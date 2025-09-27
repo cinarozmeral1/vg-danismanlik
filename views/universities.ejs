@@ -150,7 +150,7 @@
                             </div>
                                                                     <div class="card-footer bg-transparent border-0">
                                             <div class="d-flex justify-content-center align-items-center">
-                                                <button onclick="window.location.href='/c/<%= university.id %>'" class="btn btn-primary btn-sm" style="background: #0d6efd; color: white; padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600;">
+                                                <button onclick="window.location.href='/c/<%= university.id %>'" class="btn btn-primary btn-sm" style="background: #0d6efd; color: white; padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; transition: all 0.3s ease; display: inline-block;">
                                                     <i class="fas fa-info-circle me-2"></i>Detaylar
                                                 </button>
                                             </div>
@@ -354,9 +354,9 @@
 }
 
 .university-card-inner:hover {
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
     border-color: #0d6efd !important;
-    transform: none !important;
+    transform: translateY(-5px) !important;
 }
 
 .university-card-inner:hover::before {
@@ -405,8 +405,8 @@
 }
 
 .university-card-inner:hover .university-logo {
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
-    transform: none !important;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+    transform: scale(1.05) !important;
 }
 
 /* Futuristic Stats */
@@ -445,6 +445,9 @@
     letter-spacing: 0.5px;
     position: relative;
     overflow: hidden;
+    cursor: pointer !important;
+    display: inline-block;
+    text-decoration: none;
 }
 
 .btn-primary::before {
@@ -463,8 +466,13 @@
 }
 
 .btn-primary:hover {
-    transform: translateY(-3px);
+    transform: translateY(-3px) scale(1.05);
     box-shadow: 0 8px 25px rgba(13, 110, 253, 0.6);
+    cursor: pointer !important;
+}
+
+.btn-primary:active {
+    transform: translateY(-1px) scale(1.02);
 }
 
 /* Location text */
@@ -537,6 +545,33 @@
     color: #64748b;
     font-size: 1.2rem;
     font-weight: 500;
+}
+
+/* Button hover effects for university cards */
+.university-card-inner:hover .btn-primary {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(13, 110, 253, 0.6);
+    cursor: pointer !important;
+}
+
+.university-card-inner:hover .btn-primary:hover {
+    transform: translateY(-4px) scale(1.08);
+    box-shadow: 0 12px 30px rgba(13, 110, 253, 0.8);
+}
+
+/* Ensure buttons are always clickable */
+.btn-primary, .btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+    cursor: pointer !important;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+/* Card footer button container */
+.card-footer {
+    position: relative;
+    z-index: 3;
 }
 
 /* Responsive adjustments */
