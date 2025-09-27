@@ -2,11 +2,7 @@ const { Pool } = require('pg');
 
 // PostgreSQL connection
 const pool = new Pool({
-    user: process.env.POSTGRES_USER,
-    host: process.env.POSTGRES_HOST,
-    database: process.env.POSTGRES_DATABASE,
-    password: process.env.POSTGRES_PASSWORD,
-    port: process.env.POSTGRES_PORT || 5432,
+    connectionString: process.env.DATABASE_URL || 'postgres://neondb_owner:npg_Sd7p4ULFtBmx@ep-snowy-sound-ad15kvuj-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require',
     ssl: { rejectUnauthorized: false }
 });
 
