@@ -200,41 +200,42 @@
         let departmentCount = 0;
 
         // Bölüm ekleme fonksiyonu
-        function addDepartment() {
-            departmentCount++;
-            const departmentHtml = `
-                <div class="department-item border rounded p-3 mb-3" data-index="${departmentCount}">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <label class="form-label">Bölüm Adı *</label>
-                            <input type="text" class="form-control" name="departments[${departmentCount}][name_tr]" required>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Fiyat (€)</label>
-                            <input type="number" class="form-control" name="departments[${departmentCount}][price]" min="0" step="0.01" placeholder="Örn: 1000">
-                        </div>
-                        <div class="col-md-1">
-                            <label class="form-label">&nbsp;</label>
-                            <button type="button" class="btn btn-outline-danger btn-sm w-100" onclick="removeDepartment(${departmentCount})">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
+        function addDepartment(name = '', price = '') {
+            const departmentDiv = document.createElement('div');
+            departmentDiv.className = 'department-field mb-3 p-3 border rounded';
+            departmentDiv.innerHTML = `
+                <div class="row">
+                    <div class="col-md-5">
+                        <label class="form-label">Bölüm Adı</label>
+                        <input type="text" class="form-control department-name" name="departments[${departmentCount}][name_tr]" value="${name}" placeholder="Örn: Mühendislik">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Fiyat (€)</label>
+                        <input type="number" class="form-control department-price" name="departments[${departmentCount}][price]" value="${price}" placeholder="Örn: 5000" min="0" step="0.01">
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button type="button" class="btn btn-outline-danger btn-sm remove-department">
+                            <i class="fas fa-trash"></i> Kaldır
+                        </button>
                     </div>
                 </div>
             `;
-            departmentsContainer.insertAdjacentHTML('beforeend', departmentHtml);
+            
+            departmentsContainer.appendChild(departmentDiv);
+            departmentCount++;
         }
 
         // Bölüm silme fonksiyonu
-        window.removeDepartment = function(index) {
-            const departmentItem = document.querySelector(`[data-index="${index}"]`);
-            if (departmentItem) {
-                departmentItem.remove();
+        departmentsContainer.addEventListener('click', function(e) {
+            if (e.target.closest('.remove-department')) {
+                e.target.closest('.department-field').remove();
             }
-        };
+        });
 
         // Bölüm ekle butonu
-        addDepartmentBtn.addEventListener('click', addDepartment);
+        addDepartmentBtn.addEventListener('click', function() {
+            addDepartment();
+        });
 
         // Clear form
         clearBtn.addEventListener('click', function() {
@@ -271,17 +272,17 @@
             
             try {
                 // Collect departments
-                const departments = {};
+                const departments = [];
                 const departmentFields = document.querySelectorAll('.department-field');
                 departmentFields.forEach((field, index) => {
                     const nameInput = field.querySelector('.department-name');
                     const priceInput = field.querySelector('.department-price');
                     if (nameInput && nameInput.value.trim()) {
-                        departments[index] = {
+                        departments.push({
                             name_tr: nameInput.value.trim(),
                             name_en: nameInput.value.trim(),
                             price: priceInput ? priceInput.value : 0
-                        };
+                        });
                     }
                 });
                 

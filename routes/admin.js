@@ -774,7 +774,8 @@ router.put('/applications/:id', async (req, res) => {
         const result = await pool.query(
             `UPDATE applications 
             SET university_name = $1, program_name = $2, status = $3, required_documents = $4, country = $5, english_level = $6, updated_at = CURRENT_TIMESTAMP
-            WHERE id = $7`,
+            WHERE id = $7
+            RETURNING *`,
             [university, program, status, notes, country, englishLevel, id]
         );
         
@@ -1124,6 +1125,62 @@ router.get('/universities/new', async (req, res) => {
     } catch (error) {
         console.error('Get university add page error:', error);
         res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// Get university edit page
+router.get('/universities/:id/edit', async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log('🎯 Get university edit page for ID:', id);
+        
+        // Get university details with departments
+        const universityResult = await pool.query(`
+            SELECT 
+                u.*,
+                COALESCE(
+                    json_agg(
+                        json_build_object(
+                            'id', ud.id,
+                            'name_tr', ud.name_tr,
+                            'name_en', ud.name_en,
+                            'price', ud.price
+                        )
+                    ) FILTER (WHERE ud.id IS NOT NULL),
+                    '[]'::json
+                ) as departments
+            FROM universities u
+            LEFT JOIN university_departments ud ON u.id = ud.university_id AND ud.is_active = true
+            WHERE u.id = $1
+            GROUP BY u.id
+        `, [id]);
+        
+        if (universityResult.rows.length === 0) {
+            return res.status(404).render('admin/universities', {
+                title: 'Üniversite Bulunamadı',
+                error: 'Üniversite bulunamadı'
+            });
+        }
+        
+        const university = universityResult.rows[0];
+        console.log('✅ University found:', university.name);
+        console.log('📚 Departments:', university.departments);
+        
+        // Get sidebar counts
+        const sidebarCounts = await getAdminSidebarCounts();
+        
+        res.render('admin/university-edit', {
+            title: 'Üniversite Düzenle - Admin Panel',
+            university: university,
+            activePage: 'universities',
+            ...sidebarCounts
+        });
+    } catch (error) {
+        console.error('Get university edit page error:', error);
+        res.status(500).render('admin/universities', {
+            title: 'Hata',
+            error: 'Üniversite düzenleme sayfası yüklenirken hata oluştu'
+        });
     }
 });
 

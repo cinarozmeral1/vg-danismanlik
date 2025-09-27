@@ -215,15 +215,16 @@
 <style>
 /* Futuristic University Detail Styling */
 .university-hero {
-    background: linear-gradient(145deg, #ffffff 0%, #f8f9ff 50%, #e8f2ff 100%);
+    background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 50%, #0a58ca 100%);
     border: 2px solid transparent;
     border-radius: 24px;
     padding: 3rem;
     margin-bottom: 3rem;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+    box-shadow: 0 8px 32px rgba(13, 110, 253, 0.3), 0 2px 8px rgba(0,0,0,0.08);
     backdrop-filter: blur(20px);
     position: relative;
     overflow: hidden;
+    color: white;
 }
 
 .university-hero::before {
@@ -234,12 +235,39 @@
     right: 0;
     bottom: 0;
     background: linear-gradient(45deg, 
-        rgba(13, 110, 253, 0.05) 0%, 
-        rgba(13, 110, 253, 0.05) 25%, 
-        rgba(13, 110, 253, 0.05) 50%, 
-        rgba(13, 110, 253, 0.05) 75%, 
-        rgba(13, 110, 253, 0.05) 100%);
+        rgba(255, 255, 255, 0.1) 0%, 
+        rgba(255, 255, 255, 0.1) 25%, 
+        rgba(255, 255, 255, 0.1) 50%, 
+        rgba(255, 255, 255, 0.1) 75%, 
+        rgba(255, 255, 255, 0.1) 100%);
     z-index: 1;
+}
+
+/* Hero section text colors */
+.university-hero h1,
+.university-hero h2,
+.university-hero h3,
+.university-hero h4,
+.university-hero h5,
+.university-hero h6,
+.university-hero p,
+.university-hero span,
+.university-hero div {
+    color: white !important;
+    position: relative;
+    z-index: 2;
+}
+
+.university-hero .breadcrumb-item a {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.university-hero .breadcrumb-item.active {
+    color: white !important;
+}
+
+.university-hero .breadcrumb-item + .breadcrumb-item::before {
+    color: rgba(255, 255, 255, 0.6) !important;
 }
 
 .university-sidebar {
