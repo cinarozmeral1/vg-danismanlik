@@ -55,7 +55,7 @@ const authenticateUser = async (req, res, next) => {
 // Admin authentication middleware
 const authenticateAdmin = async (req, res, next) => {
     try {
-        const token = req.cookies.userToken || req.headers.authorization?.replace('Bearer ', '');
+        const token = req.cookies.userToken || req.cookies.adminToken || req.headers.authorization?.replace('Bearer ', '');
         
         if (!token) {
             return res.status(401).json({ 
