@@ -1381,7 +1381,7 @@ router.post('/universities', async (req, res) => {
         } = data;
 
         console.log('📝 Parsed Data:', {
-            name, name_en, country, city, website_url, logo_url, world_ranking, tuition_fee, application_fee, currency, 
+            name, name_en, country, city, logo_url, world_ranking, tuition_fee, application_fee, currency, 
             description, description_en, requirements, requirements_en, is_partner, is_active, is_featured
         });
 
