@@ -46,20 +46,6 @@
                     </div>
                 </div>
                 
-                <div class="col-lg-4">
-                    <div class="quick-stats">
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-graduation-cap"></i>
-                            </div>
-                            <div class="stat-content">
-                                <h3><%= departments ? departments.length : 0 %></h3>
-                                <p>Bölüm</p>
-                            </div>
-                        </div>
-                        
-                    </div>
-                </div>
             </div>
         </div>
     </section>
@@ -332,60 +318,6 @@
     letter-spacing: -0.025em;
 }
 
-.quick-stats {
-    background: linear-gradient(145deg, rgba(13, 110, 253, 0.9) 0%, rgba(11, 94, 215, 0.9) 100%);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 20px;
-    padding: 2rem;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-    backdrop-filter: blur(20px);
-    color: white;
-}
-
-.stat-card {
-    display: flex;
-    align-items: center;
-    padding: 1.5rem;
-    background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 50%, #0a58ca 100%);
-    border-radius: 16px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    transition: all 0.3s ease;
-    color: white;
-}
-
-.stat-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-}
-
-.stat-icon {
-    background: linear-gradient(135deg, #0d6efd, #0b5ed7);
-    color: white;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 1.5rem;
-    font-size: 1.4rem;
-    box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
-}
-
-.stat-content h3 {
-    color: white;
-    font-weight: 900;
-    font-size: 1.8rem;
-    margin: 0;
-    letter-spacing: -0.025em;
-}
-
-.stat-content p {
-    color: rgba(255, 255, 255, 0.9);
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 600;
-}
 </style>
 
 <script>
