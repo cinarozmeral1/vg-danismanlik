@@ -1140,7 +1140,6 @@ router.put('/universities/:id', upload.single('logo_file'), async (req, res) => 
             country,
             city,
             logo_url,
-            website_url,
             description,
             description_en,
             requirements,
@@ -1184,14 +1183,14 @@ router.put('/universities/:id', upload.single('logo_file'), async (req, res) => 
         const result = await pool.query(`
             UPDATE universities SET 
                 name = $1, name_en = $2, country = $3, city = $4, logo_url = $5, 
-                website_url = $6, description = $7, description_en = $8,
-                requirements = $9, requirements_en = $10,
-                tuition_fee = $11, application_fee = $12,
-                world_ranking = $13, is_active = $14, 
-                is_featured = $15, is_partner = $16, updated_at = CURRENT_TIMESTAMP
-            WHERE id = $17 RETURNING *
+                description = $6, description_en = $7,
+                requirements = $8, requirements_en = $9,
+                tuition_fee_min = $10, tuition_fee_max = $10, application_fee = $11,
+                world_ranking = $12, is_active = $13, 
+                is_featured = $14, is_partner = $15, updated_at = CURRENT_TIMESTAMP
+            WHERE id = $16 RETURNING *
         `, [
-            name, name_en, country, city, finalLogoUrl, website_url, description, description_en,
+            name, name_en, country, city, finalLogoUrl, description, description_en,
             requirements, requirements_en,
             tuitionFee, applicationFee,
             worldRanking, isActiveBool, isFeaturedBool, isPartnerBool, id
