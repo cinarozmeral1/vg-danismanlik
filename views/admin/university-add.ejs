@@ -177,7 +177,7 @@
                                         <button type="button" class="btn btn-secondary" id="clearFormBtn">
                                             <i class="fas fa-eraser me-2"></i>Temizle
                                         </button>
-                                        <button type="submit" class="btn btn-primary">
+                                        <button type="button" class="btn btn-primary" id="addUniversityBtn" onclick="addUniversity()">
                                             <i class="fas fa-save me-2"></i>Üniversite Ekle
                                         </button>
                                     </div>
@@ -245,7 +245,89 @@
             }
         });
 
-        // Form submit
+        // Add University Function
+        window.addUniversity = async function() {
+            console.log('🚀 Add University button clicked!');
+            
+            // Get form data
+            const name = document.getElementById('name').value;
+            const country = document.getElementById('country').value;
+            const city = document.getElementById('city').value;
+            const world_ranking = document.getElementById('world_ranking').value;
+            const description = document.getElementById('description').value;
+            const requirements = document.getElementById('requirements').value;
+            
+            // Validate required fields
+            if (!name || !country || !city) {
+                alert('Üniversite adı, ülke ve şehir alanları zorunludur!');
+                return;
+            }
+            
+            // Show loading
+            const btn = document.getElementById('addUniversityBtn');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Ekleniyor...';
+            
+            try {
+                // Collect departments
+                const departments = {};
+                const departmentFields = document.querySelectorAll('.department-field');
+                departmentFields.forEach((field, index) => {
+                    const nameInput = field.querySelector('.department-name');
+                    const priceInput = field.querySelector('.department-price');
+                    if (nameInput && nameInput.value.trim()) {
+                        departments[index] = {
+                            name_tr: nameInput.value.trim(),
+                            name_en: nameInput.value.trim(),
+                            price: priceInput ? priceInput.value : 0
+                        };
+                    }
+                });
+                
+                // Prepare data
+                const formData = new URLSearchParams();
+                formData.append('name', name);
+                formData.append('country', country);
+                formData.append('city', city);
+                formData.append('world_ranking', world_ranking);
+                formData.append('description', description);
+                formData.append('requirements', requirements);
+                formData.append('departments', JSON.stringify(departments));
+                
+                console.log('📝 Sending data:', {
+                    name, country, city, world_ranking, description, requirements, departments
+                });
+                
+                // Send request
+                const response = await fetch('/universities/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: formData
+                });
+                
+                const result = await response.json();
+                console.log('📝 Response:', result);
+                
+                if (result.success) {
+                    alert('Üniversite başarıyla eklendi!');
+                    window.location.href = '/admin/universities';
+                } else {
+                    alert('Hata: ' + result.message);
+                }
+                
+            } catch (error) {
+                console.error('❌ Error:', error);
+                alert('Bir hata oluştu: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        };
+
+        // Form submit (keep as backup)
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
 
