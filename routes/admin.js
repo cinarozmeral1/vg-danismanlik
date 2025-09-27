@@ -281,22 +281,6 @@ ensureTablesExist().then(() => {
     console.error('❌ ensureTablesExist failed:', error);
 });
 
-// Multer configuration for file uploads (memory storage for Vercel)
-const upload = multer({ 
-    storage: multer.memoryStorage(),
-    fileFilter: function (req, file, cb) {
-        // Allow PDF and image files
-        const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png', 'image/heic'];
-        if (allowedTypes.includes(file.mimetype)) {
-            cb(null, true);
-        } else {
-            cb(new Error('Sadece PDF, JPG, JPEG, PNG, HEIC dosyaları yüklenebilir!'), false);
-        }
-    },
-    limits: {
-        fileSize: 10 * 1024 * 1024 // 10MB limit
-    }
-});
 
 // Admin authentication middleware (simplified)
 const authenticateAdmin = async (req, res, next) => {
