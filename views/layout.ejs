@@ -313,6 +313,27 @@
                 }, 5000);
             }
         });
+        
+        // Global dil değiştirme sistemi
+        function switchLanguage(lang) {
+            console.log('Switching language to:', lang);
+            
+            // Server endpoint'ine yönlendir
+            window.location.href = '/change-language/' + lang;
+        }
+        
+        // Dil değiştirme butonlarına event listener ekle
+        document.addEventListener('DOMContentLoaded', function() {
+            const langButtons = document.querySelectorAll('.language-switcher');
+            langButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const lang = this.getAttribute('data-lang');
+                    console.log('Language button clicked:', lang);
+                    switchLanguage(lang);
+                });
+            });
+        });
     </script>
 </body>
 </html> 

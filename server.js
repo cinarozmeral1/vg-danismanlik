@@ -162,6 +162,26 @@ app.get('/favicon.svg', (req, res) => {
 // Dil middleware'ini ekle
 app.use(languageMiddleware);
 
+// Dil değiştirme endpoint'i
+app.get('/change-language/:lang', (req, res) => {
+    const { lang } = req.params;
+    const supportedLanguages = ['tr', 'en'];
+    
+    if (supportedLanguages.includes(lang)) {
+        res.cookie('language', lang, { 
+            maxAge: 365 * 24 * 60 * 60 * 1000, // 1 yıl
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict'
+        });
+        console.log('Language changed to:', lang);
+    }
+    
+    // Önceki sayfaya yönlendir
+    const referer = req.get('Referer') || '/';
+    res.redirect(referer);
+});
+
 // User info middleware'ini ekle
 app.use(userInfoMiddleware);
 
