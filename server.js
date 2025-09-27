@@ -382,11 +382,11 @@ app.post('/admin/login', async (req, res) => {
 
 // API Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/admin', authenticateAdmin, adminRoutes);
-app.use('/admin', authenticateAdmin, adminRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/admin', adminRoutes);
 app.use('/api/user', userRoutes);
 app.use('/user', userRoutes);
-app.use('/admin/guardians', authenticateAdmin, guardianRoutes);
+app.use('/admin/guardians', guardianRoutes);
 
 // Logout route
 app.post('/logout', (req, res) => {
