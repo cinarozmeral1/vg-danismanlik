@@ -95,10 +95,6 @@
                                 </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="website_url" class="form-label">Website URL</label>
-                                <input type="url" class="form-control" id="website_url" name="website_url" value="<%= university.website_url || '' %>">
-                            </div>
 
                             <div class="mb-3">
                                 <label for="logo_file" class="form-label">Logo Dosyası</label>
@@ -188,6 +184,24 @@
                         </div>
                     </div>
 
+                    <!-- Bölümler -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6 class="text-primary mb-3">
+                                <i class="fas fa-graduation-cap me-2"></i>Bölümler
+                            </h6>
+                            <p class="text-muted">Bu üniversitede bulunan bölümleri düzenleyin</p>
+                        </div>
+                        <div class="col-12">
+                            <div id="departmentsContainer">
+                                <!-- Bölümler buraya dinamik olarak eklenecek -->
+                            </div>
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="addDepartmentBtn">
+                                <i class="fas fa-plus me-2"></i>Bölüm Ekle
+                            </button>
+                        </div>
+                    </div>
+
                     <div class="row">
                         <div class="col-12">
                             <h6 class="mb-3"><i class="fas fa-align-left me-2"></i>Açıklamalar</h6>
@@ -253,6 +267,52 @@
         document.getElementById('deleteUniversityBtn').addEventListener('click', function() {
             deleteUniversity(this.getAttribute('data-university-id'));
         });
+        
+        // Bölüm yönetimi
+        const addDepartmentBtn = document.getElementById('addDepartmentBtn');
+        const departmentsContainer = document.getElementById('departmentsContainer');
+        let departmentCount = 0;
+
+        // Bölüm ekleme fonksiyonu
+        function addDepartment() {
+            departmentCount++;
+            const departmentHtml = `
+                <div class="department-item border rounded p-3 mb-3" data-index="${departmentCount}">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="form-label">Bölüm Adı (Türkçe) *</label>
+                            <input type="text" class="form-control" name="departments[${departmentCount}][name_tr]" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Bölüm Adı (İngilizce) *</label>
+                            <input type="text" class="form-control" name="departments[${departmentCount}][name_en]" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Fiyat (€)</label>
+                            <input type="number" class="form-control" name="departments[${departmentCount}][price]" min="0" step="0.01" placeholder="Örn: 1000">
+                        </div>
+                        <div class="col-md-1">
+                            <label class="form-label">&nbsp;</label>
+                            <button type="button" class="btn btn-outline-danger btn-sm w-100" onclick="removeDepartment(${departmentCount})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            departmentsContainer.insertAdjacentHTML('beforeend', departmentHtml);
+        }
+
+        // Bölüm silme fonksiyonu
+        window.removeDepartment = function(index) {
+            const departmentItem = document.querySelector(`[data-index="${index}"]`);
+            if (departmentItem) {
+                departmentItem.remove();
+            }
+        };
+
+        // Bölüm ekle butonu
+        addDepartmentBtn.addEventListener('click', addDepartment);
     });
 
     document.getElementById('universityEditForm').addEventListener('submit', function(e) {

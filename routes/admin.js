@@ -1149,7 +1149,8 @@ router.put('/universities/:id', upload.single('logo_file'), async (req, res) => 
             world_ranking,
             is_active,
             is_featured,
-            is_partner
+            is_partner,
+            departments
         } = req.body;
 
         // Validate required fields
@@ -1200,11 +1201,39 @@ router.put('/universities/:id', upload.single('logo_file'), async (req, res) => 
             return res.status(404).json({ success: false, message: 'University not found' });
         }
 
-        console.log('University update successful:', result.rows[0]);
+        const university = result.rows[0];
+        console.log('University update successful:', university);
+
+        // Update departments if provided
+        if (departments && typeof departments === 'object') {
+            console.log('📝 Updating departments:', departments);
+            
+            // Delete existing departments
+            await pool.query('DELETE FROM university_departments WHERE university_id = $1', [id]);
+            
+            // Add new departments
+            for (const [key, dept] of Object.entries(departments)) {
+                if (dept.name_tr && dept.name_en) {
+                    await pool.query(
+                        `INSERT INTO university_departments (university_id, name_tr, name_en, price, currency) 
+                         VALUES ($1, $2, $3, $4, $5)`,
+                        [
+                            id,
+                            dept.name_tr,
+                            dept.name_en,
+                            dept.price ? parseFloat(dept.price) : null,
+                            'EUR'
+                        ]
+                    );
+                    console.log(`✅ Department updated: ${dept.name_tr}`);
+                }
+            }
+        }
+
         res.json({
             success: true,
             message: 'Üniversite başarıyla güncellendi',
-            university: result.rows[0]
+            university: university
         });
     } catch (error) {
         console.error('Update university error:', error);
