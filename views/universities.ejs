@@ -213,21 +213,29 @@
                     if (lang === 'tr') {
                         // Türkçe göster
                         document.querySelectorAll('.university-name').forEach(el => {
-                            el.textContent = el.getAttribute('data-tr');
+                            const trName = el.getAttribute('data-tr');
+                            if (trName && trName.trim() !== '') {
+                                el.textContent = trName;
+                            }
                         });
-                        document.querySelectorAll('[data-tr]').forEach(el => {
-                            if (el.classList.contains('stat-label')) {
-                                el.textContent = el.getAttribute('data-tr');
+                        document.querySelectorAll('.stat-label').forEach(el => {
+                            const trText = el.getAttribute('data-tr');
+                            if (trText && trText.trim() !== '') {
+                                el.textContent = trText;
                             }
                         });
                     } else if (lang === 'en') {
                         // İngilizce göster
                         document.querySelectorAll('.university-name').forEach(el => {
-                            el.textContent = el.getAttribute('data-en');
+                            const enName = el.getAttribute('data-en');
+                            if (enName && enName.trim() !== '') {
+                                el.textContent = enName;
+                            }
                         });
-                        document.querySelectorAll('[data-en]').forEach(el => {
-                            if (el.classList.contains('stat-label')) {
-                                el.textContent = el.getAttribute('data-en');
+                        document.querySelectorAll('.stat-label').forEach(el => {
+                            const enText = el.getAttribute('data-en');
+                            if (enText && enText.trim() !== '') {
+                                el.textContent = enText;
                             }
                         });
                     }
