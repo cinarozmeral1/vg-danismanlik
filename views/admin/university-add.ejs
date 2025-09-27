@@ -249,9 +249,18 @@
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
 
-            const formData = new FormData(this);
+            // Form verilerini topla
+            const formData = new URLSearchParams();
             const logoFile = document.getElementById('logo_file').files[0];
             let logoUrl = null;
+            
+            // Temel bilgileri topla
+            formData.append('name', document.getElementById('name').value);
+            formData.append('country', document.getElementById('country').value);
+            formData.append('city', document.getElementById('city').value);
+            formData.append('world_ranking', document.getElementById('world_ranking').value);
+            formData.append('description', document.getElementById('description').value);
+            formData.append('requirements', document.getElementById('requirements').value);
 
             // Durum ayarları kaldırıldı - tüm üniversiteler aktif olacak
             
