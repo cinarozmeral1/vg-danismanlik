@@ -510,7 +510,7 @@ app.get('/universities/:id', async (req, res) => {
                 u.*,
                 0 as actual_program_count
             FROM universities u
-            WHERE u.id = $1 AND u.is_active = true
+            WHERE u.id = $1
         `, [universityId]);
         
         console.log('University query result:', universityResult.rows);
