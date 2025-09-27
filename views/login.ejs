@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Redirect after a short delay
                 setTimeout(() => {
                     // Admin kullanıcısını admin paneline, diğerlerini anasayfaya yönlendir
-                    if (data.is_admin) {
+                    if (data.user && data.user.is_admin) {
                         window.location.href = '/admin/dashboard';
                     } else {
                         window.location.href = '/user/dashboard';
