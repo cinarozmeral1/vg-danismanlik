@@ -62,11 +62,6 @@
                                 <input type="text" class="form-control" id="name" name="name" value="<%= university.name %>" required>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="name_en" class="form-label">Üniversite Adı (İngilizce)</label>
-                                <input type="text" class="form-control" id="name_en" name="name_en" value="<%= university.name_en || '' %>">
-                            </div>
-
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">
@@ -264,13 +259,9 @@
             const departmentHtml = `
                 <div class="department-item border rounded p-3 mb-3" data-index="${departmentCount}">
                     <div class="row">
-                        <div class="col-md-4">
-                            <label class="form-label">Bölüm Adı (Türkçe) *</label>
+                        <div class="col-md-6">
+                            <label class="form-label">Bölüm Adı *</label>
                             <input type="text" class="form-control" name="departments[${departmentCount}][name_tr]" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Bölüm Adı (İngilizce) *</label>
-                            <input type="text" class="form-control" name="departments[${departmentCount}][name_en]" required>
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Fiyat (€)</label>
@@ -314,10 +305,9 @@
         const departments = {};
         document.querySelectorAll('#departmentsContainer .department-item').forEach((item, index) => {
             const name_tr = item.querySelector('[name^="departments["][name$="[name_tr]"]').value;
-            const name_en = item.querySelector('[name^="departments["][name$="[name_en]"]').value;
             const price = item.querySelector('[name^="departments["][name$="[price]"]').value;
-            if (name_tr && name_en) {
-                departments[index] = { name_tr, name_en, price };
+            if (name_tr) {
+                departments[index] = { name_tr, name_en: name_tr, price };
             }
         });
         formData.append('departments', JSON.stringify(departments));

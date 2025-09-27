@@ -62,14 +62,8 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="mb-3">
-                                        <label for="name" class="form-label">Üniversite Adı (Türkçe) *</label>
+                                        <label for="name" class="form-label">Üniversite Adı *</label>
                                         <input type="text" class="form-control" id="name" name="name" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="name_en" class="form-label">Üniversite Adı (İngilizce)</label>
-                                        <input type="text" class="form-control" id="name_en" name="name_en">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -133,16 +127,10 @@
                                         <i class="fas fa-align-left me-2"></i>Açıklama
                                     </h6>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-12">
                                     <div class="mb-3">
-                                        <label for="description" class="form-label">Açıklama (Türkçe)</label>
+                                        <label for="description" class="form-label">Açıklama</label>
                                         <textarea class="form-control" id="description" name="description" rows="4" placeholder="Üniversite hakkında detaylı bilgi..."></textarea>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="description_en" class="form-label">Açıklama (İngilizce)</label>
-                                        <textarea class="form-control" id="description_en" name="description_en" rows="4" placeholder="University description in English..."></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -250,13 +238,9 @@
             const departmentHtml = `
                 <div class="department-item border rounded p-3 mb-3" data-index="${departmentCount}">
                     <div class="row">
-                        <div class="col-md-4">
-                            <label class="form-label">Bölüm Adı (Türkçe) *</label>
+                        <div class="col-md-6">
+                            <label class="form-label">Bölüm Adı *</label>
                             <input type="text" class="form-control" name="departments[${departmentCount}][name_tr]" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Bölüm Adı (İngilizce) *</label>
-                            <input type="text" class="form-control" name="departments[${departmentCount}][name_en]" required>
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Fiyat (€)</label>
@@ -346,6 +330,17 @@
                 if (logoUrl) {
                     urlParams.append('logo_url', logoUrl);
                 }
+                
+                // Collect departments data
+                const departments = {};
+                departmentsContainer.querySelectorAll('.department-item').forEach((item, index) => {
+                    const name_tr = item.querySelector('[name^="departments["][name$="[name_tr]"]').value;
+                    const price = item.querySelector('[name^="departments["][name$="[price]"]').value;
+                    if (name_tr) {
+                        departments[index] = { name_tr, name_en: name_tr, price };
+                    }
+                });
+                urlParams.append('departments', JSON.stringify(departments));
                 
                 console.log('📝 URLSearchParams Debug:');
                 for (let [key, value] of urlParams.entries()) {

@@ -1134,14 +1134,11 @@ router.put('/universities/:id', upload.single('logo_file'), async (req, res) => 
         const { id } = req.params;
         const {
             name,
-            name_en,
             country,
             city,
             logo_url,
             description,
-            description_en,
             requirements,
-            requirements_en,
             world_ranking,
             is_active,
             is_featured,
@@ -1189,15 +1186,13 @@ router.put('/universities/:id', upload.single('logo_file'), async (req, res) => 
 
         const result = await pool.query(`
             UPDATE universities SET 
-                name = $1, name_en = $2, country = $3, city = $4, logo_url = $5, 
-                description = $6, description_en = $7,
-                requirements = $8, requirements_en = $9,
-                world_ranking = $10, is_active = $11, 
-                is_featured = $12, is_partner = $13, updated_at = CURRENT_TIMESTAMP
-            WHERE id = $14 RETURNING *
+                name = $1, country = $2, city = $3, logo_url = $4, 
+                description = $5, requirements = $6,
+                world_ranking = $7, is_active = $8, 
+                is_featured = $9, is_partner = $10, updated_at = CURRENT_TIMESTAMP
+            WHERE id = $11 RETURNING *
         `, [
-            name, name_en, country, city, finalLogoUrl, description, description_en,
-            requirements, requirements_en,
+            name, country, city, finalLogoUrl, description, requirements,
             worldRanking, isActiveBool, isFeaturedBool, isPartnerBool, id
         ]);
 
@@ -1407,15 +1402,12 @@ router.post('/universities', async (req, res) => {
 
         const {
             name,
-            name_en,
             country,
             city,
             logo_url,
             world_ranking,
             description,
-            description_en,
             requirements,
-            requirements_en,
             is_partner,
             is_active,
             is_featured,
@@ -1423,8 +1415,8 @@ router.post('/universities', async (req, res) => {
         } = data;
 
         console.log('📝 Parsed Data:', {
-            name, name_en, country, city, logo_url, world_ranking, 
-            description, description_en, requirements, requirements_en, is_partner, is_active, is_featured
+            name, country, city, logo_url, world_ranking, 
+            description, requirements, is_partner, is_active, is_featured
         });
 
         console.log('📝 Validation Check:');
@@ -1449,21 +1441,18 @@ router.post('/universities', async (req, res) => {
         // Create university
         const universityResult = await pool.query(
             `INSERT INTO universities (
-                name, name_en, country, city, logo_url, world_ranking, 
-                description, description_en, requirements, requirements_en, is_partner, is_active, is_featured,
+                name, country, city, logo_url, world_ranking, 
+                description, requirements, is_partner, is_active, is_featured,
                 created_at, updated_at
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *`,
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *`,
             [
                 name,
-                name_en || null,
                 country,
                 city,
                 logo_url || null,
                 world_ranking ? parseInt(world_ranking) : null,
                 description || null,
-                description_en || null,
                 requirements || null,
-                requirements_en || null,
                 is_partner === 'true' || is_partner === true,
                 is_active === 'true' || is_active === true,
                 is_featured === 'true' || is_featured === true
