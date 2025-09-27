@@ -1411,10 +1411,10 @@ router.post('/universities', async (req, res) => {
         // Create university
         const universityResult = await pool.query(
             `INSERT INTO universities (
-                name, name_en, country, city, website_url, logo_url, world_ranking, tuition_fee, application_fee, currency, 
+                name, name_en, country, city, website_url, logo_url, world_ranking, tuition_fee_min, tuition_fee_max, application_fee, currency, 
                 description, description_en, requirements, requirements_en, is_partner, is_active, is_featured,
                 created_at, updated_at
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *`,
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *`,
             [
                 name,
                 name_en || null,
@@ -1423,6 +1423,7 @@ router.post('/universities', async (req, res) => {
                 website_url || null,
                 logo_url || null,
                 world_ranking ? parseInt(world_ranking) : null,
+                tuition_fee ? parseFloat(tuition_fee) : null,
                 tuition_fee ? parseFloat(tuition_fee) : null,
                 application_fee ? parseFloat(application_fee) : null,
                 currency || 'EUR',
