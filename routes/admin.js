@@ -1477,7 +1477,7 @@ router.post('/test-email', async (req, res) => {
 });
 
 // Create new university
-router.post('/universities', async (req, res) => {
+router.post('/api/admin/universities', async (req, res) => {
     try {
         console.log('📝 Create University Request - Headers:', req.headers);
         console.log('📝 Create University Request - Body:', req.body);
