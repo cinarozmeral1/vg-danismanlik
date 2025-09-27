@@ -2153,7 +2153,7 @@ router.post('/users/:userId/services', async (req, res) => {
         // Insert service
         const serviceQuery = `
             INSERT INTO services (user_id, service_name, amount, currency, due_date, payment_date, is_paid, has_installments)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
             RETURNING *
         `;
         
@@ -2185,7 +2185,7 @@ router.post('/users/:userId/services', async (req, res) => {
                 
                 const installmentQuery = `
                     INSERT INTO installments (service_id, installment_number, amount, due_date, is_paid)
-                    VALUES (?, ?, ?, ?, ?)
+                    VALUES ($1, $2, $3, $4, $5)
                 `;
                 
                 await client.query(installmentQuery, [
