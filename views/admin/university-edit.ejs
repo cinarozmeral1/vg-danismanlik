@@ -102,8 +102,8 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="logo_file" class="form-label">Logo Dosyası</label>
-                                <input type="file" class="form-control" id="logo_file" name="logo_file" accept="image/*">
-                                <small class="text-muted">PNG, JPG, SVG formatları desteklenir</small>
+                                <input type="file" class="form-control" id="logo_file" name="logo_file" accept="image/*,.heic,.heif">
+                                <small class="text-muted">PNG, JPG, SVG, HEIC formatları desteklenir</small>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -302,19 +302,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 const logoFormData = new FormData();
                 logoFormData.append('logo_file', logoFile);
                 
-                const logoResponse = await fetch('/api/admin/universities/upload-logo', {
-                    method: 'POST',
-                    body: logoFormData
-                });
-                
-                const logoResult = await logoResponse.json();
-                console.log('📝 Logo upload response:', logoResult);
-                
-                if (logoResult.success) {
-                    logoUrl = logoResult.logo_url;
-                    console.log('✅ Logo uploaded:', logoUrl);
-                } else {
-                    throw new Error('Logo yükleme hatası: ' + logoResult.message);
+                try {
+                    const logoResponse = await fetch('/api/admin/universities/upload-logo', {
+                        method: 'POST',
+                        body: logoFormData
+                    });
+                    
+                    if (!logoResponse.ok) {
+                        throw new Error(`Logo upload failed with status: ${logoResponse.status}`);
+                    }
+                    
+                    const logoResult = await logoResponse.json();
+                    console.log('📝 Logo upload response:', logoResult);
+                    
+                    if (logoResult.success) {
+                        logoUrl = logoResult.logo_url;
+                        console.log('✅ Logo uploaded:', logoUrl);
+                    } else {
+                        throw new Error('Logo yükleme hatası: ' + logoResult.message);
+                    }
+                } catch (logoError) {
+                    console.error('❌ Logo upload error:', logoError);
+                    throw new Error('Logo yükleme başarısız: ' + logoError.message);
                 }
             }
             
@@ -351,11 +360,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log(`  ${key}:`, value);
             }
             
+            // Timeout ile fetch işlemi
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 saniye timeout
+            
             const response = await fetch(`/api/admin/universities/<%= university.id %>`, {
                 method: 'PUT',
-                body: formData
+                body: formData,
+                signal: controller.signal
             });
             
+            clearTimeout(timeoutId);
             console.log('📝 Response status:', response.status);
             console.log('📝 Response ok:', response.ok);
             
@@ -376,7 +391,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } catch (error) {
             console.error('Network error:', error);
-            alert('Bağlantı hatası. Lütfen tekrar deneyin.');
+            if (error.name === 'AbortError') {
+                alert('İşlem zaman aşımına uğradı. Lütfen tekrar deneyin.');
+            } else {
+                alert('Bağlantı hatası. Lütfen tekrar deneyin. Hata: ' + error.message);
+            }
         } finally {
             submitButton.disabled = false;
             submitButton.innerHTML = originalText;
