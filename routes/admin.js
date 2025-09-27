@@ -1212,25 +1212,31 @@ router.put('/universities/:id', upload.single('logo_file'), async (req, res) => 
         if (departments && typeof departments === 'object') {
             console.log('📝 Updating departments:', departments);
             
-            // Delete existing departments
-            await pool.query('DELETE FROM university_departments WHERE university_id = $1', [id]);
-            
-            // Add new departments
-            for (const [key, dept] of Object.entries(departments)) {
-                if (dept.name_tr && dept.name_en) {
-                    await pool.query(
-                        `INSERT INTO university_departments (university_id, name_tr, name_en, price, currency) 
-                         VALUES ($1, $2, $3, $4, $5)`,
-                        [
-                            id,
-                            dept.name_tr,
-                            dept.name_en,
-                            dept.price ? parseFloat(dept.price) : null,
-                            'EUR'
-                        ]
-                    );
-                    console.log(`✅ Department updated: ${dept.name_tr}`);
+            try {
+                // Delete existing departments
+                await pool.query('DELETE FROM university_departments WHERE university_id = $1', [id]);
+                console.log('✅ Existing departments deleted');
+                
+                // Add new departments
+                for (const [key, dept] of Object.entries(departments)) {
+                    if (dept.name_tr && dept.name_en) {
+                        await pool.query(
+                            `INSERT INTO university_departments (university_id, name_tr, name_en, price, currency) 
+                             VALUES ($1, $2, $3, $4, $5)`,
+                            [
+                                id,
+                                dept.name_tr,
+                                dept.name_en,
+                                dept.price ? parseFloat(dept.price) : null,
+                                'EUR'
+                            ]
+                        );
+                        console.log(`✅ Department updated: ${dept.name_tr}`);
+                    }
                 }
+            } catch (deptError) {
+                console.error('❌ Department update error:', deptError);
+                throw new Error('Department update failed: ' + deptError.message);
             }
         }
 
@@ -1241,7 +1247,14 @@ router.put('/universities/:id', upload.single('logo_file'), async (req, res) => 
         });
     } catch (error) {
         console.error('Update university error:', error);
-        res.status(500).json({ success: false, message: 'Server error' });
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Server error: ' + error.message,
+            error: error.message,
+            stack: error.stack
+        });
     }
 });
 
