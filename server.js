@@ -455,15 +455,9 @@ app.get('/universities/:id', async (req, res) => {
         const universityResult = await pool.query(`
             SELECT 
                 u.*,
-                COALESCE(COUNT(up.id), 0) as actual_program_count
+                0 as actual_program_count
             FROM universities u
-            LEFT JOIN university_programs up ON u.id = up.university_id AND up.is_active = true
             WHERE u.id = $1 AND u.is_active = true
-            GROUP BY u.id, u.name, u.name_en, u.country, u.city, u.logo_url, u.website_url, 
-                     u.tuition_fee, u.application_fee,
-                     u.world_ranking, u.is_featured, u.is_partner,
-                     u.created_at, u.description, u.description_en,
-                     u.requirements, u.requirements_en
         `, [universityId]);
         
         console.log('University query result:', universityResult.rows);
@@ -477,20 +471,11 @@ app.get('/universities/:id', async (req, res) => {
 
         const university = universityResult.rows[0];
 
-        // Get university programs
-        const programsResult = await pool.query(`
-            SELECT id, name, name_en, level, field_of_study, duration_months, tuition_fee, currency, language, is_active
-            FROM university_programs 
-            WHERE university_id = $1 AND is_active = true
-            ORDER BY name ASC
-        `, [universityId]);
+        // Get university programs (empty for now)
+        const programsResult = { rows: [] };
 
-        // Get university images
-        const imagesResult = await pool.query(`
-            SELECT * FROM university_images 
-            WHERE university_id = $1 
-            ORDER BY id ASC
-        `, [universityId]);
+        // Get university images (empty for now)
+        const imagesResult = { rows: [] };
 
         res.render('university-detail', {
             title: `${university.name} - Venture Global`,
