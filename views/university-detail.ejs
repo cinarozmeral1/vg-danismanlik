@@ -38,9 +38,6 @@
                             <% if (university.is_featured) { %>
                                 <span class="badge bg-warning me-2">Öne Çıkan</span>
                             <% } %>
-                            <% if (university.is_partner) { %>
-                                <span class="badge bg-success me-2">Partner</span>
-                            <% } %>
                             <% if (university.world_ranking) { %>
                                 <span class="badge bg-primary me-2">Dünya Sıralaması: #<%= university.world_ranking %></span>
                             <% } %>
@@ -276,7 +273,7 @@
 }
 
 .sidebar-card {
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 255, 0.95) 100%);
+    background: linear-gradient(145deg, rgba(13, 110, 253, 0.9) 0%, rgba(11, 94, 215, 0.9) 100%);
     border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 20px;
     padding: 2rem;
@@ -286,6 +283,7 @@
     backdrop-filter: blur(20px);
     position: relative;
     overflow: hidden;
+    color: white;
 }
 
 .sidebar-card::before {
@@ -312,7 +310,7 @@
 }
 
 .sidebar-card h3 {
-    color: #1e293b;
+    color: white !important;
     font-weight: 800;
     margin-bottom: 1.5rem;
     font-size: 1.4rem;
@@ -487,7 +485,7 @@
 }
 
 .content-section {
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 255, 0.95) 100%);
+    background: linear-gradient(145deg, rgba(13, 110, 253, 0.9) 0%, rgba(11, 94, 215, 0.9) 100%);
     border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 20px;
     padding: 3rem;
@@ -496,6 +494,7 @@
     backdrop-filter: blur(20px);
     position: relative;
     overflow: hidden;
+    color: white;
 }
 
 .content-section::before {
@@ -510,7 +509,7 @@
 }
 
 .content-section h2 {
-    color: #1e293b;
+    color: white !important;
     font-weight: 900;
     margin-bottom: 1.5rem;
     font-size: 1.8rem;
@@ -518,12 +517,13 @@
 }
 
 .quick-stats {
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 255, 0.95) 100%);
+    background: linear-gradient(145deg, rgba(13, 110, 253, 0.9) 0%, rgba(11, 94, 215, 0.9) 100%);
     border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 20px;
     padding: 2rem;
     box-shadow: 0 8px 25px rgba(0,0,0,0.1);
     backdrop-filter: blur(20px);
+    color: white;
 }
 
 .stat-card {

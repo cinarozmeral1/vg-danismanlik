@@ -360,7 +360,7 @@
                     const logoFormData = new FormData();
                     logoFormData.append('logo_file', logoFile);
                     
-                    const logoResponse = await fetch('/api/admin/universities/upload-logo', {
+                    const logoResponse = await fetch('/admin/universities/upload-logo', {
                         method: 'POST',
                         body: logoFormData
                     });
@@ -409,7 +409,7 @@
                 
                 // Üniversiteyi oluştur
                 console.log('📝 Creating university...');
-                const response = await fetch('/universities/create', {
+                const response = await fetch('/admin/universities', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'

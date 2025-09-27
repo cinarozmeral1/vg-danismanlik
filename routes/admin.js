@@ -1399,7 +1399,7 @@ router.post('/universities/upload-logo', upload.single('logo_file'), async (req,
             });
         }
 
-        const logoUrl = `/uploads/${req.file.filename}`;
+        const logoUrl = `/uploads/logos/${req.file.filename}`;
         
         res.json({
             success: true,
