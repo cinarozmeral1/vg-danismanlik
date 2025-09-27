@@ -389,7 +389,7 @@ app.use('/user', userRoutes);
 app.use('/admin/guardians', guardianRoutes);
 
 // Public university routes (no authentication required)
-app.get('/x/:id', async (req, res) => {
+app.get('/y/:id', async (req, res) => {
     try {
         const universityId = req.params.id;
 
