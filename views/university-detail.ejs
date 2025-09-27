@@ -70,40 +70,21 @@
                     <div class="content-section">
                         <h2>Üniversite Hakkında</h2>
                         <div class="university-description">
-                            <div class="description-tr" style="display: block;">
-                                <% if (university.description) { %>
-                                    <p><%= university.description %></p>
-                                <% } else { %>
-                                    <p><%= university.name %>, <%= university.country %>'nin önde gelen üniversitelerinden biridir. 
-                                    Kaliteli eğitim ve araştırma imkanları sunmaktadır.</p>
-                                <% } %>
-                            </div>
-                            <div class="description-en" style="display: none;">
-                                <% if (university.description_en) { %>
-                                    <p><%= university.description_en %></p>
-                                <% } else { %>
-                                    <p><%= university.name_en || university.name %> is one of the leading universities in <%= university.country %>. 
-                                    It offers quality education and research opportunities.</p>
-                                <% } %>
-                            </div>
+                            <% if (university.description) { %>
+                                <p><%= university.description %></p>
+                            <% } else { %>
+                                <p><%= university.name %>, <%= university.country %>'nin önde gelen üniversitelerinden biridir. 
+                                Kaliteli eğitim ve araştırma imkanları sunmaktadır.</p>
+                            <% } %>
                         </div>
                     </div>
 
                     <!-- Requirements Section -->
-                    <% if (university.requirements || university.requirements_en) { %>
+                    <% if (university.requirements) { %>
                     <div class="content-section">
-                        <h2 class="requirements-title" data-tr="Gereksinimler" data-en="Requirements">Gereksinimler</h2>
+                        <h2>Gereksinimler</h2>
                         <div class="requirements-content">
-                            <div class="requirements-tr" style="display: block;">
-                                <% if (university.requirements) { %>
-                                    <p><%= university.requirements %></p>
-                                <% } %>
-                            </div>
-                            <div class="requirements-en" style="display: none;">
-                                <% if (university.requirements_en) { %>
-                                    <p><%= university.requirements_en %></p>
-                                <% } %>
-                            </div>
+                            <p><%= university.requirements %></p>
                         </div>
                     </div>
                     <% } %>
@@ -111,13 +92,12 @@
                     <!-- Departments Section -->
                     <% if (departments && departments.length > 0) { %>
                     <div class="content-section">
-                        <h2 class="departments-title" data-tr="Bölümler" data-en="Departments">Bölümler</h2>
+                        <h2>Bölümler</h2>
                         <div class="departments-grid">
                             <% departments.forEach(department => { %>
                             <div class="department-card">
                                 <div class="department-header">
-                                    <h4 class="department-name-tr" style="display: block;"><%= department.name_tr %></h4>
-                                    <h4 class="department-name-en" style="display: none;"><%= department.name_en %></h4>
+                                    <h4><%= department.name_tr %></h4>
                                     <% if (department.price) { %>
                                         <span class="price-badge">€<%= department.price %></span>
                                     <% } %>
