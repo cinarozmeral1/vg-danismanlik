@@ -497,7 +497,7 @@ app.get('/universities', async (req, res) => {
 });
 
 // University detail page route
-app.get('/universities/:id', async (req, res) => {
+app.get('/university-detail/:id', async (req, res) => {
     try {
         const universityId = req.params.id;
 

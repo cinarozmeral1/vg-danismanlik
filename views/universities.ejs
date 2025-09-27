@@ -150,7 +150,7 @@
                             </div>
                                                                     <div class="card-footer bg-transparent border-0">
                                             <div class="d-flex justify-content-center align-items-center">
-                                                <a href="/universities/<%= university.id %>" class="btn btn-primary btn-sm">
+                                                <a href="/university-detail/<%= university.id %>" class="btn btn-primary btn-sm">
                                                     <i class="fas fa-info-circle me-2"></i>Detaylar
                                                 </a>
                                             </div>
@@ -328,7 +328,7 @@
     background: linear-gradient(145deg, #ffffff 0%, #f8f9ff 50%, #e8f2ff 100%);
     border: 2px solid transparent;
     border-radius: 20px;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
     box-shadow: 0 4px 20px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.1);
     overflow: hidden;
     position: relative;
@@ -354,8 +354,7 @@
 }
 
 .university-card-inner:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 25px rgba(0,0,0,0.15), 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     border-color: #0d6efd;
 }
 
@@ -400,13 +399,12 @@
     object-fit: contain !important;
     border-radius: 16px !important;
     box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: box-shadow 0.3s ease;
     border: 3px solid rgba(255,255,255,0.8);
 }
 
 .university-card-inner:hover .university-logo {
-    transform: rotate(2deg);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 /* Futuristic Stats */
