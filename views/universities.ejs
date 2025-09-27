@@ -150,7 +150,7 @@
                             </div>
                                                                     <div class="card-footer bg-transparent border-0">
                                             <div class="d-flex justify-content-center align-items-center">
-                                                <a href="/university-detail/<%= university.id %>" class="btn btn-primary btn-sm">
+                                                <a href="/university/<%= university.id %>" class="btn btn-primary btn-sm">
                                                     <i class="fas fa-info-circle me-2"></i>Detaylar
                                                 </a>
                                             </div>
@@ -354,8 +354,9 @@
 }
 
 .university-card-inner:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    border-color: #0d6efd;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+    border-color: #0d6efd !important;
+    transform: none !important;
 }
 
 .university-card-inner:hover::before {
@@ -404,7 +405,8 @@
 }
 
 .university-card-inner:hover .university-logo {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+    transform: none !important;
 }
 
 /* Futuristic Stats */
