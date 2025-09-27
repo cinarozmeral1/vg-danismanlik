@@ -282,7 +282,7 @@
             console.log('Response data:', result);
             if (result.success) {
                 alert('Üniversite başarıyla güncellendi!');
-                window.location.href = `/admin/universities/<%= university.id %>`;
+                window.location.href = '/admin/universities';
             } else {
                 alert('Hata: ' + result.message);
             }
