@@ -172,6 +172,7 @@ app.use(express.static('public', {
 app.use('/css', express.static('public/css'));
 app.use('/js', express.static('public/js'));
 app.use('/images', express.static('public/images'));
+app.use('/uploads', express.static('public/uploads'));
 
 // Static dosya route'ları
 app.get('/css/:file', (req, res) => {

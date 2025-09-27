@@ -284,6 +284,33 @@ document.addEventListener('DOMContentLoaded', function() {
             submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Kaydediliyor...';
             
             const formData = new FormData(form);
+            const logoFile = document.getElementById('logo_file').files[0];
+            let logoUrl = formData.get('logo_url'); // Mevcut logo URL'ini al
+            
+            // Yeni logo yüklendiyse
+            if (logoFile) {
+                console.log('📝 Uploading new logo...');
+                const logoFormData = new FormData();
+                logoFormData.append('logo_file', logoFile);
+                
+                const logoResponse = await fetch('/api/admin/universities/upload-logo', {
+                    method: 'POST',
+                    body: logoFormData
+                });
+                
+                const logoResult = await logoResponse.json();
+                if (logoResult.success) {
+                    logoUrl = logoResult.logo_url;
+                    console.log('✅ Logo uploaded:', logoUrl);
+                } else {
+                    throw new Error('Logo yükleme hatası: ' + logoResult.message);
+                }
+            }
+            
+            // Logo URL'ini güncelle
+            if (logoUrl) {
+                formData.set('logo_url', logoUrl);
+            }
             
             // Bölümleri topla
             const departments = [];

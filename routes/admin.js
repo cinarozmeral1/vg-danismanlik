@@ -7,6 +7,41 @@ const path = require('path');
 const fs = require('fs');
 const { sendApplicationStatusEmail } = require('../services/emailService');
 
+// File upload middleware for university logos
+const upload = multer({
+    storage: multer.diskStorage({
+        destination: function (req, file, cb) {
+            const uploadDir = 'public/uploads/logos';
+            if (!fs.existsSync(uploadDir)) {
+                fs.mkdirSync(uploadDir, { recursive: true });
+            }
+            cb(null, uploadDir);
+        },
+        filename: function (req, file, cb) {
+            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+            cb(null, 'logo-' + uniqueSuffix + path.extname(file.originalname));
+        }
+    }),
+    fileFilter: function (req, file, cb) {
+        // Allow only image types for logos
+        const allowedTypes = [
+            'image/jpeg',
+            'image/jpg', 
+            'image/png',
+            'image/svg+xml'
+        ];
+        
+        if (allowedTypes.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Logo için sadece resim dosyaları kabul edilir!'), false);
+        }
+    },
+    limits: {
+        fileSize: 5 * 1024 * 1024 // 5MB limit
+    }
+});
+
 // File upload middleware for documents
 const documentUpload = multer({
     storage: multer.diskStorage({
