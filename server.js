@@ -388,6 +388,65 @@ app.use('/api/user', userRoutes);
 app.use('/user', userRoutes);
 app.use('/admin/guardians', guardianRoutes);
 
+// Public university routes (no authentication required)
+app.post('/api/universities', async (req, res) => {
+    try {
+        console.log('📝 Create University Request - Headers:', req.headers);
+        console.log('📝 Create University Request - Body:', req.body);
+
+        const {
+            name,
+            country,
+            city,
+            logo_url,
+            world_ranking,
+            description,
+            requirements,
+            departments
+        } = req.body;
+
+        if (!name || !country || !city) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Üniversite adı, ülke ve şehir alanları zorunludur.' 
+            });
+        }
+
+        // Insert university
+        const universityResult = await pool.query(`
+            INSERT INTO universities (name, country, city, logo_url, world_ranking, description, requirements, is_active, is_featured, is_partner)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+            RETURNING id
+        `, [name, country, city, logo_url, world_ranking, description, requirements, true, false, true]);
+
+        const universityId = universityResult.rows[0].id;
+
+        // Insert departments if provided
+        if (departments && Array.isArray(departments)) {
+            for (const dept of departments) {
+                if (dept.name_tr && dept.price) {
+                    await pool.query(`
+                        INSERT INTO university_departments (university_id, name_tr, name_en, price, currency, is_active)
+                        VALUES ($1, $2, $3, $4, $5, $6)
+                    `, [universityId, dept.name_tr, dept.name_tr, dept.price, 'EUR', true]);
+                }
+            }
+        }
+
+        res.json({ 
+            success: true, 
+            message: 'Üniversite başarıyla eklendi!',
+            universityId: universityId
+        });
+    } catch (error) {
+        console.error('University creation error:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Üniversite eklenirken hata oluştu: ' + error.message 
+        });
+    }
+});
+
 // Logout route
 app.post('/logout', (req, res) => {
     // Clear both user and admin tokens with proper options
