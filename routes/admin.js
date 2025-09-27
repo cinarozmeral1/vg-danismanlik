@@ -1146,8 +1146,20 @@ router.put('/universities/:id', upload.single('logo_file'), async (req, res) => 
             is_active,
             is_featured,
             is_partner,
-            departments
+            departments: departmentsRaw
         } = req.body;
+        
+        // Parse departments if it's a JSON string
+        let departments = null;
+        if (departmentsRaw) {
+            try {
+                departments = typeof departmentsRaw === 'string' ? JSON.parse(departmentsRaw) : departmentsRaw;
+                console.log('Parsed departments:', departments);
+            } catch (error) {
+                console.error('Error parsing departments:', error);
+                departments = null;
+            }
+        }
 
         // Validate required fields
         if (!name || !country || !city) {

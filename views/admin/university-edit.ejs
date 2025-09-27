@@ -310,8 +310,21 @@
         formData.set('is_featured', document.getElementById('is_featured').checked);
         formData.set('is_partner', document.getElementById('is_partner').checked);
         
+        // Collect departments data
+        const departments = {};
+        document.querySelectorAll('#departmentsContainer .department-item').forEach((item, index) => {
+            const name_tr = item.querySelector('[name^="departments["][name$="[name_tr]"]').value;
+            const name_en = item.querySelector('[name^="departments["][name$="[name_en]"]').value;
+            const price = item.querySelector('[name^="departments["][name$="[price]"]').value;
+            if (name_tr && name_en) {
+                departments[index] = { name_tr, name_en, price };
+            }
+        });
+        formData.append('departments', JSON.stringify(departments));
+        
         // Debug log
         console.log('Form data being sent:', formData);
+        console.log('Departments:', departments);
         
         // Show loading state
         const submitBtn = document.querySelector('button[type="submit"]');
