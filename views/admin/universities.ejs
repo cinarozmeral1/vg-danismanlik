@@ -101,9 +101,6 @@
                                     </td>
                                     <td>
                                         <div class="btn-group" role="group">
-                                            <button class="btn btn-sm btn-outline-primary js-view-university" data-university-id="<%= university.id %>" title="Görüntüle">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
                                             <button class="btn btn-sm btn-outline-warning js-edit-university" data-university-id="<%= university.id %>" title="Düzenle">
                                                 <i class="fas fa-edit"></i>
                                             </button>
@@ -143,15 +140,8 @@
         }
 
         // University action buttons
-        const viewBtn = e.target.closest('.js-view-university');
         const editBtn = e.target.closest('.js-edit-university');
         const deleteBtn = e.target.closest('.js-delete-university');
-
-        if (viewBtn) {
-            const id = viewBtn.getAttribute('data-university-id');
-            if (id) window.location.href = `/admin/universities/${id}`;
-            return;
-        }
 
         if (editBtn) {
             const id = editBtn.getAttribute('data-university-id');

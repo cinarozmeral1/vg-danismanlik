@@ -988,61 +988,6 @@ app.get('/admin/universities/new', async (req, res) => {
     }
 });
 
-// University detail route
-app.get('/admin/universities/:id', async (req, res) => {
-    try {
-        // Check if user is logged in and is admin
-        if (!res.locals.isLoggedIn || !res.locals.isAdmin) {
-            return res.redirect('/login');
-        }
-
-        const universityId = req.params.id;
-
-        // Get university details
-        const universityResult = await pool.query(`
-            SELECT * FROM universities WHERE id = $1
-        `, [universityId]);
-
-        if (universityResult.rows.length === 0) {
-            return res.status(404).render('error', {
-                title: 'Üniversite Bulunamadı',
-                message: 'Aradığınız üniversite bulunamadı.'
-            });
-        }
-
-        const university = universityResult.rows[0];
-
-        // Get university programs
-        const programsResult = await pool.query(`
-            SELECT * FROM university_programs 
-            WHERE university_id = $1 
-            ORDER BY name ASC
-        `, [universityId]);
-
-        // Get sidebar counts for admin layout
-        const [usersResult, applicationsResult, universitiesResult] = await Promise.all([
-            pool.query('SELECT COUNT(*) as count FROM users'),
-            pool.query('SELECT COUNT(*) as count FROM applications'),
-            pool.query('SELECT COUNT(*) as count FROM universities WHERE is_active = true')
-        ]);
-        
-        const sidebarCounts = {
-            userCount: parseInt(usersResult.rows[0].count),
-            applicationCount: parseInt(applicationsResult.rows[0].count),
-            universityCount: parseInt(universitiesResult.rows[0].count)
-        };
-
-        res.render('admin/university-detail', {
-            title: `${university.name} - Admin Panel`,
-            university: university,
-            programs: programsResult.rows,
-            ...sidebarCounts
-        });
-    } catch (error) {
-        console.error('Admin university detail error:', error);
-        res.status(500).json({ success: false, message: 'Server error' });
-    }
-});
 
 
 

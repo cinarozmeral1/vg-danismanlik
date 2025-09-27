@@ -1107,26 +1107,6 @@ router.get('/universities/new', async (req, res) => {
     }
 });
 
-// Get university by ID
-router.get('/universities/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        
-        const result = await pool.query('SELECT * FROM universities WHERE id = $1', [id]);
-        
-        if (result.rows.length === 0) {
-            return res.status(404).json({ success: false, message: 'University not found' });
-        }
-        
-        res.json({
-            success: true,
-            university: result.rows[0]
-        });
-    } catch (error) {
-        console.error('Get university error:', error);
-        res.status(500).json({ success: false, message: 'Server error' });
-    }
-});
 
 // Update university with logo upload support
 router.put('/universities/:id', async (req, res) => {
