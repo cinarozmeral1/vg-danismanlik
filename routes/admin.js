@@ -1053,12 +1053,8 @@ router.get('/universities', async (req, res) => {
                     u.is_featured,
                     u.is_partner,
                     u.created_at,
-                    COUNT(up.id) as actual_program_count
+                    0 as actual_program_count
                 FROM universities u
-                LEFT JOIN university_programs up ON u.id = up.university_id AND up.is_active = true
-                GROUP BY u.id, u.name, u.name_en, u.country, u.city, u.logo_url, u.website_url, 
-                         u.tuition_fee_min, u.tuition_fee_max, u.application_fee, u.world_ranking, 
-                         u.is_active, u.is_featured, u.is_partner, u.created_at
                 ORDER BY u.is_featured DESC, u.name ASC
             `);
             universities = result.rows;
