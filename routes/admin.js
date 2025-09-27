@@ -1047,12 +1047,11 @@ router.get('/universities', async (req, res) => {
                     u.world_ranking,
                     u.is_active,
                     u.is_featured,
-                    u.is_partner,
                     u.created_at,
                     COUNT(ud.id) as department_count
                 FROM universities u
                 LEFT JOIN university_departments ud ON u.id = ud.university_id AND ud.is_active = true
-                GROUP BY u.id, u.name, u.name_en, u.country, u.city, u.logo_url, u.world_ranking, u.is_active, u.is_featured, u.is_partner, u.created_at
+                GROUP BY u.id, u.name, u.name_en, u.country, u.city, u.logo_url, u.world_ranking, u.is_active, u.is_featured, u.created_at
                 ORDER BY u.is_featured DESC, u.name ASC
             `);
             universities = result.rows;
@@ -1162,7 +1161,7 @@ router.put('/universities/:id', async (req, res) => {
                 name = $1, country = $2, city = $3, logo_url = $4, 
                 description = $5, requirements = $6,
                 world_ranking = $7, is_active = true, 
-                is_featured = false, is_partner = true, updated_at = CURRENT_TIMESTAMP
+                is_featured = false, updated_at = CURRENT_TIMESTAMP
             WHERE id = $8 RETURNING *
         `, [
             name, country, city, finalLogoUrl, description, requirements,
@@ -1414,7 +1413,7 @@ router.post('/universities', async (req, res) => {
                 name, country, city, logo_url, world_ranking, 
                 description, requirements, is_partner, is_active, is_featured,
                 created_at, updated_at
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, true, true, false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *`,
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, true, false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *`,
             [
                 name,
                 country,

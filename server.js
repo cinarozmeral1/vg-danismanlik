@@ -472,13 +472,12 @@ app.get('/universities', async (req, res) => {
                 u.logo_url,
                 u.world_ranking,
                 u.is_featured,
-                u.is_partner,
                 u.created_at,
                 COUNT(ud.id) as department_count
             FROM universities u
             LEFT JOIN university_departments ud ON u.id = ud.university_id AND ud.is_active = true
             WHERE u.is_active = true
-            GROUP BY u.id, u.name, u.name_en, u.country, u.city, u.logo_url, u.world_ranking, u.is_featured, u.is_partner, u.created_at
+            GROUP BY u.id, u.name, u.name_en, u.country, u.city, u.logo_url, u.world_ranking, u.is_featured, u.created_at
             ORDER BY u.is_featured DESC, u.name ASC
             LIMIT 50
         `);
@@ -920,12 +919,11 @@ app.get('/admin/universities', async (req, res) => {
                 u.world_ranking,
                 u.is_active,
                 u.is_featured,
-                u.is_partner,
                 u.created_at,
                 COUNT(up.id) as actual_program_count
             FROM universities u
             LEFT JOIN university_programs up ON u.id = up.university_id AND up.is_active = true
-            GROUP BY u.id, u.name, u.name_en, u.country, u.city, u.logo_url, u.website_url, u.tuition_fee, u.application_fee, u.world_ranking, u.is_active, u.is_featured, u.is_partner, u.created_at
+            GROUP BY u.id, u.name, u.name_en, u.country, u.city, u.logo_url, u.website_url, u.tuition_fee, u.application_fee, u.world_ranking, u.is_active, u.is_featured, u.created_at
             ORDER BY u.is_featured DESC, u.name ASC
         `);
 
