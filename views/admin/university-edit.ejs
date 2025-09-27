@@ -313,7 +313,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 logoFormData.append('logo_file', logoFile);
                 
                 try {
-                    const logoResponse = await fetch('/admin/universities/upload-logo', {
+                    const logoResponse = await fetch('/api/admin/universities/upload-logo', {
                         method: 'POST',
                         body: logoFormData
                     });

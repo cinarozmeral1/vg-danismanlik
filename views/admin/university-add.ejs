@@ -360,7 +360,7 @@
                     const logoFormData = new FormData();
                     logoFormData.append('logo_file', logoFile);
                     
-                    const logoResponse = await fetch('/admin/universities/upload-logo', {
+                    const logoResponse = await fetch('/api/admin/universities/upload-logo', {
                         method: 'POST',
                         body: logoFormData
                     });

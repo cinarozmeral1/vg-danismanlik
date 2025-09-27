@@ -1389,8 +1389,36 @@ router.delete('/programs/:id', async (req, res) => {
     }
 });
 
+// Logo upload middleware
+const logoUpload = multer({
+    storage: multer.diskStorage({
+        destination: function (req, file, cb) {
+            const uploadDir = 'public/uploads/logos';
+            if (!fs.existsSync(uploadDir)) {
+                fs.mkdirSync(uploadDir, { recursive: true });
+            }
+            cb(null, uploadDir);
+        },
+        filename: function (req, file, cb) {
+            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+            cb(null, 'logo-' + uniqueSuffix + path.extname(file.originalname));
+        }
+    }),
+    fileFilter: function (req, file, cb) {
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/svg+xml'];
+        if (allowedTypes.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Sadece resim dosyaları kabul edilir (JPG, PNG, GIF, SVG)'), false);
+        }
+    },
+    limits: {
+        fileSize: 5 * 1024 * 1024 // 5MB limit
+    }
+});
+
 // Upload logo for university
-router.post('/universities/upload-logo', upload.single('logo_file'), async (req, res) => {
+router.post('/api/admin/universities/upload-logo', logoUpload.single('logo_file'), async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({
