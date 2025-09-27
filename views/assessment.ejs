@@ -1,0 +1,282 @@
+<!-- Hero Section -->
+<section class="bg-primary text-white py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="display-4 fw-bold"><%= t.assessment.hero.title %></h1>
+                <p class="lead"><%= t.assessment.hero.subtitle %></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Assessment Form Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card shadow">
+                    <div class="card-header">
+                        <h3 class="mb-0">
+                            <i class="fas fa-clipboard-check me-2"></i>
+                            <%= t.assessment.form.title %>
+                        </h3>
+                    </div>
+                    <div class="card-body assessment-section">
+                        <form id="detailedAssessmentForm">
+                            <!-- Personal Information -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <div style="all:unset; color:#111 !important; background:none !important; filter:none !important; text-shadow:none !important; position:relative; z-index:9999; display:block;">
+                                        <h5 class="border-bottom pb-2 text-black">
+                                            <i class="fas fa-user me-2 text-black"></i>
+                                            <%= t.assessment.form.personalInfo %>
+                                        </h5>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="firstName" class="form-label"><%= t.assessment.form.firstName %> *</label>
+                                    <input type="text" class="form-control" id="firstName" name="firstName" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="lastName" class="form-label"><%= t.assessment.form.lastName %> *</label>
+                                    <input type="text" class="form-control" id="lastName" name="lastName" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label"><%= t.assessment.form.email %> *</label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="phone" class="form-label"><%= t.assessment.form.phone %> *</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone" required>
+                                </div>
+                            </div>
+
+                            <!-- Educational Background -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <div style="all:unset; color:#111 !important; background:none !important; filter:none !important; text-shadow:none !important; position:relative; z-index:9999; display:block;">
+                                        <h5 class="border-bottom pb-2 text-black">
+                                            <i class="fas fa-graduation-cap me-2 text-black"></i>
+                                            <%= t.assessment.form.educationalBackground %>
+                                        </h5>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="currentEducation" class="form-label"><%= t.assessment.form.currentEducation %> *</label>
+                                    <select class="form-select" id="currentEducation" name="currentEducation" required>
+                                        <option value=""><%= t.assessment.form.selectOption %></option>
+                                        <option value="high_school"><%= t.assessment.form.highSchoolStudent %></option>
+                                        <option value="high_school_graduate"><%= t.assessment.form.highSchoolGraduate %></option>
+                                        <option value="university_student"><%= t.assessment.form.universityStudent %></option>
+                                        <option value="university_graduate"><%= t.assessment.form.universityGraduate %></option>
+                                        <option value="master_student"><%= t.assessment.form.masterStudent %></option>
+                                        <option value="master_graduate"><%= t.assessment.form.masterGraduate %></option>
+                                        
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="gpa" class="form-label"><%= t.assessment.form.gpa %></label>
+                                    <input type="number" class="form-control" id="gpa" name="gpa" min="0" step="0.01">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="studyField" class="form-label"><%= t.assessment.form.studyField %></label>
+                                    <input type="text" class="form-control" id="studyField" name="studyField">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="graduationYear" class="form-label"><%= t.assessment.form.graduationYear %></label>
+                                    <input type="number" class="form-control" id="graduationYear" name="graduationYear" min="2000" max="2030">
+                                </div>
+                            </div>
+
+                            <!-- Target Education -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <div style="all:unset; color:#111 !important; background:none !important; filter:none !important; text-shadow:none !important; position:relative; z-index:9999; display:block;">
+                                        <h5 class="border-bottom pb-2 text-black">
+                                            <i class="fas fa-target me-2 text-black"></i>
+                                            <%= t.assessment.form.targetEducation %>
+                                        </h5>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="targetLevel" class="form-label"><%= t.assessment.form.targetLevel %> *</label>
+                                    <select class="form-select" id="targetLevel" name="targetLevel" required>
+                                        <option value=""><%= t.assessment.form.selectOption %></option>
+                                        <option value="bachelor"><%= t.assessment.form.bachelor %></option>
+                                        <option value="master"><%= t.assessment.form.master %></option>
+                
+                                        <option value="language"><%= t.assessment.form.languageSchool %></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="targetCountry" class="form-label"><%= t.assessment.form.targetCountry %> *</label>
+                                    <select class="form-select" id="targetCountry" name="targetCountry" required>
+                                        <option value=""><%= t.assessment.form.selectOption %></option>
+                                        <option value="germany"><%= t.assessment.form.germany %></option>
+                                        <option value="austria"><%= t.assessment.form.austria %></option>
+                                        <option value="uk"><%= t.assessment.form.uk %></option>
+                                        <option value="italy"><%= t.assessment.form.italy %></option>
+                                        <option value="czech"><%= t.assessment.form.czech %></option>
+                                        <option value="poland"><%= t.assessment.form.poland %></option>
+                                        <option value="hungary"><%= t.assessment.form.hungary %></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="targetProgram" class="form-label"><%= t.assessment.form.targetField %> *</label>
+                                    <select class="form-select" id="targetProgram" name="targetProgram" required>
+                                        <option value=""><%= t.assessment.form.selectOption %></option>
+                                        <option value="engineering"><%= t.assessment.form.engineering %></option>
+                                        <option value="business"><%= t.assessment.form.business %></option>
+                                        <option value="medicine"><%= t.assessment.form.medicine %></option>
+                                        <option value="arts"><%= t.assessment.form.arts %></option>
+                                        <option value="social"><%= t.assessment.form.social %></option>
+                                        <option value="natural"><%= t.assessment.form.natural %></option>
+                                        <option value="computer"><%= t.assessment.form.computer %></option>
+                                        <option value="language"><%= t.assessment.form.language %></option>
+                                        <option value="other"><%= t.assessment.form.other %></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="budget" class="form-label"><%= t.assessment.form.budget %> *</label>
+                                    <select class="form-select" id="budget" name="budget" required>
+                                        <option value=""><%= t.assessment.form.selectOption %></option>
+                                        <option value="low"><%= t.assessment.form.lowBudget %></option>
+                                        <option value="medium"><%= t.assessment.form.mediumBudget %></option>
+                                        <option value="high"><%= t.assessment.form.highBudget %></option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Language Skills -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <div style="all:unset; color:#111 !important; background:none !important; filter:none !important; text-shadow:none !important; position:relative; z-index:9999; display:block;">
+                                        <h5 class="border-bottom pb-2 text-black">
+                                            <i class="fas fa-language me-2 text-black"></i>
+                                            <%= t.assessment.form.languageSkills %>
+                                        </h5>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="englishLevel" class="form-label"><%= t.assessment.form.englishLevel %></label>
+                                    <select class="form-select" id="englishLevel" name="englishLevel">
+                                        <option value=""><%= t.assessment.form.selectOption %></option>
+                                        <option value="beginner"><%= t.assessment.form.beginner %> (A1-A2)</option>
+                                        <option value="intermediate"><%= t.assessment.form.intermediate %> (B1-B2)</option>
+                                        <option value="advanced"><%= t.assessment.form.advanced %> (C1-C2)</option>
+                                        <option value="native"><%= t.assessment.form.native %></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="otherLanguages" class="form-label"><%= t.assessment.form.otherLanguages %></label>
+                                    <input type="text" class="form-control" id="otherLanguages" name="otherLanguages" placeholder="<%= t.assessment.form.otherLanguagesPlaceholder %>">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="languageCertificates" class="form-label"><%= t.assessment.form.languageCertificates %></label>
+                                    <input type="text" class="form-control" id="languageCertificates" name="languageCertificates" placeholder="<%= t.assessment.form.languageCertificatesPlaceholder %>">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="preferredLanguage" class="form-label"><%= t.assessment.form.preferredLanguage %></label>
+                                    <select class="form-select" id="preferredLanguage" name="preferredLanguage">
+                                        <option value=""><%= t.assessment.form.selectOption %></option>
+                                        <option value="english"><%= t.assessment.form.english %></option>
+                                        <option value="german"><%= t.assessment.form.german %></option>
+                                        <option value="french"><%= t.assessment.form.french %></option>
+                                        <option value="spanish"><%= t.assessment.form.spanish %></option>
+                                        <option value="italian"><%= t.assessment.form.italian %></option>
+                                        <option value="dutch"><%= t.assessment.form.dutch %></option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Additional Information -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <div style="all:unset; color:#111 !important; background:none !important; filter:none !important; text-shadow:none !important; position:relative; z-index:9999; display:block;">
+                                        <h5 class="border-bottom pb-2 text-black">
+                                            <i class="fas fa-info-circle me-2 text-black"></i>
+                                            <%= t.assessment.form.additionalInfoSection %>
+                                        </h5>
+                                    </div>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label for="additionalInfo" class="form-label"><%= t.assessment.form.additionalInfo %></label>
+                                    <textarea class="form-control" id="additionalInfo" name="additionalInfo" rows="3" placeholder="<%= t.assessment.form.additionalInfoPlaceholder %>"></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-outline-primary btn-lg">
+                                    <i class="fas fa-search me-2"></i>
+                                    <%= t.assessment.form.submit %>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<script>
+document.getElementById('detailedAssessmentForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData);
+    
+    // Check required fields
+    if (!data.firstName || !data.lastName || !data.email || !data.phone || !data.targetLevel || !data.targetCountry || !data.targetProgram || !data.budget) {
+        alert('<%= t.assessment.form.requiredFields %>');
+        return;
+    }
+    
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(data.email)) {
+        alert('<%= t.assessment.form.invalidEmail %>');
+        return;
+    }
+    
+    // Show loading
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span><%= t.assessment.form.submitting %>';
+    submitBtn.disabled = true;
+    
+    try {
+        const response = await fetch('/api/assessment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            // Show success message
+            alert(result.message);
+            
+            // Reset form
+            this.reset();
+        } else {
+            alert(result.error || '<%= t.assessment.form.error %>');
+        }
+    } catch (error) {
+        alert('<%= t.assessment.form.connectionError %>');
+    } finally {
+        // Reset button
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }
+});
+
+
+</script> 

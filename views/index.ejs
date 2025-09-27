@@ -1,0 +1,314 @@
+<!-- Hero Section -->
+<section class="hero-section text-white main-hero">
+    <!-- Background Images -->
+    <div class="hero-background">
+        <img src="/images/backgrounds/campus-location-hero.jpg" class="hero-bg-img active" alt="Campus Hero">
+        <img src="/images/backgrounds/campus-glasgow.jpg" class="hero-bg-img" alt="Glasgow University">
+        <img src="/images/backgrounds/photo-1568792923760-d70635a89fdc.jpg" class="hero-bg-img" alt="Campus 3">
+        <img src="/images/backgrounds/cambridge.jpg" class="hero-bg-img" alt="Cambridge">
+        <img src="/images/backgrounds/photo-1618255630366-f402c45736f6.jpg" class="hero-bg-img" alt="Kampüs 4">
+        <img src="/images/backgrounds/photo-1564910443496-5fd2d76b47fa.jpg" class="hero-bg-img" alt="Kampüs 6">
+        <img src="/images/backgrounds/photo-1583373834259-46cc92173cb7.jpg" class="hero-bg-img" alt="Kampüs 7">
+        <img src="/images/backgrounds/photo-1606761568499-6d2451b23c66.jpg" class="hero-bg-img" alt="Kampüs 8">
+        <img src="/images/backgrounds/photo-1607013407627-6ee814329547.jpg" class="hero-bg-img" alt="Kampüs 9">
+        <img src="/images/backgrounds/photo-1562349275-f5e7360af2dd.jpg" class="hero-bg-img" alt="Kampüs 10">
+    </div>
+    
+    <div class="container position-relative" style="z-index: 3;">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        <%= t.home.hero.title %><br>
+                        <span style="color: #ffffff;"><%= t.home.hero.subtitle %></span>
+                    </h1>
+                    <p class="hero-subtitle">
+                        <%= t.home.hero.description %>
+                    </p>
+                    <div class="d-flex flex-wrap gap-3 mb-4">
+                        <a href="/assessment" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-clipboard-check me-2"></i>
+                            <%= t.home.hero.freeAssessment %>
+                        </a>
+                        <a href="/services" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <%= t.home.hero.ourServices %>
+                        </a>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <h3>7</h3>
+                            <p><%= t.home.stats.countries %></p>
+                        </div>
+                        <div class="stat-item">
+                            <h3>50+</h3>
+                            <p><%= t.home.stats.universities %></p>
+                        </div>
+                        <div class="stat-item">
+                            <h3>%98</h3>
+                            <p><%= t.home.stats.satisfaction %></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="text-center">
+                    <div class="position-relative">
+                        <!-- Ana sayfadaki büyük logo görselini kaldır -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="section bg-light text-dark">
+    <div class="container">
+        <div class="section-title">
+            <h2 class="text-black"><%= t.home.features.title %></h2>
+            <p><%= t.home.features.subtitle %></p>
+        </div>
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="text-center">
+                    <i class="fas fa-globe fa-3x text-primary mb-3"></i>
+                    <h5><%= t.home.features.network.title %></h5>
+                    <p><%= t.home.features.network.description %></p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="text-center">
+                    <i class="fas fa-clock fa-3x text-primary mb-3"></i>
+                    <h5><%= t.home.features.support.title %></h5>
+                    <p><%= t.home.features.support.description %></p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="text-center">
+                    <i class="fas fa-shield-alt fa-3x text-primary mb-3"></i>
+                    <h5><%= t.home.features.security.title %></h5>
+                    <p><%= t.home.features.security.description %></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Assessment Form Section -->
+<section class="section text-dark">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card secure-form" style="background-color: #e6f0fa !important;">
+                    <div class="card-header">
+                        <h3 class="mb-0">
+                            <i class="fas fa-user-graduate me-2"></i>
+                            <%= t.home.assessment.title %>
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="security-notice">
+                            <i class="fas fa-shield-alt"></i>
+                            <strong><%= t.home.assessment.security %></strong>
+                        </div>
+                        <form id="assessmentForm">
+                            <!-- Personal Information -->
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="firstName" class="form-label"><%= t.home.assessment.firstName %> *</label>
+                                    <input type="text" class="form-control secure-input" id="firstName" name="firstName" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="lastName" class="form-label"><%= t.home.assessment.lastName %> *</label>
+                                    <input type="text" class="form-control secure-input" id="lastName" name="lastName" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label"><%= t.home.assessment.email %> *</label>
+                                    <input type="email" class="form-control secure-input" id="email" name="email" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="phone" class="form-label"><%= t.home.assessment.phone %> *</label>
+                                    <input type="tel" class="form-control secure-input" id="phone" name="phone" required>
+                                </div>
+                            </div>
+                            <!-- Assessment Information -->
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="educationLevel" class="form-label"><%= t.home.assessment.educationLevel %></label>
+                                    <select class="form-select secure-input" id="educationLevel" name="educationLevel" required>
+                                        <option value=""><%= t.home.assessment.selectOption %></option>
+                                        <option value="bachelor"><%= t.home.assessment.bachelor %></option>
+                                        <option value="master"><%= t.home.assessment.master %></option>
+            
+                                        <option value="language"><%= t.home.assessment.languageSchool %></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="country" class="form-label"><%= t.home.assessment.preferredCountry %></label>
+                                    <select class="form-select secure-input" id="country" name="country" required>
+                                        <option value=""><%= t.home.assessment.selectOption %></option>
+                                        <option value="germany"><%= t.home.assessment.germany %></option>
+                                        <option value="italy"><%= t.home.assessment.italy %></option>
+                                        <option value="czech"><%= t.home.assessment.czech %></option>
+                                        <option value="austria"><%= t.home.assessment.austria %></option>
+                                        <option value="uk"><%= t.home.assessment.uk %></option>
+                                        <option value="poland"><%= t.home.assessment.poland %></option>
+                                        <option value="hungary"><%= t.home.assessment.hungary %></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="program" class="form-label"><%= t.home.assessment.programArea %></label>
+                                    <select class="form-select secure-input" id="program" name="program" required>
+                                        <option value=""><%= t.home.assessment.selectOption %></option>
+                                        <option value="engineering"><%= t.home.assessment.engineering %></option>
+                                        <option value="business"><%= t.home.assessment.business %></option>
+                                        <option value="medicine"><%= t.home.assessment.medicine %></option>
+                                        <option value="arts"><%= t.home.assessment.arts %></option>
+                                        <option value="social"><%= t.home.assessment.social %></option>
+                                        <option value="natural"><%= t.home.assessment.natural %></option>
+                                        <option value="computer"><%= t.home.assessment.computer %></option>
+                                        <option value="language"><%= t.home.assessment.language %></option>
+                                        <option value="other"><%= t.home.assessment.other %></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="budget" class="form-label"><%= t.home.assessment.budgetRange %></label>
+                                    <select class="form-select secure-input" id="budget" name="budget" required>
+                                        <option value=""><%= t.home.assessment.selectOption %></option>
+                                        <option value="low"><%= t.home.assessment.lowBudget %></option>
+                                        <option value="medium"><%= t.home.assessment.mediumBudget %></option>
+                                        <option value="high"><%= t.home.assessment.highBudget %></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-search me-2"></i>
+                                    <%= t.home.assessment.getRecommendations %>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Statistics Section -->
+<section class="stats-section section text-white">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stat-item stat-black">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label"><%= t.home.stats.countries %></div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stat-item stat-black">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label"><%= t.home.stats.universities %></div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="stat-item stat-black">
+                    <div class="stat-number">%98</div>
+                    <div class="stat-label"><%= t.home.stats.satisfaction %></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.getElementById('assessmentForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData);
+    
+    console.log('Form verileri:', data);
+    
+    // Enhanced loading state
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Gönderiliyor...';
+    submitBtn.disabled = true;
+    
+    try {
+        console.log('API\'ye gönderiliyor:', JSON.stringify(data));
+        const response = await fetch('/api/assessment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+        
+        console.log('API yanıtı:', response.status);
+        const result = await response.json();
+        console.log('API sonucu:', result);
+        
+        if (result.success) {
+            // Show success message
+            const successMessage = document.createElement('div');
+            successMessage.className = 'alert alert-success mt-3';
+            successMessage.innerHTML = `
+                <i class="fas fa-check-circle me-2"></i>
+                <strong>${result.message || 'Değerlendirmeniz başarıyla alındı!'}</strong>
+            `;
+            
+            this.parentNode.insertBefore(successMessage, this);
+            
+            // Reset form
+            this.reset();
+        } else {
+            // Show error message
+            const errorMessage = document.createElement('div');
+            errorMessage.className = 'alert alert-danger mt-3';
+            errorMessage.innerHTML = `
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong>${result.error || 'Bir hata oluştu.'}</strong>
+            `;
+            
+            this.parentNode.insertBefore(errorMessage, this);
+        }
+    } catch (error) {
+        console.error('Form gönderme hatası:', error);
+        
+        // Show error message
+        const errorMessage = document.createElement('div');
+        errorMessage.className = 'alert alert-danger mt-3';
+        errorMessage.innerHTML = `
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>Bağlantı hatası. Lütfen tekrar deneyin.</strong>
+        `;
+        
+        this.parentNode.insertBefore(errorMessage, this);
+    } finally {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+        
+        // Remove messages after 5 seconds
+        setTimeout(() => {
+            const messages = this.parentNode.querySelectorAll('.alert');
+            messages.forEach(msg => msg.remove());
+        }, 5000);
+    }
+});
+
+// Fotoğrafları değiştir
+let currentImage = 0;
+setInterval(() => {
+    const images = document.querySelectorAll('.hero-bg-img');
+    images.forEach(img => img.classList.remove('active'));
+    currentImage = (currentImage + 1) % images.length;
+    images[currentImage].classList.add('active');
+}, 5000);
+</script> 

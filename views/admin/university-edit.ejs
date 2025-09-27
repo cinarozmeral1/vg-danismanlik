@@ -1,0 +1,327 @@
+<!-- Admin University Edit Content -->
+<div class="admin-container">
+    <!-- Sidebar -->
+    <div class="admin-sidebar">
+        <div class="sidebar-header">
+            <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Yönetim Paneli</h6>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/admin/dashboard" class="nav-item">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/admin/users" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Öğrenciler</span>
+            </a>
+            <a href="/admin/applications" class="nav-item">
+                <i class="fas fa-file-alt"></i>
+                <span>Başvurular</span>
+            </a>
+            <a href="/admin/universities" class="nav-item active">
+                <i class="fas fa-university"></i>
+                <span>Üniversiteler</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="admin-main">
+        <!-- Header -->
+        <div class="section-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2><i class="fas fa-edit me-2"></i>Üniversite Düzenle</h2>
+                    <p class="text-muted"><%= university.name %></p>
+                </div>
+                <div class="btn-group">
+                    <a href="/admin/universities/<%= university.id %>" class="btn btn-secondary">
+                        <i class="fas fa-eye me-2"></i>Görüntüle
+                    </a>
+                    <a href="/admin/universities" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Geri Dön
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Form -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-university me-2"></i>Üniversite Bilgileri</h5>
+            </div>
+            <div class="card-body">
+                <form id="universityEditForm">
+                    <div class="row">
+                        <!-- Basic Information -->
+                        <div class="col-md-6">
+                            <h6 class="mb-3"><i class="fas fa-info-circle me-2"></i>Temel Bilgiler</h6>
+                            
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Üniversite Adı *</label>
+                                <input type="text" class="form-control" id="name" name="name" value="<%= university.name %>" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="name_en" class="form-label">Üniversite Adı (İngilizce)</label>
+                                <input type="text" class="form-control" id="name_en" name="name_en" value="<%= university.name_en || '' %>">
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="country" class="form-label">Ülke *</label>
+                                        <select class="form-select" id="country" name="country" required>
+                                            <option value="">Ülke Seçin</option>
+                                            <option value="Germany" <%= university.country === 'Germany' ? 'selected' : '' %>>Almanya</option>
+                                            <option value="UK" <%= university.country === 'UK' ? 'selected' : '' %>>İngiltere</option>
+                                            <option value="France" <%= university.country === 'France' ? 'selected' : '' %>>Fransa</option>
+                                            <option value="Netherlands" <%= university.country === 'Netherlands' ? 'selected' : '' %>>Hollanda</option>
+                                            <option value="Switzerland" <%= university.country === 'Switzerland' ? 'selected' : '' %>>İsviçre</option>
+                                            <option value="Austria" <%= university.country === 'Austria' ? 'selected' : '' %>>Avusturya</option>
+                                            <option value="Italy" <%= university.country === 'Italy' ? 'selected' : '' %>>İtalya</option>
+                                            <option value="Czech Republic" <%= university.country === 'Czech Republic' ? 'selected' : '' %>>Çek Cumhuriyeti</option>
+                                            <option value="Poland" <%= university.country === 'Poland' ? 'selected' : '' %>>Polonya</option>
+                                            <option value="Hungary" <%= university.country === 'Hungary' ? 'selected' : '' %>>Macaristan</option>
+                                            <option value="Spain" <%= university.country === 'Spain' ? 'selected' : '' %>>İspanya</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="city" class="form-label">Şehir *</label>
+                                        <input type="text" class="form-control" id="city" name="city" value="<%= university.city %>" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="website_url" class="form-label">Website URL</label>
+                                <input type="url" class="form-control" id="website_url" name="website_url" value="<%= university.website_url || '' %>">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="logo_file" class="form-label">Logo Dosyası</label>
+                                <div class="input-group">
+                                    <input type="file" class="form-control" id="logo_file" name="logo_file" accept="image/*">
+                                    <button type="button" class="btn btn-outline-secondary" id="clearLogoFileBtn">Temizle</button>
+                                </div>
+                                <div class="form-text">Maksimum 5MB, sadece resim dosyaları (JPG, PNG, GIF)</div>
+                                
+                                <!-- Hidden input for current logo URL -->
+                                <input type="hidden" name="logo_url" value="<%= university.logo_url || '' %>">
+                                
+                                <!-- Current Logo Preview -->
+                                <% if (university.logo_url) { %>
+                                <div class="mt-2">
+                                    <label class="form-label">Mevcut Logo:</label>
+                                    <div class="d-flex align-items-center">
+                                        <img src="<%= university.logo_url %>" alt="Mevcut Logo" class="img-thumbnail me-2" style="max-width: 100px; max-height: 100px;">
+                                        <div>
+                                            <small class="text-muted d-block">Mevcut logo korunacak</small>
+                                            <small class="text-muted">Yeni dosya yüklerseniz değişecek</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% } %>
+                            </div>
+                        </div>
+
+                        <!-- Financial Information -->
+                        <div class="col-md-6">
+                            <h6 class="mb-3"><i class="fas fa-euro-sign me-2"></i>Finansal Bilgiler</h6>
+                            
+                            <div class="mb-3">
+                                <label for="tuition_fee" class="form-label">Eğitim Ücreti (€)</label>
+                                <input type="number" class="form-control" id="tuition_fee" name="tuition_fee" value="<%= university.tuition_fee || '' %>" step="0.01" min="0">
+                                <div class="form-text">Yıllık eğitim ücreti</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="application_fee" class="form-label">Başvuru Ücreti (€)</label>
+                                <input type="number" class="form-control" id="application_fee" name="application_fee" value="<%= university.application_fee || '' %>" step="0.01" min="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Rankings -->
+                        <div class="col-md-6">
+                            <h6 class="mb-3"><i class="fas fa-trophy me-2"></i>Sıralamalar</h6>
+                            
+                            <div class="mb-3">
+                                <label for="world_ranking" class="form-label">Dünya Sıralaması</label>
+                                <input type="number" class="form-control" id="world_ranking" name="world_ranking" value="<%= university.world_ranking || '' %>" min="1">
+                            </div>
+                        </div>
+
+                        <!-- Status -->
+                        <div class="col-md-6">
+                            <h6 class="mb-3"><i class="fas fa-toggle-on me-2"></i>Durum Ayarları</h6>
+                            
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="is_active" name="is_active" <%= university.is_active ? 'checked' : '' %>>
+                                    <label class="form-check-label" for="is_active">
+                                        Aktif
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="is_featured" name="is_featured" <%= university.is_featured ? 'checked' : '' %>>
+                                    <label class="form-check-label" for="is_featured">
+                                        Öne Çıkan
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="is_partner" name="is_partner" <%= university.is_partner ? 'checked' : '' %>>
+                                    <label class="form-check-label" for="is_partner">
+                                        Partner
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <h6 class="mb-3"><i class="fas fa-align-left me-2"></i>Açıklamalar</h6>
+                            
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Açıklama (Türkçe)</label>
+                                <textarea class="form-control" id="description" name="description" rows="3"><%= university.description || '' %></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="description_en" class="form-label">Açıklama (İngilizce)</label>
+                                <textarea class="form-control" id="description_en" name="description_en" rows="3"><%= university.description_en || '' %></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <h6 class="mb-3"><i class="fas fa-clipboard-list me-2"></i>Gereksinimler</h6>
+                            
+                            <div class="mb-3">
+                                <label for="requirements" class="form-label">Gereksinimler (Türkçe)</label>
+                                <textarea class="form-control" id="requirements" name="requirements" rows="3" placeholder="Üniversiteye başvuru için gerekli şartlar, belgeler, sınavlar..."><%= university.requirements || '' %></textarea>
+                                <small class="form-text text-muted">
+                                    Örnek: Lise diploması, İngilizce seviyesi, sınav sonuçları, referans mektupları
+                                </small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="requirements_en" class="form-label">Gereksinimler (İngilizce)</label>
+                                <textarea class="form-control" id="requirements_en" name="requirements_en" rows="3" placeholder="University application requirements in English..."><%= university.requirements_en || '' %></textarea>
+                                <small class="form-text text-muted">
+                                    Example: High school diploma, English level, exam results, reference letters
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary" id="goBackBtn">
+                            <i class="fas fa-arrow-left me-2"></i>Geri Dön
+                        </button>
+                        <div>
+                            <button type="button" class="btn btn-danger me-2" id="deleteUniversityBtn" data-university-id="<%= university.id %>">
+                                <i class="fas fa-trash me-2"></i>Sil
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Değişiklikleri Kaydet
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Event listeners for buttons
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('clearLogoFileBtn').addEventListener('click', clearLogoFile);
+        document.getElementById('goBackBtn').addEventListener('click', goBack);
+        document.getElementById('deleteUniversityBtn').addEventListener('click', function() {
+            deleteUniversity(this.getAttribute('data-university-id'));
+        });
+    });
+
+    document.getElementById('universityEditForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        
+        // Checkbox değerlerini FormData'ya ekle
+        formData.set('is_active', document.getElementById('is_active').checked);
+        formData.set('is_featured', document.getElementById('is_featured').checked);
+        formData.set('is_partner', document.getElementById('is_partner').checked);
+        
+        // Debug log
+        console.log('Form data being sent:', formData);
+        
+        // API'ye gönder (FormData ile)
+        fetch(`/api/admin/universities/<%= university.id %>`, {
+            method: 'PUT',
+            body: formData
+        })
+        .then(response => {
+            console.log('Response status:', response.status);
+            console.log('Response headers:', response.headers);
+            return response.json();
+        })
+        .then(result => {
+            console.log('Response data:', result);
+            if (result.success) {
+                alert('Üniversite başarıyla güncellendi!');
+                window.location.href = `/admin/universities/<%= university.id %>`;
+            } else {
+                alert('Hata: ' + result.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+        });
+    });
+
+    function clearLogoFile() {
+        document.getElementById('logo_file').value = '';
+    }
+
+    function deleteUniversity(universityId) {
+        if (confirm('Bu üniversiteyi silmek istediğinizden emin misiniz?\n\nBu işlem geri alınamaz ve üniversiteye ait tüm programlar ve görseller de silinecektir.')) {
+            fetch(`/api/admin/universities/${universityId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert('Üniversite başarıyla silindi!');
+                    window.location.href = '/admin/universities';
+                } else {
+                    alert('Hata: ' + result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+            });
+        }
+    }
+
+    function goBack() {
+        window.location.href = `/admin/universities/<%= university.id %>`;
+    }
+</script>

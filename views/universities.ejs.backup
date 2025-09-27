@@ -1,0 +1,756 @@
+<!-- Hero Section -->
+<section class="bg-primary text-white py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="display-4 fw-bold"><%= t.universities.hero.title %></h1>
+                <p class="lead"><%= t.universities.hero.subtitle %></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Filter Section -->
+<section class="py-4 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 mb-3">
+                <select class="form-select" id="countryFilter">
+                    <option value=""><%= t.universities.filters.allCountries %></option>
+                    <option value="germany"><%= t.universities.filters.germany %></option>
+                    <option value="italy"><%= t.universities.filters.italy %></option>
+                    <option value="czech"><%= t.universities.filters.czech %></option>
+                    <option value="austria"><%= t.universities.filters.austria %></option>
+                    <option value="uk"><%= t.universities.filters.uk %></option>
+                    <option value="poland"><%= t.universities.filters.poland %></option>
+                    <option value="hungary"><%= t.universities.filters.hungary %></option>
+                </select>
+            </div>
+            <div class="col-md-3 mb-3">
+                <select class="form-select" id="programFilter">
+                    <option value=""><%= t.universities.filters.allPrograms %></option>
+                    <option value="engineering"><%= t.universities.filters.engineering %></option>
+                    <option value="business"><%= t.universities.filters.business %></option>
+                    <option value="medicine"><%= t.universities.filters.medicine %></option>
+                    <option value="arts"><%= t.universities.filters.arts %></option>
+                    <option value="social"><%= t.universities.filters.social %></option>
+                    <option value="natural"><%= t.universities.filters.natural %></option>
+                    <option value="computer"><%= t.universities.filters.computer %></option>
+                    <option value="language"><%= t.universities.filters.language %></option>
+                    <option value="law"><%= t.universities.filters.law %></option>
+                    <option value="agriculture"><%= t.universities.filters.agriculture %></option>
+                    <option value="chemistry"><%= t.universities.filters.chemistry %></option>
+                </select>
+            </div>
+            <div class="col-md-3 mb-3">
+                <select class="form-select" id="levelFilter">
+                    <option value=""><%= t.universities.filters.allLevels %></option>
+                    <option value="bachelor"><%= t.universities.filters.bachelor %></option>
+                    <option value="master"><%= t.universities.filters.master %></option>
+                    <option value="phd"><%= t.universities.filters.phd %></option>
+                </select>
+            </div>
+            <div class="col-md-3 mb-3">
+                <button class="btn btn-primary w-100" onclick="filterUniversities()">
+                    <i class="fas fa-filter me-2"></i><%= t.universities.filters.filter %>
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Universities Section -->
+<section class="py-5 universities-page">
+    <div class="container">
+        <div class="row" id="universitiesContainer">
+            <!-- Czech Republic - Prague (CTU) -->
+            <div class="col-lg-6 mb-4 university-card" data-country="czech" data-programs="engineering,technology" data-levels="bachelor,master">
+                <div class="card h-100 shadow">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/images/logos/ctu-logo.svg" class="rounded me-3" alt="CTU Logo" style="width: 80px; height: 80px; object-fit: contain;">
+                            <div>
+                                <h5 class="mb-1">Czech Technical University in Prague</h5>
+                                <small class="text-muted"><%= t.universityLocations.prague %></small>
+                            </div>
+                        </div>
+                        <p class="card-text"><%= t.universityDescriptions.ctu %></p>
+                        <div class="mb-3">
+                            <span class="badge bg-warning text-white"><%= t.qsRankings.title %>: <%= t.qsRankings.ctu %></span>
+                        </div>
+                        <div class="mb-3">
+                            
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-black fw-bold"><%= t.universities.tuition %>: 3,800€/yıl</small>
+                            <a href="/university/ctu" class="btn btn-outline-primary btn-sm"><%= t.universities.details %></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Charles University - 2nd position -->
+            <div class="col-lg-6 mb-4 university-card" data-country="czech" data-programs="engineering,business,medicine" data-levels="bachelor,master">
+                <div class="card h-100 shadow">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/images/logos/cuni-logo.svg" class="rounded me-3" alt="Charles University" style="width: 80px; height: 80px; object-fit: contain;">
+                            <div>
+                                <h5 class="mb-1">Charles University</h5>
+                                <small class="text-muted"><%= t.universityLocations.prague %></small>
+                            </div>
+                        </div>
+                        <p class="card-text"><%= t.universityDescriptions.charles %></p>
+                        <div class="mb-3">
+                            
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-warning text-white mb-2"><%= t.qsRankings.title %>: <%= t.qsRankings.charles %></span>
+                            <small class="text-black fw-bold"><%= t.universities.tuition %>: 4,000€/yıl</small>
+                            <a href="/university/charles" class="btn btn-outline-primary btn-sm"><%= t.universities.details %></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Germany - Munich -->
+            <div class="col-lg-6 mb-4 university-card" data-country="germany" data-programs="engineering,business,medicine" data-levels="bachelor,master">
+                <div class="card h-100 shadow">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/images/logos/tum-logo.png" class="rounded me-3" alt="TUM Logo" style="width: 80px; height: 80px; object-fit: contain;">
+                            <div>
+                                <h5 class="mb-1">Technical University of Munich</h5>
+                                <small class="text-muted"><%= t.universityLocations.munich %></small>
+                            </div>
+                        </div>
+                        <p class="lead" style="color: black !important;"><%= t.universityDescriptions.tum %></p>
+                        <div class="mb-3">
+                            <span class="badge bg-warning text-white"><%= t.qsRankings.title %>: <%= t.qsRankings.tum %></span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-black fw-bold"><%= t.universities.tuition %>: 2,000-6,000€/yıl</small>
+                            <a href="/university/tum" class="btn btn-outline-primary btn-sm"><%= t.universities.details %></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Germany - Dresden -->
+            <div class="col-lg-6 mb-4 university-card" data-country="germany" data-programs="engineering,medicine" data-levels="bachelor,master">
+                <div class="card h-100 shadow">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/images/logos/tud-logo.jpg" class="rounded me-3" alt="TU Dresden" style="width: 80px; height: 80px; object-fit: contain;">
+                            <div>
+                                <h5 class="mb-1">Technical University of Dresden</h5>
+                                <small class="text-muted"><%= t.universityLocations.dresden %></small>
+                            </div>
+                        </div>
+                        <p class="card-text"><%= t.universityDescriptions.tud %></p>
+                        <div class="mb-3">
+                            
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-warning text-white mb-2"><%= t.qsRankings.title %>: <%= t.qsRankings.tud %></span>
+                            <small class="text-black fw-bold"><%= t.universities.tuition %>: 1,500€/yıl</small>
+                            <a href="/university/tud" class="btn btn-outline-primary btn-sm"><%= t.universities.details %></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Italy - Milan -->
+            <div class="col-lg-6 mb-4 university-card" data-country="italy" data-programs="engineering,arts,business" data-levels="bachelor,master">
+                <div class="card h-100 shadow">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/images/logos/polimi-logo.png" class="rounded me-3" alt="Politecnico di Milano" style="width: 80px; height: 80px; object-fit: contain;">
+                            <div>
+                                <h5 class="mb-1">Politecnico di Milano</h5>
+                                <small class="text-muted"><%= t.universityLocations.milan %></small>
+                            </div>
+                        </div>
+                        <p class="card-text"><%= t.universityDescriptions.polimi %></p>
+                        <div class="mb-3">
+                            
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-warning text-white mb-2"><%= t.qsRankings.title %>: <%= t.qsRankings.polimi %></span>
+                            <small class="text-black fw-bold"><%= t.universities.tuition %>: 3,500€/yıl</small>
+                            <a href="/university/polimi" class="btn btn-outline-primary btn-sm"><%= t.universities.details %></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Italy - Rome -->
+            <div class="col-lg-6 mb-4 university-card" data-country="italy" data-programs="medicine,business,social" data-levels="bachelor,master">
+                <div class="card h-100 shadow">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/images/logos/sapienza-university-of-rome.png" class="rounded me-3" alt="Sapienza University of Rome" style="width: 80px; height: 80px; object-fit: contain;">
+                            <div>
+                                <h5 class="mb-1">Sapienza University of Rome</h5>
+                                <small class="text-muted"><%= t.universityLocations.rome %></small>
+                            </div>
+                        </div>
+                        <p class="card-text"><%= t.universityDescriptions.sapienza %></p>
+                        <div class="mb-3">
+                            
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-warning text-white mb-2"><%= t.qsRankings.title %>: <%= t.qsRankings.sapienza %></span>
+                            <small class="text-black fw-bold"><%= t.universities.tuition %>: 2,800€/yıl</small>
+                            <a href="/university/sapienza" class="btn btn-outline-primary btn-sm"><%= t.universities.details %></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Italy - Florence -->
+            <div class="col-lg-6 mb-4 university-card" data-country="italy" data-programs="arts,humanities,social" data-levels="bachelor,master">
+                <div class="card h-100 shadow">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/images/logos/unifi-logo.png" class="rounded me-3" alt="University of Florence" style="width: 80px; height: 80px; object-fit: contain;">
+                            <div>
+                                <h5 class="mb-1">University of Florence</h5>
+                                <small class="text-muted"><%= t.universityLocations.florence %></small>
+                            </div>
+                        </div>
+                        <p class="card-text"><%= t.universityDescriptions.unifi %></p>
+                        <div class="mb-3">
+                            
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-warning text-white mb-2"><%= t.qsRankings.title %>: <%= t.qsRankings.unifi %></span>
+                            <small class="text-black fw-bold"><%= t.universities.tuition %>: 2,500€/yıl</small>
+                            <a href="/university/unifi" class="btn btn-outline-primary btn-sm"><%= t.universities.details %></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Czech Republic - Brno -->
+            <div class="col-lg-6 mb-4 university-card" data-country="czech" data-programs="engineering,technology" data-levels="bachelor,master">
+                <div class="card h-100 shadow">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/images/logos/vut-logo.png" class="rounded me-3" alt="Brno University of Technology" style="width: 80px; height: 80px; object-fit: contain;">
+                            <div>
+                                <h5 class="mb-1">Brno University of Technology</h5>
+                                <small class="text-muted"><%= t.universityLocations.brno %></small>
+                            </div>
+                        </div>
+                        <p class="card-text"><%= t.universityDescriptions.vut %></p>
+                        <div class="mb-3">
+                            
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-warning text-white mb-2"><%= t.qsRankings.title %>: <%= t.qsRankings.vut %></span>
+                            <small class="text-black fw-bold"><%= t.universities.tuition %>: 3,200€/yıl</small>
+                            <a href="/university/vut" class="btn btn-outline-primary btn-sm"><%= t.universities.details %></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Czech Republic - Ostrava -->
+            <div class="col-lg-6 mb-4 university-card" data-country="czech" data-programs="engineering,business" data-levels="bachelor,master">
+                <div class="card h-100 shadow">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/images/logos/vsb-logo.png" class="rounded me-3" alt="VSB Technical University of Ostrava" style="width: 80px; height: 80px; object-fit: contain;">
+                            <div>
+                                <h5 class="mb-1">VSB Technical University of Ostrava</h5>
+                                <small class="text-muted"><%= t.universityLocations.ostrava %></small>
+                            </div>
+                        </div>
+                        <p class="card-text"><%= t.universityDescriptions.vsb %></p>
+                        <div class="mb-3">
+                            
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-warning text-white mb-2"><%= t.qsRankings.title %>: <%= t.qsRankings.vsb %></span>
+                            <small class="text-black fw-bold"><%= t.universities.tuition %>: 3,500€/yıl</small>
+                            <a href="/university/vsb" class="btn btn-outline-primary btn-sm"><%= t.universities.details %></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Austria -->
+            <div class="col-lg-6 mb-4 university-card" data-country="austria" data-programs="business,medicine" data-levels="bachelor,master">
+                <div class="card h-100 shadow">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/images/logos/univie-logo.png" class="rounded me-3" alt="University of Vienna" style="width: 80px; height: 80px; object-fit: contain;">
+                            <div>
+                                <h5 class="mb-1">University of Vienna</h5>
+                                <small class="text-muted"><%= t.universityLocations.vienna %></small>
+                            </div>
+                        </div>
+                        <p class="card-text"><%= t.universityDescriptions.univie %></p>
+                        <div class="mb-3">
+                            <span class="badge bg-warning text-white"><%= t.qsRankings.title %>: <%= t.qsRankings.univie %></span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-black fw-bold"><%= t.universities.tuition %>: 1,500€/yıl</small>
+                            <a href="/university/univie" class="btn btn-outline-primary btn-sm"><%= t.universities.details %></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- UK -->
+            <div class="col-lg-6 mb-4 university-card" data-country="uk" data-programs="engineering,science,business,medicine" data-levels="bachelor,master">
+                <div class="card h-100 shadow">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/images/logos/manchester-logo.jpeg" class="rounded me-3" alt="Manchester Logo" style="width: 80px; height: 80px; object-fit: contain;">
+                            <div>
+                                <h5 class="mb-1">Manchester University</h5>
+                                <small class="text-muted"><%= t.universityLocations.manchester %></small>
+                            </div>
+                        </div>
+                        <p class="card-text"><%= t.universityDescriptions.manchester %></p>
+                        <div class="mb-3">
+                            
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-warning text-white mb-2"><%= t.qsRankings.title %>: <%= t.qsRankings.manchester %></span>
+                            <small class="text-black fw-bold"><%= t.universities.tuition %>: 9,250£/yıl</small>
+                            <a href="/university/manchester" class="btn btn-outline-primary btn-sm"><%= t.universities.details %></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- VSCHT Prague -->
+            <div class="col-lg-6 mb-4 university-card" data-country="czech" data-programs="chemistry,technology,engineering" data-levels="bachelor,master">
+                <div class="card h-100 shadow">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/images/logos/vscht-logo.png" class="rounded me-3" alt="VSCHT Logo" style="width: 80px; height: 80px; object-fit: contain;">
+                            <div>
+                                <h5 class="mb-1">University of Chemistry and Technology, Prague (VSCHT)</h5>
+                                <small class="text-muted"><%= t.universityLocations.prague %></small>
+                            </div>
+                        </div>
+                        <p class="card-text"><%= t.universityDescriptions.vscht %></p>
+                        <div class="mb-3">
+                            <span class="badge bg-warning text-white"><%= t.qsRankings.title %>: <%= t.qsRankings.vscht %></span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-black fw-bold"><%= t.universities.tuition %>: 3,500€/yıl</small>
+                            <a href="/university/vscht" class="btn btn-outline-primary btn-sm"><%= t.universities.details %></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Metropolitan University of Prague -->
+            <div class="col-lg-6 mb-4 university-card" data-country="czech" data-programs="social,business,law" data-levels="bachelor,master">
+                <div class="card h-100 shadow">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/images/logos/metropolitan-logo.jpeg" class="rounded me-3" alt="Metropolitan Logo" style="width: 80px; height: 80px; object-fit: contain;">
+                            <div>
+                                <h5 class="mb-1">Metropolitan University of Prague</h5>
+                                <small class="text-muted"><%= t.universityLocations.prague %></small>
+                            </div>
+                        </div>
+                        <p class="card-text"><%= t.universityDescriptions.metropolitan %></p>
+                        <div class="mb-3">
+                            
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-warning text-white mb-2"><%= t.qsRankings.title %>: <%= t.qsRankings.metropolitan %></span>
+                            <small class="text-black fw-bold"><%= t.universities.tuition %>: 3,000€/yıl</small>
+                            <a href="/university/metropolitan" class="btn btn-outline-primary btn-sm"><%= t.universities.details %></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- CZU Prague -->
+            <div class="col-lg-6 mb-4 university-card" data-country="czech" data-programs="agriculture,environment,business" data-levels="bachelor,master">
+                <div class="card h-100 shadow">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/images/logos/czu-logo.png" class="rounded me-3" alt="CZU Logo" style="width: 80px; height: 80px; object-fit: contain;">
+                            <div>
+                                <h5 class="mb-1">Czech University of Life Sciences Prague (CZU)</h5>
+                                <small class="text-muted"><%= t.universityLocations.prague %></small>
+                            </div>
+                        </div>
+                        <p class="card-text"><%= t.universityDescriptions.czu %></p>
+                        <div class="mb-3">
+                            
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-warning text-white mb-2"><%= t.qsRankings.title %>: <%= t.qsRankings.czu %></span>
+                            <small class="text-black fw-bold"><%= t.universities.tuition %>: 2,500€/yıl</small>
+                            <a href="/university/czu" class="btn btn-outline-primary btn-sm"><%= t.universities.details %></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Masaryk University -->
+            <div class="col-lg-6 mb-4 university-card" data-country="czech" data-programs="science,medicine,social" data-levels="bachelor,master">
+                <div class="card h-100 shadow">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/images/logos/masaryk-logo.png" class="rounded me-3" alt="Masaryk Logo" style="width: 80px; height: 80px; object-fit: contain;">
+                            <div>
+                                <h5 class="mb-1">Masaryk University</h5>
+                                <small class="text-muted"><%= t.universityLocations.brno %></small>
+                            </div>
+                        </div>
+                        <p class="card-text"><%= t.universityDescriptions.masaryk %></p>
+                        <div class="mb-3">
+                            
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-warning text-white mb-2"><%= t.qsRankings.title %>: <%= t.qsRankings.masaryk %></span>
+                            <small class="text-black fw-bold"><%= t.universities.tuition %>: 3,000€/yıl</small>
+                            <a href="/university/masaryk" class="btn btn-outline-primary btn-sm"><%= t.universities.details %></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- University of New York in Prague -->
+            <div class="col-lg-6 mb-4 university-card" data-country="czech" data-programs="business,psychology,communication" data-levels="bachelor,master">
+                <div class="card h-100 shadow">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/images/logos/unyp-logo.png" class="rounded me-3" alt="UNYP Logo" style="width: 80px; height: 80px; object-fit: contain;">
+                            <div>
+                                <h5 class="mb-1">University of New York in Prague</h5>
+                                <small class="text-muted"><%= t.universityLocations.prague %></small>
+                            </div>
+                        </div>
+                        <p class="card-text"><%= t.universityDescriptions.unyp %></p>
+                        <div class="mb-3">
+                            
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-warning text-white mb-2"><%= t.qsRankings.title %>: <%= t.qsRankings.unyp %></span>
+                            <small class="text-black fw-bold"><%= t.universities.tuition %>: 6,000€/yıl</small>
+                            <a href="/university/unyp" class="btn btn-outline-primary btn-sm"><%= t.universities.details %></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- University of Bologna -->
+            <div class="col-lg-6 mb-4 university-card" data-country="italy" data-programs="arts,law,science,engineering" data-levels="bachelor,master">
+                <div class="card h-100 shadow">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/images/logos/bologna-logo.png" class="rounded me-3" alt="Bologna Logo" style="width: 80px; height: 80px; object-fit: contain;">
+                            <div>
+                                <h5 class="mb-1">University of Bologna</h5>
+                                <small class="text-muted"><%= t.universityLocations.bologna %></small>
+                            </div>
+                        </div>
+                        <p class="card-text"><%= t.universityDescriptions.bologna %></p>
+                        <div class="mb-3">
+                            
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-warning text-white mb-2"><%= t.qsRankings.title %>: <%= t.qsRankings.bologna %></span>
+                            <small class="text-black fw-bold"><%= t.universities.tuition %>: 3,000€/yıl</small>
+                            <a href="/university/bologna" class="btn btn-outline-primary btn-sm"><%= t.universities.details %></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- University of Pecs -->
+            <div class="col-lg-6 mb-4 university-card" data-country="hungary" data-programs="medicine,arts,business" data-levels="bachelor,master">
+                <div class="card h-100 shadow">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/images/logos/pecs-logo.png" class="rounded me-3" alt="Pecs Logo" style="width: 80px; height: 80px; object-fit: contain;">
+                            <div>
+                                <h5 class="mb-1">University of Pecs</h5>
+                                <small class="text-muted"><%= t.universityLocations.budapest %></small>
+                            </div>
+                        </div>
+                        <p class="card-text"><%= t.universityDescriptions.pecs %></p>
+                        <div class="mb-3">
+                            
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-warning text-white mb-2"><%= t.qsRankings.title %>: <%= t.qsRankings.pecs %></span>
+                            <small class="text-black fw-bold"><%= t.universities.tuition %>: 4,000€/yıl</small>
+                            <a href="/university/pecs" class="btn btn-outline-primary btn-sm"><%= t.universities.details %></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- University of Warsaw -->
+            <div class="col-lg-6 mb-4 university-card" data-country="poland" data-programs="science,arts,business" data-levels="bachelor,master">
+                <div class="card h-100 shadow">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/images/logos/warsaw-logo.jpeg" class="rounded me-3" alt="Warsaw Logo" style="width: 80px; height: 80px; object-fit: contain;">
+                            <div>
+                                <h5 class="mb-1">University of Warsaw</h5>
+                                <small class="text-muted"><%= t.universityLocations.warsaw %></small>
+                            </div>
+                        </div>
+                        <p class="card-text"><%= t.universityDescriptions.warsaw %></p>
+                        <div class="mb-3">
+                            
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-warning text-white mb-2"><%= t.qsRankings.title %>: <%= t.qsRankings.warsaw %></span>
+                            <small class="text-black fw-bold"><%= t.universities.tuition %>: 2,500€/yıl</small>
+                            <a href="/university/warsaw" class="btn btn-outline-primary btn-sm"><%= t.universities.details %></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Warsaw University of Technology -->
+            <div class="col-lg-6 mb-4 university-card" data-country="poland" data-programs="engineering,technology" data-levels="bachelor,master">
+                <div class="card h-100 shadow">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/images/logos/wut-logo.png" class="rounded me-3" alt="WUT Logo" style="width: 80px; height: 80px; object-fit: contain;">
+                            <div>
+                                <h5 class="mb-1">Warsaw University of Technology</h5>
+                                <small class="text-muted"><%= t.universityLocations.warsaw %></small>
+                            </div>
+                        </div>
+                        <p class="card-text"><%= t.universityDescriptions.wut %></p>
+                        <div class="mb-3">
+                            <span class="badge bg-warning text-white"><%= t.qsRankings.title %>: <%= t.qsRankings.vscht %></span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-black fw-bold"><%= t.universities.tuition %>: 2,800€/yıl</small>
+                            <a href="/university/wut" class="btn btn-outline-primary btn-sm"><%= t.universities.details %></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- University of Stirling -->
+            <div class="col-lg-6 mb-4 university-card" data-country="uk" data-programs="social,science,business" data-levels="bachelor,master">
+                <div class="card h-100 shadow">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/images/logos/stirling-logo.png" class="rounded me-3" alt="Stirling Logo" style="width: 80px; height: 80px; object-fit: contain;">
+                            <div>
+                                <h5 class="mb-1">University of Stirling</h5>
+                                <small class="text-muted"><%= t.universityLocations.stirling %></small>
+                            </div>
+                        </div>
+                        <p class="card-text"><%= t.universityDescriptions.stirling %></p>
+                        <div class="mb-3">
+                            
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-warning text-white mb-2"><%= t.qsRankings.title %>: <%= t.qsRankings.stirling %></span>
+                            <small class="text-black fw-bold"><%= t.universities.tuition %>: 7,000£/yıl</small>
+                            <a href="/university/stirling" class="btn btn-outline-primary btn-sm"><%= t.universities.details %></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- University of Winchester -->
+            <div class="col-lg-6 mb-4 university-card" data-country="uk" data-programs="arts,education,social" data-levels="bachelor,master">
+                <div class="card h-100 shadow">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/images/logos/winchester-logo.png" class="rounded me-3" alt="Winchester Logo" style="width: 80px; height: 80px; object-fit: contain;">
+                            <div>
+                                <h5 class="mb-1">University of Winchester</h5>
+                                <small class="text-muted"><%= t.universityLocations.winchester %></small>
+                            </div>
+                        </div>
+                        <p class="card-text"><%= t.universityDescriptions.winchester %></p>
+                        <div class="mb-3">
+                            
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-warning text-white mb-2"><%= t.qsRankings.title %>: <%= t.qsRankings.winchester %></span>
+                            <small class="text-black fw-bold"><%= t.universities.tuition %>: 9,250£/yıl</small>
+                            <a href="/university/winchester" class="btn btn-outline-primary btn-sm"><%= t.universities.details %></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Yeni Üniversiteler -->
+            <!-- Berlin School of Business and Innovation -->
+            <div class="col-lg-6 mb-4 university-card" data-country="germany" data-programs="business" data-levels="bachelor,master">
+                <div class="card h-100 shadow">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/images/logos/bsbi-logo.jpeg" class="rounded me-3" alt="BSBI Logo" style="width: 80px; height: 80px; object-fit: contain;">
+                            <div>
+                                <h5 class="mb-1">Berlin School of Business and Innovation</h5>
+                                <small class="text-muted"><%= t.universityLocations.berlin %></small>
+                            </div>
+                        </div>
+                        <p class="card-text"><%= t.universityDescriptions.bsbi %></p>
+                        <div class="mb-3">
+                            
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-warning text-white mb-2"><%= t.qsRankings.bsbi %></span>
+                            <small class="text-black fw-bold"><%= t.universities.tuition %>: 8,000-12,000€/yıl</small>
+                            <a href="/university/bsbi" class="btn btn-outline-primary btn-sm"><%= t.universities.details %></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- University of Economics, Prague VSE -->
+            <div class="col-lg-6 mb-4 university-card" data-country="czech" data-programs="business" data-levels="bachelor,master">
+                <div class="card h-100 shadow">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/images/logos/vse-logo.png" class="rounded me-3" alt="VSE Logo" style="width: 80px; height: 80px; object-fit: contain;">
+                            <div>
+                                <h5 class="mb-1">University of Economics, Prague VSE</h5>
+                                <small class="text-muted"><%= t.universityLocations.prague %></small>
+                            </div>
+                        </div>
+                        <p class="card-text"><%= t.universityDescriptions.vse %></p>
+                        <div class="mb-3">
+                            <span class="badge bg-warning text-white"><%= t.qsRankings.vse %></span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-black fw-bold"><%= t.universities.tuition %>: 3,000-5,000€/yıl</small>
+                            <a href="/university/vse" class="btn btn-outline-primary btn-sm"><%= t.universities.details %></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Università Cattolica del Sacro Cuore -->
+            <div class="col-lg-6 mb-4 university-card" data-country="italy" data-programs="business,social,medicine" data-levels="bachelor,master">
+                <div class="card h-100 shadow">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/images/logos/cattolica-logo.png" class="rounded me-3" alt="Cattolica Logo" style="width: 80px; height: 80px; object-fit: contain;">
+                            <div>
+                                <h5 class="mb-1">Università Cattolica del Sacro Cuore</h5>
+                                <small class="text-muted"><%= t.universityLocations.milan %></small>
+                            </div>
+                        </div>
+                        <p class="card-text"><%= t.universityDescriptions.cattolica %></p>
+                        <div class="mb-3">
+                            
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-warning text-white mb-2"><%= t.qsRankings.cattolica %></span>
+                            <small class="text-black fw-bold"><%= t.universities.tuition %>: 8,000-15,000€/yıl</small>
+                            <a href="/university/cattolica" class="btn btn-outline-primary btn-sm"><%= t.universities.details %></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- University of Siena -->
+            <div class="col-lg-6 mb-4 university-card" data-country="italy" data-programs="medicine,law,business" data-levels="bachelor,master">
+                <div class="card h-100 shadow">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/images/logos/siena-logo.png" class="rounded me-3" alt="Siena Logo" style="width: 80px; height: 80px; object-fit: contain;">
+                            <div>
+                                <h5 class="mb-1">University of Siena</h5>
+                                <small class="text-muted"><%= t.universityLocations.siena %></small>
+                            </div>
+                        </div>
+                        <p class="card-text"><%= t.universityDescriptions.siena %></p>
+                        <div class="mb-3">
+                            
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-warning text-white mb-2"><%= t.qsRankings.siena %></span>
+                            <small class="text-black fw-bold"><%= t.universities.tuition %>: 1,000-3,000€/yıl</small>
+                            <a href="/university/siena" class="btn btn-outline-primary btn-sm"><%= t.universities.details %></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Politecnico di Torino -->
+            <div class="col-lg-6 mb-4 university-card" data-country="italy" data-programs="engineering,arts" data-levels="bachelor,master">
+                <div class="card h-100 shadow">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/images/logos/polito-logo.png" class="rounded me-3" alt="Polito Logo" style="width: 80px; height: 80px; object-fit: contain;">
+                            <div>
+                                <h5 class="mb-1">Politecnico di Torino</h5>
+                                <small class="text-muted"><%= t.universityLocations.turin %></small>
+                            </div>
+                        </div>
+                        <p class="card-text"><%= t.universityDescriptions.polito %></p>
+                        <div class="mb-3">
+                            <span class="badge bg-warning text-white"><%= t.qsRankings.polito %></span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-black fw-bold"><%= t.universities.tuition %>: 2,000-4,000€/yıl</small>
+                            <a href="/university/polito" class="btn btn-outline-primary btn-sm"><%= t.universities.details %></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- University of Padova -->
+            <div class="col-lg-6 mb-4 university-card" data-country="italy" data-programs="medicine,law,science" data-levels="bachelor,master">
+                <div class="card h-100 shadow">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="/images/logos/padova-logo.png" class="rounded me-3" alt="Padova Logo" style="width: 80px; height: 80px; object-fit: contain;">
+                            <div>
+                                <h5 class="mb-1">University of Padova</h5>
+                                <small class="text-muted"><%= t.universityLocations.padova %></small>
+                            </div>
+                        </div>
+                        <p class="card-text"><%= t.universityDescriptions.padova %></p>
+                        <div class="mb-3">
+                            
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-warning text-white mb-2"><%= t.qsRankings.padova %></span>
+                            <small class="text-black fw-bold"><%= t.universities.tuition %>: 1,000-3,000€/yıl</small>
+                            <a href="/university/padova" class="btn btn-outline-primary btn-sm"><%= t.universities.details %></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+function filterUniversities() {
+    const countryFilter = document.getElementById('countryFilter').value;
+    const programFilter = document.getElementById('programFilter').value;
+    const levelFilter = document.getElementById('levelFilter').value;
+    
+    const universityCards = document.querySelectorAll('.university-card');
+    
+    universityCards.forEach(card => {
+        const country = card.getAttribute('data-country');
+        const programs = card.getAttribute('data-programs').split(',');
+        const levels = card.getAttribute('data-levels').split(',');
+        
+        let showCard = true;
+        
+        if (countryFilter && country !== countryFilter) {
+            showCard = false;
+        }
+        
+        if (programFilter && !programs.includes(programFilter)) {
+            showCard = false;
+        }
+        
+        if (levelFilter && !levels.includes(levelFilter)) {
+            showCard = false;
+        }
+        
+        card.style.display = showCard ? 'block' : 'none';
+    });
+}
+</script> 

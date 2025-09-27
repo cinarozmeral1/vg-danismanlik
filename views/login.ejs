@@ -1,0 +1,146 @@
+<!-- Login Section -->
+<section class="section bg-light text-dark" style="margin-top: 100px; min-height: 80vh;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h3 class="mb-0">
+                            <i class="fas fa-sign-in-alt me-2"></i>
+                            <%= t.auth.login.title %>
+                        </h3>
+                    </div>
+                    <div class="card-body p-4">
+                        <div id="alertContainer"></div>
+                        
+                        <form id="loginForm">
+                            <div class="mb-3">
+                                <label for="email" class="form-label">
+                                    <i class="fas fa-envelope me-2"></i>
+                                    <%= t.auth.login.email %>
+                                </label>
+                                <input type="email" class="form-control" id="email" name="email" autocomplete="username" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="password" class="form-label">
+                                    <i class="fas fa-lock me-2"></i>
+                                    <%= t.auth.login.password %>
+                                </label>
+                                <input type="password" class="form-control" id="password" name="password" autocomplete="current-password" required>
+                            </div>
+                            
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe">
+                                <label class="form-check-label" for="rememberMe">
+                                    <%= t.auth.login.rememberMe %>
+                                </label>
+                            </div>
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-sign-in-alt me-2"></i>
+                                    <%= t.auth.login.submit %>
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <hr class="my-4">
+                        
+                        <div class="text-center">
+                            <p class="mb-3">
+                                <%= t.auth.login.noAccount %>
+                                <a href="/register" class="text-primary">
+                                    <%= t.auth.login.registerHere %>
+                                </a>
+                            </p>
+                            <a href="/forgot-password" class="text-muted">
+                                <i class="fas fa-key me-1"></i>
+                                <%= t.auth.login.forgotPassword %>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const loginForm = document.getElementById('loginForm');
+    const alertContainer = document.getElementById('alertContainer');
+    
+    loginForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(loginForm);
+        const email = formData.get('email');
+        const password = formData.get('password');
+        const rememberMe = formData.get('rememberMe');
+        
+        try {
+            console.log('Login attempt for:', email);
+            
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password,
+                    rememberMe: rememberMe === 'on'
+                })
+            });
+            
+            console.log('Response status:', response.status);
+            console.log('Response headers:', response.headers);
+            
+            const data = await response.json();
+            console.log('Response data:', data);
+            
+            if (data.success) {
+                // Show success message
+                alertContainer.innerHTML = `
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        ${data.message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                `;
+                
+                // Redirect after a short delay
+                setTimeout(() => {
+                    // Admin kullanıcısını admin paneline, diğerlerini anasayfaya yönlendir
+                    if (data.is_admin) {
+                        window.location.href = '/admin/dashboard';
+                    } else {
+                        window.location.href = '/user/dashboard';
+                    }
+                }, 1500);
+                
+            } else {
+                // Show error message
+                alertContainer.innerHTML = `
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        ${data.message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                `;
+            }
+            
+        } catch (error) {
+            console.error('Login error:', error);
+            alertContainer.innerHTML = `
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <%= t.auth.login.networkError %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+        }
+    });
+});
+</script> 

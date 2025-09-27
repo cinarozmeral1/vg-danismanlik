@@ -1,0 +1,578 @@
+<!-- Admin Applications Content -->
+<div class="admin-container">
+    <!-- Sidebar -->
+    <div class="admin-sidebar">
+        <div class="sidebar-header">
+            <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Yönetim Paneli</h6>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/admin/dashboard" class="nav-item">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/admin/users" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Öğrenciler</span>
+            </a>
+            <a href="/admin/applications" class="nav-item active">
+                <i class="fas fa-file-alt"></i>
+                <span>Başvurular</span>
+            </a>
+            <a href="/admin/universities" class="nav-item">
+                <i class="fas fa-university"></i>
+                <span>Üniversiteler</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="admin-main">
+        <div class="section-header">
+            <h2><i class="fas fa-file-alt me-2"></i>Başvurular</h2>
+            <p class="text-muted">Sistemdeki tüm başvuruları yönetin</p>
+        </div>
+
+        <!-- Applications Table -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Başvuru Listesi (<%= applications.length %>)</h5>
+                <button class="btn btn-primary btn-sm" id="openUserSelectionModalBtn">
+                    <i class="fas fa-plus me-2"></i>Yeni Başvuru
+                </button>
+            </div>
+            <div class="card-body">
+                <% if (applications.length > 0) { %>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Öğrenci</th>
+                                    <th>Ülke</th>
+                                    <th>Üniversite</th>
+                                    <th>Program</th>
+                                    <th>Durum</th>
+                                    <th>Tarih</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% applications.forEach(app => { %>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-sm me-2">
+                                                <i class="fas fa-user-circle fa-2x text-primary"></i>
+                                            </div>
+                                            <div>
+                                                <strong><%= app.first_name %> <%= app.last_name %></strong>
+                                                <br><small class="text-muted"><%= app.email %></small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><%= app.country || 'Türkiye' %></td>
+                                    <td><%= app.university_name || app.university || '-' %></td>
+                                    <td><%= app.program_name || app.program || '-' %></td>
+                                    <td>
+                                        <% if (app.status === 'pending') { %>
+                                            <span class="badge bg-warning">Beklemede</span>
+                                        <% } else if (app.status === 'approved') { %>
+                                            <span class="badge bg-success">Onaylandı</span>
+                                        <% } else if (app.status === 'rejected') { %>
+                                            <span class="badge bg-danger">Reddedildi</span>
+                                        <% } %>
+                                    </td>
+                                    <td><%= new Date(app.created_at).toLocaleDateString('tr-TR') %></td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-sm btn-outline-primary js-edit-application" data-application-id="<%= app.id %>" title="Düzenle">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-success js-approve-application" data-application-id="<%= app.id %>" title="Onayla">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger js-reject-application" data-application-id="<%= app.id %>" title="Reddet">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-warning js-pending-application" data-application-id="<%= app.id %>" title="Beklemede">
+                                                <i class="fas fa-clock"></i>
+                                            </button>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-danger ms-2 js-delete-application" data-application-id="<%= app.id %>" title="Sil">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                <% } else { %>
+                    <div class="text-center py-5">
+                        <i class="fas fa-file-alt fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">Henüz başvuru bulunmuyor</h5>
+                        <p class="text-muted">İlk başvuruyu oluşturmak için "Yeni Başvuru" butonuna tıklayın.</p>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- User Selection Modal -->
+        <div class="modal fade" id="userSelectionModal" tabindex="-1" aria-labelledby="userSelectionModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="userSelectionModalLabel">
+                            <i class="fas fa-user-plus me-2"></i>Öğrenci Seçimi
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Search Bar -->
+                        <div class="mb-3">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" class="form-control" id="userSearchInput" placeholder="Öğrenci ara (ad, soyad, e-posta)...">
+                            </div>
+                        </div>
+
+                        <!-- Users List -->
+                        <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                            <table class="table table-hover" id="usersTable">
+                                <thead class="table-light sticky-top">
+                                    <tr>
+                                        <th>Öğrenci</th>
+                                        <th>E-posta</th>
+                                        <th>Telefon</th>
+                                        <th>Başvuru Durumu</th>
+                                        <th>Kayıt Tarihi</th>
+                                        <th>İşlem</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (typeof users !== 'undefined' && users) { %>
+                                        <% users.forEach(user => { %>
+                                        <tr class="user-row" data-name="<%= user.first_name.toLowerCase() %> <%= user.last_name.toLowerCase() %>" data-email="<%= user.email.toLowerCase() %>">
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar-sm me-2">
+                                                        <i class="fas fa-user-circle fa-2x text-primary"></i>
+                                                    </div>
+                                                    <div>
+                                                        <strong><%= user.first_name %> <%= user.last_name %></strong>
+                                                        <% if (user.is_admin) { %>
+                                                            <span class="badge bg-danger ms-1">Admin</span>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td><%= user.email %></td>
+                                            <td><%= user.phone || '-' %></td>
+                                            <td>
+                                                <% if (user.application_status) { %>
+                                                    <% if (user.application_status === 'pending') { %>
+                                                        <span class="badge bg-warning">Beklemede</span>
+                                                    <% } else if (user.application_status === 'approved') { %>
+                                                        <span class="badge bg-success">Onaylandı</span>
+                                                    <% } else if (user.application_status === 'rejected') { %>
+                                                        <span class="badge bg-danger">Reddedildi</span>
+                                                    <% } %>
+                                                <% } else { %>
+                                                    <span class="text-muted">Başvuru Yok</span>
+                                                <% } %>
+                                            </td>
+                                            <td><%= new Date(user.created_at).toLocaleDateString('tr-TR') %></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary js-select-user" 
+                                                        data-user-id="<%= user.id %>" 
+                                                        data-user-first-name="<%= user.first_name %>" 
+                                                        data-user-last-name="<%= user.last_name %>" 
+                                                        data-user-email="<%= user.email %>"
+                                                        data-application-status="<%= user.application_status || 'none' %>"
+                                                        data-application-id="<%= user.application_id || '' %>">
+                                                    <i class="fas fa-check me-1"></i>Seç
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <% }); %>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Event delegation for all buttons
+    document.addEventListener('DOMContentLoaded', function() {
+        // Open user selection modal button
+        document.getElementById('openUserSelectionModalBtn').addEventListener('click', openUserSelectionModal);
+        
+        // Event delegation for application action buttons
+        document.addEventListener('click', function(e) {
+            const editBtn = e.target.closest('.js-edit-application');
+            const approveBtn = e.target.closest('.js-approve-application');
+            const rejectBtn = e.target.closest('.js-reject-application');
+            const pendingBtn = e.target.closest('.js-pending-application');
+            const deleteBtn = e.target.closest('.js-delete-application');
+            const selectUserBtn = e.target.closest('.js-select-user');
+
+            if (editBtn) {
+                const appId = editBtn.getAttribute('data-application-id');
+                editApplication(appId);
+                return;
+            }
+
+            if (approveBtn) {
+                const appId = approveBtn.getAttribute('data-application-id');
+                approveApplication(appId);
+                return;
+            }
+
+            if (rejectBtn) {
+                const appId = rejectBtn.getAttribute('data-application-id');
+                rejectApplication(appId);
+                return;
+            }
+
+            if (pendingBtn) {
+                const appId = pendingBtn.getAttribute('data-application-id');
+                pendingApplication(appId);
+                return;
+            }
+
+            if (deleteBtn) {
+                const appId = deleteBtn.getAttribute('data-application-id');
+                deleteApplication(appId);
+                return;
+            }
+
+            if (selectUserBtn) {
+                const userId = selectUserBtn.getAttribute('data-user-id');
+                const firstName = selectUserBtn.getAttribute('data-user-first-name');
+                const lastName = selectUserBtn.getAttribute('data-user-last-name');
+                const email = selectUserBtn.getAttribute('data-user-email');
+                const applicationStatus = selectUserBtn.getAttribute('data-application-status');
+                const applicationId = selectUserBtn.getAttribute('data-application-id');
+                selectUser(userId, firstName, lastName, email, applicationStatus, applicationId);
+                return;
+            }
+        });
+    });
+
+    // Modal ve arama işlevselliği
+    let selectedUserId = null;
+    let selectedUserName = '';
+    let selectedUserEmail = '';
+
+    function openUserSelectionModal() {
+        // Modal'ı aç
+        const modal = new bootstrap.Modal(document.getElementById('userSelectionModal'));
+        modal.show();
+        
+        // Arama input'unu temizle
+        document.getElementById('userSearchInput').value = '';
+        filterUsers('');
+        
+        // Arama fonksiyonunu kur
+        setupUserSearch();
+    }
+
+    function selectUser(userId, firstName, lastName, email, applicationStatus, applicationId) {
+        selectedUserId = userId;
+        selectedUserName = `${firstName} ${lastName}`;
+        selectedUserEmail = email;
+        
+        // Modal'ı kapat
+        const modal = bootstrap.Modal.getInstance(document.getElementById('userSelectionModal'));
+        modal.hide();
+        
+        // Başvuru durumuna göre yönlendir
+        if (applicationStatus && applicationStatus !== 'none' && applicationId) {
+            // Mevcut başvuru varsa düzenleme sayfasına yönlendir
+            window.location.href = `/admin/applications/${applicationId}/edit`;
+        } else {
+            // Başvuru yoksa aynı sayfada yeni başvuru formunu göster
+            showNewApplicationForm(userId, firstName, lastName, email);
+        }
+    }
+
+    // Modal arama fonksiyonu - Modal açıldığında event listener ekle
+    function setupUserSearch() {
+        const userSearchInput = document.getElementById('userSearchInput');
+        if (userSearchInput) {
+            userSearchInput.addEventListener('input', function() {
+                filterUsers(this.value);
+            });
+        }
+    }
+
+    function filterUsers(searchTerm) {
+        const rows = document.querySelectorAll('.user-row');
+        const term = searchTerm.toLowerCase().trim();
+        
+        if (term === '') {
+            // Arama terimi boşsa tüm satırları göster
+            rows.forEach(row => {
+                row.style.display = '';
+            });
+            return;
+        }
+        
+        rows.forEach(row => {
+            const name = row.getAttribute('data-name') || '';
+            const email = row.getAttribute('data-email') || '';
+            const phone = row.querySelector('td:nth-child(3)')?.textContent?.toLowerCase() || '';
+            
+            if (name.includes(term) || email.includes(term) || phone.includes(term)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+
+    // Yeni başvuru formunu göster
+    function showNewApplicationForm(userId, firstName, lastName, email) {
+        // Mevcut içeriği gizle
+        document.querySelector('.admin-main').innerHTML = `
+            <div class="section-header">
+                <h2><i class="fas fa-plus me-2"></i>Yeni Başvuru Oluştur</h2>
+                <p class="text-muted">${firstName} ${lastName} için yeni başvuru kaydı oluşturun</p>
+            </div>
+
+            <!-- Application Form -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Yeni Başvuru Oluştur</h5>
+                </div>
+                <div class="card-body">
+                    <form id="newApplicationForm">
+                        <!-- User Selection -->
+                        <div class="mb-4">
+                            <h6 class="mb-3"><i class="fas fa-user me-2"></i>Seçilen Öğrenci</h6>
+                            <div class="alert alert-info">
+                                <i class="fas fa-user me-2"></i>
+                                <strong>${firstName} ${lastName}</strong> (${email})
+                            </div>
+                            <input type="hidden" id="userId" name="userId" value="${userId}">
+                        </div>
+
+                        <!-- Application Details -->
+                        <div class="mb-4">
+                            <h6 class="mb-3"><i class="fas fa-file-alt me-2"></i>Başvuru Bilgileri</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="country" class="form-label">Hedef Ülke *</label>
+                                        <select class="form-select" id="country" name="country" required>
+                                            <option value="">Ülke Seçin</option>
+                                            <option value="Germany">Almanya</option>
+                                            <option value="Czech Republic">Çek Cumhuriyeti</option>
+                                            <option value="Italy">İtalya</option>
+                                            <option value="Austria">Avusturya</option>
+                                            <option value="UK">İngiltere</option>
+                                            <option value="Poland">Polonya</option>
+                                            <option value="Hungary">Macaristan</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="university" class="form-label">Üniversite *</label>
+                                        <input type="text" class="form-control" id="university" name="university" placeholder="Hedef üniversite adı" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="program" class="form-label">Program *</label>
+                                        <input type="text" class="form-control" id="program" name="program" placeholder="Hedef program adı" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="englishLevel" class="form-label">İngilizce Seviyesi</label>
+                                        <select class="form-select" id="englishLevel" name="englishLevel">
+                                            <option value="">Seviye Seçin</option>
+                                            <option value="A1">A1</option>
+                                            <option value="A2">A2</option>
+                                            <option value="B1">B1</option>
+                                            <option value="B2">B2</option>
+                                            <option value="C1">C1</option>
+                                            <option value="C2">C2</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="notes" class="form-label">Notlar</label>
+                                <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Başvuru hakkında ek notlar..."></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="status" class="form-label">Durum *</label>
+                                <select class="form-select" id="status" name="status" required>
+                                    <option value="pending">Beklemede</option>
+                                    <option value="approved">Onaylandı</option>
+                                    <option value="rejected">Reddedildi</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary" id="goBackBtn">
+                                <i class="fas fa-arrow-left me-2"></i>Geri Dön
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Başvuru Oluştur
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `;
+
+        // Event listeners ekle
+        document.getElementById('goBackBtn').addEventListener('click', function() {
+            location.reload();
+        });
+
+        document.getElementById('newApplicationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            console.log('Form data:', data);
+            
+            // API'ye gönder
+            fetch('/api/admin/applications', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert('Başvuru başarıyla oluşturuldu!');
+                    location.reload();
+                } else {
+                    alert('Hata: ' + result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+            });
+        });
+    }
+
+    function editApplication(appId) {
+        // Başvuru düzenleme sayfasına yönlendir
+        window.location.href = `/admin/applications/${appId}/edit`;
+    }
+
+    function approveApplication(appId) {
+        if (confirm('Bu başvuruyu onaylamak istediğinizden emin misiniz?')) {
+            fetch(`/api/admin/applications/${appId}/status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    status: 'approved'
+                })
+            }).then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Başvuru onaylandı!');
+                    location.reload();
+                } else {
+                    alert('Hata: ' + data.message);
+                }
+            });
+        }
+    }
+
+    function rejectApplication(appId) {
+        if (confirm('Bu başvuruyu reddetmek istediğinizden emin misiniz?')) {
+            fetch(`/api/admin/applications/${appId}/status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    status: 'rejected'
+                })
+            }).then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Başvuru reddedildi!');
+                    location.reload();
+                } else {
+                    alert('Hata: ' + data.message);
+                }
+            });
+        }
+    }
+
+    function pendingApplication(appId) {
+        if (confirm('Bu başvuruyu beklemede durumuna almak istediğinizden emin misiniz?')) {
+            fetch(`/api/admin/applications/${appId}/status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    status: 'pending'
+                })
+            }).then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Başvuru beklemede durumuna alındı!');
+                    location.reload();
+                } else {
+                    alert('Hata: ' + data.message);
+                }
+            });
+        }
+    }
+
+    function deleteApplication(appId) {
+        if (confirm('Bu başvuruyu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!')) {
+            fetch(`/api/admin/applications/${appId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Başvuru başarıyla silindi!');
+                    location.reload();
+                } else {
+                    alert('Hata: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Bir hata oluştu!');
+            });
+        }
+    }
+
+</script>

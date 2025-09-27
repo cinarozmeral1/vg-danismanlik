@@ -1,0 +1,282 @@
+<!-- University Detail Page -->
+<div class="university-detail-page">
+    <!-- Hero Section -->
+    <section class="university-hero">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/">Ana Sayfa</a></li>
+                            <li class="breadcrumb-item"><a href="/universities">Üniversiteler</a></li>
+                            <li class="breadcrumb-item active" aria-current="page"><%= university.name %></li>
+                        </ol>
+                    </nav>
+                    
+                    <div class="university-header">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="<%= university.logo_url || '/images/default-university.png' %>" 
+                                 alt="<%= university.name %>" 
+                                 class="university-logo-large me-3">
+                            <div>
+                                <h1 class="university-title"><%= university.name %></h1>
+                                <p class="university-location">
+                                    <i class="fas fa-map-marker-alt me-2"></i>
+                                    <%= university.city %>, <%= university.country %>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="university-badges mb-3">
+                            <% if (university.is_featured) { %>
+                                <span class="badge bg-warning me-2">Öne Çıkan</span>
+                            <% } %>
+                            <% if (university.is_partner) { %>
+                                <span class="badge bg-success me-2">Partner</span>
+                            <% } %>
+                            <% if (university.world_ranking) { %>
+                                <span class="badge bg-primary me-2">Dünya Sıralaması: #<%= university.world_ranking %></span>
+                            <% } %>
+
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <div class="quick-stats">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3><%= university.actual_program_count || university.program_count || 0 %></h3>
+                                <p>Program</p>
+                            </div>
+                        </div>
+                        
+                        <% if (university.tuition_fee) { %>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-euro-sign"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>€<%= Math.round(Number(university.tuition_fee)).toLocaleString() %></h3>
+                                <p>Yıllık Ücret</p>
+                            </div>
+                        </div>
+                        <% } %>
+                        
+                        <% if (university.application_fee) { %>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>€<%= university.application_fee %></h3>
+                                <p>Başvuru Ücreti</p>
+                            </div>
+                        </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- University Content -->
+    <section class="university-content">
+        <div class="container">
+            <div class="row">
+                <!-- Main Content -->
+                <div class="col-lg-8">
+                    <!-- About Section -->
+                    <div class="content-section">
+                        <h2>Üniversite Hakkında</h2>
+                        <div class="university-description">
+                            <% if (university.description) { %>
+                                <p><%= university.description %></p>
+                            <% } %>
+                            <% if (university.description_en) { %>
+                                <p><%= university.description_en %></p>
+                            <% } %>
+                            <% if (!university.description && !university.description_en) { %>
+                                <p><%= university.name %>, <%= university.country %>'nin önde gelen üniversitelerinden biridir. 
+                                Kaliteli eğitim ve araştırma imkanları sunmaktadır.</p>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <!-- Requirements Section -->
+                    <% if (university.requirements || university.requirements_en) { %>
+                    <div class="content-section">
+                        <h2>Gereksinimler</h2>
+                        <div class="requirements-content">
+                            <% if (university.requirements) { %>
+                                <div class="requirement-item">
+                                    <h6><i class="fas fa-clipboard-list me-2"></i>Türkçe:</h6>
+                                    <p><%= university.requirements %></p>
+                                </div>
+                            <% } %>
+                            <% if (university.requirements_en) { %>
+                                <div class="requirement-item">
+                                    <h6><i class="fas fa-clipboard-list me-2"></i>English:</h6>
+                                    <p><%= university.requirements_en %></p>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                    <% } %>
+
+                    <!-- Programs Section -->
+                    <% if (programs && programs.length > 0) { %>
+                    <div class="content-section">
+                        <h2>Programlar</h2>
+                        <div class="programs-grid">
+                            <% programs.forEach(program => { %>
+                            <div class="program-card">
+                                <div class="program-header">
+                                    <h4><%= program.name %></h4>
+                                    <% if (program.level) { %>
+                                        <span class="badge bg-secondary"><%= program.level %></span>
+                                    <% } %>
+                                </div>
+                                <div class="program-details">
+                                    <% if (program.duration_months) { %>
+                                        <p><strong>Süre:</strong> <%= program.duration_months %> sömestr</p>
+                                    <% } %>
+                                    <% if (program.language) { %>
+                                        <p><strong>Eğitim Dili:</strong> <%= program.language %></p>
+                                    <% } %>
+                                    <% if (program.field_of_study) { %>
+                                        <p><strong>Çalışma Alanı:</strong> <%= program.field_of_study %></p>
+                                    <% } %>
+                                    <% if (program.tuition_fee) { %>
+                                        <p><strong>Ücret:</strong> €<%= Math.round(Number(program.tuition_fee)).toLocaleString() %></p>
+                                    <% } %>
+                                    <% if (program.currency) { %>
+                                        <p><strong>Para Birimi:</strong> <%= program.currency %></p>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <% }); %>
+                        </div>
+                    </div>
+                    <% } %>
+
+
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    <div class="university-sidebar">
+                        <!-- Contact Info -->
+                        <div class="sidebar-card">
+                            <h3>İletişim Bilgileri</h3>
+                            <div class="contact-info">
+                                <% if (university.website_url) { %>
+                                <div class="contact-item">
+                                    <i class="fas fa-globe"></i>
+                                    <a href="<%= university.website_url %>" target="_blank" rel="noopener">
+                                        Resmi Web Sitesi
+                                    </a>
+                                </div>
+                                <% } %>
+                                
+                                <div class="contact-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span><%= university.city %>, <%= university.country %></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Fees Information -->
+                        <div class="sidebar-card">
+                            <h3>Ücret Bilgileri</h3>
+                            <div class="fees-info">
+                                <% if (university.tuition_fee) { %>
+                                <div class="fee-item">
+                                    <span class="fee-label">Yıllık Eğitim Ücreti:</span>
+                                    <span class="fee-value">€<%= Math.round(Number(university.tuition_fee)).toLocaleString() %></span>
+                                </div>
+                                <% } %>
+                                
+                                <% if (university.application_fee) { %>
+                                <div class="fee-item">
+                                    <span class="fee-label">Başvuru Ücreti:</span>
+                                    <span class="fee-value">€<%= university.application_fee %></span>
+                                </div>
+                                <% } %>
+                            </div>
+                        </div>
+
+                        <!-- Rankings -->
+                        <div class="sidebar-card">
+                            <h3>Sıralama Bilgileri</h3>
+                            <div class="rankings-info">
+                                <% if (university.world_ranking) { %>
+                                <div class="ranking-item">
+                                    <span class="ranking-label">Dünya Sıralaması:</span>
+                                    <span class="ranking-value">#<%= university.world_ranking %></span>
+                                </div>
+                                <% } %>
+                                
+                                
+                            </div>
+                        </div>
+
+                        <!-- CTA Buttons -->
+                        <div class="sidebar-card">
+                            <h3>Başvuru</h3>
+                            <div class="cta-buttons">
+                                <a href="/contact" class="btn btn-primary w-100 mb-2">
+                                    <i class="fas fa-phone me-2"></i>Danışmanlık Al
+                                </a>
+                                <a href="/assessment" class="btn btn-outline-primary w-100">
+                                    <i class="fas fa-clipboard-list me-2"></i>Değerlendirme Testi
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Image Modal -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imageModalLabel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" src="" alt="" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Event delegation for image modal
+document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('click', function(e) {
+        const imageModal = e.target.closest('.js-open-image-modal');
+        if (imageModal) {
+            const imageUrl = imageModal.getAttribute('data-image-url');
+            const imageAlt = imageModal.getAttribute('data-image-alt');
+            openImageModal(imageUrl, imageAlt);
+        }
+    });
+});
+
+function openImageModal(imageUrl, caption) {
+    document.getElementById('modalImage').src = imageUrl;
+    document.getElementById('modalImage').alt = caption;
+    document.getElementById('imageModalLabel').textContent = caption;
+    
+    const modal = new bootstrap.Modal(document.getElementById('imageModal'));
+    modal.show();
+}
+</script> 

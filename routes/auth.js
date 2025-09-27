@@ -1,0 +1,493 @@
+const express = require('express');
+const bcrypt = require('bcryptjs');
+const pool = require('../config/database');
+const { generateUserToken } = require('../middleware/auth');
+const { sendVerificationEmail, sendPasswordResetEmail, generateVerificationToken, generateResetToken } = require('../services/emailService');
+
+const router = express.Router();
+
+// User Registration
+router.post('/register', async (req, res) => {
+    try {
+        const {
+            first_name,
+            last_name,
+            email,
+            tc_number,
+            phone,
+            password,
+            english_level,
+            high_school_graduation_date,
+            birth_date,
+            passport_number,
+            passport_type,
+            schengen_visa_count = 0,
+            uk_visa_count = 0,
+            academic_exams,
+            annual_budget,
+            language = 'tr'
+        } = req.body;
+
+        // Validation
+        if (!first_name || !last_name || !email || !tc_number || !phone || !password) {
+            return res.status(400).json({
+                success: false,
+                message: language === 'tr' ? 'Tüm zorunlu alanları doldurun' : 'Please fill all required fields'
+            });
+        }
+
+        // TC Number validation (11 digits)
+        if (!/^\d{11}$/.test(tc_number)) {
+            return res.status(400).json({
+                success: false,
+                message: language === 'tr' ? 'TC kimlik numarası 11 haneli olmalıdır' : 'TC number must be 11 digits'
+            });
+        }
+
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({
+                success: false,
+                message: language === 'tr' ? 'Geçerli bir e-posta adresi girin' : 'Please enter a valid email address'
+            });
+        }
+
+        // Check if user already exists
+        const existingUser = await pool.query(
+            'SELECT id FROM users WHERE email = $1 OR tc_number = $2 OR phone = $3',
+            [email, tc_number, phone]
+        );
+
+        if (existingUser.rows.length > 0) {
+            return res.status(400).json({
+                success: false,
+                message: language === 'tr' ? 
+                    'Bu e-posta adresi zaten kayıtlı. Şifrenizi unuttuysanız şifre sıfırlama sayfasını kullanın.' : 
+                    'This email address is already registered. If you forgot your password, use the password reset page.',
+                redirectTo: '/forgot-password'
+            });
+        }
+
+        // Hash password
+        const saltRounds = 10;
+        const passwordHash = await bcrypt.hash(password, saltRounds);
+
+        // Generate verification token
+        const verificationToken = generateVerificationToken();
+
+        // Insert user
+        const result = await pool.query(`
+            INSERT INTO users (
+                first_name, last_name, email, tc_number, phone, password_hash,
+                english_level, high_school_graduation_date, birth_date,
+                passport_number, passport_type, schengen_visa_count, uk_visa_count,
+                academic_exams, annual_budget, verification_token
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+            RETURNING id, first_name, email
+        `, [
+            first_name, last_name, email, tc_number, phone, passwordHash,
+            english_level, high_school_graduation_date, birth_date,
+            passport_number, passport_type, schengen_visa_count, uk_visa_count,
+            academic_exams, annual_budget, verificationToken
+        ]);
+
+        const user = result.rows[0];
+
+        // Send verification email
+        await sendVerificationEmail(email, first_name, verificationToken, language);
+
+        res.status(201).json({
+            success: true,
+            message: language === 'tr' ? 
+                'Kayıt başarılı! Lütfen e-posta adresinizi doğrulayın.' : 
+                'Registration successful! Please verify your email address.',
+            user: {
+                id: user.id,
+                first_name: user.first_name,
+                email: user.email
+            }
+        });
+
+    } catch (error) {
+        console.error('Registration error:', error);
+        res.status(500).json({
+            success: false,
+            message: language === 'tr' ? 'Kayıt sırasında bir hata oluştu' : 'An error occurred during registration'
+        });
+    }
+});
+
+// Email Verification
+router.get('/verify-email', async (req, res) => {
+    try {
+        const { token } = req.query;
+        const language = req.query.lang || 'tr';
+
+        if (!token) {
+            return res.status(400).render('verification-error', { 
+                title: 'Doğrulama Hatası',
+                message: language === 'tr' ? 'Geçersiz doğrulama tokeni' : 'Invalid verification token',
+                language 
+            });
+        }
+
+        // Find user with this token
+        const result = await pool.query(
+            'SELECT id, first_name, email FROM users WHERE verification_token = $1 AND email_verified = 0',
+            [token]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(400).render('verification-error', { 
+                title: 'Doğrulama Hatası',
+                message: language === 'tr' ? 'Geçersiz veya kullanılmış doğrulama tokeni' : 'Invalid or used verification token',
+                language 
+            });
+        }
+
+        const user = result.rows[0];
+
+        // Update user as verified
+        await pool.query(
+            'UPDATE users SET email_verified = 1, verification_token = NULL WHERE id = $1',
+            [user.id]
+        );
+
+        res.render('verification-success', { 
+            title: 'E-posta Doğrulandı',
+            message: language === 'tr' ? 
+                'E-posta adresiniz başarıyla doğrulandı! Giriş yapabilirsiniz.' : 
+                'Your email has been verified successfully! You can now login.',
+            user: {
+                id: user.id,
+                first_name: user.first_name,
+                email: user.email
+            },
+            language 
+        });
+
+    } catch (error) {
+        console.error('Email verification error:', error);
+        res.status(500).render('verification-error', { 
+            title: 'Doğrulama Hatası',
+            message: language === 'tr' ? 'Doğrulama sırasında bir hata oluştu' : 'An error occurred during verification',
+            language 
+        });
+    }
+});
+
+// Forgot Password
+router.post('/forgot-password', async (req, res) => {
+    try {
+        const { email, language = 'tr' } = req.body;
+
+        if (!email) {
+            return res.status(400).json({
+                success: false,
+                message: language === 'tr' ? 'E-posta adresi gereklidir' : 'Email address is required'
+            });
+        }
+
+        // Check if user exists
+        const result = await pool.query(
+            'SELECT id, first_name, email FROM users WHERE email = $1',
+            [email]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: language === 'tr' ? 
+                    'Bu e-posta adresi ile kayıtlı kullanıcı bulunamadı. Lütfen kayıt olun.' : 
+                    'No user found with this email address. Please register.'
+            });
+        }
+
+        const user = result.rows[0];
+
+        // Generate reset token
+        const resetToken = generateResetToken();
+
+        // Save reset token to database
+        await pool.query(
+            'UPDATE users SET reset_token = $1, reset_token_expires = NOW() + INTERVAL \'1 hour\' WHERE id = $2',
+            [resetToken, user.id]
+        );
+
+        // Send reset email
+        await sendPasswordResetEmail(email, user.first_name, resetToken, language);
+
+        res.json({
+            success: true,
+            message: language === 'tr' ? 
+                'Şifre sıfırlama linki e-posta adresinize gönderildi.' : 
+                'Password reset link has been sent to your email address.'
+        });
+
+    } catch (error) {
+        console.error('Forgot password error:', error);
+        res.status(500).json({
+            success: false,
+            message: language === 'tr' ? 'Şifre sıfırlama sırasında bir hata oluştu' : 'An error occurred during password reset'
+        });
+    }
+});
+
+// Unified Login (Admin and User)
+router.post('/login', async (req, res) => {
+    try {
+        const { email, password, language = 'tr' } = req.body;
+
+        if (!email || !password) {
+            return res.status(400).json({
+                success: false,
+                message: language === 'tr' ? 'E-posta ve şifre gerekli' : 'Email and password required'
+            });
+        }
+
+        // Find user (including admin status)
+        const result = await pool.query(
+            'SELECT id, first_name, last_name, email, password_hash, email_verified, is_admin FROM users WHERE email = $1',
+            [email]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(401).json({
+                success: false,
+                message: language === 'tr' ? 'Geçersiz e-posta veya şifre' : 'Invalid eposta or password'
+            });
+        }
+
+        const user = result.rows[0];
+
+        // Check if eposta is verified (only for non-admin users)
+        if (!user.is_admin && !user.email_verified) {
+            return res.status(403).json({
+                success: false,
+                message: language === 'tr' ? 'Lütfen önce e-posta adresinizi doğrulayın' : 'Please verify your eposta address first'
+            });
+        }
+
+        // Check password
+        const passwordMatch = await bcrypt.compare(password, user.password_hash);
+        if (!passwordMatch) {
+            return res.status(401).json({
+                success: false,
+                message: language === 'tr' ? 'Geçersiz e-posta veya şifre' : 'Invalid eposta or password'
+            });
+        }
+
+        // Generate token
+        const token = generateUserToken(user.id);
+
+        // Set cookie
+        res.cookie('userToken', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        });
+
+        res.json({
+            success: true,
+            message: language === 'tr' ? 'Giriş başarılı' : 'Login successful',
+            user: {
+                id: user.id,
+                first_name: user.first_name,
+                last_name: user.last_name,
+                email: user.email,
+                is_admin: user.is_admin
+            },
+            token,
+            is_admin: user.is_admin
+        });
+
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).json({
+            success: false,
+            message: language === 'tr' ? 'Giriş sırasında bir hata oluştu' : 'An error occurred during login'
+        });
+    }
+});
+
+// Password Reset Request
+router.post('/forgot-password', async (req, res) => {
+    try {
+        const { eposta, language = 'tr' } = req.body;
+
+        if (!eposta) {
+            return res.status(400).json({
+                success: false,
+                message: language === 'tr' ? 'E-posta adresi gerekli' : 'Email address required'
+            });
+        }
+
+        // Find user
+        const result = await pool.query(
+            'SELECT id, ad, eposta FROM kullanicilar WHERE eposta = $1',
+            [eposta]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: language === 'tr' ? 'Bu e-posta adresi ile kayıtlı kullanıcı bulunamadı' : 'No user found with this eposta address'
+            });
+        }
+
+        const user = result.rows[0];
+
+        // Generate reset token
+        const resetToken = generateResetToken();
+        const resetTokenExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+        // Update user with reset token
+        await pool.query(
+            'UPDATE kullanicilar SET sifre_sifirlama_token = $1, sifre_sifirlama_token_expires = $2 WHERE id = $3',
+            [resetToken, resetTokenExpires, user.id]
+        );
+
+        // Send reset eposta
+        await sendPasswordResetEmail(eposta, user.ad, resetToken, language);
+
+        res.json({
+            success: true,
+            message: language === 'tr' ? 
+                'Şifre sıfırlama bağlantısı e-posta adresinize gönderildi' : 
+                'Password reset link has been sent to your eposta address'
+        });
+
+    } catch (error) {
+        console.error('Password reset request error:', error);
+        res.status(500).json({
+            success: false,
+            message: language === 'tr' ? 'Şifre sıfırlama sırasında bir hata oluştu' : 'An error occurred during password reset'
+        });
+    }
+});
+
+// Password Reset
+router.post('/reset-password', async (req, res) => {
+    try {
+        const { token, password, language = 'tr' } = req.body;
+
+        if (!token || !password) {
+            return res.status(400).json({
+                success: false,
+                message: language === 'tr' ? 'Token ve yeni şifre gerekli' : 'Token and new password required'
+            });
+        }
+
+        // Find user with valid reset token
+        const result = await pool.query(
+            'SELECT id FROM kullanicilar WHERE sifre_sifirlama_token = $1 AND sifre_sifirlama_token_expires > NOW()',
+            [token]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: language === 'tr' ? 'Geçersiz veya süresi dolmuş reset tokeni' : 'Invalid or expired reset token'
+            });
+        }
+
+        const user = result.rows[0];
+
+        // Hash new password
+        const saltRounds = 10;
+        const passwordHash = await bcrypt.hash(password, saltRounds);
+
+        // Update password and clear reset token
+        await pool.query(
+            'UPDATE kullanicilar SET sifre_hash = $1, sifre_sifirlama_token = NULL, sifre_sifirlama_token_expires = NULL WHERE id = $2',
+            [passwordHash, user.id]
+        );
+
+        res.json({
+            success: true,
+            message: language === 'tr' ? 'Şifreniz başarıyla güncellendi' : 'Your password has been updated successfully'
+        });
+
+    } catch (error) {
+        console.error('Password reset error:', error);
+        res.status(500).json({
+            success: false,
+            message: language === 'tr' ? 'Şifre sıfırlama sırasında bir hata oluştu' : 'An error occurred during password reset'
+        });
+    }
+});
+
+// Logout
+router.post('/logout', (req, res) => {
+    // Clear both user and admin tokens with proper options
+    res.clearCookie('userToken', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        path: '/'
+    });
+    res.clearCookie('adminToken', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        path: '/'
+    });
+    
+    console.log('Logout endpoint called - cookies cleared'); // Debug log
+    
+    res.json({
+        success: true,
+        message: 'Logout successful'
+    });
+});
+
+// Temporary admin creation endpoint (for development only)
+router.post('/create-admin', async (req, res) => {
+    try {
+        const { eposta, password, name } = req.body;
+        
+        if (!eposta || !password || !name) {
+            return res.status(400).json({
+                success: false,
+                message: 'Email, password and name are required'
+            });
+        }
+
+        // Hash password
+        const saltRounds = 10;
+        const passwordHash = await bcrypt.hash(password, saltRounds);
+
+        // Insert admin user
+        const result = await pool.query(`
+            INSERT INTO kullanicilar (ad, soyad, eposta, tc_kimlik_no, telefon, sifre_hash, ingilizce_seviyesi, lise_mezuniyet_tarihi, dogum_tarihi, eposta_verified, is_admin)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?0, ?1)
+            RETURNING id, ad, soyad, eposta, is_admin
+        `, [
+            name, 'Admin', eposta, '00000000000', '00000000000', passwordHash, 
+            'Advanced', '2020-01-01', '1990-01-01', true, true
+        ]);
+
+        const admin = result.rows[0];
+
+        res.status(201).json({
+            success: true,
+            message: 'Admin user created successfully',
+            admin: {
+                id: admin.id,
+                name: admin.ad,
+                eposta: admin.eposta,
+                is_admin: admin.is_admin
+            }
+        });
+
+    } catch (error) {
+        console.error('Admin creation error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'An error occurred while creating admin user'
+        });
+    }
+});
+
+module.exports = router; 

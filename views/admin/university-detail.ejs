@@ -1,0 +1,344 @@
+<!-- Admin University Detail Content -->
+<div class="admin-container">
+    <!-- Sidebar -->
+    <div class="admin-sidebar">
+        <div class="sidebar-header">
+            <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Yönetim Paneli</h6>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/admin/dashboard" class="nav-item">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/admin/users" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Öğrenciler</span>
+            </a>
+            <a href="/admin/applications" class="nav-item">
+                <i class="fas fa-file-alt"></i>
+                <span>Başvurular</span>
+            </a>
+            <a href="/admin/universities" class="nav-item active">
+                <i class="fas fa-university"></i>
+                <span>Üniversiteler</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="admin-main">
+        <!-- Header -->
+        <div class="section-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2><i class="fas fa-university me-2"></i><%= university.name %></h2>
+                    <p class="text-muted"><%= university.city %>, <%= university.country %></p>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-warning" id="editUniversityBtn" data-university-id="<%= university.id %>">
+                        <i class="fas fa-edit me-2"></i>Düzenle
+                    </button>
+                    <button class="btn btn-danger" id="deleteUniversityBtn" data-university-id="<%= university.id %>">
+                        <i class="fas fa-trash me-2"></i>Sil
+                    </button>
+                    <a href="/admin/universities" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Geri Dön
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- University Details -->
+        <div class="row">
+            <!-- Basic Information -->
+            <div class="col-md-8">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5><i class="fas fa-info-circle me-2"></i>Üniversite Bilgileri</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Üniversite Adı:</strong> <%= university.name %></p>
+                                <p><strong>Ülke:</strong> <%= university.country %></p>
+                                <p><strong>Şehir:</strong> <%= university.city %></p>
+                                <p><strong>Website:</strong> <a href="<%= university.website_url %>" target="_blank"><%= university.website_url %></a></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Program Sayısı:</strong> <span class="badge bg-info"><%= university.program_count %></span></p>
+                                <p><strong>Dünya Sıralaması:</strong> <span class="badge bg-primary">#<%= university.world_ranking %></span></p>
+                                <p><strong>Durum:</strong> 
+                                    <% if (university.is_active) { %>
+                                        <span class="badge bg-success">Aktif</span>
+                                    <% } else { %>
+                                        <span class="badge bg-secondary">Pasif</span>
+                                    <% } %>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <% if (university.tuition_fee) { %>
+                                    <p><strong>Eğitim Ücreti:</strong> €<%= Math.round(Number(university.tuition_fee)).toLocaleString() %></p>
+                                <% } else { %>
+                                    <p><strong>Eğitim Ücreti:</strong> Belirtilmemiş</p>
+                                <% } %>
+                                <p><strong>Başvuru Ücreti:</strong> €<%= university.application_fee || '-' %></p>
+                                <% if (university.description) { %>
+                                    <p><strong>Açıklama:</strong> <%= university.description %></p>
+                                <% } %>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="d-flex gap-2">
+                                    <% if (university.is_featured) { %>
+                                        <span class="badge bg-warning">Öne Çıkan</span>
+                                    <% } %>
+                                    <% if (university.is_partner) { %>
+                                        <span class="badge bg-success">Partner</span>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Programs -->
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5><i class="fas fa-graduation-cap me-2"></i>Programlar (<%= programs.length %>)</h5>
+                        <button class="btn btn-primary btn-sm" id="addProgramBtn" data-university-id="<%= university.id %>">
+                            <i class="fas fa-plus me-2"></i>Program Ekle
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <% if (programs && programs.length > 0) { %>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Program Adı</th>
+                                            <th>Derece</th>
+                                            <th>Süre</th>
+                                            <th>Dil</th>
+                                            <th>İşlemler</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% programs.forEach(program => { %>
+                                        <tr>
+                                            <td><strong><%= program.name %></strong></td>
+                                            <td><span class="badge bg-info"><%= program.level %></span></td>
+                                            <td><%= program.duration_months %> sömestr</td>
+                                            <td><%= program.language %></td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <button class="btn btn-outline-primary js-view-program" data-program-id="<%= program.id %>" title="Görüntüle" onclick="viewProgram('<%= program.id %>')">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <button class="btn btn-outline-warning js-edit-program" data-program-id="<%= program.id %>" title="Düzenle" onclick="editProgram('<%= program.id %>')">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button class="btn btn-outline-danger js-delete-program" data-program-id="<%= program.id %>" title="Sil" onclick="deleteProgram('<%= program.id %>')">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <% }); %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <% } else { %>
+                            <div class="text-center text-muted py-4">
+                                <i class="fas fa-graduation-cap fa-3x mb-3"></i>
+                                <p>Henüz program bulunmuyor</p>
+                                <button class="btn btn-primary" id="addProgramEmptyBtn" data-university-id="<%= university.id %>">
+                                    <i class="fas fa-plus me-2"></i>İlk Programı Ekle
+                                </button>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-md-4">
+                <!-- University Logo -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5><i class="fas fa-image me-2"></i>Üniversite Logosu</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <img src="<%= university.logo_url || '/images/default-university.png' %>" 
+                             alt="<%= university.name %>" 
+                             class="img-fluid rounded" 
+                             style="max-width: 200px;">
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5><i class="fas fa-chart-bar me-2"></i>Hızlı İstatistikler</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <div class="border-end">
+                                    <h4 class="text-primary"><%= programs.length %></h4>
+                                    <small class="text-muted">Program</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <h4 class="text-success"><%= university.world_ranking %></h4>
+                                <small class="text-muted">Dünya Sıralaması</small>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row text-center">
+                            <div class="col-12">
+                                <% if (university.tuition_fee) { %>
+                                    <h4 class="text-info">€<%= Math.round(Number(university.tuition_fee)).toLocaleString() %></h4>
+                                    <small class="text-muted">Eğitim Ücreti</small>
+                                <% } else { %>
+                                    <h4 class="text-info">-</h4>
+                                    <small class="text-muted">Eğitim Ücreti</small>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Event delegation for all buttons
+    document.addEventListener('DOMContentLoaded', function() {
+        // University action buttons
+        document.getElementById('editUniversityBtn').addEventListener('click', function() {
+            editUniversity(this.getAttribute('data-university-id'));
+        });
+        
+        document.getElementById('deleteUniversityBtn').addEventListener('click', function() {
+            deleteUniversity(this.getAttribute('data-university-id'));
+        });
+        
+        // Program action buttons
+        document.getElementById('addProgramBtn').addEventListener('click', function() {
+            addProgram(this.getAttribute('data-university-id'));
+        });
+        
+        document.getElementById('addProgramEmptyBtn').addEventListener('click', function() {
+            addProgram(this.getAttribute('data-university-id'));
+        });
+        
+        // Event delegation for program action buttons
+        document.addEventListener('click', function(e) {
+            console.log('Click event detected:', e.target);
+            
+            const viewBtn = e.target.closest('.js-view-program');
+            const editBtn = e.target.closest('.js-edit-program');
+            const deleteBtn = e.target.closest('.js-delete-program');
+
+            console.log('View button:', viewBtn);
+            console.log('Edit button:', editBtn);
+            console.log('Delete button:', deleteBtn);
+
+            if (viewBtn) {
+                const programId = viewBtn.getAttribute('data-program-id');
+                console.log('View program clicked, ID:', programId);
+                viewProgram(programId);
+                return;
+            }
+
+            if (editBtn) {
+                const programId = editBtn.getAttribute('data-program-id');
+                console.log('Edit program clicked, ID:', programId);
+                editProgram(programId);
+                return;
+            }
+
+            if (deleteBtn) {
+                const programId = deleteBtn.getAttribute('data-program-id');
+                console.log('Delete program clicked, ID:', programId);
+                deleteProgram(programId);
+                return;
+            }
+        });
+    });
+
+    function editUniversity(universityId) {
+        window.location.href = `/admin/universities/${universityId}/edit`;
+    }
+
+    function deleteUniversity(universityId) {
+        if (confirm('Bu üniversiteyi silmek istediğinizden emin misiniz?\n\nBu işlem geri alınamaz ve üniversiteye ait tüm programlar ve görseller de silinecektir.')) {
+            fetch(`/api/admin/universities/${universityId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert('Üniversite başarıyla silindi!');
+                    window.location.href = '/admin/universities';
+                } else {
+                    alert('Hata: ' + result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+            });
+        }
+    }
+
+    function addProgram(universityId) {
+        window.location.href = `/admin/universities/${universityId}/programs/new`;
+    }
+
+    function viewProgram(programId) {
+        console.log('viewProgram called with ID:', programId);
+        window.location.href = `/admin/programs/${programId}`;
+    }
+
+    function editProgram(programId) {
+        console.log('editProgram called with ID:', programId);
+        window.location.href = `/admin/programs/${programId}/edit`;
+    }
+
+    function deleteProgram(programId) {
+        console.log('deleteProgram called with ID:', programId);
+        if (confirm('Bu programı silmek istediğinizden emin misiniz?')) {
+            fetch(`/api/admin/programs/${programId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert('Program başarıyla silindi!');
+                    location.reload();
+                } else {
+                    alert('Hata: ' + result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+            });
+        }
+    }
+</script>

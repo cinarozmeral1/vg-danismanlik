@@ -1,0 +1,260 @@
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+    .card {
+        border: none;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+    .card-header {
+        background-color: #fff;
+        border-bottom: 1px solid #dee2e6;
+    }
+    .form-label {
+        font-weight: 500;
+        color: #495057;
+    }
+    .btn-primary {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+    }
+    .btn-primary:hover {
+        background-color: #0b5ed7;
+        border-color: #0a58ca;
+    }
+    .text-primary {
+        color: #0d6efd !important;
+    }
+</style>
+
+<!-- Admin Container -->
+<div class="admin-container">
+    <!-- Sidebar -->
+    <div class="admin-sidebar">
+        <div class="sidebar-header">
+            <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Yönetim Paneli</h6>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/admin/dashboard" class="nav-item">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/admin/users" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Öğrenciler</span>
+            </a>
+            <a href="/admin/applications" class="nav-item">
+                <i class="fas fa-file-alt"></i>
+                <span>Başvurular</span>
+            </a>
+            <a href="/admin/universities" class="nav-item active">
+                <i class="fas fa-university"></i>
+                <span>Üniversiteler</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="admin-main">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Program Ekle</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <a href="/admin/universities/<%= university.id %>" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Geri Dön
+                    </a>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-plus-circle me-2"></i>
+                                <%= university.name %> - Yeni Program Ekle
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="programAddForm" enctype="multipart/form-data">
+                                <!-- Program Temel Bilgileri -->
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <h6 class="text-primary mb-3">
+                                            <i class="fas fa-info-circle me-2"></i>Program Temel Bilgileri
+                                        </h6>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="name" class="form-label">Program Adı *</label>
+                                            <input type="text" class="form-control" id="name" name="name" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="name_en" class="form-label">Program Adı (İngilizce)</label>
+                                            <input type="text" class="form-control" id="name_en" name="name_en">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Program Detayları -->
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <h6 class="text-primary mb-3">
+                                            <i class="fas fa-cog me-2"></i>Program Detayları
+                                        </h6>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label for="level" class="form-label">Derece Türü *</label>
+                                            <select class="form-select" id="level" name="level" required>
+                                                <option value="">Seçiniz</option>
+                                                <option value="Lisans">Lisans</option>
+                                                <option value="Yüksek Lisans">Yüksek Lisans</option>
+                                                <option value="Dil Okulu">Dil Okulu</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label for="duration_months" class="form-label">Süre (Sömestr) *</label>
+                                            <input type="number" class="form-control" id="duration_months" name="duration_months" required min="1" placeholder="Örn: 6">
+                                            <small class="text-muted">1 sömestr = 6 ay</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label for="language" class="form-label">1. Eğitim Dili *</label>
+                                            <select class="form-select" id="language" name="language" required>
+                                                <option value="">Seçiniz</option>
+                                                <option value="English">İngilizce</option>
+                                                <option value="Italian">İtalyanca</option>
+                                                <option value="German">Almanca</option>
+                                                <option value="French">Fransızca</option>
+                                                <option value="Spanish">İspanyolca</option>
+                                                <option value="Czech">Çekçe</option>
+                                                <option value="Polish">Lehçe</option>
+                                                <option value="Hungarian">Macarca</option>
+                                                <option value="Mixed">Karışık</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label for="language2" class="form-label">2. Eğitim Dili (Opsiyonel)</label>
+                                            <select class="form-select" id="language2" name="language2">
+                                                <option value="">Seçiniz</option>
+                                                <option value="English">İngilizce</option>
+                                                <option value="Italian">İtalyanca</option>
+                                                <option value="German">Almanca</option>
+                                                <option value="French">Fransızca</option>
+                                                <option value="Spanish">İspanyolca</option>
+                                                <option value="Czech">Çekçe</option>
+                                                <option value="Polish">Lehçe</option>
+                                                <option value="Hungarian">Macarca</option>
+                                                <option value="Mixed">Karışık</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Başvuru Ücreti -->
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <h6 class="text-primary mb-3">
+                                            <i class="fas fa-euro-sign me-2"></i>Başvuru Ücreti
+                                        </h6>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="application_fee" class="form-label">Başvuru Ücreti (€)</label>
+                                            <input type="number" class="form-control" id="application_fee" name="application_fee" min="0" step="0.01">
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+
+
+
+
+                                <!-- Program Durumu -->
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <h6 class="text-primary mb-3">
+                                            <i class="fas fa-toggle-on me-2"></i>Program Durumu
+                                        </h6>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="is_active" name="is_active" checked>
+                                                <label class="form-check-label" for="is_active">
+                                                    Program Aktif
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a href="/admin/universities/<%= university.id %>" class="btn btn-secondary">
+                                        <i class="fas fa-times me-2"></i>İptal
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save me-2"></i>Program Ekle
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Form gönderimi
+document.getElementById('programAddForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // Get form data
+    const formData = new FormData(this);
+    formData.append('university_id', '<%= university.id %>');
+    
+    // Add checkbox value
+    formData.append('is_active', document.getElementById('is_active').checked ? 'true' : 'false');
+    
+    // Convert FormData to URLSearchParams for proper form submission
+    const urlParams = new URLSearchParams();
+    for (let [key, value] of formData.entries()) {
+        urlParams.append(key, value);
+    }
+    
+    try {
+        const response = await fetch('/admin/universities/<%= university.id %>/programs', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: urlParams.toString()
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert('Program başarıyla eklendi!');
+            window.location.href = '/admin/universities/<%= university.id %>';
+        } else {
+            console.log('Server response:', result);
+            alert('Hata: ' + result.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+    }
+});
+</script>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="<%= language %>">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Venture Global</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <strong>Venture Global®</strong>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Ana Sayfa</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/services">Hizmetler</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/universities">Üniversiteler</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact">İletişim</a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <button class="btn btn-outline-light btn-sm me-2" id="changeLanguageTrBtn">TR</button>
+                    <button class="btn btn-outline-light btn-sm" id="changeLanguageEnBtn">EN</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <section class="section bg-light text-dark" style="margin-top: 100px; min-height: 80vh;">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-6">
+                    <div class="card shadow-lg">
+                        <div class="card-header bg-danger text-white text-center">
+                            <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+                            <h3><%= language === 'tr' ? 'Doğrulama Hatası!' : 'Verification Error!' %></h3>
+                        </div>
+                        <div class="card-body p-4 text-center">
+                            <div class="alert alert-danger">
+                                <i class="fas fa-times-circle me-2"></i>
+                                <%= message %>
+                            </div>
+                            
+                            <div class="help-info bg-light p-3 rounded mb-4">
+                                <h5><%= language === 'tr' ? 'Yardım:' : 'Help:' %></h5>
+                                <ul class="text-start">
+                                    <li><%= language === 'tr' ? 'E-posta kutunuzu kontrol edin' : 'Check your email inbox' %></li>
+                                    <li><%= language === 'tr' ? 'Spam klasörünü kontrol edin' : 'Check your spam folder' %></li>
+                                    <li><%= language === 'tr' ? 'Linkin tam olduğundan emin olun' : 'Make sure the link is complete' %></li>
+                                    <li><%= language === 'tr' ? 'Eğer sorun devam ederse yeni kayıt olun' : 'If the problem persists, register again' %></li>
+                                </ul>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <a href="/register" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-user-plus me-2"></i>
+                                    <%= language === 'tr' ? 'Yeniden Kayıt Ol' : 'Register Again' %>
+                                </a>
+                                <a href="/contact" class="btn btn-outline-secondary">
+                                    <i class="fas fa-envelope me-2"></i>
+                                    <%= language === 'tr' ? 'İletişime Geç' : 'Contact Us' %>
+                                </a>
+                                <a href="/" class="btn btn-outline-secondary">
+                                    <i class="fas fa-home me-2"></i>
+                                    <%= language === 'tr' ? 'Ana Sayfaya Dön' : 'Back to Home' %>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Language Change Script -->
+    <script>
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('changeLanguageTrBtn').addEventListener('click', () => changeLanguage('tr'));
+            document.getElementById('changeLanguageEnBtn').addEventListener('click', () => changeLanguage('en'));
+        });
+
+        function changeLanguage(lang) {
+            fetch('/change-language', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ language: lang })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Language change error:', error);
+            });
+        }
+    </script>
+</body>
+</html> 

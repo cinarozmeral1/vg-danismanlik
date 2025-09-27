@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; img-src 'self' data: https:; connect-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com;">
+    <title><%= title %> - Admin Panel</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <style>
+        /* Disable source map requests */
+        @import url('data:text/css,');
+    </style>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous">
+    
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    
+    <style>
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+            background-color: #f8f9fa;
+        }
+        
+        .admin-sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.1);
+        }
+        
+        .sidebar-header h6 {
+            color: white;
+            font-weight: 600;
+        }
+        
+        .sidebar-nav {
+            padding: 20px 0;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-left-color: #3498db;
+        }
+        
+        .nav-item.active {
+            background: rgba(52, 152, 219, 0.2);
+            color: white;
+            border-left-color: #3498db;
+        }
+        
+        .nav-item i {
+            width: 20px;
+            margin-right: 12px;
+            font-size: 16px;
+        }
+        
+        .nav-item span {
+            flex: 1;
+        }
+        
+        .badge {
+            font-size: 11px;
+            padding: 4px 8px;
+        }
+        
+        .nav-item .badge {
+            margin-left: auto;
+            font-size: 10px;
+            padding: 3px 6px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+        
+        .nav-item.active .badge {
+            background-color: rgba(255,255,255,0.2) !important;
+            color: white !important;
+        }
+        
+        .admin-main {
+            flex: 1;
+            margin-left: 280px;
+            padding: 20px;
+        }
+        
+        .section-header {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+        }
+        
+        .section-header h2 {
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .section-header p {
+            color: #6c757d;
+            margin-bottom: 0;
+        }
+        
+        .content-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border: none;
+        }
+        
+        .card-header h5 {
+            margin-bottom: 0;
+            font-weight: 600;
+        }
+        
+        .card-body {
+            padding: 25px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            margin-right: 20px;
+        }
+        
+        .stat-card.primary .stat-icon { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .stat-card.success .stat-icon { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+        .stat-card.warning .stat-icon { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .stat-card.info .stat-icon { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        
+        .stat-content h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        
+        .stat-content p {
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+        
+        .stat-trend {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .stat-trend.positive { color: #28a745; }
+        .stat-trend.negative { color: #dc3545; }
+        .stat-trend.neutral { color: #6c757d; }
+        
+        .btn-action {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-edit {
+            background: #ffc107;
+            color: #212529;
+        }
+        
+        .btn-edit:hover {
+            background: #e0a800;
+            transform: translateY(-1px);
+        }
+        
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-delete:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+        }
+        
+        .btn-back {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-back:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .info-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .info-card h6 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f1f3f4;
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            color: #6c757d;
+            font-weight: 500;
+        }
+        
+        .info-value {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        
+        .tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin: 2px;
+        }
+        
+        .tag.featured {
+            background: #ffc107;
+            color: #212529;
+        }
+        
+        .tag.partner {
+            background: #28a745;
+            color: white;
+        }
+        
+        .tag.active {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .stats-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            margin: 2px;
+        }
+        
+        .stats-badge.primary {
+            background: #007bff;
+            color: white;
+        }
+        
+        .stats-badge.success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .stats-badge.info {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .admin-sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .admin-main {
+                margin-left: 0;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-globe-americas text-primary me-2"></i>
+                Venture Global
+            </a>
+            
+            <div class="navbar-nav ms-auto">
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle me-2"></i>
+                        <%= typeof currentUser !== 'undefined' ? currentUser.first_name : 'Admin' %>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="/admin/dashboard"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
+                        <li><a class="dropdown-item" href="/"><i class="fas fa-home me-2"></i>Ana Sayfa</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="/logout"><i class="fas fa-sign-out-alt me-2"></i>Çıkış</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Admin Container -->
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <div class="admin-sidebar">
+            <div class="sidebar-header">
+                <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Yönetim Paneli</h6>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="/admin/dashboard" class="nav-item <%= typeof activePage !== 'undefined' && activePage === 'dashboard' ? 'active' : '' %>">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/admin/users" class="nav-item <%= typeof activePage !== 'undefined' && activePage === 'users' ? 'active' : '' %>">
+                    <i class="fas fa-users"></i>
+                    <span>Öğrenciler</span>
+                    <% if (typeof userCount !== 'undefined' && userCount > 0) { %>
+                        <span class="badge bg-primary ms-auto"><%= userCount %></span>
+                    <% } %>
+                </a>
+                <a href="/admin/applications" class="nav-item <%= typeof activePage !== 'undefined' && activePage === 'applications' ? 'active' : '' %>">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Başvurular</span>
+                    <% if (typeof applicationCount !== 'undefined' && applicationCount > 0) { %>
+                        <span class="badge bg-success ms-auto"><%= applicationCount %></span>
+                    <% } %>
+                </a>
+                <a href="/admin/universities" class="nav-item <%= typeof activePage !== 'undefined' && activePage === 'universities' ? 'active' : '' %>">
+                    <i class="fas fa-university"></i>
+                    <span>Üniversiteler</span>
+                    <% if (typeof universityCount !== 'undefined' && universityCount > 0) { %>
+                        <span class="badge bg-info ms-auto"><%= universityCount %></span>
+                    <% } %>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="admin-main">
+            <%- body %>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    <script>
+        // Disable source map requests
+        if (typeof window !== 'undefined') {
+            window.addEventListener('error', function(e) {
+                if (e.filename && e.filename.includes('.map')) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        }
+    </script>
+    
+    <script>
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.admin-sidebar');
+            sidebar.classList.toggle('show');
+        }
+        
+        // Add mobile menu button if needed
+        if (window.innerWidth <= 768) {
+            const navbar = document.querySelector('.navbar');
+            const toggleBtn = document.createElement('button');
+            toggleBtn.className = 'btn btn-outline-primary btn-sm ms-2';
+            toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            toggleBtn.onclick = toggleSidebar;
+            navbar.appendChild(toggleBtn);
+        }
+    </script>
+</body>
+</html>

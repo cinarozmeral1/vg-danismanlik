@@ -1,0 +1,181 @@
+<!-- Admin Edit Application Content -->
+<div class="admin-container">
+    <!-- Sidebar -->
+    <div class="admin-sidebar">
+        <div class="sidebar-header">
+            <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Yönetim Paneli</h6>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/admin/dashboard" class="nav-item">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/admin/users" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Öğrenciler</span>
+            </a>
+            <a href="/admin/applications" class="nav-item active">
+                <i class="fas fa-file-alt"></i>
+                <span>Başvurular</span>
+            </a>
+            <a href="/admin/universities" class="nav-item">
+                <i class="fas fa-university"></i>
+                <span>Üniversiteler</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="admin-main">
+        <!-- Header -->
+        <div class="section-header">
+            <h2><i class="fas fa-edit me-2"></i>Başvuru Düzenle</h2>
+            <p class="text-muted">Mevcut başvuru bilgilerini güncelleyin</p>
+        </div>
+
+        <!-- Application Form -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Başvuru Düzenle</h5>
+            </div>
+            <div class="card-body">
+                <form id="editApplicationForm">
+                    <!-- User Information (Read-only) -->
+                    <div class="mb-4">
+                        <h6 class="mb-3"><i class="fas fa-user me-2"></i>Öğrenci Bilgileri</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="userInfo" class="form-label">Öğrenci</label>
+                                    <input type="text" class="form-control" id="userInfo" 
+                                           value="<%= application.first_name %> <%= application.last_name %> (<%= application.email %>)" 
+                                           readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="applicationDate" class="form-label">Başvuru Tarihi</label>
+                                    <input type="text" class="form-control" id="applicationDate" 
+                                           value="<%= new Date(application.created_at).toLocaleDateString('tr-TR') %>" 
+                                           readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Application Details -->
+                    <div class="mb-4">
+                        <h6 class="mb-3"><i class="fas fa-file-alt me-2"></i>Başvuru Bilgileri</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="country" class="form-label">Hedef Ülke *</label>
+                                    <select class="form-select" id="country" name="country" required>
+                                        <option value="">Ülke Seçin</option>
+                                        <option value="Germany" <%= application.country === 'Germany' ? 'selected' : '' %>>Almanya</option>
+                                        <option value="Czech Republic" <%= application.country === 'Czech Republic' ? 'selected' : '' %>>Çek Cumhuriyeti</option>
+                                        <option value="Italy" <%= application.country === 'Italy' ? 'selected' : '' %>>İtalya</option>
+                                        <option value="Austria" <%= application.country === 'Austria' ? 'selected' : '' %>>Avusturya</option>
+                                        <option value="UK" <%= application.country === 'UK' ? 'selected' : '' %>>İngiltere</option>
+                                        <option value="Poland" <%= application.country === 'Poland' ? 'selected' : '' %>>Polonya</option>
+                                        <option value="Hungary" <%= application.country === 'Hungary' ? 'selected' : '' %>>Macaristan</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="university" class="form-label">Üniversite</label>
+                                    <input type="text" class="form-control" id="university" name="university" 
+                                           value="<%= application.university_name %>" placeholder="Hedef üniversite adı">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="program" class="form-label">Program</label>
+                                    <input type="text" class="form-control" id="program" name="program" 
+                                           value="<%= application.program_name %>" placeholder="Eğitim programı">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="englishLevel" class="form-label">İngilizce Seviyesi</label>
+                                    <select class="form-select" id="englishLevel" name="englishLevel">
+                                        <option value="">Seviye Seçin</option>
+                                        <option value="Beginner" <%= application.english_level === 'Beginner' ? 'selected' : '' %>>Başlangıç</option>
+                                        <option value="Elementary" <%= application.english_level === 'Elementary' ? 'selected' : '' %>>Temel</option>
+                                        <option value="Intermediate" <%= application.english_level === 'Intermediate' ? 'selected' : '' %>>Orta</option>
+                                        <option value="Upper Intermediate" <%= application.english_level === 'Upper Intermediate' ? 'selected' : '' %>>İyi</option>
+                                        <option value="Advanced" <%= application.english_level === 'Advanced' ? 'selected' : '' %>>İleri</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Notlar</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3" 
+                                      placeholder="Başvuru hakkında ek notlar..."><%= application.required_documents || '' %></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Durum *</label>
+                            <select class="form-select" id="status" name="status" required>
+                                <option value="pending" <%= application.status === 'pending' ? 'selected' : '' %>>Beklemede</option>
+                                <option value="approved" <%= application.status === 'approved' ? 'selected' : '' %>>Onaylandı</option>
+                                <option value="rejected" <%= application.status === 'rejected' ? 'selected' : '' %>>Reddedildi</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary" onclick="goBack()">
+                            <i class="fas fa-arrow-left me-2"></i>Geri Dön
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Başvuru Güncelle
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('editApplicationForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData);
+        
+        // API'ye gönder
+        fetch(`/api/admin/applications/<%= application.id %>`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                alert('Başvuru başarıyla güncellendi!');
+                window.location.href = '/admin/applications';
+            } else {
+                alert('Hata: ' + result.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+        });
+    });
+
+    function goBack() {
+        window.location.href = '/admin/applications';
+    }
+</script>

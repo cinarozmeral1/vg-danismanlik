@@ -1,0 +1,3383 @@
+<!-- Admin Student Details Content -->
+<div class="admin-container">
+    <!-- Sidebar -->
+    <div class="admin-sidebar">
+        <div class="sidebar-header">
+            <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Yönetim Paneli</h6>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/admin/dashboard" class="nav-item">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/admin/users" class="nav-item active">
+                <i class="fas fa-users"></i>
+                <span>Öğrenciler</span>
+            </a>
+            <a href="/admin/applications" class="nav-item">
+                <i class="fas fa-file-alt"></i>
+                <span>Başvurular</span>
+            </a>
+            <a href="/admin/universities" class="nav-item">
+                <i class="fas fa-university"></i>
+                <span>Üniversiteler</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="admin-main">
+        <!-- Header -->
+        <div class="section-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2><i class="fas fa-user me-2"></i>Öğrenci Detayları</h2>
+                    <p class="text-muted">Öğrenci bilgilerini görüntüleyin ve düzenleyin</p>
+                </div>
+                <div>
+                    <a href="/admin/users" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Geri Dön
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student Profile Header -->
+        <div class="card mb-4">
+            <div class="card-body bg-primary text-white">
+                <div class="row align-items-center">
+                    <div class="col-md-2 text-center">
+                        <img src="<%= user.avatar_url || '/images/default-avatar.png' %>" alt="Avatar" class="avatar-img" id="userAvatar" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjRjVGNUY1Ii8+CjxjaXJjbGUgY3g9IjUwIiBjeT0iMzUiIHI9IjE1IiBmaWxsPSIjQ0NDQ0NDIi8+CjxwYXRoIGQ9Ik0yMCA4MEMyMCA2OS4wNTM5IDI5LjA1MzkgNjAgNDAgNjBINjBDNzAuOTQ2MSA2MCA4MCA2OS4wNTM5IDgwIDgwVjEwMEgyMFY4MFoiIGZpbGw9IiNDQ0NDQ0MiLz4KPC9zdmc+';">
+                    </div>
+                    <div class="col-md-6">
+                        <h3 class="mb-1"><%= user.first_name %> <%= user.last_name %></h3>
+                        <p class="mb-0 opacity-75">DOSYA NO: VG<%= user.id.toString().padStart(6, '0') %></p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <button class="btn btn-light btn-sm" onclick="changeAvatar()">
+                            <i class="fas fa-camera me-1"></i>Avatar Değiştir
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="card">
+            <div class="card-header p-0">
+                <div class="d-flex justify-content-center">
+                    <ul class="nav nav-tabs nav-fill" id="studentTabs" role="tablist" style="max-width: 100%; width: 100%;">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="student-info-tab" data-bs-toggle="tab" data-bs-target="#student-info" type="button" role="tab">
+                                <i class="fas fa-user me-2"></i>ÖĞRENCİ
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="grades-tab" data-bs-toggle="tab" data-bs-target="#grades" type="button" role="tab">
+                                <i class="fas fa-star me-2"></i>NOTLAR
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="services-tab" data-bs-toggle="tab" data-bs-target="#services" type="button" role="tab">
+                                <i class="fas fa-cogs me-2"></i>HİZMETLER
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="files-tab" data-bs-toggle="tab" data-bs-target="#files" type="button" role="tab">
+                                <i class="fas fa-file me-2"></i>DOSYALAR
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="guardians-tab" data-bs-toggle="tab" data-bs-target="#guardians" type="button" role="tab">
+                                <i class="fas fa-user-friends me-2"></i>VELİ BİLGİLERİ
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="checklist-tab" data-bs-toggle="tab" data-bs-target="#checklist" type="button" role="tab">
+                                <i class="fas fa-clipboard-check me-2"></i>KONTROL LİSTESİ
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="tab-content" id="studentTabsContent" style="overflow: visible; max-height: none;">
+                    <!-- Student Information Tab -->
+                    <div class="tab-pane fade show active" id="student-info" role="tabpanel" style="overflow: visible; max-height: none;">
+                        <div class="container-fluid px-0">
+                            <h5 class="mb-4 text-center"><strong>Öğrenci Bilgileri</strong></h5>
+                            <form id="studentForm">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="first_name" class="form-label">Ad *</label>
+                                        <input type="text" class="form-control" id="first_name" name="first_name" value="<%= user.first_name || 'Ayda' %>" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="last_name" class="form-label">Soyad *</label>
+                                        <input type="text" class="form-control" id="last_name" name="last_name" value="<%= user.last_name || 'Kahraman' %>" required>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="email" class="form-label">E-posta *</label>
+                                        <input type="email" class="form-control" id="email" name="email" value="<%= user.email || 'ayda.kahraman2010@gmail.com' %>" readonly>
+                                        <small class="text-muted">E-posta değiştirilemez</small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="phone" class="form-label">Telefon *</label>
+                                        <input type="tel" class="form-control" id="phone" name="phone" value="<%= user.phone || '05053964692' %>" required>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="tc_number" class="form-label">TC Kimlik No *</label>
+                                        <input type="text" class="form-control" id="tc_number" name="tc_number" value="<%= user.tc_number || '18557933214' %>" maxlength="11" pattern="[0-9]{11}" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="birth_date" class="form-label">Doğum Tarihi *</label>
+                                        <input type="date" class="form-control" id="birth_date" name="birth_date" value="<%= user.birth_date ? new Date(user.birth_date).toISOString().split('T')[0] : '2010-01-01' %>" required>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="school" class="form-label">Okul</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-school"></i></span>
+                                            <input type="text" class="form-control" id="school" name="school" value="<%= user.school || 'DOĞAN CÜCELOĞLU FEN LİSESİ' %>" placeholder="Okul adı">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="class_level" class="form-label">Sınıf</label>
+                                        <input type="text" class="form-control" id="class_level" name="class_level" value="<%= user.class_level || '9' %>" placeholder="Sınıf">
+                                    </div>
+                                </div>
+
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="english_level" class="form-label">İngilizce Seviyesi *</label>
+                                        <select class="form-select" id="english_level" name="english_level" required>
+                                            <option value="">Seçiniz</option>
+                                            <option value="A1" <%= user.english_level === 'A1' ? 'selected' : '' %>>A1</option>
+                                            <option value="A2" <%= user.english_level === 'A2' ? 'selected' : '' %>>A2</option>
+                                            <option value="B1" <%= user.english_level === 'B1' ? 'selected' : '' %>>B1</option>
+                                            <option value="B2" <%= user.english_level === 'B2' ? 'selected' : '' %>>B2</option>
+                                            <option value="C1" <%= user.english_level === 'C1' ? 'selected' : '' %>>C1</option>
+                                            <option value="C2" <%= user.english_level === 'C2' ? 'selected' : '' %>>C2</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="high_school_graduation_date" class="form-label">Lise Mezuniyet Tarihi *</label>
+                                        <input type="date" class="form-control" id="high_school_graduation_date" name="high_school_graduation_date" value="<%= user.high_school_graduation_date ? new Date(user.high_school_graduation_date).toISOString().split('T')[0] : '2028-06-15' %>" required>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="country" class="form-label">Ülke</label>
+                                        <select class="form-select" id="country" name="country">
+                                            <option value="">Lütfen Seçin</option>
+                                            <option value="Türkiye" <%= (user.country === 'Türkiye' || !user.country) ? 'selected' : '' %>>Türkiye</option>
+                                            <option value="Almanya" <%= user.country === 'Almanya' ? 'selected' : '' %>>Almanya</option>
+                                            <option value="İngiltere" <%= user.country === 'İngiltere' ? 'selected' : '' %>>İngiltere</option>
+                                            <option value="Amerika" <%= user.country === 'Amerika' ? 'selected' : '' %>>Amerika</option>
+                                            <option value="Kanada" <%= user.country === 'Kanada' ? 'selected' : '' %>>Kanada</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="city" class="form-label">Şehir</label>
+                                        <select class="form-select" id="city" name="city">
+                                            <option value="">Lütfen Seçin</option>
+                                            <option value="İstanbul" <%= (user.city === 'İstanbul' || !user.city) ? 'selected' : '' %>>İstanbul</option>
+                                            <option value="Ankara" <%= user.city === 'Ankara' ? 'selected' : '' %>>Ankara</option>
+                                            <option value="İzmir" <%= user.city === 'İzmir' ? 'selected' : '' %>>İzmir</option>
+                                            <option value="Bursa" <%= user.city === 'Bursa' ? 'selected' : '' %>>Bursa</option>
+                                            <option value="Antalya" <%= user.city === 'Antalya' ? 'selected' : '' %>>Antalya</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="address" class="form-label">Adres</label>
+                                        <input type="text" class="form-control" id="address" name="address" value="<%= user.address || '' %>" placeholder="Adres">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="nationality" class="form-label">Uyruk</label>
+                                        <select class="form-select" id="nationality" name="nationality">
+                                            <option value="TC Vatandaşı" <%= (user.nationality === 'TC Vatandaşı' || !user.nationality) ? 'selected' : '' %>>TC Vatandaşı</option>
+                                            <option value="Çifte Vatandaş" <%= user.nationality === 'Çifte Vatandaş' ? 'selected' : '' %>>Çifte Vatandaş</option>
+                                            <option value="Yabancı" <%= user.nationality === 'Yabancı' ? 'selected' : '' %>>Yabancı</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="target_country" class="form-label">Gitmek İstediği Ülke?</label>
+                                        <select class="form-select" id="target_country" name="target_country">
+                                            <option value="">Lütfen Seçin</option>
+                                            <option value="Almanya" <%= user.target_country === 'Almanya' ? 'selected' : '' %>>Almanya</option>
+                                            <option value="İngiltere" <%= user.target_country === 'İngiltere' ? 'selected' : '' %>>İngiltere</option>
+                                            <option value="Amerika" <%= user.target_country === 'Amerika' ? 'selected' : '' %>>Amerika</option>
+                                            <option value="Kanada" <%= user.target_country === 'Kanada' ? 'selected' : '' %>>Kanada</option>
+                                            <option value="Avustralya" <%= user.target_country === 'Avustralya' ? 'selected' : '' %>>Avustralya</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="active_class" class="form-label">Aktif Sınıf</label>
+                                        <input type="text" class="form-control" id="active_class" name="active_class" value="<%= user.active_class || '' %>" placeholder="Aktif sınıf">
+                                    </div>
+                                </div>
+
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="passport_number" class="form-label">Pasaport Numarası</label>
+                                        <input type="text" class="form-control" id="passport_number" name="passport_number" value="<%= user.passport_number || '' %>">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="passport_type" class="form-label">Pasaport Türü</label>
+                                        <select class="form-select" id="passport_type" name="passport_type">
+                                            <option value="">Seçiniz</option>
+                                            <option value="Bordo" <%= user.passport_type === 'Bordo' ? 'selected' : '' %>>Bordo</option>
+                                            <option value="Yeşil" <%= user.passport_type === 'Yeşil' ? 'selected' : '' %>>Yeşil</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="schengen_visa_count" class="form-label">Schengen Vize Sayısı</label>
+                                        <input type="number" class="form-control" id="schengen_visa_count" name="schengen_visa_count" value="<%= user.schengen_visa_count || 0 %>" min="0">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="uk_visa_count" class="form-label">İngiltere Vize Sayısı</label>
+                                        <input type="number" class="form-control" id="uk_visa_count" name="uk_visa_count" value="<%= user.uk_visa_count || 0 %>" min="0">
+                                    </div>
+                                </div>
+
+                                <div class="row g-3">
+                                    <div class="col-md-12">
+                                        <label for="academic_exams" class="form-label">Akademik Sınavlar (IELTS, SAT, AP vb.)</label>
+                                        <textarea class="form-control" id="academic_exams" name="academic_exams" rows="3"><%= user.academic_exams || '' %></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3">
+                                    <div class="col-md-12">
+                                        <label for="annual_budget" class="form-label">Yıllık Bütçe (TL)</label>
+                                        <input type="number" class="form-control" id="annual_budget" name="annual_budget" value="<%= user.annual_budget || '' %>" min="0" step="0.01">
+                                    </div>
+                                </div>
+                                
+                            </form>
+                        </div>
+                    </div>
+                    
+                    
+                    <!-- Grades Tab -->
+                    <div class="tab-pane fade" id="grades" role="tabpanel" style="overflow: visible; max-height: none;">
+                        <div class="container-fluid px-0">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="mb-0 text-center"><strong>NOTLAR</strong></h5>
+                                <button type="button" class="btn btn-primary" onclick="showAddNoteModal()">
+                                    <i class="fas fa-plus me-2"></i>YENİ NOT EKLE
+                                </button>
+                            </div>
+
+                        <!-- Filters -->
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <label for="noteCategoryFilter" class="form-label">Kategori</label>
+                                        <select class="form-select" id="noteCategoryFilter" onchange="loadStudentNotes()">
+                                            <option value="">Tüm Kategoriler</option>
+                                            <option value="general">Genel</option>
+                                            <option value="academic">Akademik</option>
+                                            <option value="personal">Kişisel</option>
+                                            <option value="important">Önemli</option>
+                                            <option value="reminder">Hatırlatıcı</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="notePriorityFilter" class="form-label">Öncelik</label>
+                                        <select class="form-select" id="notePriorityFilter" onchange="loadStudentNotes()">
+                                            <option value="">Tüm Öncelikler</option>
+                                            <option value="low">Düşük</option>
+                                            <option value="medium">Orta</option>
+                                            <option value="high">Yüksek</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="noteImportantFilter" class="form-label">Önemli Notlar</label>
+                                        <select class="form-select" id="noteImportantFilter" onchange="loadStudentNotes()">
+                                            <option value="">Tümü</option>
+                                            <option value="true">Sadece Önemliler</option>
+                                            <option value="false">Normal Notlar</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">&nbsp;</label>
+                                        <div class="d-grid">
+                                            <button type="button" class="btn btn-outline-secondary" onclick="clearNoteFilters()">
+                                                <i class="fas fa-times me-1"></i>Filtreleri Temizle
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                            <!-- Notes List -->
+                            <div id="studentNotesList" class="row">
+                                <!-- Notes will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Services Tab -->
+                    <div class="tab-pane fade" id="services" role="tabpanel" style="overflow: visible; max-height: none;">
+                        <div class="container-fluid px-0">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="mb-0 text-center"><strong>HİZMETLER</strong></h5>
+                                <button type="button" class="btn btn-success" onclick="toggleAddServiceForm()">
+                                    <i class="fas fa-plus me-2"></i>YENİ HİZMET EKLE
+                                </button>
+                            </div>
+                        
+                        <!-- Add Service Form (Initially Hidden) -->
+                        <div id="addServiceFormContainer" class="card mb-4" style="display: none;">
+                            <div class="card-header">
+                                <h6 class="mb-0">Yeni Hizmet Ekle</h6>
+                            </div>
+                            <div class="card-body">
+                                <form id="addServiceForm">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="serviceName" class="form-label">Hizmet Adı</label>
+                                                <input type="text" class="form-control" id="serviceName" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="mb-3">
+                                                <label for="serviceAmount" class="form-label">Tutar</label>
+                                                <input type="number" class="form-control" id="serviceAmount" step="0.01" min="0" required onchange="calculateInstallments()">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="mb-3">
+                                                <label for="serviceCurrency" class="form-label">Para Birimi</label>
+                                                <select class="form-select" id="serviceCurrency" required>
+                                                    <option value="EUR">EUR (Euro)</option>
+                                                    <option value="USD">USD (Amerikan Doları)</option>
+                                                    <option value="CAD">CAD (Kanada Doları)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="serviceDueDate" class="form-label">Vade Tarihi</label>
+                                                <input type="date" class="form-control" id="serviceDueDate" onchange="toggleInstallmentSystem()">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3 form-check mt-4">
+                                                <input type="checkbox" class="form-check-input" id="serviceIsPaid">
+                                                <label class="form-check-label" for="serviceIsPaid">
+                                                    Ödendi
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Installment System (Initially Hidden) -->
+                                    <div id="installmentSystem" class="mt-4" style="display: block;">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h6 class="mb-0">Taksit Planı</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="row mb-3">
+                                                    <div class="col-md-4">
+                                                        <label for="installmentCount" class="form-label">Taksit Sayısı</label>
+                                                        <input type="number" class="form-control" id="installmentCount" min="1" max="12" value="1" onchange="calculateInstallments()">
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label for="installmentInterval" class="form-label">Taksit Aralığı</label>
+                                                        <select class="form-select" id="installmentInterval" onchange="calculateInstallments()">
+                                                            <option value="monthly">Aylık</option>
+                                                            <option value="weekly">Haftalık</option>
+                                                            <option value="quarterly">3 Aylık</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label for="installmentAmount" class="form-label">Taksit Tutarı</label>
+                                                        <input type="number" class="form-control" id="installmentAmount" step="0.01" readonly>
+                                                    </div>
+                                                </div>
+                                                <div id="installmentPreview" class="mb-3">
+                                                    <!-- Installment preview will be shown here -->
+                                                </div>
+                                                <button type="button" class="btn btn-info btn-sm" onclick="addInstallmentsToService()">
+                                                    <i class="fas fa-plus me-2"></i>Taksitleri Hizmete Ekle (YENİ VERSİYON)
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <button type="button" class="btn btn-success" onclick="addService()">
+                                            <i class="fas fa-save me-2"></i>Hizmet Ekle
+                                        </button>
+                                        <button type="button" class="btn btn-secondary" onclick="cancelAddService()">
+                                            <i class="fas fa-times me-2"></i>İptal
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        
+                            <div id="servicesList">
+                                <!-- Services will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Files Tab -->
+                    <div class="tab-pane fade" id="files" role="tabpanel" style="overflow: visible; max-height: none;">
+                        <div class="container-fluid px-0">
+                            <div class="row">
+                                <!-- Left Sidebar - File Categories -->
+                                <div class="col-md-3">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0 text-center">Dosya Kategorileri</h6>
+                                        </div>
+                                        <div class="card-body p-0">
+                                            <div id="fileCategoriesList">
+                                                <!-- Categories will be loaded here -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Right Main Content - File Management -->
+                                <div class="col-md-9">
+                                <!-- File Upload Area -->
+                                <div class="card mb-4">
+                                    <div class="card-body">
+                                        <div class="file-upload-area" id="fileUploadArea">
+                                            <div class="upload-icon">
+                                                <i class="fas fa-cloud-upload-alt fa-3x text-primary"></i>
+                                            </div>
+                                            <h5 class="mt-3">Yüklemek istediğiniz dosya veya resimleri sürükleyip bırakın</h5>
+                                            <p class="text-muted">Desteklenen formatlar: PDF, JPG, JPEG, PNG, HEIC</p>
+                                            <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png,.heic" style="display: none;">
+                                            <button type="button" class="btn btn-primary mt-3" onclick="document.getElementById('fileInput').click()">
+                                                <i class="fas fa-plus me-2"></i>Dosya Seç
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- File List -->
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6 class="mb-0">Dosya Listesi</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="filesList">
+                                            <!-- Files will be loaded here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    <!-- Guardians Tab -->
+                    <div class="tab-pane fade" id="guardians" role="tabpanel" style="overflow: visible; max-height: none;">
+                        <div class="container-fluid px-0">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="mb-0 text-center"><strong>VELİ BİLGİLERİ</strong></h5>
+                                <button type="button" class="btn btn-primary" onclick="showEditGuardiansModal()">
+                                    <i class="fas fa-edit me-2"></i>VELİ BİLGİLERİNİ DÜZENLE
+                                </button>
+                            </div>
+                        
+                        <!-- Mother Information -->
+                        <div class="card guardian-card mb-4">
+                            <div class="guardian-card-header bg-primary text-white">
+                                <h6 class="mb-0"><i class="fas fa-female me-2"></i>ANNE BİLGİLERİ</h6>
+                            </div>
+                            <div class="guardian-card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label"><strong>Ad Soyad:</strong></label>
+                                            <p class="guardian-info-value <%= (user.mother_name || user.mother_surname) ? '' : 'empty' %>" id="motherFullName">
+                                                <%= (user.mother_name || user.mother_surname) ? `${user.mother_name || ''} ${user.mother_surname || ''}`.trim() : 'Belirtilmemiş' %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label"><strong>Telefon:</strong></label>
+                                            <p class="guardian-info-value <%= user.mother_phone ? '' : 'empty' %>" id="motherPhone">
+                                                <%= user.mother_phone || 'Belirtilmemiş' %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label"><strong>TC Kimlik No:</strong></label>
+                                            <p class="guardian-info-value <%= user.mother_tc ? '' : 'empty' %>" id="motherTc">
+                                                <%= user.mother_tc || 'Belirtilmemiş' %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Father Information -->
+                        <div class="card guardian-card mb-4">
+                            <div class="guardian-card-header">
+                                <h6 class="mb-0"><i class="fas fa-male me-2"></i>BABA BİLGİLERİ</h6>
+                            </div>
+                            <div class="guardian-card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label"><strong>Ad Soyad:</strong></label>
+                                            <p class="guardian-info-value <%= (user.father_name || user.father_surname) ? '' : 'empty' %>" id="fatherFullName">
+                                                <%= (user.father_name || user.father_surname) ? `${user.father_name || ''} ${user.father_surname || ''}`.trim() : 'Belirtilmemiş' %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label"><strong>Telefon:</strong></label>
+                                            <p class="guardian-info-value <%= user.father_phone ? '' : 'empty' %>" id="fatherPhone">
+                                                <%= user.father_phone || 'Belirtilmemiş' %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label"><strong>TC Kimlik No:</strong></label>
+                                            <p class="guardian-info-value <%= user.father_tc ? '' : 'empty' %>" id="fatherTc">
+                                                <%= user.father_tc || 'Belirtilmemiş' %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Checklist Tab -->
+                    <div class="tab-pane fade" id="checklist" role="tabpanel" style="overflow: visible; max-height: none;">
+                        <div class="container-fluid px-0">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card border-success">
+                                        <div class="card-header bg-success text-white text-center">
+                                            <h5 class="mb-0">
+                                                <i class="fas fa-clipboard-check me-2"></i>
+                                                Öğrenci Süreç Takip Listesi
+                                            </h5>
+                                        </div>
+                                        <div class="card-body p-4">
+                                            <div id="checklistContainer">
+                                                <!-- Checklist items will be loaded here -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.checklist-item {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    margin-bottom: 10px;
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+.checklist-item:hover {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    transform: translateY(-1px);
+}
+.checklist-item.completed {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    box-shadow: 0 2px 6px rgba(40, 167, 69, 0.2);
+}
+.checklist-text {
+    flex-grow: 1;
+    margin-left: 15px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+.checklist-text.completed {
+    text-decoration: line-through;
+    color: #6c757d;
+}
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 24px;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+input:checked + .slider {
+    background-color: #28a745;
+}
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+/* Tab Navigation Styles */
+.nav-tabs {
+    border-bottom: 2px solid #dee2e6;
+    margin-bottom: 0;
+}
+
+.nav-tabs .nav-link {
+    color: #495057 !important;
+    background-color: #f8f9fa !important;
+    border: 1px solid #dee2e6 !important;
+    border-bottom: none !important;
+    margin-right: 2px;
+    border-radius: 0.375rem 0.375rem 0 0;
+    transition: all 0.3s ease;
+    padding: 12px 20px;
+    font-weight: 500;
+    text-align: center;
+    min-width: 120px;
+}
+
+.nav-tabs .nav-link:hover {
+    color: #212529 !important;
+    background-color: #e9ecef !important;
+    border-color: #dee2e6 #dee2e6 #dee2e6 !important;
+    transform: translateY(-2px);
+}
+
+.nav-tabs .nav-link.active {
+    color: #fff !important;
+    background-color: #0d6efd !important;
+    border-color: #0d6efd #0d6efd #fff !important;
+    box-shadow: 0 2px 4px rgba(13, 110, 253, 0.3);
+}
+
+.nav-tabs .nav-link i {
+    margin-right: 0.5rem;
+    font-size: 1.1em;
+}
+
+/* Remove internal scrolling */
+.tab-content {
+    overflow: visible !important;
+    max-height: none !important;
+}
+
+.tab-pane {
+    overflow: visible !important;
+    max-height: none !important;
+    padding: 20px 0;
+}
+
+/* File Management Styles */
+.file-category-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e9ecef;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.file-category-item:hover {
+    background-color: #f8f9fa;
+}
+
+.file-category-item.active {
+    background-color: #e3f2fd;
+    border-left: 4px solid #dc3545;
+}
+
+.file-category-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-color: #dc3545;
+}
+
+.file-category-name {
+    flex-grow: 1;
+    font-weight: 500;
+    color: #495057;
+}
+
+.file-category-count {
+    background-color: #6c757d;
+    color: white;
+    border-radius: 12px;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.file-upload-area {
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    padding: 40px 20px;
+    text-align: center;
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+.file-upload-area:hover {
+    border-color: #0d6efd;
+    background-color: #e3f2fd;
+}
+
+.file-upload-area.dragover {
+    border-color: #0d6efd;
+    background-color: #e3f2fd;
+    transform: scale(1.02);
+}
+
+.upload-icon {
+    margin-bottom: 16px;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.file-item:last-child {
+    border-bottom: none;
+}
+
+.file-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    font-weight: bold;
+    color: white;
+}
+
+.file-icon.pdf {
+    background-color: #dc3545;
+}
+
+.file-icon.image {
+    background-color: #28a745;
+}
+
+.file-info {
+    flex-grow: 1;
+}
+
+.file-name {
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 4px;
+}
+
+.file-meta {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+.file-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.file-action-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.file-action-btn.download {
+    background-color: #0d6efd;
+    color: white;
+}
+
+.file-action-btn.download:hover {
+    background-color: #0b5ed7;
+}
+
+.file-action-btn.delete {
+    background-color: #dc3545;
+    color: white;
+}
+
+.file-action-btn.delete:hover {
+    background-color: #bb2d3b;
+}
+
+
+
+.service-summary {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+/* Installment System Styles */
+#installmentSystem {
+    border: 2px solid #28a745;
+    border-radius: 8px;
+    background-color: #f8fff9;
+}
+
+#installmentSystem .card {
+    border: none;
+    background-color: transparent;
+}
+
+#installmentSystem .card-header {
+    background-color: #28a745;
+    color: white;
+    border-radius: 6px 6px 0 0;
+}
+
+#installmentPreview {
+    background-color: white;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 15px;
+}
+
+#installmentPreview table {
+    margin-bottom: 0;
+}
+
+#installmentPreview th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.summary-label {
+    font-weight: 600;
+    color: #495057;
+}
+
+.summary-value {
+    color: #6c757d;
+}
+
+.summary-total {
+    font-size: 18px;
+    font-weight: bold;
+    color: #0d6efd;
+}
+
+/* Avatar Styles */
+.avatar-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.avatar-img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Predefined Services Styles */
+.predefined-service-item {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.predefined-service-item:hover {
+    border-color: #0d6efd;
+    background-color: #f8f9fa;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.predefined-service-name {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 5px;
+}
+
+.predefined-service-description {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-bottom: 8px;
+}
+
+.predefined-service-type {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.predefined-service-type.school_application {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.predefined-service-type.consultancy {
+    background-color: #f3e5f5;
+    color: #7b1fa2;
+}
+
+.predefined-service-type.optional {
+    background-color: #fff3e0;
+    color: #f57c00;
+}
+
+.predefined-service-customizable {
+    font-size: 0.75rem;
+    color: #28a745;
+    font-weight: 500;
+}
+
+.predefined-service-customizable::before {
+    content: "🔧 ";
+}
+
+/* New Service Modal Styles */
+.service-section {
+    min-height: 200px;
+}
+
+.service-card {
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.service-card:hover {
+    border-color: #0d6efd;
+    background-color: #f8f9fa;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+
+.service-card.selected {
+    border-color: #28a745;
+    background-color: #d4edda;
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.25);
+}
+
+.service-card-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.service-card-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    font-size: 18px;
+    color: white;
+}
+
+.service-card-icon.school_application {
+    background: linear-gradient(135deg, #1976d2, #42a5f5);
+}
+
+.service-card-icon.consultancy {
+    background: linear-gradient(135deg, #7b1fa2, #ba68c8);
+}
+
+.service-card-icon.optional {
+    background: linear-gradient(135deg, #f57c00, #ffb74d);
+}
+
+.service-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #495057;
+    margin: 0;
+}
+
+.service-card-description {
+    font-size: 14px;
+    color: #6c757d;
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+.service-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.service-card-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.service-card-badge.school_application {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.service-card-badge.consultancy {
+    background-color: #f3e5f5;
+    color: #7b1fa2;
+}
+
+.service-card-badge.optional {
+    background-color: #fff3e0;
+    color: #f57c00;
+}
+
+.service-card-customizable {
+    font-size: 12px;
+    color: #28a745;
+    font-weight: 500;
+}
+
+.service-card-customizable::before {
+    content: "🔧 ";
+}
+
+.service-card-check {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 24px;
+    height: 24px;
+    background-color: #28a745;
+    border-radius: 50%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+}
+
+.service-card.selected .service-card-check {
+    display: flex;
+}
+
+.checklist-progress {
+    margin-bottom: 25px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.progress-bar {
+    background: linear-gradient(90deg, #28a745, #20c997);
+    border-radius: 4px;
+}
+.checklist-item {
+    margin-bottom: 10px;
+    padding: 12px 15px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+/* Guardian Information Styles */
+.guardian-info-value {
+    color: #007bff;
+    font-weight: 500;
+    font-size: 16px;
+    padding: 8px 12px;
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    margin: 0;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+.guardian-info-value.empty {
+    color: #6c757d;
+    font-style: italic;
+    background-color: #f8f9fa;
+    border: 1px dashed #dee2e6;
+}
+
+.guardian-card {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.guardian-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transform: translateY(-1px);
+}
+
+.guardian-card-header {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    border-radius: 8px 8px 0 0;
+    padding: 12px 20px;
+    font-weight: 600;
+}
+
+.guardian-card-body {
+    padding: 20px;
+    background-color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .modal-dialog {
+        margin: 10px;
+        max-width: calc(100% - 20px);
+    }
+    
+    .card-body {
+        padding: 15px;
+    }
+    
+    .row {
+        margin: 0 -5px;
+    }
+    
+    .col-md-6, .col-md-3, .col-md-4 {
+        padding: 0 5px;
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    .btn {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+    
+    .form-control, .form-select {
+        font-size: 14px;
+    }
+    
+    .modal-dialog {
+        margin: 5px;
+        max-width: calc(100% - 10px);
+    }
+}
+
+/* Tab Content Optimization */
+.tab-content {
+    position: relative;
+    background-color: #fff;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.tab-pane {
+    padding: 30px 20px;
+    min-height: 400px;
+}
+
+/* Form improvements */
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+    padding: 12px 16px;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 8px;
+}
+
+/* Card improvements */
+.card {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 1px solid #e9ecef;
+}
+
+.card-header {
+    border-radius: 12px 12px 0 0 !important;
+    border-bottom: 2px solid #e9ecef;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+}
+
+/* Button improvements */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 10px 20px;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* Container improvements */
+.container-fluid {
+    padding: 0 15px;
+}
+
+/* Centering improvements */
+.text-center {
+    text-align: center !important;
+}
+
+.d-flex.justify-content-center {
+    justify-content: center !important;
+}
+
+/* Hide any remaining "Bilgileri Kaydet" buttons */
+.hidden-save-button {
+    display: none !important;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+    .tab-pane {
+        padding: 10px 0;
+    }
+    
+    .mb-4 {
+        margin-bottom: 1rem !important;
+    }
+    
+    .mb-3 {
+        margin-bottom: 0.75rem !important;
+    }
+}
+</style>
+
+<!-- Edit Guardians Modal -->
+        <div class="modal fade" id="editGuardiansModal" tabindex="-1" aria-labelledby="editGuardiansModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="editGuardiansModalLabel">
+                    <i class="fas fa-user-friends me-2"></i>Veli Bilgilerini Düzenle
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="guardiansForm">
+                    <!-- Mother Information -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h6 class="mb-0"><i class="fas fa-female me-2"></i>ANNE BİLGİLERİ</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="motherName" class="form-label">Ad</label>
+                                        <input type="text" class="form-control" id="motherName" name="mother_name" value="<%= user.mother_name || '' %>">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="motherSurname" class="form-label">Soyad</label>
+                                        <input type="text" class="form-control" id="motherSurname" name="mother_surname" value="<%= user.mother_surname || '' %>">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="motherPhone" class="form-label">Telefon</label>
+                                        <input type="text" class="form-control" id="motherPhone" name="mother_phone" value="<%= user.mother_phone || '' %>">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="motherTc" class="form-label">TC Kimlik No</label>
+                                        <input type="text" class="form-control" id="motherTc" name="mother_tc" value="<%= user.mother_tc || '' %>">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Father Information -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h6 class="mb-0"><i class="fas fa-male me-2"></i>BABA BİLGİLERİ</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="fatherName" class="form-label">Ad</label>
+                                        <input type="text" class="form-control" id="fatherName" name="father_name" value="<%= user.father_name || '' %>">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="fatherSurname" class="form-label">Soyad</label>
+                                        <input type="text" class="form-control" id="fatherSurname" name="father_surname" value="<%= user.father_surname || '' %>">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="fatherPhone" class="form-label">Telefon</label>
+                                        <input type="text" class="form-control" id="fatherPhone" name="father_phone" value="<%= user.father_phone || '' %>">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="fatherTc" class="form-label">TC Kimlik No</label>
+                                        <input type="text" class="form-control" id="fatherTc" name="father_tc" value="<%= user.father_tc || '' %>">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-primary" onclick="saveGuardiansInfo()">
+                    <i class="fas fa-save me-2"></i>Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Load checklist when checklist tab is shown
+    const checklistTab = document.getElementById('checklist-tab');
+    console.log('Checklist tab element:', checklistTab);
+    
+    if (checklistTab) {
+        checklistTab.addEventListener('shown.bs.tab', function() {
+            console.log('Checklist tab shown, loading checklist...');
+            loadChecklist();
+        });
+        
+        // Also add click event as backup
+        checklistTab.addEventListener('click', function() {
+            console.log('Checklist tab clicked, loading checklist...');
+            setTimeout(() => {
+                loadChecklist();
+            }, 100);
+        });
+    }
+    
+    // Also load initially if checklist tab is active
+    if (checklistTab && checklistTab.classList.contains('active')) {
+        console.log('Checklist tab is initially active, loading checklist...');
+        loadChecklist();
+    }
+
+    // Load files when files tab is shown
+    const filesTab = document.getElementById('files-tab');
+    if (filesTab) {
+        filesTab.addEventListener('shown.bs.tab', function() {
+            console.log('Files tab shown, loading files...');
+            try {
+                loadFileCategories();
+                loadFiles();
+            } catch (error) {
+                console.error('Error loading files:', error);
+            }
+        });
+        
+        filesTab.addEventListener('click', function() {
+            console.log('Files tab clicked, loading files...');
+            setTimeout(() => {
+                try {
+                    loadFileCategories();
+                    loadFiles();
+                } catch (error) {
+                    console.error('Error loading files:', error);
+                }
+            }, 100);
+        });
+    }
+    
+    // Also load initially if files tab is active
+    if (filesTab && filesTab.classList.contains('active')) {
+        console.log('Files tab is initially active, loading files...');
+        try {
+            loadFileCategories();
+            loadFiles();
+        } catch (error) {
+            console.error('Error loading files:', error);
+        }
+    }
+
+
+
+
+    // File upload functionality
+    const fileInput = document.getElementById('fileInput');
+    const fileUploadArea = document.getElementById('fileUploadArea');
+
+    if (fileInput) {
+        fileInput.addEventListener('change', handleFileUpload);
+    }
+
+    if (fileUploadArea) {
+        // Drag and drop functionality
+        fileUploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            fileUploadArea.classList.add('dragover');
+        });
+
+        fileUploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            fileUploadArea.classList.remove('dragover');
+        });
+
+        fileUploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            fileUploadArea.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                uploadFiles(files);
+            }
+        });
+    }
+
+    // Form submission
+    document.getElementById('studentForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+        
+        // Convert empty strings to null for optional fields
+        Object.keys(data).forEach(key => {
+            if (data[key] === '') {
+                data[key] = null;
+            }
+        });
+        
+        fetch(`/api/admin/users/<%= user.id %>/details`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                // Show success message
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-success alert-dismissible fade show';
+                alertDiv.innerHTML = `
+                    <i class="fas fa-check-circle me-2"></i>${result.message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                document.querySelector('.section-header').appendChild(alertDiv);
+                
+                // Auto-hide after 3 seconds
+                setTimeout(() => {
+                    alertDiv.remove();
+                }, 3000);
+            } else {
+                throw new Error(result.message);
+            }
+        })
+        .catch(error => {
+            console.error('Update error:', error);
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+            alertDiv.innerHTML = `
+                <i class="fas fa-exclamation-circle me-2"></i>Hata: ${error.message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.querySelector('.section-header').appendChild(alertDiv);
+        });
+    });
+
+    // Checklist functions
+    async function loadChecklist() {
+        console.log('Loading checklist for user:', <%= user.id %>);
+        try {
+            const response = await fetch(`/api/admin/users/<%= user.id %>/checklist`, {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            console.log('Checklist response status:', response.status);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('Checklist data:', data);
+            displayChecklist(data.checklist);
+        } catch (error) {
+            console.error('Error loading checklist:', error);
+            // Show default checklist if API fails
+            showDefaultChecklist();
+        }
+    }
+
+    function displayChecklist(checklist) {
+        console.log('Displaying checklist:', checklist);
+        const container = document.getElementById('checklistContainer');
+        console.log('Checklist container:', container);
+        
+        if (!checklist || checklist.length === 0) {
+            console.log('No checklist data, showing default');
+            showDefaultChecklist();
+            return;
+        }
+
+        // Calculate progress
+        const completedCount = checklist.filter(item => item.is_completed).length;
+        const totalCount = checklist.length;
+        const progressPercentage = (completedCount / totalCount) * 100;
+
+        let html = `
+            <div class="checklist-progress mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted">İlerleme: <span id="progressCount">${completedCount}</span>/${totalCount}</span>
+                    <span class="text-muted">%<span id="progressPercentage">${Math.round(progressPercentage)}</span></span>
+                </div>
+                <div class="progress" style="height: 8px;">
+                    <div class="progress-bar" id="progressBar" style="width: ${progressPercentage}%"></div>
+                </div>
+            </div>
+        `;
+
+        checklist.forEach(item => {
+            html += `
+                <div class="checklist-item ${item.is_completed ? 'completed' : ''}" data-item-id="${item.id}">
+                    <label class="toggle-switch">
+                        <input type="checkbox" ${item.is_completed ? 'checked' : ''} 
+                               onchange="toggleChecklistItem(${item.id}, this.checked)">
+                        <span class="slider"></span>
+                    </label>
+                    <div class="checklist-text ${item.is_completed ? 'completed' : ''}">
+                        ${item.item_name}
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    }
+
+    function showDefaultChecklist() {
+        console.log('Showing default checklist');
+        
+        // First, try to load real checklist from database
+        loadChecklistFromDatabase();
+    }
+
+    async function loadChecklistFromDatabase() {
+        try {
+            console.log('Loading checklist from database for user:', <%= user.id %>);
+            const response = await fetch(`/api/admin/users/<%= user.id %>/checklist`, {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            console.log('Database checklist response status:', response.status);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('Database checklist data:', data);
+            
+            if (data.checklist && data.checklist.length > 0) {
+                displayChecklist(data.checklist);
+            } else {
+                // If no checklist exists, create it
+                await createChecklistForUser();
+            }
+        } catch (error) {
+            console.error('Error loading checklist from database:', error);
+            showDefaultChecklistFallback();
+        }
+    }
+
+    async function createChecklistForUser() {
+        try {
+            console.log('Creating checklist for user:', <%= user.id %>);
+            const response = await fetch(`/api/admin/users/<%= user.id %>/checklist/initialize`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            console.log('Create checklist response status:', response.status);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log('Create checklist result:', result);
+            
+            if (result.success) {
+                // Reload checklist after creation
+                loadChecklistFromDatabase();
+            } else {
+                throw new Error(result.message);
+            }
+        } catch (error) {
+            console.error('Error creating checklist:', error);
+            showDefaultChecklistFallback();
+        }
+    }
+
+    function showDefaultChecklistFallback() {
+        console.log('Showing fallback checklist');
+        const defaultItems = [
+            'Her okul için niyet mektubu hazırlandı ve sisteme yüklendi.',
+            'CV düzenlendi ve sisteme yüklendi.',
+            'Referans mektupları alındı ve sisteme yüklendi.',
+            'Danışmanlık Ücreti ödendi.',
+            'Vize evraklarının tam olduğu kontrol edildi.',
+            'İlgili ülkede banka hesabı açıldı.',
+            'İlgili ülkenin telefon hattı açıldı',
+            'İlgili şehir kartı düzenlendi.',
+            'Üniversite kabul mektubu Türkiyeye gönderildi.',
+            'Dil yeterliliğini kanıtlayan sertifikalar sisteme yüklendi.',
+            'Eğitim geçmişini kanıtlayan belgeler sisteme yüklendi.',
+            'Finansal durumu kanıtlayan ve vize için gerekli olan belgeler sisteme yüklendi.',
+            'Üniversite başvurusu için gerekli yazılı belgeler eklendi.',
+            'Apostil ve çeviri gereken vize için gerekli belgeler sisteme yüklendi.'
+        ];
+
+        const container = document.getElementById('checklistContainer');
+        
+        let html = `
+            <div class="checklist-progress mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted">İlerleme: <span id="progressCount">0</span>/${defaultItems.length}</span>
+                    <span class="text-muted">%<span id="progressPercentage">0</span></span>
+                </div>
+                <div class="progress" style="height: 8px;">
+                    <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+                </div>
+            </div>
+        `;
+
+        defaultItems.forEach((item, index) => {
+            html += `
+                <div class="checklist-item" data-item-id="${index + 1}">
+                    <label class="toggle-switch">
+                        <input type="checkbox" onchange="toggleChecklistItem(${index + 1}, this.checked)">
+                        <span class="slider"></span>
+                    </label>
+                    <div class="checklist-text">
+                        ${item}
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+        console.log('Fallback checklist HTML set:', html);
+    }
+
+    // Make toggleChecklistItem globally accessible
+    window.toggleChecklistItem = async function(itemId, isCompleted) {
+        console.log('Toggling checklist item:', itemId, 'to:', isCompleted);
+        try {
+            const response = await fetch(`/api/admin/users/<%= user.id %>/checklist/${itemId}`, {
+                method: 'PUT',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ is_completed: isCompleted })
+            });
+
+            console.log('Toggle response status:', response.status);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log('Toggle result:', result);
+            
+            if (result.success) {
+                // Update UI immediately
+                const item = document.querySelector(`[data-item-id="${itemId}"]`);
+                const text = item.querySelector('.checklist-text');
+                
+                if (isCompleted) {
+                    item.classList.add('completed');
+                    text.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                    text.classList.remove('completed');
+                }
+                
+                // Update progress immediately
+                updateProgress();
+                console.log('UI updated successfully');
+            } else {
+                throw new Error(result.message);
+            }
+        } catch (error) {
+            console.error('Error toggling checklist item:', error);
+            showAlert('danger', 'Checklist güncellenirken hata oluştu: ' + error.message);
+        }
+    };
+
+    // Make updateProgress globally accessible
+    window.updateProgress = function() {
+        const items = document.querySelectorAll('.checklist-item');
+        const completedItems = document.querySelectorAll('.checklist-item.completed');
+        const totalCount = items.length;
+        const completedCount = completedItems.length;
+        const progressPercentage = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+        
+        console.log('Updating progress:', {
+            totalCount,
+            completedCount,
+            progressPercentage
+        });
+        
+        // Update progress display
+        const progressCountElement = document.getElementById('progressCount');
+        const progressPercentageElement = document.getElementById('progressPercentage');
+        const progressBarElement = document.getElementById('progressBar');
+        
+        console.log('Progress elements:', {
+            progressCountElement,
+            progressPercentageElement,
+            progressBarElement
+        });
+        
+        if (progressCountElement) {
+            progressCountElement.textContent = completedCount;
+        }
+        if (progressPercentageElement) {
+            progressPercentageElement.textContent = progressPercentage;
+        }
+        if (progressBarElement) {
+            progressBarElement.style.width = progressPercentage + '%';
+        }
+        
+        console.log('Progress updated to:', completedCount + '/' + totalCount, progressPercentage + '%');
+    };
+
+    // Make showAlert globally accessible
+    window.showAlert = function(type, message) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+        alertDiv.style.top = '20px';
+        alertDiv.style.right = '20px';
+        alertDiv.style.zIndex = '9999';
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.body.appendChild(alertDiv);
+        
+        setTimeout(() => {
+            if (alertDiv.parentNode) {
+                alertDiv.parentNode.removeChild(alertDiv);
+            }
+        }, 5000);
+    };
+
+    // File Management Functions
+    let selectedCategoryId = null;
+
+    async function loadFileCategories() {
+        try {
+            console.log('Loading file categories for user:', <%= user.id %>);
+            const response = await fetch(`/api/admin/users/<%= user.id %>/file-categories`, {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            console.log('File categories response status:', response.status);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('File categories data:', data);
+            displayFileCategories(data.categories);
+        } catch (error) {
+            console.error('Error loading file categories:', error);
+            // Fallback to default categories if API fails
+            const defaultCategories = [
+                { id: 'education', category_name: 'Eğitim Belgeleri', file_count: 0 },
+                { id: 'identity', category_name: 'Kimlik Belgeleri', file_count: 0 },
+                { id: 'language', category_name: 'Dil Sertifikaları', file_count: 0 },
+                { id: 'other', category_name: 'Diğer Belgeler', file_count: 0 }
+            ];
+            displayFileCategories(defaultCategories);
+        }
+    }
+
+    function displayFileCategories(categories) {
+        const container = document.getElementById('fileCategoriesList');
+        
+        if (!categories || categories.length === 0) {
+            container.innerHTML = '<div class="p-3 text-center text-muted">Kategori bulunamadı</div>';
+            return;
+        }
+
+        let html = '';
+        categories.forEach((category, index) => {
+            const isActive = index === 0 ? 'active' : '';
+            const categoryDisplayName = getCategoryDisplayName(category.category_name || category.id);
+            html += `
+                <div class="file-category-item ${isActive}" onclick="selectCategory('${category.id}')">
+                    <div class="file-category-name">${categoryDisplayName}</div>
+                    <div class="file-category-count">${category.file_count}</div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+        
+        // Select first category by default
+        if (categories.length > 0) {
+            selectedCategoryId = categories[0].id;
+        }
+    }
+
+    // Convert category ID to Turkish display name
+    function getCategoryDisplayName(categoryId) {
+        const categoryMap = {
+            'education': 'Eğitim Belgeleri',
+            'identity': 'Kimlik Belgeleri', 
+            'language': 'Dil Sertifikaları',
+            'other': 'Diğer Belgeler'
+        };
+        return categoryMap[categoryId] || categoryId;
+    }
+
+    async function loadFiles() {
+        try {
+            console.log('Loading files for user:', <%= user.id %>);
+            const response = await fetch(`/api/admin/users/<%= user.id %>/documents`, {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            console.log('Files response status:', response.status);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('Files data:', data);
+            displayFiles(data.documents);
+        } catch (error) {
+            console.error('Error loading files:', error);
+            showAlert('danger', 'Dosyalar yüklenirken hata oluştu: ' + error.message);
+        }
+    }
+
+    function displayFiles(files) {
+        const container = document.getElementById('filesList');
+        
+        if (!files || files.length === 0) {
+            container.innerHTML = '<div class="text-center text-muted py-4">Henüz dosya yüklenmemiş</div>';
+            return;
+        }
+
+        let html = '';
+        files.forEach(file => {
+            // Determine file type from mime_type
+            const isPdf = file.mime_type && file.mime_type.includes('pdf');
+            const isImage = file.mime_type && file.mime_type.startsWith('image/');
+            const fileIconClass = isPdf ? 'pdf' : (isImage ? 'image' : 'pdf');
+            const fileType = isPdf ? 'PDF' : (isImage ? 'IMG' : 'DOC');
+            const timeAgo = getTimeAgo(file.created_at);
+            
+            html += `
+                <div class="file-item">
+                    <div class="file-icon ${fileIconClass}">
+                        ${fileType}
+                    </div>
+                    <div class="file-info">
+                        <div class="file-name">${file.title || file.original_filename}</div>
+                        <div class="file-meta">
+                            <i class="fas fa-info-circle me-1"></i>
+                            ${file.original_filename} • ${timeAgo}
+                        </div>
+                    </div>
+                    <div class="file-actions">
+                        <button class="file-action-btn download" onclick="downloadFile(${file.id})" title="İndir">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button class="file-action-btn delete" onclick="deleteFile(${file.id})" title="Sil">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    }
+
+    // Make file functions globally accessible
+    window.selectCategory = function(categoryId) {
+        selectedCategoryId = categoryId;
+        
+        // Update active category
+        document.querySelectorAll('.file-category-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        event.target.closest('.file-category-item').classList.add('active');
+        
+        // Load files for selected category
+        loadFiles();
+    };
+
+    window.downloadFile = async function(fileId) {
+        try {
+            console.log('Downloading file:', fileId);
+            const response = await fetch(`/api/admin/users/<%= user.id %>/documents/${fileId}/download`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            // Get filename from Content-Disposition header
+            const contentDisposition = response.headers.get('Content-Disposition');
+            let filename = 'document';
+            if (contentDisposition) {
+                const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+                if (filenameMatch) {
+                    filename = filenameMatch[1];
+                }
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            
+            showAlert('success', 'Dosya başarıyla indirildi: ' + filename);
+        } catch (error) {
+            console.error('Error downloading file:', error);
+            showAlert('danger', 'Dosya indirilirken hata oluştu: ' + error.message);
+        }
+    };
+
+    window.deleteFile = async function(fileId) {
+        if (!confirm('Bu dosyayı silmek istediğinizden emin misiniz?')) {
+            return;
+        }
+
+        try {
+            console.log('Deleting file:', fileId);
+            const response = await fetch(`/api/admin/users/<%= user.id %>/documents/${fileId}`, {
+                method: 'DELETE',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log('Delete result:', result);
+            
+            if (result.success) {
+                showAlert('success', 'Dosya başarıyla silindi');
+                loadFileCategories();
+                loadFiles();
+            } else {
+                throw new Error(result.message);
+            }
+        } catch (error) {
+            console.error('Error deleting file:', error);
+            showAlert('danger', 'Dosya silinirken hata oluştu: ' + error.message);
+        }
+    };
+
+    function getTimeAgo(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffInSeconds = Math.floor((now - date) / 1000);
+        
+        if (diffInSeconds < 60) return 'Az önce';
+        if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} dakika önce`;
+        if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} saat önce`;
+        if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)} gün önce`;
+        if (diffInSeconds < 31536000) return `${Math.floor(diffInSeconds / 2592000)} ay önce`;
+        return `${Math.floor(diffInSeconds / 31536000)} yıl önce`;
+    }
+
+    // File upload functions
+    function handleFileUpload(event) {
+        const files = event.target.files;
+        if (files.length > 0) {
+            uploadFiles(files);
+        }
+    }
+
+    async function uploadFiles(files) {
+        if (!selectedCategoryId) {
+            showAlert('warning', 'Lütfen önce bir kategori seçin');
+            return;
+        }
+
+        const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png', 'image/heic'];
+        const maxSize = 10 * 1024 * 1024; // 10MB
+
+        for (let file of files) {
+            // Validate file type
+            if (!allowedTypes.includes(file.type)) {
+                showAlert('danger', `Dosya türü desteklenmiyor: ${file.name}. Sadece PDF, JPG, JPEG, PNG, HEIC dosyaları yüklenebilir.`);
+                continue;
+            }
+
+            // Validate file size
+            if (file.size > maxSize) {
+                showAlert('danger', `Dosya boyutu çok büyük: ${file.name}. Maksimum 10MB yüklenebilir.`);
+                continue;
+            }
+
+            await uploadSingleFile(file);
+        }
+
+        // Clear file input
+        document.getElementById('fileInput').value = '';
+    }
+
+    async function uploadSingleFile(file) {
+        try {
+            console.log('Uploading file:', file.name);
+            
+            // Get title and description from user input
+            const title = prompt('Belge başlığını girin:', file.name);
+            if (!title) {
+                showAlert('warning', 'Belge başlığı gereklidir');
+                return;
+            }
+            
+            const description = prompt('Belge açıklamasını girin (isteğe bağlı):', '');
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('title', title);
+            formData.append('category', selectedCategoryId);
+            formData.append('description', description || '');
+
+            const response = await fetch(`/api/admin/users/<%= user.id %>/files/upload`, {
+                method: 'POST',
+                credentials: 'include',
+                body: formData
+            });
+
+            console.log('Upload response status:', response.status);
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log('Upload result:', result);
+
+            if (result.success) {
+                showAlert('success', `Dosya başarıyla yüklendi: ${file.name}`);
+                // Reload categories and files
+                loadFileCategories();
+                loadFiles();
+            } else {
+                throw new Error(result.message);
+            }
+        } catch (error) {
+            console.error('Error uploading file:', error);
+            showAlert('danger', `Dosya yüklenirken hata oluştu: ${file.name} - ${error.message}`);
+        }
+    }
+
+
+
+
+
+
+
+    // Services Tab Functions
+    const servicesTab = document.getElementById('services-tab');
+    if (servicesTab) {
+        servicesTab.addEventListener('shown.bs.tab', function() {
+            console.log('Services tab shown, loading services...');
+            loadServices();
+        });
+    }
+
+
+    // Load services
+    async function loadServices() {
+        try {
+            console.log('Loading services for user:', <%= user.id %>);
+            const response = await fetch(`/api/admin/users/<%= user.id %>/services`, {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('Services data:', data);
+            console.log('Services:', data.services);
+            displayServices(data.services);
+        } catch (error) {
+            console.error('Error loading services:', error);
+            showAlert('danger', 'Hizmetler yüklenirken hata oluştu: ' + error.message);
+        }
+    }
+
+    // Display services
+    function displayServices(services) {
+        const container = document.getElementById('servicesList');
+        
+        console.log('Displaying services:', services);
+        
+        if (!services || services.length === 0) {
+            container.innerHTML = '<div class="text-center text-muted py-4">Henüz hizmet eklenmemiş</div>';
+            return;
+        }
+
+        let html = '';
+        services.forEach(service => {
+            const statusClass = service.is_paid ? 'text-success' : 'text-danger';
+            const statusText = service.is_paid ? 'Ödendi' : 'Ödenmedi';
+            const dueDateText = service.due_date ? new Date(service.due_date).toLocaleDateString('tr-TR') : 'Vade tarihi belirtilmemiş';
+
+            html += `
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h6 class="card-title">${service.service_name}</h6>
+                                <p class="card-text">
+                                    <strong>Tutar:</strong> ${service.amount} ${service.currency}<br>
+                                    <strong>Vade:</strong> ${dueDateText}<br>
+                                    <strong>Durum:</strong> <span class="${statusClass}">${statusText}</span>
+                                </p>
+                                
+                                ${service.has_installments && service.installments && service.installments.length > 0 ? `
+                                    <div class="mt-3">
+                                        <h6 class="mb-2">Taksit Planı (${service.installments.length} taksit)</h6>
+                                        <div class="table-responsive">
+                                            <table class="table table-sm table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Taksit No</th>
+                                                        <th>Tutar</th>
+                                                        <th>Vade Tarihi</th>
+                                                        <th>Durum</th>
+                                                        <th>İşlem</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    ${service.installments.map(installment => {
+                                                        const installmentDueDate = new Date(installment.due_date).toLocaleDateString('tr-TR');
+                                                        const installmentStatusBadge = installment.is_paid ? 'badge bg-success' : 'badge bg-warning';
+                                                        const installmentStatusText = installment.is_paid ? 'Ödendi' : 'Bekliyor';
+                                                        return `
+                                                            <tr>
+                                                                <td>${installment.installment_number}</td>
+                                                                <td>${installment.amount} ${service.currency}</td>
+                                                                <td>${installmentDueDate}</td>
+                                                                <td><span class="${installmentStatusBadge}">${installmentStatusText}</span></td>
+                                                                <td>
+                                                                    ${!installment.is_paid ? `
+                                                                        <button class="btn btn-success btn-sm" onclick="markInstallmentPaid(${installment.id})">
+                                                                            <i class="fas fa-check"></i> Ödendi
+                                                                        </button>
+                                                                    ` : `
+                                                                        <button class="btn btn-secondary btn-sm" onclick="markInstallmentUnpaid(${installment.id})">
+                                                                            <i class="fas fa-undo"></i> Geri Al
+                                                                        </button>
+                                                                    `}
+                                                                </td>
+                                                            </tr>
+                                                        `;
+                                                    }).join('')}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                            <div class="ms-3">
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteService(${service.id})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    }
+
+    // Toggle add service form
+    window.toggleAddServiceForm = function() {
+        const formContainer = document.getElementById('addServiceFormContainer');
+        const button = document.querySelector('button[onclick="toggleAddServiceForm()"]');
+        
+        if (formContainer.style.display === 'none') {
+            formContainer.style.display = 'block';
+            button.innerHTML = '<i class="fas fa-minus me-2"></i>FORMU GİZLE';
+            button.classList.remove('btn-success');
+            button.classList.add('btn-secondary');
+            // Show installment system by default
+            document.getElementById('installmentSystem').style.display = 'block';
+        } else {
+            formContainer.style.display = 'none';
+            button.innerHTML = '<i class="fas fa-plus me-2"></i>YENİ HİZMET EKLE';
+            button.classList.remove('btn-secondary');
+            button.classList.add('btn-success');
+            document.getElementById('addServiceForm').reset();
+            // Hide installment system when form is closed
+            document.getElementById('installmentSystem').style.display = 'none';
+        }
+    };
+
+    // Cancel add service
+    window.cancelAddService = function() {
+        document.getElementById('addServiceForm').reset();
+        document.getElementById('installmentSystem').style.display = 'none';
+        document.getElementById('installmentPreview').innerHTML = '';
+        window.serviceInstallments = null;
+        toggleAddServiceForm();
+    };
+
+    // Toggle installment system based on due date
+    window.toggleInstallmentSystem = function() {
+        console.log('toggleInstallmentSystem called');
+        const dueDate = document.getElementById('serviceDueDate').value;
+        const installmentSystem = document.getElementById('installmentSystem');
+        
+        console.log('Due date:', dueDate);
+        console.log('Installment system element:', installmentSystem);
+        
+        if (dueDate) {
+            installmentSystem.style.display = 'block';
+            console.log('Installment system shown');
+            calculateInstallments();
+        } else {
+            installmentSystem.style.display = 'none';
+            console.log('Installment system hidden');
+        }
+    };
+
+    // Calculate installments - UPDATED VERSION
+    window.calculateInstallments = function() {
+        console.log('🔧 calculateInstallments called - NEW VERSION');
+        
+        const totalAmount = parseFloat(document.getElementById('serviceAmount').value) || 0;
+        const installmentCount = parseInt(document.getElementById('installmentCount').value) || 1;
+        
+        console.log('📊 Calculation data:', { totalAmount, installmentCount });
+        
+        if (totalAmount > 0 && installmentCount > 0) {
+            const installmentAmount = totalAmount / installmentCount;
+            document.getElementById('installmentAmount').value = installmentAmount.toFixed(2);
+            console.log('✅ Calculated installment amount:', installmentAmount.toFixed(2));
+            
+            // Show installment preview if due date is set
+            const dueDate = document.getElementById('serviceDueDate').value;
+            if (dueDate) {
+                console.log('📅 Due date found, showing preview...');
+                showInstallmentPreview();
+            } else {
+                console.log('❌ No due date, skipping preview');
+            }
+        } else {
+            console.log('❌ Invalid data for calculation');
+        }
+    };
+
+    // Show installment preview - UPDATED VERSION
+    window.showInstallmentPreview = function() {
+        console.log('🔧 showInstallmentPreview called - NEW VERSION');
+        
+        const dueDate = document.getElementById('serviceDueDate').value;
+        const installmentCount = parseInt(document.getElementById('installmentCount').value) || 1;
+        const installmentInterval = document.getElementById('installmentInterval').value;
+        const installmentAmount = document.getElementById('installmentAmount').value;
+        const currency = document.getElementById('serviceCurrency').value;
+        
+        console.log('📊 Preview data:', {
+            dueDate, installmentCount, installmentInterval, installmentAmount, currency
+        });
+        
+        if (!dueDate || !installmentAmount) {
+            console.log('❌ Missing dueDate or installmentAmount, returning');
+            return;
+        }
+        
+        const previewContainer = document.getElementById('installmentPreview');
+        if (!previewContainer) {
+            console.log('❌ installmentPreview container not found');
+            return;
+        }
+        
+        console.log('✅ Creating installment preview table...');
+        
+        let html = '<h6 class="text-success">📋 Taksit Önizlemesi:</h6><div class="table-responsive"><table class="table table-sm table-bordered table-striped">';
+        html += '<thead class="table-dark"><tr><th>Taksit No</th><th>Tutar</th><th>Vade Tarihi</th><th>Durum</th></tr></thead><tbody>';
+        
+        const startDate = new Date(dueDate);
+        
+        for (let i = 1; i <= installmentCount; i++) {
+            let installmentDate = new Date(startDate);
+            
+            switch (installmentInterval) {
+                case 'weekly':
+                    installmentDate.setDate(startDate.getDate() + (i - 1) * 7);
+                    break;
+                case 'monthly':
+                    installmentDate.setMonth(startDate.getMonth() + (i - 1));
+                    break;
+                case 'quarterly':
+                    installmentDate.setMonth(startDate.getMonth() + (i - 1) * 3);
+                    break;
+            }
+            
+            html += `<tr>
+                <td><strong>${i}</strong></td>
+                <td><span class="text-primary">${installmentAmount} ${currency}</span></td>
+                <td>${installmentDate.toLocaleDateString('tr-TR')}</td>
+                <td><span class="badge bg-warning">Bekliyor</span></td>
+            </tr>`;
+        }
+        
+        html += '</tbody></table></div>';
+        previewContainer.innerHTML = html;
+        console.log('✅ Installment preview HTML set successfully!');
+        console.log('📋 Preview HTML:', html);
+    };
+
+    // Add installments to service - UPDATED VERSION
+    window.addInstallmentsToService = function() {
+        console.log('🔧 addInstallmentsToService called - NEW VERSION');
+        
+        const installmentCount = parseInt(document.getElementById('installmentCount').value) || 1;
+        const installmentInterval = document.getElementById('installmentInterval').value;
+        const installmentAmount = document.getElementById('installmentAmount').value;
+        
+        console.log('📊 Installment data:', { installmentCount, installmentInterval, installmentAmount });
+        
+        if (!installmentAmount || installmentAmount <= 0) {
+            showAlert('error', 'Lütfen geçerli bir taksit tutarı girin');
+            return;
+        }
+        
+        // Store installment data for later use
+        window.serviceInstallments = {
+            count: installmentCount,
+            interval: installmentInterval,
+            amount: installmentAmount
+        };
+        
+        console.log('💾 Installments prepared:', window.serviceInstallments);
+        
+        // Show the preview
+        showInstallmentPreview();
+        
+        showAlert('success', `${installmentCount} taksit planı hazırlandı ve önizleme gösterildi!`);
+    };
+
+    // Add service
+    window.addService = async function() {
+        try {
+            const serviceName = document.getElementById('serviceName').value;
+            const amount = parseFloat(document.getElementById('serviceAmount').value);
+            const currency = document.getElementById('serviceCurrency').value;
+            const dueDate = document.getElementById('serviceDueDate').value || null;
+            const isPaid = document.getElementById('serviceIsPaid').checked;
+            
+            if (!serviceName || !amount) {
+                showAlert('warning', 'Lütfen tüm gerekli alanları doldurun');
+                return;
+            }
+            
+            // Auto-prepare installments if due date exists and no installments prepared
+            if (dueDate && !window.serviceInstallments) {
+                const installmentCount = parseInt(document.getElementById('installmentCount').value) || 1;
+                const installmentInterval = document.getElementById('installmentInterval').value;
+                const installmentAmount = document.getElementById('installmentAmount').value;
+                
+                if (installmentAmount && installmentAmount > 0) {
+                    window.serviceInstallments = {
+                        count: installmentCount,
+                        interval: installmentInterval,
+                        amount: installmentAmount
+                    };
+                    console.log('Auto-prepared installments:', window.serviceInstallments);
+                }
+            }
+            
+            // If due date exists but no installments prepared, prepare them now
+            if (dueDate && !window.serviceInstallments) {
+                const installmentCount = parseInt(document.getElementById('installmentCount').value) || 1;
+                const installmentInterval = document.getElementById('installmentInterval').value;
+                const installmentAmount = document.getElementById('installmentAmount').value;
+                
+                if (installmentAmount && installmentAmount > 0) {
+                    window.serviceInstallments = {
+                        count: installmentCount,
+                        interval: installmentInterval,
+                        amount: installmentAmount
+                    };
+                    console.log('Last-minute prepared installments:', window.serviceInstallments);
+                }
+            }
+            
+            console.log('Adding service with data:', {
+                serviceName, amount, currency, dueDate, isPaid,
+                has_installments: window.serviceInstallments ? true : false,
+                installments: window.serviceInstallments
+            });
+            
+            const response = await fetch(`/api/admin/users/<%= user.id %>/services`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    service_name: serviceName,
+                    amount: amount,
+                    currency: currency,
+                    due_date: dueDate,
+                    payment_date: null,
+                    is_paid: isPaid,
+                    has_installments: window.serviceInstallments ? true : false,
+                    installments: window.serviceInstallments || null
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            
+            if (result.success) {
+                showAlert('success', 'Hizmet başarıyla eklendi');
+                loadServices();
+                // Close form
+                cancelAddService();
+                // Clear installment data
+                window.serviceInstallments = null;
+                // Clear installment preview
+                document.getElementById('installmentPreview').innerHTML = '';
+            } else {
+                throw new Error(result.message);
+            }
+        } catch (error) {
+            console.error('Error adding service:', error);
+            showAlert('danger', 'Hizmet eklenirken hata oluştu: ' + error.message);
+        }
+    };
+
+    // Delete service
+    window.deleteService = async function(serviceId) {
+        if (!confirm('Bu hizmeti silmek istediğinizden emin misiniz?')) {
+            return;
+        }
+
+        try {
+            console.log('Deleting service:', serviceId);
+            const response = await fetch(`/api/admin/users/<%= user.id %>/services/${serviceId}`, {
+                method: 'DELETE',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            
+            if (result.success) {
+                showAlert('success', 'Hizmet başarıyla silindi');
+                loadServices();
+            } else {
+                throw new Error(result.message);
+            }
+        } catch (error) {
+            console.error('Error deleting service:', error);
+            showAlert('danger', 'Hizmet silinirken hata oluştu: ' + error.message);
+        }
+    };
+
+    // Mark installment as paid
+    window.markInstallmentPaid = async function(installmentId) {
+        try {
+            const response = await fetch(`/api/admin/installments/${installmentId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    is_paid: true,
+                    payment_date: new Date().toISOString().split('T')[0]
+                })
+            });
+
+            const result = await response.json();
+            
+            if (result.success) {
+                showAlert('success', 'Taksit ödendi olarak işaretlendi');
+                loadServices();
+            } else {
+                throw new Error(result.message);
+            }
+        } catch (error) {
+            console.error('Error marking installment paid:', error);
+            showAlert('error', 'Taksit güncellenirken hata oluştu: ' + error.message);
+        }
+    };
+
+    // Mark installment as unpaid
+    window.markInstallmentUnpaid = async function(installmentId) {
+        try {
+            const response = await fetch(`/api/admin/installments/${installmentId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    is_paid: false,
+                    payment_date: null
+                })
+            });
+
+            const result = await response.json();
+            
+            if (result.success) {
+                showAlert('success', 'Taksit ödenmedi olarak işaretlendi');
+                loadServices();
+            } else {
+                throw new Error(result.message);
+            }
+        } catch (error) {
+            console.error('Error marking installment unpaid:', error);
+            showAlert('error', 'Taksit güncellenirken hata oluştu: ' + error.message);
+        }
+    };
+
+});
+
+async function changeAvatar() {
+    console.log('🔧 Changing avatar...');
+    
+    // Create file input for avatar upload
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/jpeg,image/jpg,image/png,image/gif,image/webp';
+    fileInput.style.display = 'none';
+    
+    fileInput.addEventListener('change', async function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                showAlert('danger', 'Lütfen sadece resim dosyası seçin!');
+                return;
+            }
+            
+            // Validate specific image formats (exclude HEIC)
+            const allowedFormats = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+            if (!allowedFormats.includes(file.type)) {
+                showAlert('danger', 'Desteklenmeyen resim formatı! Lütfen JPG, PNG, GIF veya WebP formatında resim yükleyin.');
+                return;
+            }
+            
+            // Validate file size (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                showAlert('danger', 'Dosya boyutu çok büyük! Maksimum 5MB yüklenebilir.');
+                return;
+            }
+            
+            try {
+                // Show loading
+                showAlert('info', 'Avatar yükleniyor...');
+                console.log('📤 Uploading avatar for user:', '<%= user.id %>');
+                console.log('📤 Upload URL:', `/admin/users/<%= user.id %>/avatar`);
+                
+                // Create FormData
+                const formData = new FormData();
+                formData.append('avatar', file);
+                console.log('📁 File details:', { name: file.name, size: file.size, type: file.type });
+                console.log('📁 FormData entries:', Array.from(formData.entries()));
+                
+                // Upload to server
+                const response = await fetch(`/admin/users/<%= user.id %>/avatar`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: formData
+                });
+                
+                console.log('📡 Response status:', response.status);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('❌ Server error response:', errorText);
+                    throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+                }
+                
+                const result = await response.json();
+                console.log('📡 Response result:', result);
+                
+                if (result.success) {
+                    // Update avatar image
+                    const avatarImg = document.getElementById('userAvatar');
+                    console.log('🖼️ Avatar element found:', avatarImg);
+                    console.log('🖼️ New avatar URL:', result.avatar_url);
+                    console.log('🖼️ Avatar URL length:', result.avatar_url ? result.avatar_url.length : 'null');
+                    
+                    if (avatarImg) {
+                        // Direct base64 data URL, no caching needed
+                        avatarImg.src = result.avatar_url;
+                        console.log('🖼️ Avatar src updated to:', avatarImg.src.substring(0, 50) + '...');
+                        
+                        // Force image reload
+                        avatarImg.onload = function() {
+                            console.log('🖼️ Avatar image loaded successfully');
+                        };
+                        avatarImg.onerror = function() {
+                            console.error('🖼️ Avatar image failed to load');
+                        };
+                    } else {
+                        console.error('🖼️ Avatar element not found!');
+                    }
+                    
+                    showAlert('success', 'Avatar başarıyla değiştirildi!');
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                console.error('❌ Error uploading avatar:', error);
+                showAlert('danger', 'Avatar yüklenirken hata oluştu: ' + error.message);
+            }
+        }
+    });
+    
+    document.body.appendChild(fileInput);
+    fileInput.click();
+    document.body.removeChild(fileInput);
+}
+
+// Notes functionality
+let currentNoteId = null;
+
+// Load student notes
+async function loadStudentNotes() {
+    try {
+        console.log('🔧 Loading student notes...');
+        
+        // Show loading state
+        const notesList = document.getElementById('studentNotesList');
+        notesList.innerHTML = `
+            <div class="col-12">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Yükleniyor...</span>
+                    </div>
+                    <p class="mt-2 text-muted">Notlar yükleniyor...</p>
+                </div>
+            </div>
+        `;
+        
+        const category = document.getElementById('noteCategoryFilter').value;
+        const priority = document.getElementById('notePriorityFilter').value;
+        const isImportant = document.getElementById('noteImportantFilter').value;
+
+        let url = `/api/admin/users/<%= user.id %>/notes`;
+
+        const params = new URLSearchParams();
+        if (category) params.append('category', category);
+        if (priority) params.append('priority', priority);
+        if (isImportant) params.append('is_important', isImportant);
+
+        if (params.toString()) {
+            url += '?' + params.toString();
+        }
+
+        console.log('📡 Notes API URL:', url);
+
+        const response = await fetch(url, {
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log('📊 Notes result:', result);
+        
+        if (result.success) {
+            displayStudentNotes(result.notes || []);
+        } else {
+            throw new Error(result.message || 'Notlar yüklenemedi');
+        }
+    } catch (error) {
+        console.error('❌ Error loading student notes:', error);
+        const notesList = document.getElementById('studentNotesList');
+        notesList.innerHTML = `
+            <div class="col-12">
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Notlar yüklenirken hata oluştu: ${error.message}
+                </div>
+            </div>
+        `;
+    }
+}
+
+// Display student notes
+function displayStudentNotes(notes) {
+    console.log('🔧 Displaying student notes:', notes);
+    const notesList = document.getElementById('studentNotesList');
+    
+    if (notes.length === 0) {
+        notesList.innerHTML = `
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="fas fa-sticky-note fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">Henüz not bulunmuyor</h5>
+                    <p class="text-muted">Bu öğrenci için henüz not eklenmemiş.</p>
+                </div>
+            </div>
+        `;
+        return;
+    }
+
+    let html = '';
+    notes.forEach(note => {
+        const priorityClass = getNotePriorityClass(note.priority);
+        const categoryClass = getNoteCategoryClass(note.category);
+        const importantIcon = note.is_important ? '<i class="fas fa-star text-warning"></i>' : '';
+        
+        html += `
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 ${note.is_important ? 'border-warning' : ''}">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="badge ${categoryClass} me-2">${getNoteCategoryName(note.category)}</span>
+                            <span class="badge ${priorityClass}">${getNotePriorityName(note.priority)}</span>
+                        </div>
+                        <div>
+                            ${importantIcon}
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-primary" onclick="editStudentNote(${note.id})" title="Düzenle">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-outline-danger" onclick="deleteStudentNote(${note.id})" title="Sil">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-title">${note.title}</h6>
+                        <p class="card-text">${note.content}</p>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-muted">
+                            <i class="fas fa-clock me-1"></i>
+                            ${new Date(note.created_at).toLocaleDateString('tr-TR')}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    notesList.innerHTML = html;
+    console.log('✅ Student notes displayed successfully');
+}
+
+// Show add note modal
+function showAddNoteModal() {
+    try {
+        console.log('🔧 Showing add note modal');
+        currentNoteId = null;
+    
+    // Create modal HTML
+    const modalHtml = `
+        <div class="modal fade" id="studentNoteModal" tabindex="-1" aria-labelledby="studentNoteModalLabel" aria-hidden="true" style="z-index: 9999;">
+            <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="studentNoteModalLabel">Yeni Not Ekle</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="studentNoteForm">
+                            <div class="mb-3">
+                                <label for="studentNoteTitle" class="form-label">Not Başlığı</label>
+                                <input type="text" class="form-control" id="studentNoteTitle" required>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="studentNoteCategory" class="form-label">Kategori</label>
+                                        <select class="form-select" id="studentNoteCategory">
+                                            <option value="general">Genel</option>
+                                            <option value="academic">Akademik</option>
+                                            <option value="personal">Kişisel</option>
+                                            <option value="important">Önemli</option>
+                                            <option value="reminder">Hatırlatıcı</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="studentNotePriority" class="form-label">Öncelik</label>
+                                        <select class="form-select" id="studentNotePriority">
+                                            <option value="low">Düşük</option>
+                                            <option value="medium" selected>Orta</option>
+                                            <option value="high">Yüksek</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <div class="form-check mt-4">
+                                            <input class="form-check-input" type="checkbox" id="studentNoteImportant">
+                                            <label class="form-check-label" for="studentNoteImportant">
+                                                Önemli Not
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="studentNoteContent" class="form-label">Not İçeriği</label>
+                                <textarea class="form-control" id="studentNoteContent" rows="6" required></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                        <button type="button" class="btn btn-primary" onclick="saveStudentNote()">
+                            <i class="fas fa-save me-2"></i>Kaydet
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Remove existing modal if any
+    const existingModal = document.getElementById('studentNoteModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Add modal to body
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('studentNoteModal'));
+    modal.show();
+    } catch (error) {
+        console.error('❌ Error showing add note modal:', error);
+        showAlert('danger', 'Modal açılırken hata oluştu: ' + error.message);
+    }
+}
+
+// Save student note
+async function saveStudentNote() {
+    try {
+        console.log('🔧 Saving student note...');
+        
+        const title = document.getElementById('studentNoteTitle').value;
+        const content = document.getElementById('studentNoteContent').value;
+        const category = document.getElementById('studentNoteCategory').value;
+        const priority = document.getElementById('studentNotePriority').value;
+        const isImportant = document.getElementById('studentNoteImportant').checked;
+
+        if (!title || !content) {
+            showAlert('warning', 'Lütfen tüm gerekli alanları doldurun');
+            return;
+        }
+
+        const url = currentNoteId 
+            ? `/api/admin/users/<%= user.id %>/notes/${currentNoteId}`
+            : `/api/admin/users/<%= user.id %>/notes`;
+
+        const method = currentNoteId ? 'PUT' : 'POST';
+
+        console.log('📡 Saving to:', url, 'Method:', method);
+
+        const response = await fetch(url, {
+            method: method,
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                title,
+                content,
+                category,
+                priority,
+                is_important: isImportant
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        
+        if (result.success) {
+            showAlert('success', currentNoteId ? 'Not güncellendi' : 'Not eklendi');
+            loadStudentNotes();
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('studentNoteModal'));
+            modal.hide();
+        } else {
+            throw new Error(result.message);
+        }
+    } catch (error) {
+        console.error('❌ Error saving student note:', error);
+        showAlert('danger', 'Not kaydedilirken hata oluştu: ' + error.message);
+    }
+}
+
+// Edit student note
+async function editStudentNote(noteId) {
+    try {
+        console.log('🔧 Editing student note:', noteId);
+        
+        // Get current notes
+        const response = await fetch(`/api/admin/users/<%= user.id %>/notes`, {
+            credentials: 'include'
+        });
+        const result = await response.json();
+        
+        if (!result.success) {
+            throw new Error(result.message);
+        }
+        
+        const note = result.notes.find(n => n.id === noteId);
+        if (!note) {
+            showAlert('danger', 'Not bulunamadı');
+            return;
+        }
+
+        currentNoteId = noteId;
+        
+        // Show modal with existing data
+        showAddNoteModal();
+        
+        // Fill form with existing data
+        setTimeout(() => {
+            document.getElementById('studentNoteModalLabel').textContent = 'Notu Düzenle';
+            document.getElementById('studentNoteTitle').value = note.title;
+            document.getElementById('studentNoteContent').value = note.content;
+            document.getElementById('studentNoteCategory').value = note.category;
+            document.getElementById('studentNotePriority').value = note.priority;
+            document.getElementById('studentNoteImportant').checked = note.is_important;
+        }, 100);
+        
+    } catch (error) {
+        console.error('❌ Error editing student note:', error);
+        showAlert('danger', 'Not düzenlenirken hata oluştu');
+    }
+}
+
+// Delete student note
+async function deleteStudentNote(noteId) {
+    if (!confirm('Bu notu silmek istediğinizden emin misiniz?')) {
+        return;
+    }
+
+    try {
+        console.log('🔧 Deleting student note:', noteId);
+
+        const response = await fetch(`/api/admin/users/<%= user.id %>/notes/${noteId}`, {
+            method: 'DELETE',
+            credentials: 'include'
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        
+        if (result.success) {
+            showAlert('success', 'Not silindi');
+            loadStudentNotes();
+        } else {
+            throw new Error(result.message);
+        }
+    } catch (error) {
+        console.error('❌ Error deleting student note:', error);
+        showAlert('danger', 'Not silinirken hata oluştu: ' + error.message);
+    }
+}
+
+// Helper functions for notes
+function getNotePriorityClass(priority) {
+    switch (priority) {
+        case 'high': return 'bg-danger';
+        case 'medium': return 'bg-warning';
+        case 'low': return 'bg-success';
+        default: return 'bg-secondary';
+    }
+}
+
+function getNoteCategoryClass(category) {
+    switch (category) {
+        case 'academic': return 'bg-primary';
+        case 'personal': return 'bg-info';
+        case 'important': return 'bg-warning';
+        case 'reminder': return 'bg-secondary';
+        default: return 'bg-light text-dark';
+    }
+}
+
+function getNotePriorityName(priority) {
+    switch (priority) {
+        case 'high': return 'Yüksek';
+        case 'medium': return 'Orta';
+        case 'low': return 'Düşük';
+        default: return 'Belirsiz';
+    }
+}
+
+function getNoteCategoryName(category) {
+    switch (category) {
+        case 'academic': return 'Akademik';
+        case 'personal': return 'Kişisel';
+        case 'important': return 'Önemli';
+        case 'reminder': return 'Hatırlatıcı';
+        default: return 'Genel';
+    }
+}
+
+// Clear note filters
+function clearNoteFilters() {
+    document.getElementById('noteCategoryFilter').value = '';
+    document.getElementById('notePriorityFilter').value = '';
+    document.getElementById('noteImportantFilter').value = '';
+    loadStudentNotes();
+}
+
+// Load notes when grades tab is shown
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🔧 DOM Content Loaded - Initializing student details page');
+    
+    // Hide any remaining "Bilgileri Kaydet" buttons
+    function hideRemainingButtonsKaydetButtons() {
+        const buttons = document.querySelectorAll('button, .btn');
+        buttons.forEach(button => {
+            if (button.textContent && button.textContent.includes('Bilgileri Kaydet')) {
+                button.style.display = 'none';
+                button.classList.add('hidden-save-button');
+                console.log('Hidden save button:', button);
+            }
+        });
+    }
+    
+    // Run immediately
+    hideRemainingButtonsKaydetButtons();
+    
+    // Run again after a short delay in case buttons are added dynamically
+    setTimeout(hideRemainingButtonsKaydetButtons, 500);
+    setTimeout(hideRemainingButtonsKaydetButtons, 1000);
+    
+    // Add event listener for grades tab
+    const gradesTab = document.getElementById('grades-tab');
+    if (gradesTab) {
+        gradesTab.addEventListener('shown.bs.tab', function() {
+            console.log('🔧 Grades tab shown, loading notes...');
+            loadStudentNotes();
+            hideRemainingButtonsKaydetButtons();
+        });
+    }
+    
+    // Add event listener for services tab
+    const servicesTab = document.getElementById('services-tab');
+    if (servicesTab) {
+        servicesTab.addEventListener('shown.bs.tab', function() {
+            console.log('🔧 Services tab shown, loading services...');
+            loadServices();
+            hideRemainingButtonsKaydetButtons();
+        });
+    }
+    
+    // Add event listener for files tab
+    const filesTab = document.getElementById('files-tab');
+    if (filesTab) {
+        filesTab.addEventListener('shown.bs.tab', function() {
+            console.log('🔧 Files tab shown, loading files...');
+            loadStudentFiles();
+            hideRemainingButtonsKaydetButtons();
+        });
+    }
+    
+    // Add event listener for checklist tab
+    const checklistTab = document.getElementById('checklist-tab');
+    if (checklistTab) {
+        checklistTab.addEventListener('shown.bs.tab', function() {
+            console.log('🔧 Checklist tab shown, loading checklist...');
+            loadStudentChecklist();
+            hideRemainingButtonsKaydetButtons();
+        });
+    }
+    
+    // Add event listener for guardians tab
+    const guardiansTab = document.getElementById('guardians-tab');
+    if (guardiansTab) {
+        guardiansTab.addEventListener('shown.bs.tab', function() {
+            console.log('🔧 Guardians tab shown...');
+            hideRemainingButtonsKaydetButtons();
+        });
+    }
+    
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
+    console.log('✅ Student details page initialized successfully');
+});
+
+// Show edit guardians modal
+function showEditGuardiansModal() {
+    const modal = new bootstrap.Modal(document.getElementById('editGuardiansModal'));
+    modal.show();
+}
+
+// Save guardians information
+async function saveGuardiansInfo() {
+    try {
+        const form = document.getElementById('guardiansForm');
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData);
+        
+        const response = await fetch(`/admin/users/${<%= user.id %>}/guardians`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            // Update the display with proper styling
+            const motherFullName = document.getElementById('motherFullName');
+            const motherPhone = document.getElementById('motherPhone');
+            const motherTc = document.getElementById('motherTc');
+            const fatherFullName = document.getElementById('fatherFullName');
+            const fatherPhone = document.getElementById('fatherPhone');
+            const fatherTc = document.getElementById('fatherTc');
+            
+            // Update mother info
+            const motherName = (data.mother_name || data.mother_surname) ? `${data.mother_name || ''} ${data.mother_surname || ''}`.trim() : 'Belirtilmemiş';
+            motherFullName.textContent = motherName;
+            motherFullName.className = `guardian-info-value ${(data.mother_name || data.mother_surname) ? '' : 'empty'}`;
+            
+            motherPhone.textContent = data.mother_phone || 'Belirtilmemiş';
+            motherPhone.className = `guardian-info-value ${data.mother_phone ? '' : 'empty'}`;
+            
+            motherTc.textContent = data.mother_tc || 'Belirtilmemiş';
+            motherTc.className = `guardian-info-value ${data.mother_tc ? '' : 'empty'}`;
+            
+            // Update father info
+            const fatherName = (data.father_name || data.father_surname) ? `${data.father_name || ''} ${data.father_surname || ''}`.trim() : 'Belirtilmemiş';
+            fatherFullName.textContent = fatherName;
+            fatherFullName.className = `guardian-info-value ${(data.father_name || data.father_surname) ? '' : 'empty'}`;
+            
+            fatherPhone.textContent = data.father_phone || 'Belirtilmemiş';
+            fatherPhone.className = `guardian-info-value ${data.father_phone ? '' : 'empty'}`;
+            
+            fatherTc.textContent = data.father_tc || 'Belirtilmemiş';
+            fatherTc.className = `guardian-info-value ${data.father_tc ? '' : 'empty'}`;
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editGuardiansModal'));
+            modal.hide();
+            
+            // Show success message
+            alert('Veli bilgileri başarıyla güncellendi!');
+        } else {
+            alert('Hata: ' + result.message);
+        }
+    } catch (error) {
+        console.error('Error updating guardians:', error);
+        alert('Veli bilgileri güncellenirken bir hata oluştu.');
+    }
+}
+
+</script>

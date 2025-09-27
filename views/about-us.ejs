@@ -1,0 +1,94 @@
+<!-- Hero Section -->
+<section class="bg-primary text-white py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="display-4 fw-bold"><%= t.aboutUs.hero.title %></h1>
+                <p class="lead"><%= t.aboutUs.hero.subtitle %></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Main Content Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card shadow-lg border-0" style="background-color: #e6f0fa !important;">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-5">
+                            <i class="fas fa-users fa-4x text-primary mb-3"></i>
+                            <h2 class="display-6 fw-bold text-primary"><%= t.aboutUs.mainContent.title %></h2>
+                        </div>
+                        
+                        <div class="row mb-5">
+                            <div class="col-md-6 mb-4">
+                                <div class="text-center">
+                                    <i class="fas fa-map-marker-alt fa-3x text-primary mb-3"></i>
+                                    <h5 class="fw-bold"><%= t.aboutUs.mainContent.location %></h5>
+                                    <p class="text-muted"><%= t.aboutUs.mainContent.locationDesc %></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="text-center">
+                                    <i class="fas fa-graduation-cap fa-3x text-primary mb-3"></i>
+                                    <h5 class="fw-bold"><%= t.aboutUs.mainContent.expertise %></h5>
+                                    <p class="text-muted"><%= t.aboutUs.mainContent.expertiseDesc %></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-3 p-4 mb-4">
+                            <h4 class="text-primary mb-3"><i class="fas fa-quote-left me-2"></i><%= t.aboutUs.mainContent.ourStory %></h4>
+                            <p class="lead mb-0"><%= t.aboutUs.mainContent.storyText %></p>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-4 mb-3">
+                                <div class="text-center">
+                                    <i class="fas fa-handshake fa-2x text-success mb-2"></i>
+                                    <h6 class="fw-bold"><%= t.aboutUs.mainContent.studentCentered %></h6>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="text-center">
+                                    <i class="fas fa-globe-europe fa-2x text-info mb-2"></i>
+                                    <h6 class="fw-bold"><%= t.aboutUs.mainContent.europeanNetwork %></h6>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="text-center">
+                                    <i class="fas fa-trophy fa-2x text-warning mb-2"></i>
+                                    <h6 class="fw-bold"><%= t.aboutUs.mainContent.topUniversities %></h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- Call to Action Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h2 class="display-6 fw-bold mb-4"><%= t.aboutUs.cta.title %></h2>
+                <p class="lead mb-4"><%= t.aboutUs.cta.subtitle %></p>
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <a href="/contact" class="btn btn-primary btn-lg">
+                        <i class="fas fa-phone me-2"></i><%= t.aboutUs.cta.contactUs %>
+                    </a>
+                    <a href="/assessment" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-clipboard-check me-2"></i><%= t.aboutUs.cta.freeAssessment %>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+

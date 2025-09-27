@@ -1,0 +1,200 @@
+<!-- Admin Users Content -->
+<div class="admin-container">
+    <!-- Sidebar -->
+    <div class="admin-sidebar">
+        <div class="sidebar-header">
+            <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Yönetim Paneli</h6>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/admin/dashboard" class="nav-item">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/admin/users" class="nav-item active">
+                <i class="fas fa-users"></i>
+                <span>Öğrenciler</span>
+                <span class="badge bg-primary ms-auto"><%= users.length %></span>
+            </a>
+            <a href="/admin/applications" class="nav-item">
+                <i class="fas fa-file-alt"></i>
+                <span>Başvurular</span>
+            </a>
+            <a href="/admin/universities" class="nav-item">
+                <i class="fas fa-university"></i>
+                <span>Üniversiteler</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="admin-main">
+        <div class="section-header">
+            <h2><i class="fas fa-users me-2"></i>Öğrenciler</h2>
+            <p class="text-muted">Sistemdeki tüm öğrencileri yönetin</p>
+        </div>
+
+        <!-- Users Table -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Öğrenci Listesi (<%= users.length %>)</h5>
+                <div class="search-box">
+                    <div class="input-group" style="width: 300px;">
+                        <span class="input-group-text">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input type="text" class="form-control" id="userSearchInput" placeholder="Öğrenci ara...">
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Ad Soyad</th>
+                                <th>E-posta</th>
+                                <th>Telefon</th>
+                                <th>İngilizce Seviyesi</th>
+                                <th>Kayıt Tarihi</th>
+                                <th>Admin</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% users.forEach(user => { %>
+                            <tr>
+                                <td><%= user.id %></td>
+                                <td><%= user.first_name %> <%= user.last_name %></td>
+                                <td><%= user.email %></td>
+                                <td><%= user.phone %></td>
+                                <td><span class="badge bg-info"><%= user.english_level %></span></td>
+                                <td><%= new Date(user.created_at).toLocaleDateString('tr-TR') %></td>
+                                <td>
+                                    <% if (user.is_admin) { %>
+                                        <span class="badge bg-danger">Admin</span>
+                                    <% } else { %>
+                                        <span class="badge bg-secondary">Öğrenci</span>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <button class="btn btn-sm btn-outline-info js-view-details" data-user-id="<%= user.id %>">
+                                            <i class="fas fa-eye"></i> Detaylar
+                                        </button>
+                                        <% if (!user.is_admin) { %>
+                                        <button class="btn btn-sm btn-outline-danger js-delete-user" data-user-id="<%= user.id %>" data-user-name="<%= user.first_name %> <%= user.last_name %>">
+                                            <i class="fas fa-trash"></i> Sil
+                                        </button>
+                                        <% } %>
+                                    </div>
+                                </td>
+                            </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Event delegation for edit user buttons
+    document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('click', function(e) {
+            const detailsBtn = e.target.closest('.js-view-details');
+            const deleteBtn = e.target.closest('.js-delete-user');
+            
+            if (detailsBtn) {
+                const userId = detailsBtn.getAttribute('data-user-id');
+                viewUserDetails(userId);
+            }
+            
+            if (deleteBtn) {
+                const userId = deleteBtn.getAttribute('data-user-id');
+                const userName = deleteBtn.getAttribute('data-user-name');
+                deleteUser(userId, userName);
+            }
+        });
+
+        // Search functionality
+        const searchInput = document.getElementById('userSearchInput');
+        const tableRows = document.querySelectorAll('tbody tr');
+        
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            tableRows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    function viewUserDetails(userId) {
+        window.location.href = `/admin/users/${userId}/details`;
+    }
+
+    async function deleteUser(userId, userName) {
+        if (!confirm(`"${userName}" adlı öğrenciyi silmek istediğinizden emin misiniz?\n\nBu işlem geri alınamaz ve öğrencinin tüm verileri silinecektir.`)) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/admin/users/${userId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include'
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showAlert('success', result.message);
+                // Remove the row from table
+                const row = document.querySelector(`[data-user-id="${userId}"]`).closest('tr');
+                if (row) {
+                    row.remove();
+                }
+                // Update user count
+                const badge = document.querySelector('.badge.bg-primary');
+                if (badge) {
+                    const currentCount = parseInt(badge.textContent);
+                    badge.textContent = currentCount - 1;
+                }
+            } else {
+                showAlert('danger', result.message);
+            }
+        } catch (error) {
+            console.error('Delete user error:', error);
+            showAlert('danger', 'Öğrenci silinirken bir hata oluştu.');
+        }
+    }
+
+    function showAlert(type, message) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+        alertDiv.style.top = '20px';
+        alertDiv.style.right = '20px';
+        alertDiv.style.zIndex = '9999';
+        alertDiv.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        document.body.appendChild(alertDiv);
+        
+        setTimeout(() => {
+            if (alertDiv.parentNode) {
+                alertDiv.parentNode.removeChild(alertDiv);
+            }
+        }, 5000);
+    }
+</script>

@@ -1,0 +1,227 @@
+<!-- Hero Section -->
+<body data-page="contact">
+<section class="bg-primary text-white py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="display-4 fw-bold"><%= t.contact.hero.title %></h1>
+                <p class="lead"><%= t.contact.hero.subtitle %></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <!-- Contact Form -->
+            <div class="col-lg-8 mb-5">
+                <div class="card shadow">
+                    <div class="card-header">
+                        <h3 class="mb-0">
+                            <i class="fas fa-envelope me-2"></i>
+                            <%= t.contact.form.title %>
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="contactForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="contactFirstName" class="form-label" style="color: black !important;"><%= t.contact.form.firstName %> *</label>
+                                    <input type="text" class="form-control" id="contactFirstName" name="firstName" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="contactLastName" class="form-label" style="color: black !important;"><%= t.contact.form.lastName %> *</label>
+                                    <input type="text" class="form-control" id="contactLastName" name="lastName" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="contactEmail" class="form-label" style="color: black !important;"><%= t.contact.form.email %> *</label>
+                                    <input type="email" class="form-control" id="contactEmail" name="email" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="contactPhone" class="form-label" style="color: black !important;"><%= t.contact.form.phone %></label>
+                                    <input type="tel" class="form-control" id="contactPhone" name="phone">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="contactSubject" class="form-label" style="color: black !important;"><%= t.contact.form.subject %> *</label>
+                                <select class="form-select" id="contactSubject" name="subject" required>
+                                    <option value=""><%= t.contact.form.selectOption %></option>
+                                    <option value="general"><%= t.contact.form.general %></option>
+                                    <option value="university"><%= t.contact.form.university %></option>
+                                    <option value="language"><%= t.contact.form.language %></option>
+                                    <option value="visa"><%= t.contact.form.visa %></option>
+                                    <option value="assessment"><%= t.contact.form.assessment %></option>
+                                    <option value="other"><%= t.contact.form.other %></option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="contactMessage" class="form-label" style="color: black !important;"><%= t.contact.form.message %> *</label>
+                                <textarea class="form-control" id="contactMessage" name="message" rows="5" required placeholder="<%= t.contact.form.messagePlaceholder %>"></textarea>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-paper-plane me-2"></i>
+                                    <%= t.contact.form.sendMessage %>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="col-lg-4">
+                <div class="card shadow mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-phone me-2"></i>
+                            <%= t.contact.info.title %>
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-2">
+                            <i class="fas fa-phone me-2"></i>
+                            <strong><%= t.contact.info.phone %>:</strong><br>
+                            +90 539 927 30 08
+                        </p>
+                        <p class="mb-2">
+                            <i class="fas fa-envelope me-2"></i>
+                            <strong><%= t.contact.info.email %>:</strong><br>
+                            ventureglobaldanisma@gmail.com
+                        </p>
+                    </div>
+                </div>
+                <div class="card shadow">
+                    <div class="card-header bg-warning text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-shield-alt me-2"></i>
+                            <%= t.contact.security.title %>
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="security-notice">
+                            <i class="fas fa-lock"></i>
+                            <small><strong><%= t.contact.security.sslTitle %>:</strong> <%= t.contact.security.sslText %></small>
+                        </div>
+                        <div class="security-notice mt-2">
+                            <i class="fas fa-user-shield"></i>
+                            <small><strong><%= t.contact.security.privacyTitle %>:</strong> <%= t.contact.security.privacyText %></small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2><%= t.contact.faq.title %></h2>
+                <p class="lead"><%= t.contact.faq.subtitle %></p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="accordion" id="faqAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faq1">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
+                                <%= t.contact.faq.question1 %>
+                            </button>
+                        </h2>
+                        <div id="collapse1" class="accordion-collapse collapse show" aria-labelledby="faq1" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                <%= t.contact.faq.answer1 %>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faq2">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
+                                <%= t.contact.faq.question2 %>
+                            </button>
+                        </h2>
+                        <div id="collapse2" class="accordion-collapse collapse" aria-labelledby="faq2" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                <%= t.contact.faq.answer2 %>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faq3">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="false" aria-controls="collapse3">
+                                <%= t.contact.faq.question3 %>
+                            </button>
+                        </h2>
+                        <div id="collapse3" class="accordion-collapse collapse" aria-labelledby="faq3" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                <%= t.contact.faq.answer3 %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.getElementById('contactForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // Form validation
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData);
+    
+    // Check required fields
+    if (!data.firstName || !data.lastName || !data.email || !data.subject || !data.message) {
+        alert('<%= t.contact.form.requiredFields %>');
+        return;
+    }
+    
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(data.email)) {
+        alert('<%= t.contact.form.invalidEmail %>');
+        return;
+    }
+    
+    // Submit button state
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span><%= t.contact.form.submitting %>';
+    submitBtn.disabled = true;
+    
+    try {
+        const response = await fetch('/api/contact', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert(result.message);
+            this.reset();
+        } else {
+            alert(result.error || '<%= t.contact.form.error %>');
+        }
+    } catch (error) {
+        alert('<%= t.contact.form.connectionError %>');
+    } finally {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }
+});
+</script> 

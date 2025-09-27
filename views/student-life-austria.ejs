@@ -1,0 +1,261 @@
+<!-- Hero Section -->
+<section class="bg-primary text-white py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="display-4 fw-bold"><%= t.studentLifePage.hero.austria.title %></h1>
+                <p class="lead"><%= t.studentLifePage.hero.austria.subtitle %></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Content Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card shadow-lg border-0 mb-4 overflow-hidden">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <div class="image-container h-100">
+                                <img src="/images/countries/austria/AdobeStock_234354771.jpeg" class="img-fluid" alt="Austria University Campus">
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="bg-primary rounded-circle p-3 me-3">
+                                        <i class="fas fa-graduation-cap text-white fs-4"></i>
+                                    </div>
+                                    <h3 class="mb-0"><%= t.studentLifePage.sections.educationSystem.title %></h3>
+                                </div>
+                                <p class="lead text-dark"><%= t.studentLifePage.countries.austria.description1 %></p>
+                                <p><%= t.studentLifePage.countries.austria.description2 %></p>
+                                
+                                <div class="row mt-4">
+                                    <div class="col-md-6">
+                                        <h5 class="text-primary mb-3"><%= t.studentLifePage.sections.educationSystem.title %></h5>
+                                        <ul class="list-unstyled">
+                                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><strong><%= t.studentLifePage.sections.educationSystem.bachelor %>:</strong> 3-4 <%= t.studentLifePage.units.perYear.replace('/', '') %></li>
+                                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><strong><%= t.studentLifePage.sections.educationSystem.master %>:</strong> 1-2 <%= t.studentLifePage.units.perYear.replace('/', '') %></li>
+
+                                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><strong><%= t.studentLifePage.sections.educationSystem.language %>:</strong> <%= t.studentLifePage.languages.german %>/<%= t.studentLifePage.languages.english %></li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h5 class="text-primary mb-3"><%= t.studentLifePage.sections.educationSystem.popularDepts %></h5>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <% t.studentLifePage.sections.educationSystem.departments.forEach(function(badge, idx) { %>
+                                                <span class="badge badge-style-<%= (idx % 3) + 1 %>"><%= badge %></span>
+                                            <% }); %>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-lg border-0 mb-4 overflow-hidden">
+                    <div class="row g-0">
+                        <div class="col-md-8">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="bg-success rounded-circle p-3 me-3">
+                                        <i class="fas fa-home text-white fs-4"></i>
+                                    </div>
+                                    <h3 class="mb-0"><%= t.studentLifePage.sections.accommodation.title %></h3>
+                                </div>
+                                <p class="lead text-dark"><%= t.studentLifePage.countries.austria.livingDescription %></p>
+                                
+                                <div class="row mt-4">
+                                    <div class="col-md-6">
+                                        <h5 class="text-success mb-3"><%= t.studentLifePage.additionalTerms.accommodationOptions %></h5>
+                                        <ul class="list-unstyled">
+                                            <li class="mb-2"><i class="fas fa-building text-primary me-2"></i><strong><%= t.studentLifePage.sections.accommodation.studentDorms %>:</strong> 200-400€<%= t.studentLifePage.units.perMonth %></li>
+                                            <li class="mb-2"><i class="fas fa-home text-primary me-2"></i><strong><%= t.studentLifePage.sections.accommodation.privateDorms %>:</strong> 300-600€<%= t.studentLifePage.units.perMonth %></li>
+                                            <li class="mb-2"><i class="fas fa-users text-primary me-2"></i><strong><%= t.studentLifePage.sections.accommodation.sharedFlat %>:</strong> 300-600€<%= t.studentLifePage.units.perMonth %></li>
+                                            <li class="mb-2"><i class="fas fa-key text-primary me-2"></i><strong><%= t.studentLifePage.sections.accommodation.studio %>:</strong> 500-800€<%= t.studentLifePage.units.perMonth %></li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h5 class="text-success mb-3"><%= t.studentLifePage.sections.accommodation.monthlyLiving %></h5>
+                                        <div class="d-flex flex-wrap gap-2 mb-3">
+                                            <% const costBadges = [
+                                                {icon: 'fa-home', text: t.studentLifePage.sections.accommodation.costs.accommodation + ' 400-800€'},
+                                                {icon: 'fa-utensils', text: t.studentLifePage.sections.accommodation.costs.food + ' 200-300€'},
+                                                {icon: 'fa-bus', text: t.studentLifePage.sections.accommodation.costs.transport + ' 80-120€'},
+                                                {icon: 'fa-shopping-bag', text: t.studentLifePage.sections.accommodation.costs.other + ' 150-250€'}
+                                            ]; %>
+                                            <% costBadges.forEach(function(badge, idx) { %>
+                                                <span class="badge badge-style-<%= (idx % 3) + 1 %> p-2" style="font-size: 0.8rem;">
+                                                    <i class="fas <%= badge.icon %> me-1"></i><%= badge.text %>
+                                                </span>
+                                            <% }); %>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="alert alert-info mt-4">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <strong><%= t.studentLifePage.alerts.important %>:</strong> <%= t.studentLifePage.countries.austria.alerts.transportInfo %>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="image-container h-100">
+                                <img src="/images/countries/austria/AdobeStock_167367148.jpeg" class="img-fluid" alt="Austria Student Life">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-lg border-0 mb-4 overflow-hidden">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <div class="image-container h-100">
+                                <img src="/images/countries/austria/AdobeStock_144113098.jpeg" class="img-fluid" alt="Austria Costs">
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="bg-warning rounded-circle p-3 me-3">
+                                        <i class="fas fa-coins text-white fs-4"></i>
+                                    </div>
+                                    <h3 class="mb-0"><%= t.studentLifePage.sections.costs.title %></h3>
+                                </div>
+                                <p class="lead text-dark"><%= t.studentLifePage.countries.austria.costsDescription %></p>
+                                
+                                <div class="row mt-4">
+                                    <div class="col-md-6">
+                                        <h5 class="text-warning mb-3"><%= t.studentLifePage.sections.costs.educationCosts %></h5>
+                                        <div class="card bg-light mb-3">
+                                            <div class="card-body">
+                                                <h6 class="card-title text-primary"><%= t.studentLifePage.sections.costs.stateUniversities %></h6>
+                                                <p class="mb-1"><strong><%= t.studentLifePage.sections.costs.tuitionFee %>:</strong> 150-300€<%= t.studentLifePage.units.perSemester %></p>
+                                                <p class="mb-0"><strong><%= t.studentLifePage.sections.costs.total %>:</strong> 300-600€<%= t.studentLifePage.units.perYear %></p>
+                                            </div>
+                                        </div>
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                <h6 class="card-title text-primary"><%= t.studentLifePage.sections.costs.privateUniversities %></h6>
+                                                <p class="mb-1"><strong><%= t.studentLifePage.sections.costs.tuitionFee %>:</strong> 5.000-12.000€<%= t.studentLifePage.units.perYear %></p>
+                                                <p class="mb-0"><strong><%= t.studentLifePage.sections.costs.total %>:</strong> 5.000-12.000€<%= t.studentLifePage.units.perYear %></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h5 class="text-warning mb-3"><%= t.studentLifePage.sections.costs.scholarships %></h5>
+                                        <ul class="list-unstyled">
+                                            <li class="mb-3">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-star text-warning me-2"></i>
+                                                    <div>
+                                                        <strong><%= t.studentLifePage.countries.austria.scholarships.austria.title %></strong><br>
+                                                        <small class="text-muted"><%= t.studentLifePage.countries.austria.scholarships.austria.description %></small>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="mb-3">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-graduation-cap text-primary me-2"></i>
+                                                    <div>
+                                                        <strong><%= t.studentLifePage.countries.austria.scholarships.university.title %></strong><br>
+                                                        <small class="text-muted"><%= t.studentLifePage.countries.austria.scholarships.university.description %></small>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="mb-3">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-handshake text-success me-2"></i>
+                                                    <div>
+                                                        <strong><%= t.studentLifePage.sections.costs.workPermit %></strong><br>
+                                                        <small class="text-muted"><%= t.studentLifePage.sections.costs.workHours %></small>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <div class="alert alert-warning mt-4">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    <strong><%= t.studentLifePage.alerts.attention %>:</strong> <%= t.studentLifePage.countries.austria.alerts.visaRequirement %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Quick Info -->
+                <div class="card shadow-lg border-0 mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <%= t.studentLifePage.sections.quickInfo.title %>
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-6 mb-3">
+                                <div class="p-3 bg-primary rounded">
+                                    <h4 class="text-white mb-1">300€</h4>
+                                    <small class="text-white"><%= t.studentLifePage.sections.quickInfo.termTuition %></small>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="p-3 bg-success rounded">
+                                    <h4 class="text-white mb-1">700€</h4>
+                                    <small class="text-white"><%= t.studentLifePage.sections.quickInfo.minLiving %></small>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="p-3 bg-warning rounded">
+                                    <h4 class="text-white mb-1">20 <%= t.studentLifePage.buttons.hours %></h4>
+                                    <small class="text-white"><%= t.studentLifePage.sections.quickInfo.weeklyWork %></small>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="p-3 bg-info rounded">
+                                    <h4 class="text-white mb-1">50+</h4>
+                                    <small class="text-white"><%= t.studentLifePage.sections.quickInfo.universities %></small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-primary mt-3 text-dark" style="color: #111 !important; text-shadow: none !important; font-weight: 500 !important;">
+                            <i class="fas fa-lightbulb me-2" style="color: #111 !important;"></i>
+                            <strong style="color: #111 !important;"><%= t.studentLifePage.sections.quickInfo.tip %>:</strong> <%= t.studentLifePage.countries.austria.alerts.tip %>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Consulting -->
+                <div class="card shadow-lg border-0">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-headset me-2"></i>
+                            <%= t.studentLifePage.sections.consulting.title %>
+                        </h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <p class="mb-4 text-dark" style="color: #111 !important; text-shadow: none !important; font-weight: 500 !important;"><%= t.studentLifePage.countries.austria.consultingText %></p>
+                        <a href="/contact" class="btn btn-primary btn-lg w-100 mb-3">
+                            <i class="fas fa-phone me-2"></i>
+                            <%= t.studentLifePage.sections.consulting.freeConsulting %>
+                        </a>
+                        <a href="/assessment" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-clipboard-list me-2"></i>
+                            <%= t.studentLifePage.sections.consulting.eligibilityTest %>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section> 

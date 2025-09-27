@@ -1,0 +1,452 @@
+<!-- Main Content -->
+    <section class="section bg-light text-dark">
+        <div class="container">
+            <div class="row">
+                <!-- Sidebar -->
+                <div class="col-lg-3 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="fas fa-user me-2"></i>Hesap Menüsü</h5>
+                        </div>
+                        <div class="list-group list-group-flush">
+                            <a href="/user/dashboard" class="list-group-item list-group-item-action">
+                                <i class="fas fa-user me-2"></i>Profil Bilgileri
+                            </a>
+                            <a href="/user/applications" class="list-group-item list-group-item-action active">
+                                <i class="fas fa-file-alt me-2"></i>Başvurularım
+                            </a>
+                            <a href="/user/files" class="list-group-item list-group-item-action">
+                                <i class="fas fa-folder me-2"></i>Dosyalarım
+                            </a>
+                            <a href="/user/settings" class="list-group-item list-group-item-action">
+                                <i class="fas fa-cog me-2"></i>Ayarlar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="col-lg-9">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0"><i class="fas fa-file-alt me-2"></i>Başvurularım</h4>
+                            <button class="btn btn-light btn-sm" id="refreshApplicationsBtn">
+                                <i class="fas fa-sync-alt me-1"></i>Yenile
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div id="alertContainer"></div>
+                            
+                            <!-- Loading Spinner -->
+                            <div id="loadingSpinner" class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Yükleniyor...</span>
+                                </div>
+                                <p class="mt-2">Başvurularınız yükleniyor...</p>
+                            </div>
+
+                            <!-- Applications Container -->
+                            <div id="applicationsContainer" style="display: none;">
+                                <!-- Applications will be loaded here -->
+                            </div>
+
+                            <!-- No Applications Message -->
+                            <div id="noApplications" class="text-center py-5" style="display: none;">
+                                <i class="fas fa-file-alt fa-3x text-muted mb-3"></i>
+                                <h5 class="text-muted">Henüz başvurunuz bulunmuyor</h5>
+                                <p class="text-muted">Yeni bir başvuru yapmak için danışmanımızla iletişime geçin.</p>
+                                <a href="/contact" class="btn btn-primary">
+                                    <i class="fas fa-envelope me-2"></i>İletişime Geç
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Application Details Modal -->
+    <div class="modal fade" id="applicationModal" tabindex="-1" aria-labelledby="applicationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="applicationModalLabel">Başvuru Detayları</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="applicationModalBody">
+                    <!-- Application details will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script>
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('refreshApplicationsBtn').addEventListener('click', refreshApplications);
+            
+            // Event delegation for application detail buttons
+            document.addEventListener('click', function(e) {
+                const viewBtn = e.target.closest('.js-view-application-details');
+                if (viewBtn) {
+                    const appId = viewBtn.getAttribute('data-application-id');
+                    viewApplicationDetails(appId);
+                }
+            });
+        });
+
+        // Logout function
+        function logout() {
+            fetch('/api/auth/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/';
+                } else {
+                    console.error('Logout failed:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error during logout:', error);
+                window.location.href = '/';
+            });
+        }
+
+        // Load applications
+        function loadApplications() {
+            fetch('/api/user/applications')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('loadingSpinner').style.display = 'none';
+                    
+                    if (data.success) {
+                        if (data.applications && data.applications.length > 0) {
+                            displayApplications(data.applications);
+                        } else {
+                            document.getElementById('noApplications').style.display = 'block';
+                        }
+                    } else {
+                        showAlert(data.message || 'Başvurular yüklenirken bir hata oluştu!', 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('loadingSpinner').style.display = 'none';
+                    showAlert('Başvurular yüklenirken bir hata oluştu!', 'danger');
+                });
+        }
+
+        // Display applications
+        function displayApplications(applications) {
+            const container = document.getElementById('applicationsContainer');
+            container.style.display = 'block';
+            
+            container.innerHTML = applications.map(app => `
+                <div class="card mb-3 application-card" data-application-id="${app.id}">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h5 class="card-title mb-1">${app.university_name || 'Üniversite Adı Belirtilmemiş'}</h5>
+                                <p class="card-text text-muted mb-2">
+                                    <i class="fas fa-graduation-cap me-1"></i>
+                                    ${app.program_name || 'Program Adı Belirtilmemiş'}
+                                </p>
+                                <p class="card-text small text-muted">
+                                    <i class="fas fa-calendar me-1"></i>
+                                    Başvuru Tarihi: ${new Date(app.created_at).toLocaleDateString('tr-TR')}
+                                </p>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <span class="badge bg-${getStatusColor(app.status)} mb-2">
+                                    ${getStatusText(app.status)}
+                                </span>
+                                <br>
+                                <button class="btn btn-outline-primary btn-sm js-view-application-details" data-application-id="${app.id}">
+                                    <i class="fas fa-eye me-1"></i>Detaylar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Get status color
+        function getStatusColor(status) {
+            switch(status) {
+                case 'pending': return 'warning';
+                case 'approved': return 'success';
+                case 'rejected': return 'danger';
+                default: return 'secondary';
+            }
+        }
+
+        // Get status text
+        function getStatusText(status) {
+            switch(status) {
+                case 'pending': return 'Beklemede';
+                case 'approved': return 'Onaylandı';
+                case 'rejected': return 'Reddedildi';
+                default: return 'Bilinmiyor';
+            }
+        }
+
+        // View application details
+        function viewApplicationDetails(applicationId) {
+            fetch(`/api/user/applications/${applicationId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const modal = new bootstrap.Modal(document.getElementById('applicationModal'));
+                        const modalBody = document.getElementById('applicationModalBody');
+                        
+                        modalBody.innerHTML = `
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>Başvuru Bilgileri</h6>
+                                    <p><strong>Üniversite:</strong> ${data.application.university_name || 'Belirtilmemiş'}</p>
+                                    <p><strong>Program:</strong> ${data.application.program_name || 'Belirtilmemiş'}</p>
+                                    <p><strong>Durum:</strong> <span class="badge bg-${getStatusColor(data.application.status)}">${getStatusText(data.application.status)}</span></p>
+                                    <p><strong>Başvuru Tarihi:</strong> ${new Date(data.application.created_at).toLocaleDateString('tr-TR')}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Gerekli Belgeler</h6>
+                                    <p>${data.application.required_documents || 'Henüz belirtilmemiş'}</p>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-12">
+                                    <h6>Yüklenen Belgeler</h6>
+                                    <div id="documentsList">
+                                        ${data.documents && data.documents.length > 0 ? 
+                                            data.documents.map(doc => `
+                                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                                    <span><i class="fas fa-file me-2"></i>${doc.original_name}</span>
+                                                    <div>
+                                                        <button class="btn btn-sm btn-outline-primary me-1" data-doc-id="${doc.id}" data-action="download">
+                                                            <i class="fas fa-download"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-outline-danger" data-doc-id="${doc.id}" data-action="delete">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            `).join('') : 
+                                            '<p class="text-muted">Henüz belge yüklenmemiş</p>'
+                                        }
+                                    </div>
+                                    <hr>
+                                    <div class="mb-3">
+                                        <label for="documentUpload" class="form-label">Yeni Belge Yükle</label>
+                                        <input type="file" class="form-control" id="documentUpload" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                                    </div>
+                                    <button class="btn btn-primary" data-app-id="${applicationId}" data-action="upload">
+                                        <i class="fas fa-upload me-2"></i>Belge Yükle
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        
+                        modal.show();
+                    } else {
+                        showAlert(data.message || 'Başvuru detayları yüklenirken bir hata oluştu!', 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showAlert('Başvuru detayları yüklenirken bir hata oluştu!', 'danger');
+                });
+        }
+
+        // Upload document
+        function uploadDocument(applicationId) {
+            const fileInput = document.getElementById('documentUpload');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showAlert('Lütfen bir dosya seçin!', 'warning');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('document', file);
+            
+            fetch(`/api/user/applications/${applicationId}/documents`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('Belge başarıyla yüklendi!', 'success');
+                    // Refresh the modal
+                    viewApplicationDetails(applicationId);
+                } else {
+                    showAlert(data.message || 'Belge yüklenirken bir hata oluştu!', 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('Belge yüklenirken bir hata oluştu!', 'danger');
+            });
+        }
+
+        // Download document
+        function downloadDocument(documentId) {
+            window.open(`/api/user/documents/${documentId}/download`, '_blank');
+        }
+
+        // Delete document
+        function deleteDocument(documentId) {
+            if (confirm('Bu belgeyi silmek istediğinizden emin misiniz?')) {
+                fetch(`/api/user/documents/${documentId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showAlert('Belge başarıyla silindi!', 'success');
+                        // Refresh the modal
+                        const applicationId = document.querySelector('.application-card').dataset.applicationId;
+                        viewApplicationDetails(applicationId);
+                    } else {
+                        showAlert(data.message || 'Belge silinirken bir hata oluştu!', 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showAlert('Belge silinirken bir hata oluştu!', 'danger');
+                });
+            }
+        }
+
+        // Refresh applications
+        function refreshApplications() {
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.getElementById('applicationsContainer').style.display = 'none';
+            document.getElementById('noApplications').style.display = 'none';
+            loadApplications();
+        }
+
+        // Alert function
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} alert-dismissible fade show`;
+            alert.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            alertContainer.appendChild(alert);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        // Language change function
+        function changeLanguage(lang) {
+            fetch('/change-language', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ language: lang })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Language change error:', error);
+            });
+        }
+
+        // Logout function
+        function logout() {
+            console.log('Logout function called'); // Debug için
+            fetch('/api/auth/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include' // Include cookies
+            })
+            .then(response => {
+                console.log('Logout response status:', response.status); // Debug için
+                return response.json();
+            })
+            .then(data => {
+                console.log('Logout response:', data); // Debug için
+                if (data.success) {
+                    console.log('Logout successful, redirecting...'); // Debug için
+                    window.location.href = '/';
+                } else {
+                    console.error('Logout failed:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error during logout:', error);
+                window.location.href = '/';
+            });
+        }
+
+        // Language options event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const languageOptions = document.querySelectorAll('.language-option');
+            
+            languageOptions.forEach(option => {
+                option.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const language = this.getAttribute('data-language');
+                    changeLanguage(language);
+                });
+            });
+
+            // Logout butonu event listener
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    logout();
+                });
+            }
+
+            // Load applications on page load
+            loadApplications();
+
+            // Add event listeners for modal buttons
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('[data-action]')) {
+                    const action = e.target.closest('[data-action]').getAttribute('data-action');
+                    const docId = e.target.closest('[data-doc-id]')?.getAttribute('data-doc-id');
+                    const appId = e.target.closest('[data-app-id]')?.getAttribute('data-app-id');
+
+                    if (action === 'download' && docId) {
+                        downloadDocument(docId);
+                    } else if (action === 'delete' && docId) {
+                        deleteDocument(docId);
+                    } else if (action === 'upload' && appId) {
+                        uploadDocument(appId);
+                    }
+                }
+            });
+        });
+    </script> 

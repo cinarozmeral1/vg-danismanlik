@@ -1,0 +1,470 @@
+<!-- Main Content -->
+    <section class="section bg-light text-dark" style="min-height: 80vh;">
+        <div class="container">
+            <div class="row">
+                <!-- Sidebar -->
+                <div class="col-lg-3 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="fas fa-user me-2"></i>Hesap Menüsü</h5>
+                        </div>
+                        <div class="list-group list-group-flush">
+                            <a href="/user/dashboard" class="list-group-item list-group-item-action">
+                                <i class="fas fa-user me-2"></i>Profil Bilgileri
+                            </a>
+                            <a href="/user/applications" class="list-group-item list-group-item-action">
+                                <i class="fas fa-file-alt me-2"></i>Başvurularım
+                            </a>
+                            <a href="/user/files" class="list-group-item list-group-item-action">
+                                <i class="fas fa-folder me-2"></i>Dosyalarım
+                            </a>
+                            <a href="/user/settings" class="list-group-item list-group-item-action active">
+                                <i class="fas fa-cog me-2"></i>Ayarlar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="col-lg-9">
+                    <div id="alertContainer"></div>
+                    
+                    <!-- Account Settings -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h4 class="mb-0"><i class="fas fa-user-cog me-2"></i>Hesap Ayarları</h4>
+                        </div>
+                        <div class="card-body">
+                            <form id="passwordForm">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="currentPassword" class="form-label">Mevcut Şifre *</label>
+                                        <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="newPassword" class="form-label">Yeni Şifre *</label>
+                                        <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="confirmPassword" class="form-label">Yeni Şifre Tekrar *</label>
+                                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3 d-flex align-items-end">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-key me-2"></i>Şifre Değiştir
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Notification Settings -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h4 class="mb-0"><i class="fas fa-bell me-2"></i>Bildirim Ayarları</h4>
+                        </div>
+                        <div class="card-body">
+                            <form id="notificationForm">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="emailNotifications" name="emailNotifications" checked>
+                                            <label class="form-check-label" for="emailNotifications">
+                                                E-posta Bildirimleri
+                                            </label>
+                                        </div>
+                                        <small class="text-muted">Başvuru durumu güncellemeleri ve önemli bilgiler</small>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="smsNotifications" name="smsNotifications">
+                                            <label class="form-check-label" for="smsNotifications">
+                                                SMS Bildirimleri
+                                            </label>
+                                        </div>
+                                        <small class="text-muted">Acil durumlar ve önemli güncellemeler</small>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="marketingEmails" name="marketingEmails">
+                                            <label class="form-check-label" for="marketingEmails">
+                                                Pazarlama E-postaları
+                                            </label>
+                                        </div>
+                                        <small class="text-muted">Yeni hizmetler ve kampanyalar hakkında bilgi</small>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="newsletter" name="newsletter">
+                                            <label class="form-check-label" for="newsletter">
+                                                Bülten Aboneliği
+                                            </label>
+                                        </div>
+                                        <small class="text-muted">Eğitim haberleri ve güncellemeler</small>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>Ayarları Kaydet
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Privacy Settings -->
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h4 class="mb-0"><i class="fas fa-shield-alt me-2"></i>Gizlilik Ayarları</h4>
+                        </div>
+                        <div class="card-body">
+                            <form id="privacyForm">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="profileVisibility" name="profileVisibility" checked>
+                                            <label class="form-check-label" for="profileVisibility">
+                                                Profil Görünürlüğü
+                                            </label>
+                                        </div>
+                                        <small class="text-muted">Danışmanlarınızın profilinizi görmesine izin ver</small>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="dataSharing" name="dataSharing">
+                                            <label class="form-check-label" for="dataSharing">
+                                                Veri Paylaşımı
+                                            </label>
+                                        </div>
+                                        <small class="text-muted">İyileştirme için anonim veri paylaşımı</small>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="thirdPartyCookies" name="thirdPartyCookies">
+                                            <label class="form-check-label" for="thirdPartyCookies">
+                                                Üçüncü Parti Çerezler
+                                            </label>
+                                        </div>
+                                        <small class="text-muted">Analitik ve reklam çerezleri</small>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="locationSharing" name="locationSharing">
+                                            <label class="form-check-label" for="locationSharing">
+                                                Konum Paylaşımı
+                                            </label>
+                                        </div>
+                                        <small class="text-muted">Yakındaki ofisler için konum erişimi</small>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>Ayarları Kaydet
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Account Actions -->
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-warning text-dark">
+                            <h4 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Hesap İşlemleri</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <h6>Hesap Dondurma</h6>
+                                    <p class="text-muted small">Hesabınızı geçici olarak devre dışı bırakın. Tüm verileriniz korunur.</p>
+                                    <button class="btn btn-outline-warning btn-sm" id="freezeAccountBtn">
+                                        <i class="fas fa-pause me-2"></i>Hesabı Dondur
+                                    </button>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <h6>Hesap Silme</h6>
+                                    <p class="text-muted small">Hesabınızı kalıcı olarak silin. Bu işlem geri alınamaz.</p>
+                                    <button class="btn btn-outline-danger btn-sm" id="deleteAccountBtn">
+                                        <i class="fas fa-trash me-2"></i>Hesabı Sil
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script>
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('freezeAccountBtn').addEventListener('click', freezeAccount);
+            document.getElementById('deleteAccountBtn').addEventListener('click', deleteAccount);
+        });
+
+        // Logout function
+        function logout() {
+            fetch('/api/auth/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/';
+                } else {
+                    console.error('Logout failed:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error during logout:', error);
+                window.location.href = '/';
+            });
+        }
+
+        // Password change form
+        document.getElementById('passwordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (newPassword !== confirmPassword) {
+                showAlert('Yeni şifreler eşleşmiyor!', 'danger');
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                showAlert('Şifre en az 6 karakter olmalıdır!', 'danger');
+                return;
+            }
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            fetch('/api/user/change-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('Şifreniz başarıyla değiştirildi!', 'success');
+                    this.reset();
+                } else {
+                    showAlert(data.message || 'Şifre değiştirilirken bir hata oluştu!', 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('Şifre değiştirilirken bir hata oluştu!', 'danger');
+            });
+        });
+
+        // Notification settings form
+        document.getElementById('notificationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            fetch('/api/user/notification-settings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('Bildirim ayarlarınız kaydedildi!', 'success');
+                } else {
+                    showAlert(data.message || 'Ayarlar kaydedilirken bir hata oluştu!', 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('Ayarlar kaydedilirken bir hata oluştu!', 'danger');
+            });
+        });
+
+        // Privacy settings form
+        document.getElementById('privacyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            fetch('/api/user/privacy-settings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('Gizlilik ayarlarınız kaydedildi!', 'success');
+                } else {
+                    showAlert(data.message || 'Ayarlar kaydedilirken bir hata oluştu!', 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('Ayarlar kaydedilirken bir hata oluştu!', 'danger');
+            });
+        });
+
+        // Freeze account
+        function freezeAccount() {
+            if (confirm('Hesabınızı dondurmak istediğinizden emin misiniz? Bu işlem geri alınabilir.')) {
+                fetch('/api/user/freeze-account', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showAlert('Hesabınız donduruldu. Giriş yapamayacaksınız.', 'warning');
+                        setTimeout(() => {
+                            logout();
+                        }, 2000);
+                    } else {
+                        showAlert(data.message || 'Hesap dondurulurken bir hata oluştu!', 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showAlert('Hesap dondurulurken bir hata oluştu!', 'danger');
+                });
+            }
+        }
+
+        // Delete account
+        function deleteAccount() {
+            if (confirm('Hesabınızı kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz ve tüm verileriniz silinecektir.')) {
+                const password = prompt('Onaylamak için şifrenizi girin:');
+                if (password) {
+                    fetch('/api/user/delete-account', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ password: password })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showAlert('Hesabınız silindi. Ana sayfaya yönlendiriliyorsunuz.', 'danger');
+                            setTimeout(() => {
+                                window.location.href = '/';
+                            }, 2000);
+                        } else {
+                            showAlert(data.message || 'Hesap silinirken bir hata oluştu!', 'danger');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showAlert('Hesap silinirken bir hata oluştu!', 'danger');
+                    });
+                }
+            }
+        }
+
+        // Alert function
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} alert-dismissible fade show`;
+            alert.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            alertContainer.appendChild(alert);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        // Language change function
+        function changeLanguage(lang) {
+            fetch('/change-language', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ language: lang })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Language change error:', error);
+            });
+        }
+
+        // Logout function
+        function logout() {
+            fetch('/api/auth/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/';
+                } else {
+                    console.error('Logout failed:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error during logout:', error);
+                window.location.href = '/';
+            });
+        }
+
+        // Language options event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const languageOptions = document.querySelectorAll('.language-option');
+            
+            languageOptions.forEach(option => {
+                option.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const language = this.getAttribute('data-language');
+                    changeLanguage(language);
+                });
+            });
+
+            // Logout butonu event listener
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    logout();
+                });
+            }
+        });
+    </script> 

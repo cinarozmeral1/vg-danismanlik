@@ -1,0 +1,2177 @@
+module.exports = {
+    // Navigation
+    nav: {
+        home: "Ana Sayfa",
+        studentLife: "Öğrenci Yaşamı",
+        services: "Hizmetler",
+        universities: "Üniversiteler",
+        aboutUs: "Tanışalım",
+        contact: "İletişim",
+        assessment: "Değerlendirme",
+        profile: "Profil",
+        myProfile: "Profilim",
+        dashboard: "Dashboard",
+        logout: "Çıkış"
+    },
+    
+    // Countries
+    countries: {
+        germany: "Almanya",
+        czech: "Çek Cumhuriyeti",
+        italy: "İtalya",
+        austria: "Avusturya",
+        uk: "İngiltere",
+        poland: "Polonya",
+        hungary: "Macaristan"
+    },
+    
+    // Authentication
+    auth: {
+        login: {
+            title: "Giriş Yap",
+            email: "E-posta Adresi",
+            password: "Şifre",
+            rememberMe: "Beni Hatırla",
+            submit: "Giriş Yap",
+            noAccount: "Hesabınız yok mu?",
+            register: "Kayıt Ol",
+            forgotPassword: "Şifremi Unuttum",
+            success: "Giriş başarılı! Yönlendiriliyorsunuz...",
+            error: "Giriş sırasında bir hata oluştu"
+        },
+        register: {
+            title: "Kayıt Ol",
+            personalInfo: "Kişisel Bilgiler",
+            academicInfo: "Akademik Bilgiler",
+            firstName: "Ad",
+            lastName: "Soyad",
+            email: "E-posta Adresi",
+            tcNumber: "TC Kimlik Numarası",
+            tcNumberHelp: "11 haneli TC kimlik numaranızı girin",
+            phone: "Telefon Numarası",
+            password: "Şifre",
+            confirmPassword: "Şifre Tekrarı",
+            englishLevel: "İngilizce Seviyesi",
+            selectEnglishLevel: "İngilizce seviyenizi seçin",
+            beginner: "Başlangıç",
+            elementary: "Temel",
+            preIntermediate: "Orta Altı",
+            intermediate: "Orta",
+            upperIntermediate: "Orta Üstü",
+            advanced: "İleri",
+            proficient: "Uzman",
+            highSchoolGraduation: "Lise Mezuniyet Tarihi",
+            birthDate: "Doğum Tarihi",
+            passportNumber: "Pasaport Numarası",
+            passportType: "Pasaport Türü",
+            selectPassportType: "Pasaport türünü seçin",
+            bordo: "Bordo Pasaport",
+            yesil: "Yeşil Pasaport",
+            schengenVisaCount: "Schengen Vize Sayısı",
+            ukVisaCount: "UK Vize Sayısı",
+            academicExams: "Akademik Sınav Başarıları",
+            academicExamsPlaceholder: "IELTS, SAT, AP, vb. sınav sonuçlarınızı yazın",
+            annualBudget: "Yıllık Bütçe (€)",
+            termsText: "Kullanım şartlarını kabul ediyorum",
+            termsLink: "Kullanım Şartları",
+            submit: "Kayıt Ol",
+            haveAccount: "Zaten hesabınız var mı?",
+            login: "Giriş Yap",
+            success: "Kayıt başarılı! Lütfen e-posta adresinizi doğrulayın.",
+            error: "Kayıt sırasında bir hata oluştu",
+            passwordMismatch: "Şifreler eşleşmiyor"
+        }
+    },
+    
+    // Student Life Countries
+    studentLife: {
+        germany: "Almanya'da Okumak",
+        czech: "Çek Cumhuriyeti'nde Okumak",
+        italy: "İtalya'da Okumak",
+        austria: "Avusturya'da Okumak",
+        uk: "İngiltere'de Okumak",
+        poland: "Polonya'da Okumak",
+        hungary: "Macaristan'da Okumak"
+    },
+
+    // Student Life Page Content
+    studentLifePage: {
+        hero: {
+            germany: {
+                title: "Almanya'da Öğrenci Olmak",
+                subtitle: "Dünya çapında tanınan kaliteli eğitim sistemi ve ücretsiz üniversite eğitimi"
+            },
+            uk: {
+                title: "İngiltere'de Öğrenci Olmak",
+                subtitle: "Dünya çapında tanınan üniversitelerde kaliteli eğitim ve kariyer fırsatları"
+            },
+            czech: {
+                title: "Çek Cumhuriyeti'nde Öğrenci Olmak",
+                subtitle: "Prag'ın büyüleyici atmosferinde kaliteli eğitim ve uygun maliyetler"
+            },
+            austria: {
+                title: "Avusturya'da Öğrenci Olmak",
+                subtitle: "Viyana'nın kültürel başkentinde kaliteli eğitim ve yaşam standartları"
+            },
+            italy: {
+                title: "İtalya'da Öğrenci Olmak",
+                subtitle: "Tarihi ve kültürel zenginliklerin yanında kaliteli eğitim fırsatları"
+            },
+            hungary: {
+                title: "Macaristan'da Öğrenci Olmak",
+                subtitle: "Budapeşte'nin tarihi atmosferinde kaliteli eğitim ve uygun yaşam maliyetleri"
+            },
+            poland: {
+                title: "Polonya'da Öğrenci Olmak",
+                subtitle: "Varşova ve Kraków'un tarihi atmosferinde kaliteli eğitim ve uygun yaşam maliyetleri"
+            }
+        },
+        sections: {
+            educationSystem: {
+                title: "Eğitim Sistemi",
+                bachelor: "Lisans",
+                master: "Yüksek Lisans",
+                language: "Eğitim Dili",
+                popularDepts: "Popüler Bölümler",
+                departments: ["Mühendislik", "İşletme", "Tıp", "Bilgisayar Bilimi", "Ekonomi", "Psikoloji"]
+            },
+            accommodation: {
+                title: "Konaklama ve Yaşam",
+                studentDorms: "Öğrenci Yurtları",
+                privateDorms: "Özel Yurtlar",
+                sharedFlat: "Paylaşımlı Ev",
+                studio: "Stüdyo Daire",
+                monthlyLiving: "Aylık Yaşam Maliyeti",
+                costs: {
+                    accommodation: "Konaklama",
+                    food: "Yemek",
+                    transport: "Ulaşım",
+                    other: "Diğer"
+                }
+            },
+            costs: {
+                title: "Maliyetler ve Burslar",
+                educationCosts: "Eğitim Maliyetleri",
+                stateUniversities: "Devlet Üniversiteleri",
+                privateUniversities: "Özel Üniversiteler",
+                medicalFaculties: "Tıp Fakülteleri",
+                tuitionFee: "Harç Ücreti",
+                variesByCity: "(şehre göre değişir)",
+                total: "Toplam",
+                basedOnIncome: "Gelir seviyesine göre",
+                mostEconomic: "En ekonomik seçenek",
+                qualityEducation: "Kaliteli eğitim",
+                prestigiousPrograms: "Prestijli programlar",
+                scholarships: "Burslar ve Destekler",
+                workPermit: "Çalışma Fırsatı",
+                workHours: "Haftada 20 saat çalışma izni",
+                hourlyWage: "Saatlik ücret"
+            },
+            quickInfo: {
+                title: "Hızlı Bilgi",
+                yearlyTuition: "Yıllık Harç",
+                termTuition: "Dönem Harç",
+                monthlyTuition: "Aylık Harç",
+                minLiving: "Min. Yaşam",
+                weeklyWork: "Haftalık Çalışma",
+                universities: "Üniversiteler",
+                tip: "İpucu"
+            },
+            consulting: {
+                title: "Danışmanlık",
+                freeConsulting: "Ücretsiz Danışmanlık",
+                eligibilityTest: "Uygunluk Testi"
+            }
+        },
+        alerts: {
+            important: "Önemli",
+            attention: "Dikkat"
+        },
+        buttons: {
+            hours: "Saat",
+            month: "ay"
+        },
+        units: {
+            perMonth: "/ay",
+            perYear: "/yıl",
+            perSemester: "/dönem",
+            yearly: "/yıl"
+        },
+        languages: {
+            english: "İngilizce",
+            german: "Almanca",
+            czech: "Çekçe",
+            italian: "İtalyanca",
+            hungarian: "Macarca",
+            polish: "Lehçe",
+            turkish: "Türkçe"
+        },
+        universityLanguages: {
+            englishCzech: "İngilizce, Çekçe",
+            germanEnglish: "Almanca, İngilizce",
+            italianEnglish: "İtalyanca, İngilizce",
+            hungarianEnglish: "Macarca, İngilizce",
+            polishEnglish: "İngilizce, Lehçe",
+            englishOnly: "İngilizce",
+            germanWithNotes: "Almanca (çoğu lisans), İngilizce (bazı yüksek lisans)",
+            italianWithPrograms: "İtalyanca, İngilizce (çok sayıda program)"
+        },
+                additionalTerms: {
+            accommodationOptions: "Konaklama Seçenekleri",
+            scholarshipOpportunities: "Burs Fırsatları",
+            erasmusScholarships: "Erasmus+ Bursları",
+            governmentScholarships: "Devlet Bursları",
+            workingHours: "Haftada 20 saat çalışabilirsiniz",
+            hourlyWage: "Saatlik ücret",
+            yearlyFee: "Yıllık Ücret",
+            minLiving: "Min. Yaşam",
+            weeklyWork: "Haftalık Çalışma",
+            universities: "Üniversiteler",
+            consulting: "Danışmanlık",
+            attention: "Dikkat"
+        },
+        countries: {
+            uk: {
+                description1: "İngiltere, dünya çapında tanınan prestijli üniversiteleri ve köklü eğitim geleneği ile öğrencilerin hayal ettiği eğitim ülkesidir.",
+                description2: "İngiltere'de üniversite eğitimi hem kaliteli hem de uluslararası tanınırlığa sahiptir. Oxford, Cambridge gibi dünya çapında tanınan üniversitelerin yanı sıra birçok kaliteli üniversite bulunmaktadır.",
+                livingDescription: "İngiltere'de özellikle Londra'da yaşam maliyetleri yüksektir, ancak diğer şehirlerde daha uygun seçenekler bulunmaktadır.",
+                costsDescription: "İngiltere'de eğitim maliyetleri yüksektir ancak kaliteli eğitim ve uluslararası tanınırlık sunar.",
+                scholarships: {
+                    chevening: {
+                        title: "Chevening Bursları",
+                        description: "İngiltere Hükümeti"
+                    },
+                    university: {
+                        title: "Üniversite Bursları",
+                        description: "Başarılı öğrenciler için"
+                    }
+                },
+                alerts: {
+                    nhsInfo: "İngiltere'de öğrenciler için NHS sağlık sigortası ücretsizdir ve özel indirimler bulunmaktadır.",
+                    visaRequirement: "İngiltere'de öğrenci vizesi için aylık en az 1.265£ banka hesabında bulundurmanız gerekmektedir.",
+                    tip: "İngiltere'de öğrenci vizesi almak için IELTS 6.0-6.5 seviyesi İngilizce bilgisi gereklidir."
+                },
+                consultingText: "İngiltere'de eğitim hakkında detaylı bilgi almak için bizimle iletişime geçin."
+            },
+            germany: {
+                description1: "Almanya, dünya çapında tanınan kaliteli eğitim sistemi ve ücretsiz üniversite eğitimi ile öğrencilerin en çok tercih ettiği ülkelerden biridir.",
+                description2: "Almanya'da üniversite eğitimi, hem kaliteli hem de ekonomik bir seçenek sunar. Devlet üniversitelerinde harç ücreti çok düşük olup, özel üniversitelerde bile diğer ülkelere göre daha uygun fiyatlar bulunmaktadır.",
+                livingDescription: "Almanya'da öğrenci konaklama seçenekleri oldukça çeşitlidir ve her bütçeye uygun alternatifler bulunmaktadır.",
+                costsDescription: "Almanya'da eğitim maliyetleri diğer Avrupa ülkelerine göre oldukça uygun seviyededir.",
+                scholarships: {
+                    daad: {
+                        title: "DAAD Bursları",
+                        description: "Alman Akademik Değişim Servisi"
+                    },
+                    university: {
+                        title: "Üniversite Bursları",
+                        description: "Başarılı öğrenciler için"
+                    }
+                },
+                alerts: {
+                    transportInfo: "Almanya'da öğrenciler için özel indirimler ve ulaşım kartları bulunmaktadır. Aylık ulaşım kartı yaklaşık 80€'dur.",
+                    visaRequirement: "Almanya'da öğrenci vizesi için aylık en az 934€ banka hesabında bulundurmanız gerekmektedir.",
+                    tip: "Almanya'da öğrenci vizesi almak için B1 seviyesi Almanca bilgisi gereklidir."
+                },
+                consultingText: "Almanya'da eğitim hakkında detaylı bilgi almak için bizimle iletişime geçin."
+            },
+            czech: {
+                description1: "Çek Cumhuriyeti, Orta Avrupa'nın kalbinde yer alan ve kaliteli eğitim sistemi ile öne çıkan bir ülkedir.",
+                description2: "Çek Cumhuriyeti'nde üniversite eğitimi, hem kaliteli hem de ekonomik bir seçenek sunar. Prag'da bulunan üniversiteler dünya çapında tanınmaktadır.",
+                livingDescription: "Çek Cumhuriyeti'nde öğrenci konaklama seçenekleri oldukça çeşitlidir ve Prag'ın tarihi atmosferinde yaşama imkanı sunar.",
+                costsDescription: "Çek Cumhuriyeti'nde eğitim maliyetleri diğer Avrupa ülkelerine göre oldukça uygun seviyededir.",
+                scholarships: {
+                    czech: {
+                        title: "Çek Bursları",
+                        description: "Çek Cumhuriyeti Hükümeti"
+                    },
+                    university: {
+                        title: "Üniversite Bursları",
+                        description: "Başarılı öğrenciler için"
+                    }
+                },
+                alerts: {
+                    transportInfo: "Prag'da öğrenciler için özel indirimler ve ulaşım kartları bulunmaktadır. Aylık ulaşım kartı yaklaşık 20€'dur.",
+                    visaRequirement: "Çek Cumhuriyeti'nde öğrenci vizesi için aylık en az 400€ banka hesabında bulundurmanız gerekmektedir.",
+                    tip: "Çek Cumhuriyeti'nde öğrenci vizesi almak için Çekçe dil bilgisi avantaj sağlar."
+                },
+                consultingText: "Çek Cumhuriyeti'nde eğitim hakkında detaylı bilgi almak için bizimle iletişime geçin."
+            },
+            austria: {
+                description1: "Avusturya, yüksek yaşam kalitesi, güvenli ortamı ve kaliteli eğitim sistemi ile öğrencilerin tercih ettiği ülkelerden biridir.",
+                description2: "Avusturya'da üniversite eğitimi hem kaliteli hem de ekonomiktir. Özellikle müzik, sanat, tıp ve mühendislik alanlarında güçlü programlar sunulmaktadır.",
+                livingDescription: "Avusturya'da özellikle Viyana'da öğrenci konaklama seçenekleri çeşitlidir ve yüksek yaşam kalitesi sunar.",
+                costsDescription: "Avusturya'da eğitim maliyetleri diğer Avrupa ülkelerine göre uygun seviyededir.",
+                                    scholarships: {
+                        austria: {
+                            title: "Avusturya Bursları",
+                            description: "Avusturya Hükümeti"
+                        },
+                        university: {
+                            title: "Üniversite Bursları",
+                            description: "Başarılı öğrenciler için"
+                        },
+                        erasmus: {
+                            title: "Erasmus+ Bursları",
+                            description: "Avrupa Birliği destekli"
+                        }
+                    },
+                alerts: {
+                    transportInfo: "Avusturya'da öğrenciler için özel indirimler ve ulaşım kartları bulunmaktadır. Aylık ulaşım kartı yaklaşık 50€'dur.",
+                    visaRequirement: "Avusturya'da öğrenci vizesi için aylık en az 700€ banka hesabında bulundurmanız gerekmektedir.",
+                    tip: "Avusturya'da öğrenci vizesi almak için B1 seviyesi Almanca bilgisi gereklidir."
+                },
+                consultingText: "Avusturya'da eğitim hakkında detaylı bilgi almak için bizimle iletişime geçin."
+            },
+            italy: {
+                description1: "İtalya, dünyanın en eski üniversitelerine sahip olan ve sanat, tasarım, moda, gastronomi alanlarında dünya çapında tanınan bir eğitim ülkesidir.",
+                description2: "İtalya'da üniversite eğitimi hem geleneksel hem de modern programları bir arada sunar. Özellikle sanat, tasarım, mimarlık ve gastronomi alanlarında güçlü programlar bulunmaktadır.",
+                livingDescription: "İtalya'da öğrenci konaklama seçenekleri şehirden şehre değişiklik gösterir. Milano, Roma gibi büyük şehirlerde maliyetler daha yüksektir.",
+                costsDescription: "İtalya'da eğitim maliyetleri gelir seviyesine göre hesaplanır ve genellikle uygun seviyededir.",
+                scholarships: {
+                    italy: {
+                        title: "İtalya Devlet Bursları",
+                        description: "Gelir seviyesine göre"
+                    },
+                    university: {
+                        title: "Üniversite Bursları",
+                        description: "Başarılı öğrenciler için"
+                    },
+                    erasmus: {
+                        title: "Erasmus+ Bursları",
+                        description: "Avrupa Birliği destekli"
+                    }
+                },
+                alerts: {
+                    tip: "İtalya'da sanat ve tasarım alanlarında eğitim almak için portföy hazırlamanız gereklidir."
+                },
+                consultingText: "İtalya'da eğitim hakkında detaylı bilgi almak için bizimle iletişime geçin."
+            },
+            hungary: {
+                description1: "Macaristan, Orta Avrupa'nın en eski üniversitelerine sahip olan ve özellikle tıp, mühendislik ve sanat alanlarında güçlü programlar sunan bir eğitim ülkesidir.",
+                description2: "Macaristan'da üniversite eğitimi hem kaliteli hem de ekonomiktir. Budapeşte'deki üniversiteler dünya çapında tanınmaktadır ve özellikle tıp fakülteleri çok prestijlidir.",
+                livingDescription: "Macaristan'da özellikle Budapeşte'de öğrenci konaklama seçenekleri çeşitlidir ve diğer Avrupa şehirlerine göre daha ekonomiktir.",
+                costsDescription: "Macaristan'da eğitim maliyetleri Avrupa standartlarına göre oldukça uygun seviyededir.",
+                scholarships: {
+                    hungary: {
+                        title: "Macaristan Bursları",
+                        description: "Devlet destekli burslar"
+                    },
+                    university: {
+                        title: "Üniversite Bursları",
+                        description: "Başarılı öğrenciler için"
+                    },
+                    erasmus: {
+                        title: "Erasmus+ Bursları",
+                        description: "Avrupa Birliği destekli"
+                    }
+                },
+                alerts: {
+                    tip: "Macaristan'da öğrenci vizesi almak için B1 seviyesi Macarca bilgisi gereklidir."
+                },
+                consultingText: "Macaristan'da eğitim hakkında detaylı bilgi almak için bizimle iletişime geçin."
+            },
+            poland: {
+                description1: "Polonya, köklü eğitim geleneği, modern üniversiteleri ve uygun maliyetleri ile öğrencilerin tercih ettiği ülkelerden biridir.",
+                description2: "Polonya'da üniversite eğitimi hem kaliteli hem de ekonomiktir. Özellikle tıp, mühendislik, işletme ve sanat alanlarında güçlü programlar sunulmaktadır.",
+                livingDescription: "Polonya'da özellikle Varşova ve Kraków'da öğrenci konaklama seçenekleri çeşitlidir ve diğer Avrupa şehirlerine göre daha ekonomiktir.",
+                costsDescription: "Polonya'da eğitim maliyetleri Avrupa standartlarına göre oldukça uygun seviyededir.",
+                scholarships: {
+                    poland: {
+                        title: "Polonya Bursları",
+                        description: "Polonya Hükümeti"
+                    },
+                    university: {
+                        title: "Üniversite Bursları",
+                        description: "Başarılı öğrenciler için"
+                    }
+                },
+                alerts: {
+                    transportInfo: "Polonya'da öğrenciler için özel indirimler ve ulaşım kartları bulunmaktadır. Aylık ulaşım kartı yaklaşık 25€'dur.",
+                    visaRequirement: "Polonya'da öğrenci vizesi için aylık en az 500€ banka hesabında bulundurmanız gerekmektedir.",
+                    tip: "Polonya'da öğrenci vizesi almak için B1 seviyesi Lehçe bilgisi gereklidir."
+                },
+                consultingText: "Polonya'da eğitim hakkında detaylı bilgi almak için bizimle iletişime geçin."
+            }
+        }
+    },
+    
+    // Footer
+    footer: {
+        description: "Avrupa'da eğitim hayalinizi gerçekleştirmenize yardımcı oluyoruz. 7 ülkede 50+ prestijli üniversite ile işbirliği yapıyoruz.",
+        sslInfo: "SSL Sertifikası ile Güvenli Bağlantı",
+        quickLinks: "Hızlı Linkler",
+        services: "Hizmetlerimiz",
+        universities: "Üniversiteler",
+        requiredDocuments: "Gerekli Belgeler",
+        freeAssessment: "Ücretsiz Değerlendirme",
+        contact: "İletişim",
+        socialMedia: "Sosyal Medya",
+        copyright: "© 2024 Venture Global. Tüm hakları saklıdır."
+    },
+    
+    // Home Page
+    home: {
+        hero: {
+            title: "Avrupa'da Eğitim",
+            subtitle: "Hayalinizi Gerçekleştirin",
+            description: "Venture Global olarak, Avrupa'nın en prestijli üniversitelerinde eğitim almanız için size özel danışmanlık hizmeti sunuyoruz.",
+            freeAssessment: "Ücretsiz Değerlendirme",
+            ourServices: "Hizmetlerimiz"
+        },
+        stats: {
+            countries: "Ülke",
+            universities: "Üniversite",
+            satisfaction: "Memnuniyet"
+        },
+        features: {
+            title: "Neden Venture Global®?",
+            subtitle: "Avrupa'da eğitim hayalinizi gerçekleştirmeniz için size özel çözümler sunuyoruz",
+            network: {
+                title: "Geniş Ağ",
+                description: "50+ üniversite ile işbirliği"
+            },
+            support: {
+                title: "7/24 Destek",
+                description: "Eğitim süreniz boyunca kesintisiz danışmanlık"
+            },
+            security: {
+                title: "Güvenli Hizmet",
+                description: "SSL şifreleme ile güvenli veri transferi"
+            }
+        },
+        assessment: {
+            title: "Kişiye Özel Eğitim Değerlendirmesi",
+            security: "Güvenlik: Tüm verileriniz SSL şifreleme ile korunmaktadır.",
+            firstName: "Ad",
+            lastName: "Soyad",
+            email: "E-posta Adresi",
+            phone: "Telefon",
+            educationLevel: "Eğitim Seviyesi",
+            selectOption: "Seçiniz",
+            bachelor: "Lisans (Bachelor)",
+            master: "Yüksek Lisans (Master)",
+
+            languageSchool: "Dil Okulu",
+            preferredCountry: "Tercih Ettiğiniz Ülke",
+            germany: "Almanya",
+            italy: "İtalya",
+            czech: "Çek Cumhuriyeti",
+            austria: "Avusturya",
+            uk: "İngiltere",
+            poland: "Polonya",
+            hungary: "Macaristan",
+            programArea: "Program Alanı",
+            engineering: "Mühendislik",
+            business: "İşletme/Ekonomi",
+            medicine: "Tıp",
+            arts: "Sanat/Tasarım",
+            social: "Sosyal Bilimler",
+            natural: "Doğa Bilimleri",
+            computer: "Bilgisayar Bilimi",
+            language: "Dil Eğitimi",
+            other: "Diğer",
+            budgetRange: "Bütçe Aralığı (Yıllık)",
+            lowBudget: "5,000 - 15,000 €",
+            mediumBudget: "15,000 - 30,000 €",
+            highBudget: "30,000+ €",
+            getRecommendations: "Önerilerimi Al",
+            submitting: "Gönderiliyor...",
+            success: "Başarılı! Değerlendirmeniz alındı. En kısa sürede size özel önerilerimizi göndereceğiz."
+        }
+    },
+    
+    // Universities Page
+    universities: {
+        hero: {
+            title: "Partner Üniversitelerimiz",
+            subtitle: "Avrupa'nın en prestijli üniversiteleri ile çalışıyoruz"
+        },
+        filters: {
+            country: "Ülke",
+            program: "Program",
+            level: "Seviye",
+            price: "Fiyat",
+            allCountries: "Tüm Ülkeler",
+            germany: "Almanya",
+            italy: "İtalya",
+            czech: "Çek Cumhuriyeti",
+            austria: "Avusturya",
+            uk: "İngiltere",
+            poland: "Polonya",
+            hungary: "Macaristan",
+            allPrograms: "Tüm Programlar",
+            engineering: "Mühendislik",
+            business: "İşletme/Ekonomi",
+            medicine: "Tıp",
+            arts: "Sanat/Tasarım",
+            social: "Sosyal Bilimler",
+            natural: "Doğa Bilimleri",
+            computer: "Bilgisayar Bilimi",
+            language: "Dil Eğitimi",
+            law: "Hukuk",
+            agriculture: "Tarım",
+            chemistry: "Kimya",
+            allLevels: "Tüm Seviyeler",
+            bachelor: "Lisans",
+            master: "Yüksek Lisans",
+            allPrices: "Tüm Fiyatlar",
+            lowPrice: "Düşük (0-3,000€)",
+            mediumPrice: "Orta (3,000-8,000€)",
+            highPrice: "Yüksek (8,000€+)",
+            clearFilters: "Filtreleri Temizle",
+            filter: "Filtrele"
+        },
+        tuition: "Ücret",
+        details: "Detaylar"
+    },
+    
+    // QS Rankings
+    qsRankings: {
+        title: "QS Ranking",
+        ctu: "151-200 (Electrical & Electronic Engineering)",
+        charles: "201-250 (Life Sciences & Medicine)",
+        tum: "19 (Mechanical, Aeronautical & Manufacturing Engineering)",
+        tud: "151-200 (Mechanical Engineering)",
+        polimi: "5 (Art & Design)",
+        sapienza: "44 (Classics & Ancient History)",
+        unifi: "51-100 (Art & Design)",
+        vut: "401-450 (Mechanical Engineering)",
+        vsb: "32 (Arts & Humanities)",
+        univie: "251-300 (Chemical Engineering)",
+        manchester: "22 (Nursing)",
+        vscht: "201-250 (Electrical & Electronic Engineering)",
+        metropolitan: "1201+ (Overall)",
+        czu: "251-300 (Agriculture & Forestry)",
+        masaryk: "401-450 (Life Sciences & Medicine)",
+        unyp: "Not Available",
+        bologna: "21 (Classics & Ancient History)",
+        pecs: "451-500 (Medicine)",
+        warsaw: "101-150 (Linguistics)",
+        wut: "201-250 (Electrical & Electronic Engineering)",
+        stirling: "51-100 (Sports Science)",
+        winchester: "801-1000 (Overall)",
+        bsbi: "Modern business school",
+        vse: "Best economics university in Czech Republic",
+        cattolica: "Best private university in Italy",
+        siena: "One of Italy's oldest universities",
+        polito: "One of Italy's best technical universities",
+        padova: "One of Italy's oldest universities"
+    },
+    
+    // University Descriptions
+    universityDescriptions: {
+        ctu: "Çek Cumhuriyeti'nin en prestijli ve köklü teknik üniversitelerinden biri. Avrupa'da mühendislik ve teknoloji alanlarında önde gelen kurum.",
+        charles: "Orta Avrupa'nın en eski üniversitesi. Tıp ve sosyal bilimler alanlarında güçlü.",
+        tum: "Almanya'nın en prestijli teknik üniversitelerinden biri. Mühendislik ve teknoloji alanlarında dünya çapında tanınır.",
+        tud: "Saksonya'nın en büyük üniversitesi. Mühendislik ve tıp alanlarında güçlü programlar sunar.",
+        polimi: "İtalya'nın en prestijli teknik üniversitesi. Mühendislik ve tasarım alanlarında güçlü.",
+        sapienza: "Roma'nın en eski ve prestijli üniversitesi. Tıp ve sosyal bilimler alanlarında güçlü.",
+        unifi: "Rönesans şehrinin prestijli üniversitesi. Sanat ve beşeri bilimler alanlarında güçlü.",
+        vut: "Çek Cumhuriyeti'nin en büyük teknik üniversitesi. Mühendislik ve teknoloji alanlarında güçlü.",
+        vsb: "Moravya-Silezya bölgesinin prestijli teknik üniversitesi. Mühendislik alanında güçlü.",
+        univie: "Avusturya'nın en eski ve prestijli üniversitesi. Tıp ve işletme alanlarında güçlü programlar.",
+        manchester: "İngiltere'nin en büyük ve prestijli üniversitelerinden biri. Bilim, mühendislik ve işletme alanlarında güçlü.",
+        vscht: "Çekya'nın önde gelen kimya ve teknoloji üniversitesi. Kimya, biyoteknoloji ve mühendislik alanlarında uzmanlaşmış.",
+        metropolitan: "Uluslararası ilişkiler, hukuk ve işletme alanlarında güçlü programlar sunan modern bir üniversite.",
+        czu: "Tarım, çevre bilimleri ve işletme alanlarında uzmanlaşmış, yenilikçi bir üniversite.",
+        masaryk: "Çekya'nın en büyük ikinci üniversitesi. Tıp, fen ve sosyal bilimler alanlarında öne çıkar.",
+        unyp: "Amerikan tarzı eğitim sunan, işletme, psikoloji ve iletişim alanlarında öne çıkan bir üniversite.",
+        bologna: "Dünyanın en eski üniversitelerinden biri. Sanat, hukuk, fen ve mühendislik alanlarında zengin programlar sunar.",
+        pecs: "Macaristan'ın en eski üniversitesi. Tıp, sanat ve işletme alanlarında güçlü programlara sahip.",
+        warsaw: "Polonya'nın en büyük üniversitesi. Fen, sanat ve işletme alanlarında zengin programlar sunar.",
+        wut: "Polonya'nın en iyi teknik üniversitelerinden biri. Mühendislik ve teknoloji alanlarında öne çıkar.",
+        stirling: "İskoçya'nın önde gelen üniversitelerinden biri. Sosyal bilimler, fen ve işletme alanlarında güçlüdür.",
+        winchester: "İngiltere'nin köklü üniversitelerinden biri. Sanat, eğitim ve sosyal bilimler alanlarında öne çıkar.",
+        bsbi: "İşletme ve inovasyon alanlarında uzmanlaşmış modern bir yüksek öğretim kurumu. Uluslararası öğrencilere İngilizce eğitim sunar.",
+        vse: "Çek Cumhuriyeti'nin en prestijli ekonomi ve işletme üniversitesi. Ekonomi, işletme ve yönetim alanlarında Avrupa'nın önde gelen kurumlarından.",
+        cattolica: "İtalya'nın en prestijli özel üniversitelerinden biri. İşletme, ekonomi, hukuk ve beşeri bilimler alanlarında uluslararası üne sahiptir.",
+        siena: "1240 yılında kurulan University of Siena, İtalya'nın en eski üniversitelerinden biri. Tıp, hukuk, ekonomi ve beşeri bilimler alanlarında güçlü.",
+        polito: "İtalya'nın en prestijli teknik üniversitelerinden biri. Mühendislik, mimarlık ve tasarım alanlarında uluslararası üne sahiptir.",
+        padova: "1222 yılında kurulan University of Padova, İtalya'nın en eski üniversitelerinden biri. Tıp, hukuk, felsefe ve doğa bilimleri alanlarında güçlü."
+    },
+    
+    // University Detail Descriptions
+    universityDetailDescriptions: {
+        tum: "Almanya'nın en prestijli teknik üniversitelerinden biri. Mühendislik ve teknoloji alanlarında dünya çapında tanınır.",
+        ctu: "Çek Teknik Üniversitesi (Czech Technical University in Prague – CTU), Prag'da kurulmuş olan Avrupa'nın en köklü ve önde gelen teknik üniversitelerinden biridir. Üniversite, 1707 yılında kurulmuştur ve bugün 8 fakültesiyle yaklaşık 21 bin öğrenciye ev sahipliği yapmaktadır. Çek Teknik Üniversitesi; dinamik, esnek, yenilikçi ve rekabetçi yapısı ile İngilizce eğitim vermektedir.\n\nÇek Teknik Üniversitesinde eğitim dili İngilizcedir. Okulda hem lisans hem yüksek lisans programlarına katılım sağlayabilirsiniz. Lisans eğitimi 3-4 yıl, yüksek lisans eğitimi ise 2 yıl sürmektedir.\n\nCzech Technical University in Prague, teknik eğitim konusunda uzun bir geçmişe sahip olmasıyla öne çıkmaktadır. 300 yılı aşkın bir süredir teknik eğitim veren üniversite, günümüzde de modern ve yenilikçi bir yapıya sahiptir. Üniversitenin tarihi binası, Gotik mimari tarzı ve tarihi önemiyle dikkat çeken bir yapıdır.\n\nCTU, öğrencilerin kariyer hedeflerini gerçekleştirmeleri için birçok fırsat sunar. Üniversitenin İngilizce eğitim vermesi, uluslararası öğrenciler için büyük bir avantajdır. Öğrenciler, kampüste yer alan araştırma merkezleri ve laboratuvarlar sayesinde teorik bilgilerini uygulamaya dönüştürebilirler. Ayrıca, üniversitenin öğrenci kulüpleri ve sosyal aktiviteleri, öğrencilerin sosyal becerilerini geliştirmelerine yardımcı olur.\n\nLisans ve yüksek lisans programları arasından seçim yapmak isteyen öğrenciler için, CTU geniş bir yelpaze sunmaktadır. Mühendislik, bilgisayar bilimi, inşaat, mimarlık gibi alanlarda lisans programları mevcuttur. Yüksek lisans programları arasında ise, enerji teknolojisi, çevre mühendisliği, endüstriyel tasarım gibi alanlar yer almaktadır.\n\nCzech Technical University in Prague, öğrencilerin sosyal hayatına da katkı sağlar. Öğrenciler, çeşitli kulüp ve etkinliklere katılarak, arkadaşlarıyla vakit geçirebilir ve farklı kültürleri tanıyabilirler.\n\nÇek Teknik Üniversitesi, teknik alanda eğitim almak isteyen öğrenciler için mükemmel bir seçenektir. İngilizce eğitim vermesi, geniş program yelpazesi ve modern yapılarıyla, öğrencilerin iyi bir eğitim almasını sağlamaktadır. Eğer teknoloji ve mühendislik alanında kariyer yapmak istiyorsanız, Çek Teknik Üniversitesi sizin için doğru adres olacaktır.",
+        charles: "Charles Üniversitesi (İng: Charles University, Çek: Univerzita Karlova), Karlova Üniversitesi ya da diğer adıyla Prag Üniversitesi, Çekya'nın en köklü, en büyük ve en saygın üniversitesidir.\n\nCharles Üniversitesi 1348 yılında kurulmuştur ve dünyanın en eski üniversitelerinden biridir. En büyük ve en ünlü Çek üniversitesi olup, aynı zamanda uluslararası sıralamada Çekya üniversiteleri arasında en üst sıralarda yer almaktadır. Dünyanın en iyi 250 üniversitesi arasında yer alan tek Çek üniversitesidir.\n\nModern, dinamik ve kozmopolit bir yapıya sahip olan üniversitenin 17 fakültesi bulunmaktadır. Bu fakültelerden 14 tanesi Prag'da, iki tanesi Hradec Kralove ve bir tanesi de Plzen şehrindedir. Tıp, Diş Hekimliği, Fizyoterapi ve Eczacılık programları, okulun en çok tercih edilen bölümleri arasındadır.\n\nAvrupa'nın en kaliteli yüksek öğrenim kurumları arasında yer alan Charles Üniversitesi'nde yaklaşık 50 bin öğrenci eğitim görmektedir. Üniversitede, 4.500'ü akademik personel olmak üzere 7.900'den fazla çalışan bulunmaktadır.",
+        tud: "Saksonya'nın en büyük üniversitesi. Mühendislik ve tıp alanlarında güçlü programlar sunar.",
+        polimi: "İtalya'nın en prestijli teknik üniversitesi. Mühendislik ve tasarım alanlarında güçlü.",
+        sapienza: "Roma'nın en eski ve prestijli üniversitesi. Tıp ve sosyal bilimler alanlarında güçlü.",
+        unifi: "Rönesans şehrinin prestijli üniversitesi. Sanat ve beşeri bilimler alanlarında güçlü.",
+        vut: "Çek Cumhuriyeti'nin en büyük teknik üniversitesi. Mühendislik ve teknoloji alanlarında güçlü.",
+        vsb: "Moravya-Silezya bölgesinin prestijli teknik üniversitesi. Mühendislik alanında güçlü.",
+        univie: "Avusturya'nın en eski ve prestijli üniversitesi. Tıp ve işletme alanlarında güçlü programlar.",
+        manchester: "İngiltere'nin en büyük ve prestijli üniversitelerinden biri. Bilim, mühendislik ve işletme alanlarında güçlü.",
+        vscht: "Çekya'nın önde gelen kimya ve teknoloji üniversitesi. Kimya, biyoteknoloji ve mühendislik alanlarında uzmanlaşmış.",
+        metropolitan: "Uluslararası ilişkiler, hukuk ve işletme alanlarında güçlü programlar sunan modern bir üniversite.",
+        czu: "Tarım, çevre bilimleri ve işletme alanlarında uzmanlaşmış, yenilikçi bir üniversite.",
+        masaryk: "Çekya'nın en büyük ikinci üniversitesi. Tıp, fen ve sosyal bilimler alanlarında öne çıkar.",
+        unyp: "Amerikan tarzı eğitim sunan, işletme, psikoloji ve iletişim alanlarında öne çıkan bir üniversite.",
+        bologna: "Dünyanın en eski üniversitelerinden biri. Sanat, hukuk, fen ve mühendislik alanlarında zengin programlar sunar.",
+        pecs: "Macaristan'ın en eski üniversitesi. Tıp, sanat ve işletme alanlarında güçlü programlara sahip.",
+        warsaw: "Polonya'nın en büyük üniversitesi. Fen, sanat ve işletme alanlarında zengin programlar sunar.",
+        wut: "Polonya'nın en iyi teknik üniversitelerinden biri. Mühendislik ve teknoloji alanlarında öne çıkar.",
+        stirling: "İskoçya'nın önde gelen üniversitelerinden biri. Sosyal bilimler, fen ve işletme alanlarında güçlüdür.",
+        winchester: "İngiltere'nin köklü üniversitelerinden biri. Sanat, eğitim ve sosyal bilimler alanlarında öne çıkar.",
+        bsbi: "İşletme ve inovasyon alanlarında uzmanlaşmış modern bir yüksek öğretim kurumu. Uluslararası öğrencilere İngilizce eğitim sunar.",
+        vse: "Çek Cumhuriyeti'nin en prestijli ekonomi ve işletme üniversitesi. Ekonomi, işletme ve yönetim alanlarında Avrupa'nın önde gelen kurumlarından.",
+        cattolica: "İtalya'nın en prestijli özel üniversitelerinden biri. İşletme, ekonomi, hukuk ve beşeri bilimler alanlarında uluslararası üne sahiptir.",
+        siena: "1240 yılında kurulan University of Siena, İtalya'nın en eski üniversitelerinden biri. Tıp, hukuk, ekonomi ve beşeri bilimler alanlarında güçlü.",
+        polito: "İtalya'nın en prestijli teknik üniversitelerinden biri. Mühendislik, mimarlık ve tasarım alanlarında uluslararası üne sahiptir.",
+        padova: "1222 yılında kurulan University of Padova, İtalya'nın en eski üniversitelerinden biri. Tıp, hukuk, felsefe ve doğa bilimleri alanlarında güçlü."
+    },
+    
+    // Common Requirements Terms
+    commonRequirements: {
+        highSchoolDiploma: "Lise diploması",
+        transcripts: "not dökümü", 
+        englishProficiency: "İngilizce yeterlilik belgesi",
+        germanProficiency: "Almanca yeterlilik belgesi",
+        italianOrEnglish: "İtalyanca veya İngilizce yeterlilik belgesi",
+        hungarianOrEnglish: "Macarca veya İngilizce yeterlilik belgesi",
+        ielts60: "IELTS 6.0+",
+        ielts65: "IELTS 6.5+",
+        toefl80: "TOEFL iBT 80+",
+        toefl90: "TOEFL iBT 90+"
+    },
+    
+    // University Programs
+    universityPrograms: {
+        // TUM Programs
+        tum: [
+            'Yönetim ve Teknoloji (B.Sc.)',
+            'Elektronik ve Veri Mühendisliği (B.Eng.)',
+            'Uzay Mühendisliği',
+            'Biyomedikal Mühendisliği ve Tıp Fiziği',
+            'Biyomedikal Sinirbilim',
+            'Kimyasal Biyoteknoloji',
+            'İnşaat Mühendisliği',
+            'İletişim Mühendisliği',
+            'Hesaplamalı Bilim ve Mühendislik',
+            'Veri Mühendisliği ve Analitik',
+            'Bilişim (Bilgisayar Bilimi ve Oyun Mühendisliği)',
+            'Bilgi Sistemleri',
+            'Bioekonomi, Tarımsal Biyobilimler',
+            'Arazi Yönetimi ve Jeouzamsal Bilimler',
+            'Politika ve Teknoloji',
+            'Tüketici Bilimi ve Spor Bilimi'
+        ],
+        // CTU Programs
+        ctu: [
+            'Makine Mühendisliği',
+            'Elektrik Mühendisliği',
+            'Bilgisayar Bilimleri',
+            'İnşaat Mühendisliği',
+            'Mimarlık',
+            'Biyomedikal Mühendisliği',
+            'Ulaştırma Bilimleri',
+            'Nükleer Bilimler ve Fizik Mühendisliği',
+            'Bilgi Sistemleri',
+            'Robotik',
+            'Yapay Zeka',
+            'Çevre Mühendisliği',
+            'Ekonomi'
+        ],
+        // VSE Programs
+        vse: [
+            'Ekonomi',
+            'İşletme Yönetimi',
+            'Uluslararası Ticaret',
+            'Finans ve Muhasebe',
+            'Pazarlama',
+            'İnsan Kaynakları Yönetimi',
+            'Bilgi Sistemleri Yönetimi',
+            'Turizm Yönetimi',
+            'Halkla İlişkiler',
+            'İstatistik ve Ekonometri'
+        ],
+        // Charles Programs
+        charles: [
+            'Tıp',
+            'Diş Hekimliği',
+            'Eczacılık',
+            'Hukuk',
+            'Felsefe',
+            'Sosyal Bilimler',
+            'Beşeri Bilimler',
+            'Doğa Bilimleri',
+            'Matematik',
+            'Fizik',
+            'Kimya',
+            'Biyoloji',
+            'Ekonomi',
+            'İşletme'
+        ],
+        // Sapienza & UniFi Programs
+        sapienza: [
+            'Makine Mühendisliği',
+            'Elektrik Mühendisliği',
+            'Bilgisayar Mühendisliği',
+            'İnşaat Mühendisliği',
+            'Tıp',
+            'Diş Hekimliği',
+            'Eczacılık',
+            'Fizik',
+            'Kimya',
+            'Biyoloji',
+            'Matematik',
+            'Ekonomi',
+            'İşletme',
+            'Psikoloji',
+            'Eğitim Bilimleri'
+        ],
+        // VUT Programs (Brno University of Technology)
+        vut: [
+            'Makine Mühendisliği',
+            'Elektrik Mühendisliği',
+            'Bilgisayar Bilimleri',
+            'İnşaat Mühendisliği',
+            'Mimarlık',
+            'Endüstriyel Tasarım',
+            'İşletme Yönetimi',
+            'Ekonomi',
+            'Kimya Mühendisliği',
+            'Malzeme Bilimi',
+            'Çevre Mühendisliği',
+            'Otomasyon ve Kontrol',
+            'Enerji Mühendisliği',
+            'Biyomedikal Mühendisliği',
+            'Endüstri Mühendisliği',
+            'Yazılım Mühendisliği',
+            'Telekomünikasyon Mühendisliği'
+        ],
+        // University of Vienna Programs
+        univie: [
+            'Beşeri Bilimler',
+            'Sosyal Bilimler',
+            'Doğa Bilimleri',
+            'Hukuk',
+            'Ekonomi',
+            'Psikoloji',
+            'Biyoloji',
+            'Fizik',
+            'Kimya',
+            'Matematik',
+            'Bilgisayar Bilimleri',
+            'Tarih',
+            'Felsefe',
+            'Dilbilim',
+            'Siyaset Bilimi',
+            'İletişim',
+            'Çevre Bilimleri',
+            'Eğitim Bilimleri'
+        ],
+        // VSCHT Programs
+        vscht: [
+            'Kimya Mühendisliği',
+            'Kimya',
+            'Biyoteknoloji',
+            'Gıda Mühendisliği',
+            'Gıda Kimyası ve Teknolojisi',
+            'Çevre Mühendisliği',
+            'Çevre Kimyası',
+            'Malzeme Bilimi ve Mühendisliği',
+            'Ekonomi ve Yönetim',
+            'İnovasyon ve Proje Yönetimi',
+            'Doğal Kaynakların Sürdürülebilir Kullanımı'
+        ],
+        // Metropolitan University Prague Programs
+        metropolitan: [
+            'İngiliz Dili ve Edebiyatı',
+            'Uluslararası İşletme',
+            'Uluslararası İlişkiler – Asya Çalışmaları',
+            'Uluslararası İlişkiler – Avrupa Çalışmaları',
+            'Dijital Ekonomi',
+            'Finansal Yönetim',
+            'Beşeri Bilimler',
+            'Medya Çalışmaları',
+            'Kamu Yönetimi',
+            'Psikoloji',
+            'Turizm'
+        ],
+        // Czech University of Life Sciences Prague Programs
+        czu: [
+            'Tarım ve Gıda',
+            'Ekonomi ve Yönetim',
+            'Çevre Bilimleri',
+            'Ormancılık ve Ahşap Bilimleri',
+            'Mühendislik',
+            'Tropik Tarım Bilimleri',
+            'Eğitim ve İletişim Enstitüsü',
+            'Doğal Kaynakların Sürdürülebilir Kullanımı',
+            'Yaban Hayatı Yönetimi',
+            'Peyzaj Planlama',
+            'Biyoteknoloji',
+            'Gıda Güvenliği',
+            'Yenilenebilir Enerji Sistemleri'
+        ],
+        // University of Manchester Programs
+        manchester: [
+            'Mühendislik (Makine, Elektrik, Kimya, Bilgisayar, İnşaat)',
+            'Biyoloji ve Yaşam Bilimleri',
+            'Tıp',
+            'Hukuk',
+            'Ekonomi ve İşletme',
+            'Psikoloji',
+            'Matematik',
+            'Fizik',
+            'Kimya',
+            'Sosyoloji',
+            'Tarih',
+            'Dilbilim',
+            'Sanat ve Beşeri Bilimler',
+            'Çevre Bilimleri',
+            'Siyaset ve Uluslararası İlişkiler',
+            'Mimarlık'
+        ],
+        // Masaryk University Programs
+        masaryk: [
+            'Tıp (Genel Tıp, Diş Hekimliği)',
+            'Biyoloji ve Biyokimya',
+            'Veri Analitik',
+            'İngiliz Dili ve Edebiyatı',
+            'İşletme ve Finans',
+            'Ekonomi ve Kamu Politikası',
+            'Uluslararası İlişkiler ve Avrupa Politikası',
+            'Kültür, Medya ve Sanat',
+            'Eğitim Bilimleri',
+            'Bilgisayar Bilimleri',
+            'Yapay Zeka ve Veri İşleme',
+            'Çatışma ve Demokrasi Çalışmaları',
+            'Enerji Politikası',
+            'Kamu Yönetimi',
+            'Psikoloji',
+            'Sosyoloji',
+            'Coğrafya',
+            'Eczacılık Bilimleri'
+        ],
+        // University of New York in Prague Programs
+        unyp: [
+            'İşletme Yönetimi (Amerikan Lisans)',
+            'İletişim ve Medya',
+            'Bilgi Teknolojileri',
+            'Uluslararası İlişkiler',
+            'Psikoloji',
+            'İngiliz Dili ve Edebiyatı',
+            'Dijital Medya Sanatları',
+            'MBA (Finans, Pazarlama, Yönetim, Nöroyönetim, Küresel İş Hizmetleri, Girişimcilik)',
+            'Psikoloji (Yüksek Lisans)'
+        ],
+        // University of Bologna Programs
+        bologna: [
+            'Mühendislik (Makine, Otomasyon, Elektrik, İnşaat)',
+            'Tıp ve Sağlık Bilimleri',
+            'İşletme ve Ekonomi',
+            'Uluslararası İlişkiler',
+            'Bilgisayar Bilimleri',
+            'Matematik',
+            'Fizik',
+            'Kimya',
+            'Biyoloji',
+            'Tarih',
+            'Felsefe',
+            'Sanat ve Beşeri Bilimler',
+            'Tarım ve Gıda Bilimleri',
+            'Mimarlık',
+            'Çevre Bilimleri',
+            'Biyomedikal Mühendisliği',
+            'Turizm',
+            'Hukuk'
+        ],
+        // University of Warsaw Programs
+        warsaw: [
+            'Amerikan Çalışmaları',
+            'Uluslararası İlişkiler',
+            'Avrupa Politikası ve Ekonomisi',
+            'Finans, Yatırım ve Muhasebe',
+            'İngiliz Dili ve Edebiyatı',
+            'Psikoloji',
+            'Kimya',
+            'Fizik',
+            'Makine Öğrenmesi',
+            'Veri Bilimi ve İş Analitik',
+            'Sürdürülebilir Kalkınma',
+            'Sosyoloji',
+            'Tarih',
+            'Siyaset Bilimi',
+            'Hukuk',
+            'Biyoloji',
+            'Çevre Bilimleri',
+            'Medya ve İletişim',
+            'İşletme',
+            'Matematik'
+        ],
+        // University of Stirling Programs
+        stirling: [
+            'İşletme ve Yönetim',
+            'Bilgisayar Bilimleri',
+            'Çevre Bilimleri',
+            'Medya ve İletişim',
+            'Psikoloji',
+            'Spor Bilimleri',
+            'Finans ve Ekonomi',
+            'Hukuk',
+            'Matematik ve Veri Bilimi',
+            'Biyoloji',
+            'Sağlık Bilimleri',
+            'Sosyoloji',
+            'Tarih',
+            'Sanat ve Beşeri Bilimler',
+            'Uluslararası İlişkiler',
+            'Eğitim',
+            'Pazarlama',
+            'Siyaset Bilimi',
+            'Felsefe',
+            'Biyomedikal Bilimler'
+        ],
+        // University of Winchester Programs
+        winchester: [
+            'Bilgisayar Bilimleri',
+            'İşletme ve Yönetim',
+            'Psikoloji',
+            'Yaratıcı Yazarlık',
+            'Medya ve İletişim',
+            'Sanat ve Beşeri Bilimler',
+            'Tarih',
+            'Eğitim',
+            'Hukuk',
+            'Sağlık ve Sosyal Hizmetler',
+            'Spor Bilimleri',
+            'Biyoloji',
+            'Felsefe',
+            'Pazarlama',
+            'Sosyoloji',
+            'Finans',
+            'Çevre Bilimleri',
+            'Müzik',
+            'Gazetecilik',
+            'Antropoloji'
+        ],
+        // Berlin School of Business and Innovation Programs
+        bsbi: [
+            'İşletme Yönetimi',
+            'Uluslararası İşletme',
+            'Pazarlama',
+            'Finans',
+            'İnsan Kaynakları Yönetimi',
+            'Dijital Pazarlama',
+            'Girişimcilik',
+            'Proje Yönetimi',
+            'Stratejik Yönetim',
+            'Uluslararası Ticaret'
+        ],
+        // Università Cattolica del Sacro Cuore Programs
+        cattolica: [
+            'İşletme Yönetimi',
+            'Ekonomi',
+            'Hukuk',
+            'Psikoloji',
+            'Siyaset Bilimi',
+            'Uluslararası İlişkiler',
+            'İletişim Bilimleri',
+            'Eğitim',
+            'Felsefe',
+            'Tarih',
+            'Dil ve Edebiyat',
+            'Tıp',
+            'Diş Hekimliği'
+        ],
+        // University of Siena Programs
+        siena: [
+            'Tıp',
+            'Hukuk',
+            'Ekonomi',
+            'İşletme Yönetimi',
+            'Eczacılık',
+            'Diş Hekimliği',
+            'Psikoloji',
+            'Siyaset Bilimi',
+            'Tarih',
+            'Felsefe',
+            'Dil ve Edebiyat',
+            'Matematik',
+            'Fizik',
+            'Kimya',
+            'Biyoloji'
+        ],
+        // Politecnico di Torino Programs
+        polito: [
+            'Makine Mühendisliği',
+            'Elektrik Mühendisliği',
+            'Bilgisayar Mühendisliği',
+            'İnşaat Mühendisliği',
+            'Endüstri Mühendisliği',
+            'Mimarlık',
+            'Tasarım',
+            'Uzay Mühendisliği',
+            'Otomotiv Mühendisliği',
+            'Biyomedikal Mühendisliği',
+            'Çevre Mühendisliği',
+            'Enerji Mühendisliği'
+        ],
+        // University of Padova Programs
+        padova: [
+            'Tıp',
+            'Hukuk',
+            'Felsefe',
+            'Psikoloji',
+            'Eczacılık',
+            'Diş Hekimliği',
+            'Veterinerlik',
+            'Ekonomi',
+            'İşletme Yönetimi',
+            'Siyaset Bilimi',
+            'Tarih',
+            'Dil ve Edebiyat',
+            'Matematik',
+            'Fizik',
+            'Kimya',
+            'Biyoloji',
+            'Jeoloji',
+            'Astronomi'
+        ],
+        // University of Pecs Programs
+        pecs: [
+            'Tıp',
+            'Diş Hekimliği',
+            'Eczacılık',
+            'Hemşirelik',
+            'Fizyoterapi',
+            'Psikoloji',
+            'İşletme Yönetimi',
+            'Ekonomi',
+            'Uluslararası İlişkiler',
+            'Hukuk',
+            'Tarih',
+            'Dil ve Edebiyat',
+            'Müzik',
+            'Görsel Sanatlar',
+            'Mimarlık',
+            'Bilgisayar Bilimi',
+            'Matematik',
+            'Fizik',
+            'Kimya',
+            'Biyoloji'
+        ],
+        // VSB Technical University of Ostrava Programs
+        vsb: [
+            'Makine Mühendisliği',
+            'Elektrik Mühendisliği',
+            'Bilgisayar Bilimleri',
+            'İnşaat Mühendisliği',
+            'Mimarlık',
+            'Endüstriyel Tasarım',
+            'Kimya Mühendisliği',
+            'Malzeme Bilimi',
+            'Çevre Mühendisliği',
+            'Otomasyon ve Kontrol',
+            'Enerji Mühendisliği',
+            'Biyomedikal Mühendisliği',
+            'Endüstri Mühendisliği',
+            'Yazılım Mühendisliği',
+            'Telekomünikasyon Mühendisliği',
+            'Uçak Mühendisliği',
+            'Yönetim Mühendisliği',
+            'Fizik Mühendisliği',
+            'Matematik Mühendisliği'
+        ],
+        // Warsaw University of Technology Programs
+        wut: [
+            'Makine Mühendisliği',
+            'Elektrik Mühendisliği',
+            'Bilgisayar Bilimleri',
+            'İnşaat Mühendisliği',
+            'Mimarlık',
+            'Endüstriyel Tasarım',
+            'Kimya Mühendisliği',
+            'Malzeme Bilimi',
+            'Çevre Mühendisliği',
+            'Otomasyon ve Kontrol',
+            'Enerji Mühendisliği',
+            'Biyomedikal Mühendisliği',
+            'Endüstri Mühendisliği',
+            'Yazılım Mühendisliği',
+            'Telekomünikasyon Mühendisliği',
+            'Uçak Mühendisliği',
+            'Yönetim Mühendisliği',
+            'Fizik Mühendisliği',
+            'Matematik Mühendisliği'
+        ]
+    },
+    
+    // University Levels
+    universityLevels: {
+        bachelor: 'Lisans',
+        master: 'Yüksek Lisans',
+        phd: 'Doktora'
+    },
+    
+    // University Requirements
+    universityRequirements: {
+        // TUM Requirements
+        tum: [
+            'Lise diploması veya dengi',
+            'Uni-assist ön değerlendirme (Preliminary Documentation - VPD)',
+            'Dil yeterlilik belgesi (program göre İngilizce veya Almanca)',
+            'Online başvuru formu (TUMonline)',
+            'Motivasyon mektubu',
+            'CV/Özgeçmiş',
+            'Akademik transkript',
+            'Referans mektupları',
+            'Pasaport kopyası',
+            'Yetenek değerlendirme sınavı (çoğu program için)',
+            'Harç ücreti €3,000/yıl (AB dışı öğrenciler için)',
+            'Sağlık sigortası belgesi'
+        ],
+        // CTU Requirements
+        ctu: [
+            'Lise diploması veya dengi',
+            'Online başvuru formu (CTU portal)',
+            'İngilizce dil yeterlilik belgesi (IELTS 6.0+, TOEFL 80+)',
+            'Motivasyon mektubu',
+            'CV/Özgeçmiş',
+            'Akademik transkript',
+            'Referans mektupları (opsiyonel)',
+            'Başvuru ücreti 950 CZK',
+            'Pasaport kopyası',
+            'Yetenek değerlendirme sınavı (çoğu program için)'
+        ],
+        // Charles Requirements
+        charles: [
+            'Lisans/Yüksek lisans diploması (Yüksek lisans için)',
+            'Lise diploması (Lisans için)',
+            'Online başvuru formu',
+            'İngilizce dil yeterlilik belgesi (IELTS 6.5+, TOEFL 85+)',
+            'Akademik transkript ve ders müfredatları',
+            'Motivasyon mektubu',
+            'Referans mektupları (opsiyonel)',
+            'Başvuru ücreti 1500 CZK',
+            'Pasaport kopyası',
+            'Yabancı eğitim tanıma belgesi'
+        ],
+        // TUD Requirements
+        tud: [
+            'Lise diploması veya dengi',
+            'Uni-assist ön başvuru (uluslararası öğrenciler için)',
+            'Almanca dil yeterlilik belgesi (DSH-2, TestDaF 4x4, Goethe C2)',
+            'Online başvuru formu',
+            'Motivasyon mektubu',
+            'CV/Özgeçmiş',
+            'Akademik transkript (noter onaylı)',
+            'Referans mektupları',
+            'Pasaport kopyası',
+            'Finansal durum belgesi',
+            'Sağlık sigortası belgesi'
+        ],
+        // Politecnico Milano Requirements
+        polimi: [
+            'Lise diploması veya dengi (en az 12 yıl eğitim)',
+            'TOL (Test Online) veya TOLC-I sınavı (zorunlu)',
+            'İngilizce programlar için TOLC-I sınavı',
+            'SAT sınavı (alternatif - her bölümde min. 650 puan)',
+            'İngilizce dil yeterlilik belgesi (programlara göre)',
+            'İtalyanca dil yeterlilik belgesi (İtalyanca programlar için B2)',
+            'Online başvuru formu',
+            'Sınav ücreti €50',
+            'İnternet tabanlı başvuru süreci',
+            'Akademik transkript',
+            'Pasaport kopyası'
+        ],
+        // Sapienza Requirements  
+        sapienza: [
+            'Lise diploması (en az 12 yıl eğitim)',
+            'Ön seçim başvurusu (Pre-selection)',
+            'İngilizce dil yeterlilik belgesi (B2+ seviye - IELTS, TOEFL, Cambridge)',
+            'Lisans için lise diploması ve transkripti',
+            'Yüksek lisans için 3 yıllık lisans diploması',
+            'Infostud hesabı oluşturma',
+            'Pasaport veya kimlik belgesi',
+            'Motivasyon mektubu (opsiyonel)',
+            'Referans mektupları (opsiyonel)',
+            'Başvuru ücreti €30 (maksimum 2 program)',
+            'AB dışı öğrenciler için öğrenci vizesi',
+            'Harç ücreti €300-1500/yıl (ülke göre değişir)',
+            'Portfolio (mimarlık/tasarım programları için)'
+        ],
+        // UniFi Requirements
+        unifi: [
+            'Lise diploması',
+            'İtalyanca yeterlilik belgesi (B2 seviyesi)',
+            'İngilizce programlar için IELTS 6.0 veya TOEFL 80',
+            'Motivasyon mektubu',
+            'CV',
+            'Referans mektupları',
+            'Online başvuru formu',
+            'Portfolio (tasarım bölümleri için)',
+            'Giriş sınavı (bazı bölümler için)'
+        ],
+        // VUT Requirements
+        vut: [
+            'Lise diploması',
+            'İngilizce veya Çekçe yeterlilik belgesi',
+            'Motivasyon mektubu',
+            'CV',
+            'Referans mektupları',
+            'Online başvuru formu'
+        ],
+        // Univie Requirements
+        univie: [
+            'Lise diploması (Austrian Matura veya dengi)',
+            'Almanca C1 (çoğu lisans programı için)',
+            'İngilizce programlar için IELTS 6.5+ veya TOEFL iBT 90+',
+            'Akademik transkript',
+            'Motivasyon mektubu',
+            'CV',
+            'Referans mektupları',
+            'Online başvuru formu',
+            'Başvuru ücreti (~50€)',
+            'Bazı bölümler için giriş sınavı'
+        ],
+        // VSCHT Requirements
+        vscht: [
+            'Lise diploması',
+            'İngilizce veya Çekçe yeterlilik belgesi',
+            'Motivasyon mektubu',
+            'CV',
+            'Referans mektupları',
+            'Online başvuru formu',
+            'Başvuru ücreti'
+        ],
+        // Metropolitan Requirements
+        metropolitan: [
+            'Lise diploması (en az 12 yıl eğitim)',
+            'İngilizce dil yeterlilik belgesi (IELTS 6.0+, TOEFL 80+)',
+            'Online başvuru formu (Metropolitan portal)',
+            'Motivasyon mektubu (500-800 kelime)',
+            'CV/Özgeçmiş',
+            'Akademik transkript (noter onaylı)',
+            'Referans mektupları (2 adet)',
+            'Pasaport kopyası',
+            'Başvuru ücreti 1000 CZK',
+            'Portfolio (sanat/tasarım programları için)',
+            'Giriş sınavı (bazı programlar için)',
+            'Mülakat (bazı programlar için)',
+            'Vize gerektiren öğrenciler için ek belgeler'
+        ],
+        // CZU Requirements
+        czu: [
+            'Lise diploması (en az 12 yıl eğitim)',
+            'İngilizce dil yeterlilik belgesi (IELTS 6.0+, TOEFL 80+)',
+            'Çekçe programlar için Çekçe B2 seviyesi',
+            'Online başvuru formu (CZU portal)',
+            'Motivasyon mektubu (500-1000 kelime)',
+            'CV/Özgeçmiş',
+            'Akademik transkript (noter onaylı)',
+            'Referans mektupları (2 adet)',
+            'Pasaport kopyası',
+            'Başvuru ücreti 800 CZK',
+            'Portfolio (mimarlık/tasarım programları için)',
+            'Giriş sınavı (bazı programlar için)',
+            'Mülakat (bazı programlar için)',
+            'Vize gerektiren öğrenciler için ek belgeler'
+        ],
+        // Manchester Requirements
+        manchester: [
+            'Lise diploması (A-levels AAA-ABB, IB 32-37 puan veya dengi)',
+            'UCAS üzerinden başvuru (M20 MANU kodu)',
+            'İngilizce dil yeterlilik belgesi (IELTS 6.5-7.5, TOEFL 90-109)',
+            'Ülke bazlı özel notlar ve gereksinimler',
+            'Çok yüksek akademik başarı notları (program bazlı)',
+            'Matematik ve fen bilimleri zorunlu (mühendislik için)',
+            'Başvuru son tarihi: 30 Haziran (uluslararası)',
+            'Eşit değerlendirme tarihi: 29 Ocak',
+            'Tıp/Diş hekimliği: 15 Ekim son tarihi',
+            'UCAS başvuru ücreti (£27.50)',
+            'Motivasyon mektubu (4000 karakter)',
+            'Referans mektubu (öğretmen/akademisyen)',
+            'Portfolio (sanat/tasarım programları için)',
+            'Giriş sınavı (tıp, diş hekimliği için)',
+            'Mülakat (bazı programlar için)',
+            'Finansal durum belgesi (vize için)',
+            'Konaklama garantisi (koşullu)'
+        ],
+        // Masaryk Requirements
+        masaryk: [
+            'Lise diploması (en az 12 yıl eğitim)',
+            'İngilizce dil yeterlilik belgesi (IELTS 6.0+, TOEFL 80+)',
+            'Çekçe programlar için Çekçe B2 seviyesi',
+            'Online başvuru formu (Masaryk portal)',
+            'Motivasyon mektubu (500-1000 kelime)',
+            'CV/Özgeçmiş',
+            'Akademik transkript (noter onaylı)',
+            'Referans mektupları (2 adet)',
+            'Pasaport kopyası',
+            'Başvuru ücreti 1000 CZK',
+            'Portfolio (sanat/tasarım programları için)',
+            'Giriş sınavı (bazı programlar için)',
+            'Mülakat (bazı programlar için)',
+            'Vize gerektiren öğrenciler için ek belgeler'
+        ],
+        // UNYP Requirements
+        unyp: [
+            'Lise diploması (en az 12 yıl eğitim)',
+            'İngilizce dil yeterlilik belgesi (IELTS 6.0+, TOEFL iBT 72+ veya CAE/CPE)',
+            'Online başvuru formu (UNYP portal)',
+            'Motivasyon mektubu (500-1000 kelime)',
+            'CV/Özgeçmiş',
+            'Akademik transkript (noter onaylı)',
+            'Referans mektupları (2 adet)',
+            'Pasaport kopyası',
+            'Başvuru ücreti 2000 CZK',
+            'Portfolio (sanat/tasarım programları için)',
+            'Giriş sınavı (bazı programlar için)',
+            'Mülakat (bazı programlar için)',
+            'Vize gerektiren öğrenciler için ek belgeler'
+        ],
+        // Bologna Requirements
+        bologna: [
+            'Lise diploması (en az 12 yıl eğitim)',
+            'Studenti Online hesabı oluşturma',
+            'AB dışı öğrenciler için yabancı diploma değerlendirmesi',
+            'İngilizce programlar için İngilizce B2 yeterlilik belgesi',
+            'İtalyanca programlar için İtalyanca B2 yeterlilik belgesi',
+            'Dil belgesi muafiyetleri (Ana dil, eğitim dili vb.)',
+            'Akademik transkript ve ders içerikleri',
+            'Pasaport veya kimlik belgesi',
+            'Ülke bazlı özel gereksinimler (YKS, SAT, A-levels vb.)',
+            'AB dışı öğrenciler için öğrenci vizesi',
+            'Online başvuru süreci',
+            'Kısa dönem başvuru süreçleri (ülke bazlı)'
+        ],
+        // Warsaw Requirements
+        warsaw: [
+            'Lise diploması (en az 12 yıl eğitim)',
+            'İngilizce dil yeterlilik belgesi (IELTS 6.5+, TOEFL iBT 87+)',
+            'Online başvuru formu (Warsaw portal)',
+            'Motivasyon mektubu (500-1000 kelime)',
+            'CV/Özgeçmiş',
+            'Akademik transkript (noter onaylı)',
+            'Referans mektupları (2 adet)',
+            'Pasaport kopyası',
+            'Başvuru ücreti 200 PLN',
+            'Portfolio (sanat/tasarım programları için)',
+            'Giriş sınavı (bazı programlar için)',
+            'Mülakat (bazı programlar için)',
+            'Vize gerektiren öğrenciler için ek belgeler'
+        ],
+        // Stirling Requirements
+        stirling: [
+            'Lise diploması (A-levels BBB, IB 30+ puan veya dengi)',
+            'UCAS üzerinden başvuru (STIRLING kodu)',
+            'İngilizce dil yeterlilik belgesi (IELTS 6.0+, TOEFL iBT 78+)',
+            'Akademik transkript (noter onaylı)',
+            'Motivasyon mektubu (4000 karakter)',
+            'CV/Özgeçmiş',
+            'Referans mektubu (öğretmen/akademisyen)',
+            'UCAS başvuru ücreti (£27.50)',
+            'Portfolio (sanat/tasarım programları için)',
+            'Giriş sınavı (tıp programları için)',
+            'Mülakat (bazı programlar için)',
+            'Finansal durum belgesi (vize için)'
+        ],
+        // Winchester Requirements
+        winchester: [
+            'Lise diploması (A-levels CCC-BBB, IB 24-30 puan veya dengi)',
+            'UCAS üzerinden başvuru (WINCHESTER kodu)',
+            'İngilizce dil yeterlilik belgesi (IELTS 6.0+, TOEFL iBT 60+)',
+            'Akademik transkript (noter onaylı)',
+            'Motivasyon mektubu (4000 karakter)',
+            'CV/Özgeçmiş',
+            'Referans mektubu (öğretmen/akademisyen)',
+            'UCAS başvuru ücreti (£27.50)',
+            'Portfolio (sanat/tasarım programları için)',
+            'Giriş sınavı (bazı programlar için)',
+            'Mülakat (bazı programlar için)',
+            'Finansal durum belgesi (vize için)'
+        ],
+        // BSBI Requirements
+        bsbi: [
+            'Lise diploması (en az 12 yıl eğitim)',
+            'İngilizce dil yeterlilik belgesi (IELTS 6.0+, TOEFL 80+)',
+            'Online başvuru formu (BSBI portal)',
+            'Motivasyon mektubu (500-1000 kelime)',
+            'CV/Özgeçmiş',
+            'Akademik transkript (noter onaylı)',
+            'Referans mektupları (2 adet)',
+            'Pasaport kopyası',
+            'Başvuru ücreti 150€',
+            'Portfolio (sanat/tasarım programları için)',
+            'Giriş sınavı (bazı programlar için)',
+            'Mülakat (bazı programlar için)',
+            'Vize gerektiren öğrenciler için ek belgeler'
+        ],
+        // VSE Requirements
+        vse: [
+            'Lise diploması',
+            'İngilizce veya Çekçe yeterlilik belgesi',
+            'Motivasyon mektubu',
+            'CV',
+            'Referans mektupları',
+            'Online başvuru formu',
+            'Giriş sınavı (bazı bölümler için)'
+        ],
+        // Cattolica Requirements
+        cattolica: [
+            'Lise diploması',
+            'İtalyanca yeterlilik belgesi (B2 seviyesi)',
+            'İngilizce programlar için IELTS 6.5+',
+            'Motivasyon mektubu',
+            'CV',
+            'Akademik transkript',
+            'Online başvuru formu',
+            'Başvuru ücreti'
+        ],
+        // Siena Requirements
+        siena: [
+            'Lise diploması',
+            'İtalyanca yeterlilik belgesi (B2 seviyesi)',
+            'İngilizce programlar için IELTS 6.0+',
+            'Motivasyon mektubu',
+            'CV',
+            'Akademik transkript',
+            'Online başvuru formu'
+        ],
+        // Polito Requirements
+        polito: [
+            'Lise diploması',
+            'İtalyanca yeterlilik belgesi (B2 seviyesi)',
+            'İngilizce programlar için IELTS 6.0+ veya TOEFL iBT 78+',
+            'Motivasyon mektubu',
+            'CV',
+            'Akademik transkript',
+            'Online başvuru formu',
+            'Giriş sınavı (bazı bölümler için)'
+        ],
+        // Padova Requirements
+        padova: [
+            'Lise diploması',
+            'İtalyanca yeterlilik belgesi (B2 seviyesi)',
+            'İngilizce programlar için IELTS 6.0+',
+            'Motivasyon mektubu',
+            'CV',
+            'Akademik transkript',
+            'Online başvuru formu'
+        ],
+        // Pecs Requirements
+        pecs: [
+            'Lise diploması',
+            'İngilizce yeterlilik belgesi (IELTS 6.0+)',
+            'Motivasyon mektubu',
+            'CV',
+            'Referans mektupları',
+            'Online başvuru formu',
+            'Tıp bölümü için giriş sınavı'
+        ],
+        // VSB Requirements
+        vsb: [
+            'Lise diploması (en az 12 yıl eğitim)',
+            'İngilizce dil yeterlilik belgesi (IELTS 6.0+, TOEFL 80+)',
+            'Çekçe programlar için Çekçe B2 seviyesi',
+            'Online başvuru formu (VSB portal)',
+            'Motivasyon mektubu (500-1000 kelime)',
+            'CV/Özgeçmiş',
+            'Akademik transkript (noter onaylı)',
+            'Referans mektupları (2 adet)',
+            'Pasaport kopyası',
+            'Başvuru ücreti 500 CZK',
+            'Portfolio (mimarlık programları için)',
+            'Giriş sınavı (bazı programlar için)',
+            'Vize gerektiren öğrenciler için ek belgeler'
+        ],
+        // WUT Requirements
+        wut: [
+            'Lise diploması (en az 12 yıl eğitim)',
+            'İngilizce dil yeterlilik belgesi (IELTS 6.0+, TOEFL 80+)',
+            'Online başvuru formu (WUT portal)',
+            'Motivasyon mektubu (500-1000 kelime)',
+            'CV/Özgeçmiş',
+            'Akademik transkript (noter onaylı)',
+            'Referans mektupları (2 adet)',
+            'Pasaport kopyası',
+            'Başvuru ücreti 200 PLN',
+            'Portfolio (mimarlık/tasarım programları için)',
+            'Giriş sınavı (bazı programlar için)',
+            'Mülakat (bazı programlar için)',
+            'Vize gerektiren öğrenciler için ek belgeler'
+        ]
+    },
+    
+    // University Tuition
+    universityTuition: {
+        tum: '2,000-6,000€/Yıl',
+        ctu: '3,800€/Yıl',
+        charles: '4,000€/Yıl',
+        tud: '1,500€/Yıl',
+        polimi: '3,500€/Yıl',
+        sapienza: '2,500€/Yıl',
+        unifi: '2,800€/Yıl',
+        vut: '3,000€/Yıl',
+        vsb: '2,500€/Yıl',
+        univie: '1,500€/Yıl',
+        manchester: '27,000-39,000£/Yıl (programa göre değişir)',
+        vscht: '3,200€/Yıl',
+        metropolitan: '3,500€/Yıl',
+        czu: '2,800€/Yıl',
+        masaryk: '3,500€/Yıl',
+        unyp: '8,000-12,000€/Yıl',
+        bologna: '2,000€/Yıl',
+        pecs: '3,500€/Yıl',
+        warsaw: '2,500€/Yıl',
+        wut: '3,000€/Yıl',
+        stirling: '18,400£/Yıl (Lisans), 19,000-22,000£/Yıl (Yüksek Lisans)',
+        winchester: '16,700£/Yıl (Lisans), 16,700£/Yıl (Yüksek Lisans)',
+        bsbi: '8,000-12,000€/Yıl',
+        vse: '3,000€/Yıl',
+        cattolica: '8,000-15,000€/Yıl',
+        siena: '1,000-3,000€/Yıl',
+        polito: '2,000-4,000€/Yıl',
+        padova: '1,000-3,000€/Yıl',
+        vsb: '2,500€/Yıl'
+    },
+    
+    // University Application Deadlines
+    universityDeadlines: {
+        tum: '15 Temmuz (Kış dönemi), 15 Ocak (Yaz dönemi)',
+        ctu: '31 Mart (Lisans), 30 Nisan (Yüksek Lisans)',
+        charles: '31 Mart (Lisans), 30 Nisan (Yüksek Lisans)',
+        tud: '15 Temmuz (Kış dönemi), 15 Ocak (Yaz dönemi)',
+        polimi: '30 Nisan (çoğu program için)',
+        sapienza: '30 Haziran (Lisans), 30 Nisan (Yüksek Lisans)',
+        unifi: '30 Haziran (Lisans), 30 Nisan (Yüksek Lisans)',
+        vut: '31 Mart (Lisans), 30 Nisan (Yüksek Lisans)',
+        vsb: '31 Mart (Lisans), 30 Nisan (Yüksek Lisans)',
+        univie: '5 Eylül (Kış dönemi), 5 Şubat (Yaz dönemi)',
+        manchester: '31 Ocak (UCAS), Program bazlı (Yüksek Lisans)',
+        vscht: '1 Aralık - 31 Ocak (İngilizce programlar)',
+        metropolitan: '30 Nisan (çoğu program için)',
+        czu: 'Vize gerektirenler için: 15 Aralık, Diğerleri için: 15 Temmuz',
+        masaryk: '31 Mart (Lisans), 30 Nisan (Yüksek Lisans)',
+        unyp: 'Yıl boyunca başvuru alınır (erken başvuru önerilir)',
+        bologna: '30 Haziran (Lisans), 30 Nisan (Yüksek Lisans)',
+        pecs: '30 Nisan (çoğu program için)',
+        warsaw: '30 Haziran (Lisans), 30 Nisan (Yüksek Lisans)',
+        wut: '31 Mart (Lisans), 30 Nisan (Yüksek Lisans)',
+        stirling: '31 Ocak (UCAS), Program bazlı (Yüksek Lisans)',
+        winchester: '31 Ocak (UCAS), Program bazlı (Yüksek Lisans)',
+        bsbi: 'Yıl boyunca başvuru alınır',
+        vse: '31 Mart (Lisans), 30 Nisan (Yüksek Lisans)',
+        cattolica: 'Program bazlı değişir',
+        siena: 'Program bazlı değişir',
+        polito: '15 Temmuz (Kış dönemi), 15 Ocak (Yaz dönemi)',
+        padova: 'Program bazlı değişir',
+        vsb: '15 Mayıs (Kış dönemi), 15 Kasım (Yaz dönemi)'
+    },
+    
+    // University Detail Page
+    universityDetail: {
+        about: "Üniversite Hakkında",
+        language: "Eğitim Dili",
+        programs: "Programlar",
+        educationLevels: "Eğitim Seviyeleri",
+        programAreas: "Program Alanları",
+        requirements: "Başvuru Gereksinimleri",
+        quickInfo: "Hızlı Bilgiler",
+        program: "Program",
+        duration: "Süre",
+        fee: "Ücret",
+        start: "Başlangıç",
+        semesters: "Sömestr",
+        tuition: "Öğrenim Ücreti",
+        applicationDeadline: "Başvuru Son Tarihi",
+        location: "Konum",
+        applicationSupport: "Başvuru Desteği",
+        applicationQuestion: "Bu üniversiteye başvuru yapmak ister misiniz?",
+        getConsultation: "Danışmanlık Al",
+        freeAssessment: "Ücretsiz Değerlendirme",
+        similarUniversities: "Benzer Üniversiteler",
+        details: "Detaylar"
+    },
+    
+    // Services Page
+    services: {
+        hero: {
+            title: "Hizmetlerimiz",
+            subtitle: "Avrupa'da eğitim hayalinizi gerçekleştirmek için kapsamlı danışmanlık hizmetleri"
+        },
+        universityConsulting: {
+            title: "Üniversite Başvuru Danışmanlığı",
+            description: "Avrupa'nın en prestijli üniversitelerine başvuru sürecinizde size özel danışmanlık hizmeti sunuyoruz.",
+            features: [
+                "Üniversite seçimi",
+                "Başvuru dosyası hazırlama",
+                "Motivasyon mektubu yazımı",
+                "Başvuru takibi",
+                "50+ üniversite ile işbirliği"
+            ]
+        },
+        languageSchool: {
+            title: "Dil Okulu Yerleştirme",
+            description: "Avrupa'nın çeşitli ülkelerinde dil eğitimi almanız için en uygun okulları seçiyoruz.",
+            features: [
+                "Dil okulu seçimi",
+                "Konaklama ayarlama",
+                "Vize başvuru desteği",
+                "Kayıt işlemleri"
+            ]
+        },
+        documentConsulting: {
+            title: "Belge Danışmanlığı",
+            description: "Başvuru sürecinde gerekli tüm belgelerin hazırlanmasında profesyonel destek.",
+            features: [
+                "Belge listesi hazırlama",
+                "Çeviri hizmetleri",
+                "Apostil işlemleri",
+                "Noter onayları"
+            ]
+        },
+        visaConsulting: {
+            title: "Vize Danışmanlığı",
+            description: "Öğrenci vizesi başvuru sürecinizde uzman danışmanlık hizmeti.",
+            features: [
+                "Vize başvuru formu",
+                "Gerekli belgeler",
+                "Randevu ayarlama",
+                "Başvuru takibi"
+            ]
+        },
+        accommodation: {
+            title: "Konaklama Hizmetleri",
+            description: "Eğitim süreniz boyunca güvenli ve konforlu konaklama seçenekleri.",
+            features: [
+                "Öğrenci yurtları",
+                "Özel yurtlar",
+                "Aile yanı konaklama",
+                "Stüdyo daireler"
+            ]
+        },
+        transportation: {
+            title: "Ulaşım ve Transfer",
+            description: "Havalimanından konaklama yerinize kadar tüm ulaşım ihtiyaçlarınız için hizmet.",
+            features: [
+                "Havalimanı transferi",
+                "Şehir içi ulaşım",
+                "Toplu taşıma kartları",
+                "Bisiklet kiralama"
+            ],
+            note: "Not: Havalimanı transfer hizmetimiz sadece Çek Cumhuriyeti Prag'daki ana merkezimizde geçerlidir"
+        },
+        preDeparture: {
+            title: "Yolculuk Öncesi Hazırlık",
+            description: "Yurtdışına çıkmadan önce tüm hazırlıklarınızı tamamlamanız için destek.",
+            features: [
+                "Sağlık sigortası",
+                "Bankacılık işlemleri",
+                "Telefon hatları",
+                "Gerekli eşyalar"
+            ]
+        },
+        ongoingSupport: {
+            title: "Sürekli Destek",
+            description: "Eğitim süreniz boyunca kesintisiz danışmanlık ve destek hizmeti.",
+            features: [
+                "7/24 acil destek",
+                "Düzenli kontroller",
+                "Sorun çözme",
+                "Yeni fırsatlar"
+            ]
+        },
+        whyChooseUs: {
+            title: "Neden Bizi Seçmelisiniz?",
+            subtitle: "Avrupa'da eğitim hayalinizi gerçekleştirmek için güvenilir partneriniz",
+            experiencedTeam: "Deneyimli Ekip",
+            experiencedTeamDesc: "10+ yıl deneyimli uzman kadromuzla profesyonel hizmet",
+            wideNetwork: "Geniş Ağ",
+            wideNetworkDesc: "50+ üniversite ile güçlü işbirliği ağımız",
+            support247: "7/24 Destek",
+            support247Desc: "Eğitim süreniz boyunca kesintisiz danışmanlık hizmeti",
+            secureService: "Güvenli Hizmet",
+            secureServiceDesc: "SSL şifreleme ile güvenli veri transferi ve gizlilik"
+        },
+        cta: {
+            title: "Hemen Başlayın",
+            subtitle: "Avrupa'da eğitim hayalinizi gerçekleştirmek için bizimle iletişime geçin",
+            freeAssessment: "Ücretsiz Değerlendirme",
+            contactUs: "Bize Ulaşın"
+        }
+    },
+    
+    // Contact Page
+    contact: {
+        hero: {
+            title: "İletişim",
+            subtitle: "Avrupa'da eğitim hayaliniz için bizimle iletişime geçin"
+        },
+        form: {
+            title: "Bize Ulaşın",
+            firstName: "Ad",
+            lastName: "Soyad",
+            email: "E-posta",
+            phone: "Telefon",
+            subject: "Konu",
+            selectOption: "Seçiniz",
+            general: "Genel Bilgi",
+            university: "Üniversite Başvurusu",
+            language: "Dil Okulu",
+            visa: "Vize Danışmanlığı",
+            assessment: "Değerlendirme",
+            other: "Diğer",
+            message: "Mesajınız",
+            messagePlaceholder: "Mesajınızı buraya yazın...",
+            sendMessage: "Mesaj Gönder",
+            submitting: "Gönderiliyor...",
+            success: "Mesajınız başarıyla gönderildi! En kısa sürede size dönüş yapacağız.",
+            requiredFields: "Lütfen tüm zorunlu alanları doldurun.",
+            invalidEmail: "Lütfen geçerli bir e-posta adresi girin.",
+            error: "Bir hata oluştu. Lütfen tekrar deneyin.",
+            connectionError: "Bağlantı hatası. Lütfen tekrar deneyin."
+        },
+        info: {
+            title: "İletişim Bilgileri",
+            phone: "Telefon",
+            email: "E-posta",
+            workingHours: "Çalışma Saatleri",
+            hours: "Pazartesi - Cuma: 09:00 - 18:00",
+            weekend: "Cumartesi: 10:00 - 14:00",
+            emergency: "Acil Durumlar",
+            emergencyText: "7/24 acil durumlar için WhatsApp üzerinden ulaşabilirsiniz."
+        },
+        security: {
+            title: "Güvenlik",
+            sslTitle: "SSL Şifreleme",
+            sslText: "Tüm verileriniz güvenle korunmaktadır",
+            privacyTitle: "Gizlilik",
+            privacyText: "Kişisel verileriniz GDPR uyumlu şekilde işlenir"
+        },
+        faq: {
+            title: "Sık Sorulan Sorular",
+            subtitle: "En çok sorulan sorulara yanıtlar",
+            question1: "Hangi ülkelerde hizmet veriyorsunuz?",
+            answer1: "Almanya, Avusturya, İngiltere, İtalya, Çek Cumhuriyeti, Polonya ve Macaristan'da hizmet veriyoruz. Bu ülkelerdeki en prestijli üniversitelerle işbirliği yapıyoruz.",
+            question2: "Hizmet ücretleriniz nedir?",
+            answer2: "Hizmet ücretlerimiz seçtiğiniz program ve ülkeye göre değişmektedir. Detaylı bilgi için bizimle iletişime geçebilirsiniz.",
+            question3: "Vize başvuru süreci ne kadar sürer?",
+            answer3: "Vize başvuru süreci ülkeye göre 2-8 hafta arasında değişmektedir. Erken başvuru yapmanızı öneririz."
+        }
+    },
+    
+    // Assessment Page
+    assessment: {
+        hero: {
+            title: "Ücretsiz Değerlendirme",
+            subtitle: "Eğitim hedeflerinize göre size özel öneriler alın"
+        },
+        form: {
+            title: "Kişiye Özel Eğitim Değerlendirmesi",
+            personalInfo: "Kişisel Bilgiler",
+            firstName: "Ad",
+            lastName: "Soyad",
+            email: "E-posta",
+            phone: "Telefon",
+            educationalBackground: "Eğitim Geçmişi",
+            currentEducation: "Mevcut Eğitim Durumu",
+            selectOption: "Seçiniz",
+            highSchoolStudent: "Lise Öğrencisi",
+            highSchoolGraduate: "Lise Mezunu",
+            universityStudent: "Üniversite Öğrencisi",
+            universityGraduate: "Üniversite Mezunu",
+            masterStudent: "Yüksek Lisans Öğrencisi",
+            masterGraduate: "Yüksek Lisans Mezunu",
+
+            gpa: "Not Ortalaması",
+            studyField: "Mevcut/Mezun Olduğunuz Alan",
+            graduationYear: "Mezuniyet Yılı",
+            targetEducation: "Hedef Eğitim",
+            targetLevel: "Hedef Eğitim Seviyesi",
+            bachelor: "Lisans (Bachelor)",
+            master: "Yüksek Lisans (Master)",
+
+            languageSchool: "Dil Okulu",
+            targetCountry: "Hedef Ülke",
+            germany: "Almanya",
+            italy: "İtalya",
+            czech: "Çek Cumhuriyeti",
+            austria: "Avusturya",
+            uk: "İngiltere",
+            poland: "Polonya",
+            hungary: "Macaristan",
+            targetField: "Hedef Çalışma Alanı",
+            engineering: "Mühendislik",
+            business: "İşletme/Ekonomi",
+            medicine: "Tıp",
+            arts: "Sanat/Tasarım",
+            social: "Sosyal Bilimler",
+            natural: "Doğa Bilimleri",
+            computer: "Bilgisayar Bilimi",
+            language: "Dil Eğitimi",
+            other: "Diğer",
+            budget: "Bütçe Aralığı (Yıllık)",
+            lowBudget: "5,000 - 15,000 €",
+            mediumBudget: "15,000 - 30,000 €",
+            highBudget: "30,000+ €",
+            languageSkills: "Dil Becerileri",
+            german: "Almanca",
+            english: "İngilizce",
+            italian: "İtalyanca",
+            czech: "Çekçe",
+            polish: "Lehçe",
+            hungarian: "Macarca",
+            beginner: "Başlangıç",
+            intermediate: "Orta",
+            advanced: "İleri",
+            native: "Ana Dil",
+            additionalInfo: "Ek Bilgiler",
+            additionalInfoPlaceholder: "Ek bilgilerinizi buraya yazabilirsiniz...",
+            submit: "Değerlendirmeyi Gönder",
+            submitting: "Gönderiliyor...",
+            success: "Değerlendirmeniz başarıyla alındı! En kısa sürede size özel önerilerimizi göndereceğiz.",
+            requiredFields: "Lütfen tüm zorunlu alanları doldurun.",
+            invalidEmail: "Lütfen geçerli bir e-posta adresi girin.",
+            error: "Bir hata oluştu. Lütfen tekrar deneyin.",
+            connectionError: "Bağlantı hatası. Lütfen tekrar deneyin.",
+            additionalInfoSection: "Ek Bilgiler",
+            startDate: "Başlangıç Tarihi",
+            fall2024: "Sonbahar 2024",
+            spring2025: "İlkbahar 2025",
+            fall2025: "Sonbahar 2025",
+            spring2026: "İlkbahar 2026",
+            workExperience: "İş Deneyimi",
+            noExperience: "Deneyim Yok",
+            internship: "Staj",
+            partTime: "Yarı Zamanlı",
+            fullTime: "Tam Zamanlı",
+            englishLevel: "İngilizce Seviyesi",
+            otherLanguages: "Diğer Diller",
+            otherLanguagesPlaceholder: "Örn: Almanca B2, İtalyanca A1",
+            languageCertificates: "Dil Sertifikaları",
+            languageCertificatesPlaceholder: "Örn: IELTS 7.0, TOEFL 100",
+            preferredLanguage: "Eğitim Dil Tercihi",
+            french: "Fransızca",
+            spanish: "İspanyolca",
+            dutch: "Hollandaca"
+        },
+        results: {
+            title: "Size Özel Öneriler"
+        }
+    },
+    
+    // About Us Page
+    aboutUs: {
+        hero: {
+            title: "Tanışalım",
+            subtitle: "Venture Global ekibi olarak sizlere hizmet veriyoruz"
+        },
+        mainContent: {
+            title: "Biz Kimiz?",
+            location: "Prag Merkezli",
+            locationDesc: "Çek Cumhuriyeti'nin başkenti Prag'da bulunan merkezimizden hizmet veriyoruz",
+            expertise: "Uzman Ekip",
+            expertiseDesc: "Avrupa'nın en prestijli üniversitelerine öğrenci yerleştirme konusunda uzmanız",
+            ourStory: "Hikayemiz",
+            storyText: "Venture Global olarak, Prag'daki merkezimizden Avrupa'nın en prestijli üniversitelerine öğrenci yerleştirme konusunda uzman bir ekibiz. Biz de tıpkı sizin gibi bu yoldan geçtik, yurt dışında eğitim almanın zorluklarını ve heyecanını biliyoruz. Öğrenci odaklı yaklaşımımız sayesinde, vize randevularından konaklama düzenlemelerine kadar her adımda yanınızdayız. Avrupa'nın en iyi üniversiteleriyle çalışıyor, öğrencilerimizi QS Ranking'de yüksek sıralamalara sahip okullara yerleştiriyoruz. Bu süreçte, öğrenci arkadaşlarımızın desteğiyle, her ülkenin dinamiklerini biliyor ve sizlere en iyi rehberliği sunuyoruz. Bizimle birlikte, hayallerinize giden yolda emin adımlarla ilerleyin!",
+            studentCentered: "Öğrenci Odaklı",
+            europeanNetwork: "Avrupa Ağı",
+            topUniversities: "En İyi Üniversiteler"
+        },
+        instagram: {
+            title: "Sosyal Medyada Takip Edin",
+            subtitle: "Güncel paylaşımlarımızı ve öğrenci hikayelerini Instagram'da takip edin",
+            loading: "Yükleniyor...",
+            loadingText: "Instagram paylaşımlarımız yükleniyor...",
+            followUs: "Bizi Takip Edin",
+            followUsText: "Instagram hesabımızdan güncel paylaşımlarımızı takip edebilirsiniz",
+            followButton: "Instagram'da Takip Et",
+            loadMore: "Daha Fazla Göster",
+            noPosts: "Henüz Paylaşım Yok",
+            noPostsText: "Instagram hesabımızda henüz paylaşım bulunmuyor. Yakında güncel paylaşımlarımızı görebilirsiniz!"
+        },
+        cta: {
+            title: "Hayalinizi Gerçekleştirin",
+            subtitle: "Avrupa'da eğitim hayalinizi gerçekleştirmek için bizimle iletişime geçin",
+            contactUs: "İletişime Geçin",
+            freeAssessment: "Ücretsiz Değerlendirme"
+        }
+    },
+    
+    // Common
+    common: {
+        learnMore: "Daha Fazla Bilgi",
+        readMore: "Devamını Oku",
+        applyNow: "Başvur",
+        contactUs: "Bize Ulaşın",
+        getStarted: "Başla",
+        viewDetails: "Detayları Gör",
+        backToTop: "Yukarı Çık"
+    },
+    
+    // University Locations
+    universityLocations: {
+        prague: "Prag, Çek Cumhuriyeti",
+        munich: "Münih, Almanya",
+        dresden: "Dresden, Almanya",
+        milan: "Milano, İtalya",
+        rome: "Roma, İtalya",
+        florence: "Firenze, İtalya",
+        vienna: "Viyana, Avusturya",
+        manchester: "Manchester, İngiltere",
+        warsaw: "Varşova, Polonya",
+        budapest: "Budapeşte, Macaristan",
+        stirling: "Stirling, İskoçya",
+        winchester: "Winchester, İngiltere",
+        berlin: "Berlin, Almanya",
+        bologna: "Bologna, İtalya",
+        siena: "Siena, İtalya",
+        turin: "Torino, İtalya",
+        padova: "Padova, İtalya",
+        brno: "Brno, Çek Cumhuriyeti",
+        ostrava: "Ostrava, Çek Cumhuriyeti",
+        liberec: "Liberec, Çek Cumhuriyeti",
+        pilsen: "Pilsen, Çek Cumhuriyeti",
+        hradec: "Hradec Kralove, Çek Cumhuriyeti",
+        ceske: "České Budějovice, Çek Cumhuriyeti"
+    },
+    
+    // Charles University Programs List
+    charlesProgramsList: {
+        title: "Charles Üniversitesi Lisans & Yüksek Lisans Bölümleri",
+        foundationPrograms: {
+            title: "Hazırlık Programı",
+            programs: [
+                { name: "İngilizce Bölüm Hazırlık (Tıp Hariç)", duration: "2", fee: "€ 6.300", start: "Eylül" },
+                { name: "İngilizce Tıp Hazırlık (PRE-MED)", duration: "2", fee: "€ 7.890", start: "Eylül" },
+                { name: "Çekçe Tıp Hazırlık (PRE-MED)", duration: "2", fee: "€ 7.890", start: "Eylül" },
+                { name: "İngilizce Tıp Hazırlık (PRE-MED) (Ocak-Mayıs)", duration: "1", fee: "€ 6.890", start: "Ocak" }
+            ]
+        },
+        bachelorPrograms: {
+            title: "Lisans Bölümleri – BSc (İngilizce)",
+            programs: [
+                { name: "Birinci Tıp Fakültesi (Katerinska) – Tıp Eğitimi", duration: "12", fee: "€ 24.250", start: "Eylül" },
+                { name: "Birinci Tıp Fakültesi (Katerinska) – Dişçilik", duration: "10", fee: "€ 24.250", start: "Eylül" },
+                { name: "İkinci Tıp Fakültesi (Uvalu) – Tıp Eğitimi", duration: "12", fee: "420.000 CZK", start: "Eylül" },
+                { name: "Üçüncü Tıp Fakültesi (Ruska) – Tıp Eğitimi", duration: "12", fee: "420.000 CZK", start: "Eylül" },
+                { name: "Pilsen Tıp Fakültesi – Tıp Eğitimi", duration: "12", fee: "390.000 CZK", start: "Eylül" },
+                { name: "Pilsen Tıp Fakültesi – Dişçilik", duration: "10", fee: "390.000 CZK", start: "Eylül" },
+                { name: "Hradec Kralove Tıp Fakültesi – Tıp Eğitimi", duration: "12", fee: "400.000 CZK", start: "Eylül" },
+                { name: "Hradec Kralove Tıp Fakültesi – Dişçilik", duration: "10", fee: "410.000 CZK", start: "Eylül" },
+                { name: "Hradec Kralove Eczacılık Fakültesi – Eczacılık", duration: "10", fee: "€ 7.900", start: "Eylül" },
+                { name: "Liberal Arts and Humanities (Liberal Sanat ve Beşeri Bilimler)", duration: "6", fee: "€ 5.000", start: "Eylül" },
+                { name: "Physiotherapy (Fizyoterapi)", duration: "6", fee: "220.000 CZK", start: "Eylül" },
+                { name: "Fitness Coach (Fitness Koçluğu)", duration: "6", fee: "160.000 CZK", start: "Eylül" },
+                { name: "Economics and Finance (Ekonomi ve Finans)", duration: "6", fee: "€ 7.000", start: "Eylül" },
+                { name: "General Computer Science (Bilgisayar Bilimi)", duration: "6", fee: "€ 7.100", start: "Eylül" },
+                { name: "History and Area Studies (Tarih ve Bölge Çalışmaları)", duration: "6", fee: "€ 5.000", start: "Eylül" },
+                { name: "Politics, Philosophy and Economics (Siyaset, Felsefe ve Ekonomi)", duration: "6", fee: "€ 7.000", start: "Eylül" },
+                { name: "Social Sciences (Sosyal Bilimler)", duration: "6", fee: "€ 6.000", start: "Eylül" }
+            ]
+        },
+        masterPrograms: {
+            title: "Yüksek Lisans Bölümleri – MSc (İngilizce)",
+            programs: [
+                { name: "Pharmaceutical Sciences (Eczacılık Bilimi)", duration: "4", fee: "€7.900", start: "Eylül" },
+                { name: "Logic (Mantık)", duration: "4", fee: "140.000 CZK", start: "Eylül" },
+                { name: "Botany (Botanik)", duration: "4", fee: "€ 2.500", start: "Eylül" },
+                { name: "Ecology (Ekoloji)", duration: "4", fee: "€ 2.500", start: "Eylül" },
+                { name: "Immunology (İmmünoloji)", duration: "4", fee: "€ 2.500", start: "Eylül" },
+                { name: "Parasitology and Infection Biology (Parazitoloji ve Enfeksiyon Biyolojisi)", duration: "4", fee: "€ 3.500", start: "Eylül" },
+                { name: "Atmospheric Physics, Meteorology and Climatology (Atmosfer Fiziği, Meteoroloji ve Klimatoloji)", duration: "4", fee: "€ 7.100", start: "Eylül" },
+                { name: "Computational Mathematics (Hesaplamalı Matematik)", duration: "4", fee: "€ 7.100", start: "Eylül" },
+                { name: "Artificial Intelligence (Yapay Zeka)", duration: "4", fee: "€ 7.100", start: "Eylül" },
+                { name: "Discrete Models and Algorithms (Ayrık Modeller ve Algoritmalar)", duration: "4", fee: "€ 7.100", start: "Eylül" },
+                { name: "Language Technologies and Computational Linguistics (Dil Teknolojileri ve Hesaplamalı Dilbilimi)", duration: "4", fee: "€ 7.100", start: "Eylül" },
+                { name: "Software and Data Engineering (Yazılım ve Veri Mühendisliği)", duration: "4", fee: "€ 7.100", start: "Eylül" },
+                { name: "Software Systems (Yazılım Sistemleri)", duration: "4", fee: "€ 7.100", start: "Eylül" },
+                { name: "Theoretical Computer Science (Teorik Bilgisayar Bilimi)", duration: "4", fee: "€ 7.100", start: "Eylül" },
+                { name: "Visual Computing and Game Development (Görsel Hesaplama ve Oyun Geliştirme)", duration: "4", fee: "€ 7.100", start: "Eylül" },
+                { name: "Financial and Insurance Mathematics (Finans ve Sigorta Matematiği)", duration: "4", fee: "€ 7.100", start: "Eylül" },
+                { name: "Mathematical Analysis (Matematiksel Analiz)", duration: "4", fee: "€ 7.100", start: "Eylül" },
+                { name: "Mathematical Modelling in Physics and Technology (Fizik ve Teknolojide Matematiksel Modelleme)", duration: "4", fee: "€ 7.100", start: "Eylül" },
+                { name: "Mathematical Structures (Matematiksel Yapılar)", duration: "4", fee: "€ 7.100", start: "Eylül" },
+                { name: "Mathematics for Information Technologies (Bilgi Teknolojileri için Matematik)", duration: "4", fee: "€ 7.100", start: "Eylül" },
+                { name: "Optics and Optoelectronics (Optik ve Optoelektronik)", duration: "4", fee: "€ 7.100", start: "Eylül" },
+                { name: "Particle and Nuclear Physics (Parçacık ve Nükleer Fizik)", duration: "4", fee: "€ 7.100", start: "Eylül" },
+                { name: "Physics of Condensed Matter and Materials (Yoğun Madde ve Malzemelerin Fiziği)", duration: "4", fee: "€ 7.100", start: "Eylül" },
+                { name: "Probability, Mathematical Statistics and Econometrics (Olasılık, Matematiksel İstatistik ve Ekonomektrik)", duration: "4", fee: "€ 7.100", start: "Eylül" },
+                { name: "Surface and Plasma Physics (Yüzey ve Plazma Fiziği)", duration: "4", fee: "€ 7.100", start: "Eylül" },
+                { name: "Balkan, Eurasian and Central European Studies (Balkan, Avrasya ve Orta Avrupa Çalışmaları)", duration: "4", fee: "€ 7.000", start: "Eylül" },
+                { name: "Corporate Strategy and Finance in Europe (Avrupa'da Kurumsal Strateji ve Finans)", duration: "4", fee: "€ 7.000", start: "Eylül" },
+                { name: "Economics and Finance (Ekonomi ve Finans)", duration: "4", fee: "€ 7.000", start: "Eylül" },
+                { name: "Finance and Data Analytics (Finans ve Veri Analitiği)", duration: "4", fee: "€ 7.000", start: "Eylül" },
+                { name: "Geopolitical Studies (Jeopolitik Çalışmalar)", duration: "4", fee: "€ 7.000", start: "Eylül" },
+                { name: "International Economic and Political Studies (Uluslararası Ekonomik ve Politik Çalışmalar)", duration: "4", fee: "€ 7.000", start: "Eylül" },
+                { name: "International Relations (Uluslararası ilişkiler)", duration: "4", fee: "€ 7.000", start: "Eylül" },
+                { name: "International Security Studies (Uluslararası Güvenlik Çalışmaları)", duration: "4", fee: "€ 7.000", start: "Eylül" },
+                { name: "Economic Research (Ekonomik Araştırma)", duration: "4", fee: "€ 8.000", start: "Eylül" },
+                { name: "Media and Area studies (Medya ve Alan Çalışmaları)", duration: "4", fee: "€ 6.000", start: "Eylül" },
+                { name: "Public and Social Policy Studies (Kamu ve Sosyal Politika Çalışmaları)", duration: "4", fee: "€ 6.000", start: "Eylül" },
+                { name: "Society, Communication and Media (Toplum, İletişim ve Medya)", duration: "4", fee: "€ 6.000", start: "Eylül" },
+                { name: "Sociology of Contemporary Societies (Çağdaş Toplumlar Sosyolojisi)", duration: "4", fee: "€ 6.000", start: "Eylül" },
+                { name: "Applied Physiotherapy (Uygulamalı Fizyoterapi)", duration: "4", fee: "220.000 CZK", start: "Eylül" },
+                { name: "Applied Sport Science (Uygulamalı Spor Bilimi)", duration: "4", fee: "160.000 CZK", start: "Eylül" },
+                { name: "Gender Studies (Cinsiyet Çalışmaları)", duration: "4", fee: "€ 5.000", start: "Eylül" },
+                { name: "Historical Sociology (Tarihsel Sosyoloji)", duration: "4", fee: "160.000 CZK", start: "Eylül" }
+            ]
+        }
+    },
+    
+    // Czech Technical University Programs List
+    czechTechnicalProgramsList: {
+        title: "Çek Teknik Üniversitesi - Bölümler ve Fiyatlar",
+        preparatoryProgram: {
+            title: "Hazırlık Programı",
+            programs: [
+                { name: "İngilizce Bölüm Hazırlık Programı", duration: "2", fee: "€ 6.590", start: "Eylül" }
+            ]
+        },
+        bachelorPrograms: {
+            title: "Lisans Bölümleri ve Uzmanlık Alanları – BSc (İngilizce)",
+            programs: [
+                { name: "Civil Engineering (İnşaat Mühendisliği)", duration: "8", fee: "€ 4.400", start: "Eylül" },
+                { name: "Mechanical Engineering (Makine Mühendisliği)", duration: "8", fee: "€ 4.400", start: "Eylül" },
+                { name: "Artificial Intelligence and Computer Science (Yapay Zeka ve Bilgisayar Bilimleri)", duration: "8", fee: "€ 4.400", start: "Eylül" },
+                { name: "Electrical Engineering and Computer Science (Elektrik Mühendisliği ve Bilgisayar Bilimleri)", duration: "8", fee: "€ 4.400", start: "Eylül" },
+                { name: "Nuclear and Particle Physics (Nükleer ve Parçacık Fiziği)", duration: "8", fee: "€ 4.400", start: "Eylül" },
+                { name: "Physical Engineering (Fizik Mühendisliği)", duration: "8", fee: "€ 4.400", start: "Eylül" },
+                { name: "Quantum Technologies (Kuantum Teknolojileri)", duration: "6", fee: "€ 4.400", start: "Eylül" },
+                { name: "Professional Pilot (Pilotluk Eğitimi)", duration: "6", fee: "€ 24.500 (Yıllık Ortalama)", start: "Eylül" },
+                { name: "Biomedical Technology (Biyomedikal Teknoloji)", duration: "6", fee: "€ 4.400", start: "Eylül" },
+                { name: "Informatics (Bilişim)", duration: "6", fee: "€ 5.100", start: "Eylül" },
+                { name: "Software Engineering (Yazılım Mühendisliği)", duration: "6", fee: "€ 5.100", start: "Eylül" },
+                { name: "Computer Engineering (Bilgisayar Mühendisliği)", duration: "6", fee: "€ 5.100", start: "Eylül" },
+                { name: "Computer Networks and Internet (Bilgisayar Ağları ve İnternet)", duration: "6", fee: "€ 5.100", start: "Eylül" },
+                { name: "Computer Science (Bilgisayar Bilimleri)", duration: "6", fee: "€ 5.100", start: "Eylül" },
+                { name: "Computer Systems and Virtualization (Bilgisayar Sistemleri ve Sanallaştırma)", duration: "6", fee: "€ 5.100", start: "Eylül" },
+                { name: "Information Security (Bilgisayar Güvenliği)", duration: "6", fee: "€ 5.100", start: "Eylül" }
+            ]
+        },
+        masterPrograms: {
+            title: "Yüksek Lisans Bölümleri ve Uzmanlık Alanları – MSc (İngilizce)",
+            programs: [
+                { name: "Civil Engineering (İnşaat Mühendisliği)", duration: "3", fee: "€ 40", start: "Eylül" },
+                { name: "Civil Engineering – Buildings and Environment (İnşaat Mühendisliği – Binalar ve Çevre)", duration: "3", fee: "€ 40", start: "Eylül" },
+                { name: "Water and Environmental Engineering (Su ve Çevre Mühendisliği)", duration: "3", fee: "€ 40", start: "Eylül" },
+                { name: "Structural Analysis of Monuments and Historical Constructions (Anıtların ve Tarihi Yapıların Yapısal Analizi)", duration: "3", fee: "€ 40", start: "Eylül" },
+                { name: "Aeronautics and Astronautics (Havacılık ve Uzay Bilimi)", duration: "4", fee: "€ 5.300", start: "Eylül" },
+                { name: "Applied Sciences in Mechanical Engineering (Makine Mühendisliğinde Uygulamalı Bilimler)", duration: "4", fee: "€ 5.300", start: "Eylül" },
+                { name: "Automation and Instrumentation Engineering (Otomasyon ve Enstrümantasyon Mühendisliği)", duration: "4", fee: "€ 5.300", start: "Eylül" },
+                { name: "Energy and Process Engineering (Enerji ve Proses Mühendisliği)", duration: "4", fee: "€ 5.300", start: "Eylül" },
+                { name: "Environmental Engineering (Çevre Mühendisliği)", duration: "4", fee: "€ 5.300", start: "Eylül" },
+                { name: "Intelligent Buildings (Akıllı Binalar)", duration: "4", fee: "€ 5.300", start: "Eylül" },
+                { name: "Nuclear Power Engineering Equipment (Nükleer Güç Mühendisliği Ekipmanları)", duration: "4", fee: "€ 5.300", start: "Eylül" },
+                { name: "Automotive Engineering (Otomotiv Mühendisliği)", duration: "4", fee: "€ 5.300", start: "Eylül" },
+                { name: "Electrical Engineering, Power Engineering and Management (Elektrik Mühendisliği, Güç Mühendisliği ve Yönetimi)", duration: "4", fee: "€ 5.300", start: "Eylül" },
+                { name: "Electronics and Communications (Elektronik ve İletişim)", duration: "4", fee: "€ 5.300", start: "Eylül" },
+                { name: "Cybernetics and Robotics (Sibernetik ve Robotik)", duration: "4", fee: "€ 5.300", start: "Eylül" },
+                { name: "Medical Electronics and Bioinformatics (Tıbbi Elektronik ve Biyoinformatik)", duration: "4", fee: "€ 5.300", start: "Eylül" },
+                { name: "Aerospace Engineering (Uzay Mühendisliği)", duration: "4", fee: "€ 5.300", start: "Eylül" },
+                { name: "Mathematical Physics (Matematiksel Fizik)", duration: "4", fee: "€ 5.300", start: "Eylül" },
+                { name: "Plasma Physics and Thermonuclear Fusion (Plazma Fiziği ve Termonükleer Füzyon)", duration: "4", fee: "€ 5.300", start: "Eylül" },
+                { name: "Physical Electronics (Fiziksel Elektronik)", duration: "4", fee: "€ 5.300", start: "Eylül" },
+                { name: "Quantum Technologies (Kuantum Teknolojileri)", duration: "4", fee: "€ 5.300", start: "Eylül" },
+                { name: "Nuclear and Particle Physics (Nükleer ve Parçacık Fiziği)", duration: "4", fee: "€ 5.300", start: "Eylül" },
+                { name: "Nuclear Engineering (Nükleer Mühendislik)", duration: "4", fee: "€ 5.300", start: "Eylül" },
+                { name: "Nuclear Chemistry (Nükleer Kimya)", duration: "4", fee: "€ 5.300", start: "Eylül" },
+                { name: "Architecture and Urbanism (Mimarlık ve Şehircilik)", duration: "4", fee: "€ 5.300", start: "Eylül" },
+                { name: "Design (Tasarım)", duration: "4", fee: "€ 5.300", start: "Eylül" },
+                { name: "Intelligent Transport Systems (Akıllı Ulaşım Sistemleri)", duration: "4", fee: "€ 5.300", start: "Eylül" },
+                { name: "Smart Cities (Akıllı Şehirler)", duration: "4", fee: "€ 5.300", start: "Eylül" },
+                { name: "Biomedical and Clinical Engineering (Biyomedikal ve Klinik Mühendisliği)", duration: "4", fee: "€ 5.300", start: "Eylül" },
+                { name: "Medical Electronics and Bioinformatics", duration: "4", fee: "€ 5.300", start: "Eylül" },
+                { name: "Solid State Engineering (Katı Hal Mühendisliği)", duration: "4", fee: "€ 5.300", start: "Eylül" },
+                { name: "Computer Science (Bilgisayar Bilimi)", duration: "4", fee: "€ 5.150", start: "Eylül" },
+                { name: "Computer Security (Bilgisayar Güvenliği)", duration: "4", fee: "€ 5.150", start: "Eylül" },
+                { name: "Computer Systems and Networks (Bilgisayar Sistemleri ve Ağları)", duration: "4", fee: "€ 5.150", start: "Eylül" },
+                { name: "Design and Programming of Embedded Systems (Sistem Tasarımı ve Programlanması)", duration: "4", fee: "€ 5.150", start: "Eylül" },
+                { name: "Software Engineering (Yazılım Mühendisliği)", duration: "4", fee: "€ 5.150", start: "Eylül" }
+            ]
+        }
+    },
+    
+    // VSE - Prague School of Economics Programs List
+    vseProgramsList: {
+        title: "Çek Ekonomi Üniversitesi (VSE) - Bölümler ve Fiyatlar",
+        preparatoryPrograms: {
+            title: "Hazırlık Programı",
+            programs: [
+                { name: "İngilizce Hazırlık Programı / Şubat – Haziran", duration: "1", fee: "€ 3.890", start: "Şubat" },
+                { name: "İngilizce Hazırlık Programı / Eylül – Mayıs (715 saat İngilizce / 30 saat Math. / 50 saat seçmeli dersler)", duration: "2", fee: "€ 5.990", start: "Eylül" },
+                { name: "Çekçe Hazırlık Programı / Şubat – Haziran", duration: "1", fee: "€ 4.490", start: "Şubat" },
+                { name: "Çekçe Hazırlık Programı / Eylül – Mayıs (593 saat Çekçe / 30 saat Math. / 50 saat seçmeli dersler)", duration: "2", fee: "€ 5.990", start: "Eylül" }
+            ]
+        },
+        bachelorEnglish: {
+            title: "Lisans Bölümleri – BSc (İngilizce)",
+            programs: [
+                { name: "Business Administration", duration: "6", fee: "€ 5.000", start: "Eylül" },
+                { name: "Economics", duration: "6", fee: "€ 5.000", start: "Eylül" },
+                { name: "International and Diplomatic Studies", duration: "6", fee: "€ 5.000", start: "Eylül" },
+                { name: "International Business", duration: "6", fee: "€ 5.000", start: "Eylül" }
+            ]
+        },
+        masterEnglish: {
+            title: "Yüksek Lisans Bölümleri – MSc (İngilizce)",
+            programs: [
+                { name: "Economics and Public Policy", duration: "4", fee: "€ 5.000", start: "Eylül" },
+                { name: "Economic Data Analysis", duration: "4", fee: "€ 5.000", start: "Eylül" },
+                { name: "International and Diplomatic Studies", duration: "4", fee: "€ 5.000", start: "Eylül" },
+                { name: "International Business – Central European Business Realities", duration: "4", fee: "€ 5.000", start: "Eylül" },
+                { name: "International Management CEMS", duration: "4", fee: "€ 5.000", start: "Eylül" },
+                { name: "Information System Management", duration: "4", fee: "€ 5.000", start: "Eylül" },
+                { name: "Finance and Accounting", duration: "4", fee: "€ 5.000", start: "Eylül" },
+                { name: "Management", duration: "4", fee: "€ 5.000", start: "Eylül" }
+            ]
+        },
+        bachelorCzech: {
+            title: "Lisans Bölümleri – BSc (Çekçe)",
+            programs: [
+                { name: "Banking and Insurance (Bankacılık ve Sigortacılık)", duration: "6", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Finance (Finans)", duration: "6", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Accounting and Financial Management (Muhasebe ve Finansal Yönetim)", duration: "6", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Finance and Accounting (Finans ve Muhasebe)", duration: "6", fee: "Ücretsiz", start: "Eylül" },
+                { name: "International Business (Uluslararası İşletme)", duration: "6", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Tourism (Turizm)", duration: "6", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Business Manager (İşletme Müdürlüğü)", duration: "6", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Economics and Business Management (Ekonomi ve İşletme Yönetimi)", duration: "6", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Arts Management (Sanat Yönetimi)", duration: "6", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Applied Information Science (Uygulamaları Bilgi Bilimi)", duration: "6", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Information Media and Science (Medya Bilgisi ve Bilimi)", duration: "6", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Mathematic Methods in Economics (Ekonomide Matematik Methotları)", duration: "6", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Multimedia in Economics Practices", duration: "6", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Economics (Ekonomi)", duration: "6", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Economic Policy (Ekonomi Politikası)", duration: "6", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Regional Studies and Public Administration (Bölgesel Çalışmalar ve Halkla İlişkiler Yönetimi)", duration: "6", fee: "Ücretsiz", start: "Eylül" }
+            ]
+        },
+        masterCzech: {
+            title: "Yüksek Lisans Bölümleri (Çekçe)",
+            programs: [
+                { name: "Banking and Insurance (Bankacılık ve Sigorta)", duration: "4", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Finance (Finans)", duration: "4", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Financial Engineering (Finans Mühendisliği)", duration: "4", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Finance and Business Assesment (Finans ve İşletme Değerlendirmesi)", duration: "4", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Accounting and Financial Management (Muhasebe ve Finansal Yönetim)", duration: "4", fee: "Ücretsiz", start: "Eylül" },
+                { name: "International Business (Uluslararası İşletme)", duration: "4", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Tourism (Turizm)", duration: "4", fee: "Ücretsiz", start: "Eylül" },
+                { name: "European Economic Integration (Avrupa Ekonomi Entegrasyonu)", duration: "4", fee: "Ücretsiz", start: "Eylül" },
+                { name: "International and Diplomatic Studies (Uluslararası ve Diplomatik Çalışmalar)", duration: "4", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Business and Law (İşletme ve Hukuk)", duration: "4", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Management (Yönetim)", duration: "4", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Arts Management (Sanat Yönetimi)", duration: "4", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Data and Analytics for Business (İşletmeler için Data ve Analiz)", duration: "4", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Econometrics and Operational Research (Ekonometri ve Operasyonal Araştırma)", duration: "4", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Economics Demography (Ekonomik Demografi)", duration: "4", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Information Management (Bilgi Yönetimi)", duration: "4", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Information Systems and Technologies (Bilgi sistemleri ve Teknolojileri)", duration: "4", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Cognitive Informatics (Bilişsel İnformatik)", duration: "4", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Business Informatics (İşletme İnformatiği)", duration: "4", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Statistics (İstatistik)", duration: "4", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Knowledge and Web Technology (Bilgi ve Web Teknolojisi)", duration: "4", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Economic Analysis (Ekonomik Analiz)", duration: "4", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Economic Policy (Ekonomik Politika)", duration: "4", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Economic and Politikal History(Ekonomi ve Politik Tarih)", duration: "4", fee: "Ücretsiz", start: "Eylül" },
+                { name: "Regional Studies and Public Administration (Bölgesel Çalışmalar ve Halkla İlişkiler Yönetimi)", duration: "4", fee: "Ücretsiz", start: "Eylül" }
+            ]
+        }
+    }
+}; 

@@ -1,0 +1,342 @@
+<!-- Universities Page Content -->
+<div class="universities-page">
+    <!-- Universities List Section -->
+    <section id="universities-list" class="universities-section">
+        <div class="container">
+            <div class="section-header text-center mb-5">
+                <h2>Partner Üniversitelerimiz</h2>
+                <p class="text-muted">Avrupa'nın önde gelen üniversiteleri ile işbirliği yapıyoruz</p>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="filter-section mb-4">
+                <div class="row">
+                    <div class="col-md-3">
+                        <select class="form-select" id="countryFilter">
+                            <option value="">Tüm Ülkeler</option>
+                            <option value="Germany">Almanya</option>
+                            <option value="UK">İngiltere</option>
+                            <option value="France">Fransa</option>
+                            <option value="Netherlands">Hollanda</option>
+                            <option value="Switzerland">İsviçre</option>
+                            <option value="Austria">Avusturya</option>
+                            <option value="Italy">İtalya</option>
+                            <option value="Czech Republic">Çek Cumhuriyeti</option>
+                            <option value="Poland">Polonya</option>
+                            <option value="Hungary">Macaristan</option>
+                            <option value="Spain">İspanya</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" id="rankingFilter">
+                            <option value="">Tüm Sıralamalar</option>
+                            <option value="1-50">1-50</option>
+                            <option value="51-100">51-100</option>
+                            <option value="101-200">101-200</option>
+                            <option value="201+">201+</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" id="feeFilter">
+                            <option value="">Tüm Ücretler</option>
+                            <option value="0-5000">€0 - €5,000</option>
+                            <option value="5000-10000">€5,000 - €10,000</option>
+                            <option value="10000-20000">€10,000 - €20,000</option>
+                            <option value="20000+">€20,000+</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" id="programFilter">
+                            <option value="">Tüm Program Sayıları</option>
+                            <option value="1-5">1-5 Program</option>
+                            <option value="6-10">6-10 Program</option>
+                            <option value="11-20">11-20 Program</option>
+                            <option value="21+">21+ Program</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-outline-secondary w-100" id="clearFiltersBtn">
+                            <i class="fas fa-times me-2"></i>Filtreleri Temizle
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Universities Grid -->
+            <div class="row" id="universitiesGrid">
+                <% if (typeof universities !== 'undefined' && universities && universities.length > 0) { %>
+                    <% universities.forEach(university => { %>
+                    <div class="col-lg-4 col-md-6 mb-4 university-card" 
+                         data-country="<%= university.country || '' %>" 
+                         data-ranking="<%= university.world_ranking || 0 %>"
+                         data-fee="<%= university.tuition_fee_min || 0 %>"
+                         data-program-count="<%= university.actual_program_count || 0 %>">
+                        <div class="card h-100 university-card-inner">
+                            <div class="card-header bg-transparent border-0">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <img src="<%= university.logo_url || '/images/default-university.png' %>" 
+                                         alt="<%= university.name %>" 
+                                         class="university-logo">
+                                    <div class="badges">
+                                        <% if (university.is_featured) { %>
+                                            <span class="badge bg-warning">Öne Çıkan</span>
+                                        <% } %>
+                                        <% if (university.is_partner) { %>
+                                            <span class="badge bg-success">Partner</span>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title"><%= university.name %></h5>
+                                <p class="card-text text-muted">
+                                    <i class="fas fa-map-marker-alt me-2"></i>
+                                    <%= university.city %>, <%= university.country %>
+                                </p>
+                                
+                                <div class="university-stats">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="stat-item">
+                                                <span class="stat-label">Program Sayısı</span>
+                                                <span class="stat-value"><%= university.actual_program_count || 0 %></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="stat-item">
+                                                <span class="stat-label">Dünya Sıralaması</span>
+                                                <span class="stat-value">
+                                                    <% if (university.world_ranking) { %>
+                                                        #<%= university.world_ranking %>
+                                                    <% } else { %>
+                                                        -
+                                                    <% } %>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <% if (university.name_en && university.name_en !== university.name) { %>
+                                <div class="university-name-en mt-2">
+                                    <small class="text-muted"><%= university.name_en %></small>
+                                </div>
+                                <% } %>
+                                
+                                <% if (university.website_url) { %>
+                                <div class="university-website mt-2">
+                                    <a href="<%= university.website_url %>" target="_blank" class="text-decoration-none">
+                                        <i class="fas fa-external-link-alt me-1"></i>Resmi Website
+                                    </a>
+                                </div>
+                                <% } %>
+
+                                <div class="university-fees mt-3">
+                                    <% if (university.tuition_fee_min || university.tuition_fee_max) { %>
+                                        <div class="fee-range">
+                                            <span class="fee-label">Yıllık Ücret:</span>
+                                            <span class="stat-value">
+                                                <% if (university.tuition_fee_min && university.tuition_fee_max) { %>
+                                                    €<%= Math.round(university.tuition_fee_min).toLocaleString() %> - €<%= Math.round(university.tuition_fee_max).toLocaleString() %>
+                                                <% } else if (university.tuition_fee_min) { %>
+                                                    €<%= Math.round(university.tuition_fee_min).toLocaleString() %>+
+                                                <% } else if (university.tuition_fee_max) { %>
+                                                    €<%= Math.round(university.tuition_fee_max).toLocaleString() %>
+                                                <% } %>
+                                            </span>
+                                        </div>
+                                    <% } %>
+                                    <% if (university.application_fee) { %>
+                                        <div class="fee-range">
+                                            <span class="fee-label">Başvuru Ücreti:</span>
+                                            <span class="fee-value">€<%= university.application_fee %></span>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            </div>
+                                                                    <div class="card-footer bg-transparent border-0">
+                                            <div class="d-flex justify-content-center align-items-center">
+                                                <a href="/universities/<%= university.id %>" class="btn btn-primary btn-sm">
+                                                    <i class="fas fa-info-circle me-2"></i>Detaylar
+                                                </a>
+                                            </div>
+                                        </div>
+                        </div>
+                    </div>
+                    <% }); %>
+                <% } else { %>
+                    <div class="col-12 text-center py-5">
+                        <i class="fas fa-university fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">Henüz üniversite bulunmuyor</h4>
+                        <p class="text-muted">Yakında üniversite bilgileri eklenecek.</p>
+                    </div>
+                <% } %>
+            </div>
+
+            <!-- Load More Button -->
+            <% if (universities && universities.length >= 12) { %>
+            <div class="text-center mt-4">
+                <button class="btn btn-outline-primary" onclick="loadMoreUniversities()">
+                    <i class="fas fa-plus me-2"></i>Daha Fazla Üniversite
+                </button>
+            </div>
+            <% } %>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <h3>Üniversite Seçiminde Yardıma mı İhtiyacınız Var?</h3>
+                    <p class="text-muted">Uzman danışmanlarımız size en uygun üniversiteyi bulmanızda yardımcı olur.</p>
+                    <div class="cta-buttons">
+                        <a href="/contact" class="btn btn-primary btn-lg me-3">
+                            <i class="fas fa-phone me-2"></i>Ücretsiz Danışmanlık
+                        </a>
+                        <a href="/assessment" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-clipboard-list me-2"></i>Değerlendirme Testi
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+        <script>
+            // Optimized Filter functionality
+            document.addEventListener('DOMContentLoaded', function() {
+        const countryFilter = document.getElementById('countryFilter');
+        const rankingFilter = document.getElementById('rankingFilter');
+        const feeFilter = document.getElementById('feeFilter');
+        const programFilter = document.getElementById('programFilter');
+        const universityCards = document.querySelectorAll('.university-card');
+
+        // Debounce function for better performance
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function filterUniversities() {
+            const selectedCountry = countryFilter.value;
+            const selectedRanking = rankingFilter.value;
+            const selectedFee = feeFilter.value;
+            const selectedProgram = programFilter.value;
+
+            let visibleCount = 0;
+
+            universityCards.forEach(card => {
+                const country = card.dataset.country || '';
+                const ranking = parseInt(card.dataset.ranking) || 0;
+                const fee = parseInt(card.dataset.fee) || 0;
+                const programCount = parseInt(card.dataset.programCount) || 0;
+
+                let showCard = true;
+
+                // Country filter
+                if (selectedCountry && country !== selectedCountry) {
+                    showCard = false;
+                }
+
+                // Ranking filter
+                if (selectedRanking) {
+                    const [minRank, maxRank] = selectedRanking.split('-').map(r => r === '+' ? Infinity : parseInt(r));
+                    if (ranking < minRank || (maxRank !== Infinity && ranking > maxRank)) {
+                        showCard = false;
+                    }
+                }
+
+                // Fee filter
+                if (selectedFee) {
+                    const [minFee, maxFee] = selectedFee.split('-').map(f => f === '+' ? Infinity : parseInt(f));
+                    if (fee < minFee || (maxFee !== Infinity && fee > maxFee)) {
+                        showCard = false;
+                    }
+                }
+                
+                // Program count filter
+                if (selectedProgram) {
+                    const [minProgram, maxProgram] = selectedProgram.split('-').map(p => p === '+' ? Infinity : parseInt(p));
+                    if (programCount < minProgram || (maxProgram !== Infinity && programCount > maxProgram)) {
+                        showCard = false;
+                    }
+                }
+
+                if (showCard) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Show result count
+            updateResultCount(visibleCount, universityCards.length);
+        }
+
+        function updateResultCount(visible, total) {
+            let resultDiv = document.getElementById('filterResults');
+            if (!resultDiv) {
+                resultDiv = document.createElement('div');
+                resultDiv.id = 'filterResults';
+                resultDiv.className = 'alert alert-info mt-3';
+                document.querySelector('.filter-section').appendChild(resultDiv);
+            }
+            
+            if (visible === total) {
+                resultDiv.style.display = 'none';
+            } else {
+                resultDiv.innerHTML = `<i class="fas fa-info-circle me-2"></i>${visible} üniversite bulundu (toplam ${total} üniversite)`;
+                resultDiv.style.display = 'block';
+            }
+        }
+
+        // Use debounced filter for better performance
+        const debouncedFilter = debounce(filterUniversities, 300);
+
+        if (countryFilter) countryFilter.addEventListener('change', debouncedFilter);
+        if (rankingFilter) rankingFilter.addEventListener('change', debouncedFilter);
+        if (feeFilter) feeFilter.addEventListener('change', debouncedFilter);
+        if (programFilter) programFilter.addEventListener('change', debouncedFilter);
+        
+        // Clear filters button
+        document.getElementById('clearFiltersBtn').addEventListener('click', clearFilters);
+    });
+
+    function clearFilters() {
+        const countryFilter = document.getElementById('countryFilter');
+        const rankingFilter = document.getElementById('rankingFilter');
+        const feeFilter = document.getElementById('feeFilter');
+        const programFilter = document.getElementById('programFilter');
+        
+        if (countryFilter) countryFilter.value = '';
+        if (rankingFilter) rankingFilter.value = '';
+        if (feeFilter) feeFilter.value = '';
+        if (programFilter) programFilter.value = '';
+        
+        document.querySelectorAll('.university-card').forEach(card => {
+            card.style.display = 'block';
+        });
+
+        // Hide result count
+        const resultDiv = document.getElementById('filterResults');
+        if (resultDiv) {
+            resultDiv.style.display = 'none';
+        }
+    }
+
+    function loadMoreUniversities() {
+        // Implement load more functionality
+        console.log('Load more universities');
+    }
+</script> 

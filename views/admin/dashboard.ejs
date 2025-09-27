@@ -1,0 +1,172 @@
+<!-- Admin Dashboard Content -->
+<div class="admin-container">
+    <!-- Sidebar -->
+    <div class="admin-sidebar">
+        <div class="sidebar-header">
+            <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Yönetim Paneli</h6>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/admin/dashboard" class="nav-item active">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/admin/users" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Öğrenciler</span>
+                <span class="badge bg-primary ms-auto"><%= userCount %></span>
+            </a>
+            <a href="/admin/applications" class="nav-item">
+                <i class="fas fa-file-alt"></i>
+                <span>Başvurular</span>
+                <span class="badge bg-success ms-auto"><%= applicationCount %></span>
+            </a>
+            <a href="/admin/universities" class="nav-item">
+                <i class="fas fa-university"></i>
+                <span>Üniversiteler</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="admin-main">
+        <!-- Dashboard Section -->
+        <div class="section-header">
+            <h2><i class="fas fa-tachometer-alt me-2"></i>Dashboard</h2>
+            <p class="text-muted">Sistem genel durumu ve istatistikler</p>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card primary">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-content">
+                    <h3><%= userCount %></h3>
+                    <p>Toplam Öğrenci</p>
+                    <div class="stat-trend positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card success">
+                <div class="stat-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <div class="stat-content">
+                    <h3><%= applicationCount %></h3>
+                    <p>Toplam Başvuru</p>
+                    <div class="stat-trend positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card warning">
+                <div class="stat-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>0</h3>
+                    <p>Bekleyen Başvuru</p>
+                    <div class="stat-trend neutral">
+                        <i class="fas fa-minus"></i>
+                        <span>0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card info">
+                <div class="stat-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>0</h3>
+                    <p>Onaylanan Başvuru</p>
+                    <div class="stat-trend positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="row mt-4">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-users me-2"></i>Son Öğrenciler</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Öğrenci</th>
+                                        <th>E-posta</th>
+                                        <th>Kayıt Tarihi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% users.slice(0, 5).forEach(user => { %>
+                                    <tr>
+                                        <td><%= user.first_name %> <%= user.last_name %></td>
+                                        <td><%= user.email %></td>
+                                        <td><%= new Date(user.created_at).toLocaleDateString('tr-TR') %></td>
+                                    </tr>
+                                    <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-file-alt me-2"></i>Son Başvurular</h5>
+                    </div>
+                    <div class="card-body">
+                        <% if (applications.length > 0) { %>
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Öğrenci</th>
+                                            <th>Ülke</th>
+                                            <th>Durum</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% applications.slice(0, 5).forEach(app => { %>
+                                        <tr>
+                                            <td><%= app.first_name %> <%= app.last_name %></td>
+                                            <td><%= app.country %></td>
+                                            <td>
+                                                <% if (app.status === 'pending') { %>
+                                                    <span class="badge bg-warning">Beklemede</span>
+                                                <% } else if (app.status === 'approved') { %>
+                                                    <span class="badge bg-success">Onaylandı</span>
+                                                <% } else if (app.status === 'rejected') { %>
+                                                    <span class="badge bg-danger">Reddedildi</span>
+                                                <% } %>
+                                            </td>
+                                        </tr>
+                                        <% }); %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <% } else { %>
+                            <p class="text-muted mb-0">Henüz başvuru bulunmuyor.</p>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

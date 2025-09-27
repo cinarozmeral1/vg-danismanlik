@@ -1,0 +1,282 @@
+<!-- Admin New Application Content -->
+<div class="admin-container">
+    <!-- Sidebar -->
+    <div class="admin-sidebar">
+        <div class="sidebar-header">
+            <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Yönetim Paneli</h6>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/admin/dashboard" class="nav-item">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/admin/users" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Öğrenciler</span>
+            </a>
+            <a href="/admin/applications" class="nav-item active">
+                <i class="fas fa-file-alt"></i>
+                <span>Başvurular</span>
+            </a>
+            <a href="/admin/universities" class="nav-item">
+                <i class="fas fa-university"></i>
+                <span>Üniversiteler</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="admin-main">
+        <!-- Header -->
+        <div class="section-header">
+            <h2><i class="fas fa-plus me-2"></i>Yeni Başvuru Oluştur</h2>
+            <p class="text-muted">Yeni bir başvuru kaydı oluşturun</p>
+        </div>
+
+        <!-- Application Form -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Yeni Başvuru Oluştur</h5>
+            </div>
+            <div class="card-body">
+                <form id="newApplicationForm">
+                    <!-- User Selection -->
+                    <div class="mb-4">
+                        <h6 class="mb-3"><i class="fas fa-user me-2"></i>Öğrenci Seçimi</h6>
+                        <div class="mb-3">
+                            <label for="userId" class="form-label">Öğrenci *</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" class="form-control" id="userSearchInput" placeholder="Öğrenci ara (ad, soyad, e-posta)...">
+                            </div>
+                            <select class="form-select mt-2" id="userId" name="userId" required>
+                                <option value="">Öğrenci Seçin</option>
+                                <% if (typeof users !== 'undefined' && users) { %>
+                                    <% users.forEach(user => { %>
+                                        <option value="<%= user.id %>" data-email="<%= user.email %>" data-name="<%= user.first_name %> <%= user.last_name %>">
+                                            <%= user.first_name %> <%= user.last_name %> (<%= user.email %>)
+                                        </option>
+                                    <% }); %>
+                                <% } else { %>
+                                    <option value="">Kullanıcı verisi bulunamadı</option>
+                                <% } %>
+                            </select>
+                        </div>
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Seçilen Öğrenci:</strong> <span id="selectedUserInfo">Henüz öğrenci seçilmedi</span>
+                        </div>
+                    </div>
+
+                    <!-- Application Details -->
+                    <div class="mb-4">
+                        <h6 class="mb-3"><i class="fas fa-file-alt me-2"></i>Başvuru Bilgileri</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="country" class="form-label">Hedef Ülke *</label>
+                                    <select class="form-select" id="country" name="country" required>
+                                        <option value="">Ülke Seçin</option>
+                                        <option value="Germany">Almanya</option>
+                                        <option value="Czech Republic">Çek Cumhuriyeti</option>
+                                        <option value="Italy">İtalya</option>
+                                        <option value="Austria">Avusturya</option>
+                                        <option value="UK">İngiltere</option>
+                                        <option value="Poland">Polonya</option>
+                                        <option value="Hungary">Macaristan</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="university" class="form-label">Üniversite</label>
+                                    <input type="text" class="form-control" id="university" name="university" placeholder="Hedef üniversite adı">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="program" class="form-label">Program</label>
+                                    <input type="text" class="form-control" id="program" name="program" placeholder="Eğitim programı">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="englishLevel" class="form-label">İngilizce Seviyesi</label>
+                                    <select class="form-select" id="englishLevel" name="englishLevel">
+                                        <option value="">Seviye Seçin</option>
+                                        <option value="Beginner">Başlangıç</option>
+                                        <option value="Elementary">Temel</option>
+                                        <option value="Intermediate">Orta</option>
+                                        <option value="Upper Intermediate">İyi</option>
+                                        <option value="Advanced">İleri</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Notlar</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Başvuru hakkında ek notlar..."></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Durum *</label>
+                            <select class="form-select" id="status" name="status" required>
+                                <option value="pending">Beklemede</option>
+                                <option value="approved">Onaylandı</option>
+                                <option value="rejected">Reddedildi</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary" id="goBackBtn">
+                            <i class="fas fa-arrow-left me-2"></i>Geri Dön
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Başvuru Oluştur
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+        // Go back button
+        document.getElementById('goBackBtn').addEventListener('click', goBack);
+        
+        // Sayfa yüklendiğinde URL'den userId parametresini kontrol et
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('userId');
+        
+        if (userId) {
+            const selectElement = document.getElementById('userId');
+            selectElement.value = userId;
+            
+            // Öğrenci bilgisini güncelle
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            if (selectedOption) {
+                const userName = selectedOption.getAttribute('data-name');
+                const userEmail = selectedOption.getAttribute('data-email');
+                document.getElementById('selectedUserInfo').textContent = `${userName} (${userEmail})`;
+            }
+        }
+        
+        // Öğrenci arama fonksiyonu
+        document.getElementById('userSearchInput').addEventListener('input', function() {
+            filterUsers(this.value);
+        });
+        
+        // Öğrenci seçimi değiştiğinde bilgi güncelle
+        document.getElementById('userId').addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            if (selectedOption && selectedOption.value) {
+                const userName = selectedOption.getAttribute('data-name');
+                const userEmail = selectedOption.getAttribute('data-email');
+                document.getElementById('selectedUserInfo').textContent = `${userName} (${userEmail})`;
+            } else {
+                document.getElementById('selectedUserInfo').textContent = 'Henüz öğrenci seçilmedi';
+            }
+        });
+    });
+
+    // Öğrenci arama fonksiyonu
+    function filterUsers(searchTerm) {
+        const selectElement = document.getElementById('userId');
+        const options = selectElement.querySelectorAll('option');
+        const term = searchTerm.toLowerCase().trim();
+        
+        if (term === '') {
+            // Arama terimi boşsa tüm seçenekleri göster
+            options.forEach(option => {
+                option.style.display = '';
+            });
+            return;
+        }
+        
+        let visibleCount = 0;
+        options.forEach(option => {
+            if (option.value === '') {
+                // İlk seçenek (Öğrenci Seçin) her zaman görünür olsun
+                option.style.display = '';
+                return;
+            }
+            
+            const name = option.getAttribute('data-name') || '';
+            const email = option.getAttribute('data-email') || '';
+            const text = option.textContent.toLowerCase();
+            
+            // Daha kapsamlı arama
+            const nameMatch = name.toLowerCase().includes(term);
+            const emailMatch = email.toLowerCase().includes(term);
+            const textMatch = text.includes(term);
+            
+            if (nameMatch || emailMatch || textMatch) {
+                option.style.display = '';
+                visibleCount++;
+            } else {
+                option.style.display = 'none';
+            }
+        });
+    }
+
+    // Öğrenci seçimi değiştiğinde bilgi güncelle
+    document.getElementById('userId').addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const userInfo = document.getElementById('selectedUserInfo');
+        
+        if (this.value) {
+            const userName = selectedOption.getAttribute('data-name');
+            const userEmail = selectedOption.getAttribute('data-email');
+            userInfo.textContent = `${userName} (${userEmail})`;
+        } else {
+            userInfo.textContent = 'Henüz kullanıcı seçilmedi';
+        }
+    });
+
+    document.getElementById('newApplicationForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData);
+        
+        // Öğrenci seçimi kontrolü
+        if (!data.userId) {
+            alert('Lütfen bir kullanıcı seçin!');
+            return;
+        }
+        
+        // API'ye gönder
+        fetch('/api/admin/applications', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                alert('Başvuru başarıyla oluşturuldu!');
+                window.location.href = '/admin/applications';
+            } else {
+                alert('Hata: ' + result.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+        });
+    });
+
+    function goBack() {
+        window.location.href = '/admin/applications';
+    }
+</script>

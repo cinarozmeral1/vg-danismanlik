@@ -1,0 +1,280 @@
+<!-- Main Content -->
+    <section class="section bg-light text-dark" style="min-height: 80vh;">
+        <div class="container">
+            <div class="row">
+                <!-- Sidebar -->
+                <div class="col-lg-3 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="fas fa-user me-2"></i>Hesap Menüsü</h5>
+                        </div>
+                        <div class="list-group list-group-flush">
+                            <a href="/user/dashboard" class="list-group-item list-group-item-action">
+                                <i class="fas fa-user me-2"></i>Profil Bilgileri
+                            </a>
+                            <a href="/user/applications" class="list-group-item list-group-item-action">
+                                <i class="fas fa-file-alt me-2"></i>Başvurularım
+                            </a>
+                            <a href="/user/files" class="list-group-item list-group-item-action active">
+                                <i class="fas fa-folder me-2"></i>Dosyalarım
+                            </a>
+                            <a href="/user/settings" class="list-group-item list-group-item-action">
+                                <i class="fas fa-cog me-2"></i>Ayarlar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="col-lg-9">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h4 class="mb-0"><i class="fas fa-folder me-2"></i>Dosyalarım</h4>
+                        </div>
+                        <div class="card-body">
+                            <div id="alertContainer"></div>
+                            
+                            <!-- Upload Section -->
+                            <div class="card mb-4">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0"><i class="fas fa-upload me-2"></i>Dosya Yükle</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="fileUploadForm" enctype="multipart/form-data">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="fileTitle" class="form-label">Dosya Başlığı *</label>
+                                                <input type="text" class="form-control" id="fileTitle" name="title" required>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="fileCategory" class="form-label">Kategori *</label>
+                                                <select class="form-select" id="fileCategory" name="category" required>
+                                                    <option value="">Seçiniz</option>
+                                                    <option value="transcript">Transkript</option>
+                                                    <option value="passport">Pasaport</option>
+                                                    <option value="language_test">Dil Sınavı</option>
+                                                    <option value="reference">Referans Mektubu</option>
+                                                    <option value="motivation">Motivasyon Mektubu</option>
+                                                    <option value="other">Diğer</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="fileDescription" class="form-label">Açıklama</label>
+                                            <textarea class="form-control" id="fileDescription" name="description" rows="3"></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="fileInput" class="form-label">Dosya Seç *</label>
+                                            <input type="file" class="form-control" id="fileInput" name="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required>
+                                            <div class="form-text">Desteklenen formatlar: PDF, DOC, DOCX, JPG, JPEG, PNG (Max: 10MB)</div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-upload me-2"></i>Dosya Yükle
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- Files List -->
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0"><i class="fas fa-list me-2"></i>Yüklenen Dosyalar</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="filesList">
+                                        <!-- Files will be loaded here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script>
+        // Load files on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFiles();
+        });
+
+        // File upload form
+        document.getElementById('fileUploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            try {
+                const response = await fetch('/api/user/files/upload', {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAlert('Dosya başarıyla yüklendi!', 'success');
+                    this.reset();
+                    loadFiles();
+                } else {
+                    showAlert('Hata: ' + result.message, 'danger');
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                showAlert('Dosya yüklenirken bir hata oluştu!', 'danger');
+            }
+        });
+
+        // Load files
+        async function loadFiles() {
+            try {
+                const response = await fetch('/api/user/files', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    displayFiles(result.files);
+                } else {
+                    showAlert('Dosyalar yüklenirken bir hata oluştu!', 'danger');
+                }
+            } catch (error) {
+                console.error('Load files error:', error);
+                showAlert('Dosyalar yüklenirken bir hata oluştu!', 'danger');
+            }
+        }
+
+        // Display files
+        function displayFiles(files) {
+            const container = document.getElementById('filesList');
+            
+            if (files.length === 0) {
+                container.innerHTML = '<p class="text-muted">Henüz dosya yüklenmemiş.</p>';
+                return;
+            }
+            
+            let html = '';
+            files.forEach(file => {
+                const fileSize = (file.file_size / 1024 / 1024).toFixed(2);
+                const uploadDate = new Date(file.uploaded_at).toLocaleDateString('tr-TR');
+                
+                html += `
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h6 class="mb-1">${file.title}</h6>
+                                    <p class="text-muted mb-1">${file.description || 'Açıklama yok'}</p>
+                                    <small class="text-muted">
+                                        Kategori: ${getCategoryName(file.category)} | 
+                                        Boyut: ${fileSize} MB | 
+                                        Yüklenme: ${uploadDate}
+                                    </small>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <button class="btn btn-sm btn-outline-primary me-2" onclick="downloadFile(${file.id})">
+                                        <i class="fas fa-download me-1"></i>İndir
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteFile(${file.id})">
+                                        <i class="fas fa-trash me-1"></i>Sil
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // Get category name
+        function getCategoryName(category) {
+            const categories = {
+                'transcript': 'Transkript',
+                'passport': 'Pasaport',
+                'language_test': 'Dil Sınavı',
+                'reference': 'Referans Mektubu',
+                'motivation': 'Motivasyon Mektubu',
+                'other': 'Diğer'
+            };
+            return categories[category] || 'Bilinmiyor';
+        }
+
+        // Download file
+        async function downloadFile(fileId) {
+            try {
+                const response = await fetch(`/api/user/files/${fileId}/download`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'file';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                } else {
+                    showAlert('Dosya indirilemedi!', 'danger');
+                }
+            } catch (error) {
+                console.error('Download error:', error);
+                showAlert('Dosya indirilemedi!', 'danger');
+            }
+        }
+
+        // Delete file
+        async function deleteFile(fileId) {
+            if (!confirm('Bu dosyayı silmek istediğinizden emin misiniz?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/user/files/${fileId}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAlert('Dosya başarıyla silindi!', 'success');
+                    loadFiles();
+                } else {
+                    showAlert('Hata: ' + result.message, 'danger');
+                }
+            } catch (error) {
+                console.error('Delete error:', error);
+                showAlert('Dosya silinirken bir hata oluştu!', 'danger');
+            }
+        }
+
+        // Alert function
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} alert-dismissible fade show`;
+            alert.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            alertContainer.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+    </script>

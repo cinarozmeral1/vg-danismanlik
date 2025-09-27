@@ -1,0 +1,244 @@
+<!-- Admin Universities Content -->
+<div class="admin-container">
+    <!-- Sidebar -->
+    <div class="admin-sidebar">
+        <div class="sidebar-header">
+            <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Yönetim Paneli</h6>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/admin/dashboard" class="nav-item">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/admin/users" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Öğrenciler</span>
+            </a>
+            <a href="/admin/applications" class="nav-item">
+                <i class="fas fa-file-alt"></i>
+                <span>Başvurular</span>
+            </a>
+            <a href="/admin/universities" class="nav-item active">
+                <i class="fas fa-university"></i>
+                <span>Üniversiteler</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="admin-main">
+        <!-- Header -->
+        <div class="section-header">
+            <h2><i class="fas fa-university me-2"></i>Üniversiteler</h2>
+            <p class="text-muted">Üniversite bilgilerini yönetin</p>
+        </div>
+
+        <!-- Universities Table -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Üniversite Listesi (<%= universities.length %>)</h5>
+                <button class="btn btn-primary btn-sm" id="createNewUniversityBtn">
+                    <i class="fas fa-plus me-2"></i>Yeni Üniversite
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Üniversite Adı</th>
+                                <th>Ülke</th>
+                                <th>Şehir</th>
+                                <th>Program Sayısı</th>
+                                <th>Eğitim Ücreti</th>
+                                <th>Başvuru Ücreti</th>
+                                <th>Dünya Sıralaması</th>
+                                <th>Durum</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (universities && universities.length > 0) { %>
+                                <% universities.forEach(university => { %>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="<%= university.logo_url || '/images/default-university.png' %>" 
+                                                 alt="<%= university.name %>" 
+                                                 class="rounded me-2" 
+                                                 style="width: 30px; height: 30px; object-fit: cover;">
+                                            <div>
+                                                <strong><%= university.name %></strong>
+                                                <div class="small text-muted">
+                                                    <% if (university.name_en && university.name_en !== university.name) { %>
+                                                        <div class="mb-1"><%= university.name_en %></div>
+                                                    <% } %>
+                                                    <% if (university.is_featured) { %>
+                                                        <span class="badge bg-warning me-1">Öne Çıkan</span>
+                                                    <% } %>
+                                                    <% if (university.is_partner) { %>
+                                                        <span class="badge bg-success me-1">Partner</span>
+                                                    <% } %>
+                                                    <% if (university.website_url) { %>
+                                                        <div class="mt-1">
+                                                            <a href="<%= university.website_url %>" target="_blank" class="text-decoration-none">
+                                                                <i class="fas fa-external-link-alt me-1"></i>Website
+                                                            </a>
+                                                        </div>
+                                                    <% } %>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><%= university.country %></td>
+                                    <td><%= university.city %></td>
+                                    <td>
+                                        <span class="badge bg-info"><%= university.actual_program_count || 0 %></span>
+                                    </td>
+                                    <td>
+                                        <% if (university.tuition_fee) { %>
+                                            <span class="text-muted">
+                                                €<%= Math.round(university.tuition_fee).toLocaleString() %>
+                                            </span>
+                                        <% } else { %>
+                                            <span class="text-muted">Belirtilmemiş</span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <% if (university.application_fee) { %>
+                                            <span class="text-muted">
+                                                €<%= university.application_fee %>
+                                            </span>
+                                        <% } else { %>
+                                            <span class="text-muted">-</span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <% if (university.world_ranking) { %>
+                                            <span class="badge bg-primary">#<%= university.world_ranking %></span>
+                                        <% } else { %>
+                                            <span class="text-muted">-</span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <% if (university.is_active) { %>
+                                            <span class="badge bg-success">Aktif</span>
+                                        <% } else { %>
+                                            <span class="badge bg-secondary">Pasif</span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-sm btn-outline-primary js-view-university" data-university-id="<%= university.id %>" title="Görüntüle">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-warning js-edit-university" data-university-id="<%= university.id %>" title="Düzenle">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger js-delete-university" data-university-id="<%= university.id %>" title="Sil">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <% }); %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="9" class="text-center text-muted py-4">
+                                        <i class="fas fa-university fa-3x mb-3"></i>
+                                        <p>Henüz üniversite bulunmuyor</p>
+                                        <button class="btn btn-primary" id="createNewUniversityEmptyBtn">
+                                            <i class="fas fa-plus me-2"></i>İlk Üniversiteyi Ekle
+                                        </button>
+                                    </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Event delegation for university action buttons and create buttons
+    document.addEventListener('click', function(e) {
+        // Create new university buttons
+        if (e.target.closest('#createNewUniversityBtn') || e.target.closest('#createNewUniversityEmptyBtn')) {
+            createNewUniversity();
+            return;
+        }
+
+        // University action buttons
+        const viewBtn = e.target.closest('.js-view-university');
+        const editBtn = e.target.closest('.js-edit-university');
+        const deleteBtn = e.target.closest('.js-delete-university');
+
+        if (viewBtn) {
+            const id = viewBtn.getAttribute('data-university-id');
+            if (id) window.location.href = `/admin/universities/${id}`;
+            return;
+        }
+
+        if (editBtn) {
+            const id = editBtn.getAttribute('data-university-id');
+            if (id) window.location.href = `/admin/universities/${id}/edit`;
+            return;
+        }
+
+        if (deleteBtn) {
+            const id = deleteBtn.getAttribute('data-university-id');
+            if (!id) return;
+            if (confirm('Bu üniversiteyi silmek istediğinizden emin misiniz?\n\nBu işlem geri alınamaz ve üniversiteye ait tüm programlar ve görseller de silinecektir.')) {
+                fetch(`/api/admin/universities/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        alert('Üniversite başarıyla silindi!');
+                        location.reload();
+                    } else {
+                        alert('Hata: ' + result.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+                });
+            }
+        }
+    });
+
+    function createNewUniversity() {
+        window.location.href = '/admin/universities/new';
+    }
+
+    // Page load sorting
+    document.addEventListener('DOMContentLoaded', function() {
+        setupTableSorting();
+    });
+
+    function setupTableSorting() {
+        const table = document.querySelector('table');
+        if (table) {
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            
+            rows.sort((a, b) => {
+                const aFeatured = a.querySelector('.badge.bg-warning') !== null;
+                const bFeatured = b.querySelector('.badge.bg-warning') !== null;
+                
+                if (aFeatured && !bFeatured) return -1;
+                if (!aFeatured && bFeatured) return 1;
+                return 0;
+            });
+            
+            rows.forEach(row => tbody.appendChild(row));
+        }
+    }
+</script>

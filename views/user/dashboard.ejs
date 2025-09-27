@@ -1,0 +1,336 @@
+<!-- Main Content -->
+    <section class="section bg-light text-dark" style="min-height: 80vh;">
+        <div class="container">
+            <div class="row">
+                <!-- Sidebar -->
+                <div class="col-lg-3 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="fas fa-user me-2"></i>Hesap Menüsü</h5>
+                        </div>
+                        <div class="list-group list-group-flush">
+                            <a href="/user/dashboard" class="list-group-item list-group-item-action active">
+                                <i class="fas fa-user me-2"></i>Profil Bilgileri
+                            </a>
+                            <a href="/user/applications" class="list-group-item list-group-item-action">
+                                <i class="fas fa-file-alt me-2"></i>Başvurularım
+                            </a>
+                            <a href="/user/files" class="list-group-item list-group-item-action">
+                                <i class="fas fa-folder me-2"></i>Dosyalarım
+                            </a>
+                            <a href="/user/settings" class="list-group-item list-group-item-action">
+                                <i class="fas fa-cog me-2"></i>Ayarlar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="col-lg-9">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h4 class="mb-0"><i class="fas fa-user me-2"></i>Profil Bilgileri</h4>
+                        </div>
+                        <div class="card-body">
+                            <div id="alertContainer"></div>
+                            
+                            <form id="profileForm">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="first_name" class="form-label">Ad *</label>
+                                        <input type="text" class="form-control" id="first_name" name="first_name" value="<%= user.first_name %>" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="last_name" class="form-label">Soyad *</label>
+                                        <input type="text" class="form-control" id="last_name" name="last_name" value="<%= user.last_name %>" required>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="email" class="form-label">E-posta *</label>
+                                        <input type="email" class="form-control" id="email" name="email" value="<%= user.email %>" readonly>
+                                        <small class="text-muted">E-posta değiştirilemez</small>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="phone" class="form-label">Telefon *</label>
+                                        <input type="tel" class="form-control" id="phone" name="phone" value="<%= user.phone %>" required>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="tc_number" class="form-label">TC Kimlik No *</label>
+                                        <input type="text" class="form-control" id="tc_number" name="tc_number" value="<%= user.tc_number %>" maxlength="11" pattern="[0-9]{11}" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="birth_date" class="form-label">Doğum Tarihi *</label>
+                                        <input type="date" class="form-control" id="birth_date" name="birth_date" value="<%= user.birth_date %>" required>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="school" class="form-label">Okul</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-school"></i></span>
+                                            <input type="text" class="form-control" id="school" name="school" value="<%= user.school || '' %>" placeholder="Okul adı">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="class_level" class="form-label">Sınıf</label>
+                                        <input type="text" class="form-control" id="class_level" name="class_level" value="<%= user.class_level || '' %>" placeholder="Sınıf">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="english_level" class="form-label">İngilizce Seviyesi *</label>
+                                        <select class="form-select" id="english_level" name="english_level" required>
+                                            <option value="">Seçiniz</option>
+                                            <option value="A1" <%= user.english_level === 'A1' ? 'selected' : '' %>>A1</option>
+                                            <option value="A2" <%= user.english_level === 'A2' ? 'selected' : '' %>>A2</option>
+                                            <option value="B1" <%= user.english_level === 'B1' ? 'selected' : '' %>>B1</option>
+                                            <option value="B2" <%= user.english_level === 'B2' ? 'selected' : '' %>>B2</option>
+                                            <option value="C1" <%= user.english_level === 'C1' ? 'selected' : '' %>>C1</option>
+                                            <option value="C2" <%= user.english_level === 'C2' ? 'selected' : '' %>>C2</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="high_school_graduation_date" class="form-label">Lise Mezuniyet Tarihi *</label>
+                                        <input type="date" class="form-control" id="high_school_graduation_date" name="high_school_graduation_date" value="<%= user.high_school_graduation_date %>" required>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="country" class="form-label">Ülke</label>
+                                        <select class="form-select" id="country" name="country">
+                                            <option value="">Lütfen Seçin</option>
+                                            <option value="Türkiye" <%= (user.country === 'Türkiye' || !user.country) ? 'selected' : '' %>>Türkiye</option>
+                                            <option value="Almanya" <%= user.country === 'Almanya' ? 'selected' : '' %>>Almanya</option>
+                                            <option value="İngiltere" <%= user.country === 'İngiltere' ? 'selected' : '' %>>İngiltere</option>
+                                            <option value="Amerika" <%= user.country === 'Amerika' ? 'selected' : '' %>>Amerika</option>
+                                            <option value="Kanada" <%= user.country === 'Kanada' ? 'selected' : '' %>>Kanada</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="city" class="form-label">Şehir</label>
+                                        <select class="form-select" id="city" name="city">
+                                            <option value="">Lütfen Seçin</option>
+                                            <option value="İstanbul" <%= (user.city === 'İstanbul' || !user.city) ? 'selected' : '' %>>İstanbul</option>
+                                            <option value="Ankara" <%= user.city === 'Ankara' ? 'selected' : '' %>>Ankara</option>
+                                            <option value="İzmir" <%= user.city === 'İzmir' ? 'selected' : '' %>>İzmir</option>
+                                            <option value="Bursa" <%= user.city === 'Bursa' ? 'selected' : '' %>>Bursa</option>
+                                            <option value="Antalya" <%= user.city === 'Antalya' ? 'selected' : '' %>>Antalya</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="address" class="form-label">Adres</label>
+                                        <input type="text" class="form-control" id="address" name="address" value="<%= user.address || '' %>" placeholder="Adres">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="nationality" class="form-label">Uyruk</label>
+                                        <select class="form-select" id="nationality" name="nationality">
+                                            <option value="TC Vatandaşı" <%= (user.nationality === 'TC Vatandaşı' || !user.nationality) ? 'selected' : '' %>>TC Vatandaşı</option>
+                                            <option value="Çifte Vatandaş" <%= user.nationality === 'Çifte Vatandaş' ? 'selected' : '' %>>Çifte Vatandaş</option>
+                                            <option value="Yabancı" <%= user.nationality === 'Yabancı' ? 'selected' : '' %>>Yabancı</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="target_country" class="form-label">Gitmek İstediği Ülke?</label>
+                                        <select class="form-select" id="target_country" name="target_country">
+                                            <option value="">Lütfen Seçin</option>
+                                            <option value="Almanya" <%= user.target_country === 'Almanya' ? 'selected' : '' %>>Almanya</option>
+                                            <option value="İngiltere" <%= user.target_country === 'İngiltere' ? 'selected' : '' %>>İngiltere</option>
+                                            <option value="Amerika" <%= user.target_country === 'Amerika' ? 'selected' : '' %>>Amerika</option>
+                                            <option value="Kanada" <%= user.target_country === 'Kanada' ? 'selected' : '' %>>Kanada</option>
+                                            <option value="Avustralya" <%= user.target_country === 'Avustralya' ? 'selected' : '' %>>Avustralya</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="active_class" class="form-label">Aktif Sınıf</label>
+                                        <input type="text" class="form-control" id="active_class" name="active_class" value="<%= user.active_class || '' %>" placeholder="Aktif sınıf">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="passport_number" class="form-label">Pasaport Numarası</label>
+                                        <input type="text" class="form-control" id="passport_number" name="passport_number" value="<%= user.passport_number || '' %>">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="passport_type" class="form-label">Pasaport Türü</label>
+                                        <select class="form-select" id="passport_type" name="passport_type">
+                                            <option value="">Seçiniz</option>
+                                            <option value="Bordo" <%= user.passport_type === 'Bordo' ? 'selected' : '' %>>Bordo</option>
+                                            <option value="Yeşil" <%= user.passport_type === 'Yeşil' ? 'selected' : '' %>>Yeşil</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="schengen_visa_count" class="form-label">Schengen Vize Sayısı</label>
+                                        <input type="number" class="form-control" id="schengen_visa_count" name="schengen_visa_count" value="<%= user.schengen_visa_count || 0 %>" min="0">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="uk_visa_count" class="form-label">İngiltere Vize Sayısı</label>
+                                        <input type="number" class="form-control" id="uk_visa_count" name="uk_visa_count" value="<%= user.uk_visa_count || 0 %>" min="0">
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="academic_exams" class="form-label">Akademik Sınavlar (IELTS, SAT, AP vb.)</label>
+                                    <textarea class="form-control" id="academic_exams" name="academic_exams" rows="3"><%= user.academic_exams || '' %></textarea>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="annual_budget" class="form-label">Yıllık Bütçe (TL)</label>
+                                    <input type="number" class="form-control" id="annual_budget" name="annual_budget" value="<%= user.annual_budget || '' %>" min="0" step="0.01">
+                                </div>
+
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="fas fa-save me-2"></i>Değişiklikleri Kaydet
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script>
+        // Logout function
+        function logout() {
+            console.log('Logout function called'); // Debug için
+            fetch('/api/auth/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include' // Include cookies
+            })
+            .then(response => {
+                console.log('Logout response status:', response.status); // Debug için
+                return response.json();
+            })
+            .then(data => {
+                console.log('Logout response:', data); // Debug için
+                if (data.success) {
+                    console.log('Logout successful, redirecting...'); // Debug için
+                    window.location.href = '/';
+                } else {
+                    console.error('Logout failed:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error during logout:', error);
+                window.location.href = '/';
+            });
+        }
+
+        // Profile form submission
+        document.getElementById('profileForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            fetch('/api/user/profile', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('Profil bilgileriniz başarıyla güncellendi!', 'success');
+                } else {
+                    showAlert(data.message || 'Bir hata oluştu!', 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('Bir hata oluştu!', 'danger');
+            });
+        });
+
+        // Alert function
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} alert-dismissible fade show`;
+            alert.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            alertContainer.appendChild(alert);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        // Language change function
+        function changeLanguage(lang) {
+            fetch('/change-language', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ language: lang })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Language change error:', error);
+            });
+        }
+
+        // Language options event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const languageOptions = document.querySelectorAll('.language-option');
+            
+            languageOptions.forEach(option => {
+                option.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const language = this.getAttribute('data-language');
+                    changeLanguage(language);
+                });
+            });
+
+            // Logout butonu event listener
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Logout button clicked'); // Debug için
+                    logout();
+                });
+            } else {
+                console.log('Logout button not found'); // Debug için
+            }
+        });
+    </script> 
