@@ -3299,6 +3299,7 @@ document.addEventListener('DOMContentLoaded', function() {
         guardiansTab.addEventListener('shown.bs.tab', function() {
             console.log('🔧 Guardians tab shown...');
             hideRemainingButtonsKaydetButtons();
+            loadGuardians();
         });
     }
     
@@ -3310,6 +3311,72 @@ document.addEventListener('DOMContentLoaded', function() {
     
     console.log('✅ Student details page initialized successfully');
 });
+
+// Load guardians information
+async function loadGuardians() {
+    try {
+        const response = await fetch(`/api/admin/users/<%= user.id %>/guardians`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Guardians data:', data);
+        
+        if (data.success) {
+            updateGuardiansDisplay(data.guardians);
+        }
+    } catch (error) {
+        console.error('Error loading guardians:', error);
+    }
+}
+
+// Update guardians display
+function updateGuardiansDisplay(guardians) {
+    const motherFullName = document.getElementById('motherFullName');
+    const motherPhone = document.getElementById('motherPhone');
+    const motherTc = document.getElementById('motherTc');
+    const fatherFullName = document.getElementById('fatherFullName');
+    const fatherPhone = document.getElementById('fatherPhone');
+    const fatherTc = document.getElementById('fatherTc');
+
+    if (motherFullName) {
+        motherFullName.textContent = `${guardians.mother_name || ''} ${guardians.mother_surname || ''}`.trim() || 'Belirtilmemiş';
+        motherFullName.className = `guardian-info-value ${(guardians.mother_name || guardians.mother_surname) ? '' : 'empty'}`;
+    }
+    
+    if (motherPhone) {
+        motherPhone.textContent = guardians.mother_phone || 'Belirtilmemiş';
+        motherPhone.className = `guardian-info-value ${guardians.mother_phone ? '' : 'empty'}`;
+    }
+    
+    if (motherTc) {
+        motherTc.textContent = guardians.mother_tc || 'Belirtilmemiş';
+        motherTc.className = `guardian-info-value ${guardians.mother_tc ? '' : 'empty'}`;
+    }
+    
+    if (fatherFullName) {
+        fatherFullName.textContent = `${guardians.father_name || ''} ${guardians.father_surname || ''}`.trim() || 'Belirtilmemiş';
+        fatherFullName.className = `guardian-info-value ${(guardians.father_name || guardians.father_surname) ? '' : 'empty'}`;
+    }
+    
+    if (fatherPhone) {
+        fatherPhone.textContent = guardians.father_phone || 'Belirtilmemiş';
+        fatherPhone.className = `guardian-info-value ${guardians.father_phone ? '' : 'empty'}`;
+    }
+    
+    if (fatherTc) {
+        fatherTc.textContent = guardians.father_tc || 'Belirtilmemiş';
+        fatherTc.className = `guardian-info-value ${guardians.father_tc ? '' : 'empty'}`;
+    }
+}
 
 // Show edit guardians modal
 function showEditGuardiansModal() {

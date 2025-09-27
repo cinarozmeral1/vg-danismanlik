@@ -480,6 +480,35 @@ router.get('/applications/new', async (req, res) => {
     }
 });
 
+// Get user guardians information
+router.get('/users/:id/guardians', async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        const result = await pool.query(
+            `SELECT mother_name, mother_surname, mother_phone, mother_tc, 
+                    father_name, father_surname, father_phone, father_tc
+             FROM users WHERE id = $1`,
+            [id]
+        );
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+        
+        res.json({
+            success: true,
+            guardians: result.rows[0]
+        });
+    } catch (error) {
+        console.error('Get guardians error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
 // Update user guardians information
 router.put('/users/:id/guardians', async (req, res) => {
     try {
