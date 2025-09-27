@@ -74,9 +74,18 @@
                         <div class="card h-100 university-card-inner">
                             <div class="card-header bg-transparent border-0">
                                 <div class="d-flex justify-content-between align-items-start">
-                                    <img src="<%= university.logo_url || '/images/default-university.png' %>" 
-                                         alt="<%= university.name %>" 
-                                         class="university-logo">
+                                    <div class="d-flex align-items-center">
+                                        <img src="<%= university.logo_url || '/images/default-university.png' %>" 
+                                             alt="<%= university.name %>" 
+                                             class="university-logo me-3">
+                                        <div>
+                                            <h5 class="card-title university-name mb-1" data-tr="<%= university.name %>" data-en="<%= university.name_en || university.name %>"><%= university.name %></h5>
+                                            <p class="text-muted mb-0 small">
+                                                <i class="fas fa-map-marker-alt me-1"></i>
+                                                <%= university.city %>, <%= university.country %>
+                                            </p>
+                                        </div>
+                                    </div>
                                     <div class="badges">
                                         <% if (university.is_featured) { %>
                                             <span class="badge bg-warning">Öne Çıkan</span>
@@ -88,11 +97,6 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <h5 class="card-title university-name" data-tr="<%= university.name %>" data-en="<%= university.name_en || university.name %>"><%= university.name %></h5>
-                                <p class="card-text text-muted">
-                                    <i class="fas fa-map-marker-alt me-2"></i>
-                                    <%= university.city %>, <%= university.country %>
-                                </p>
                                 
                                 <div class="university-stats">
                                     <div class="row">
@@ -400,5 +404,12 @@
     margin-bottom: 0.5rem !important;
     display: block !important;
     visibility: visible !important;
+}
+
+.university-logo {
+    width: 50px !important;
+    height: 50px !important;
+    object-fit: contain !important;
+    border-radius: 8px !important;
 }
 </style> 
