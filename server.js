@@ -382,7 +382,6 @@ app.post('/admin/login', async (req, res) => {
 
 // API Routes
 app.use('/api/auth', authRoutes);
-app.use('/', authRoutes);
 app.use('/api/admin', authenticateAdmin, adminRoutes);
 app.use('/admin', authenticateAdmin, adminRoutes);
 app.use('/api/user', userRoutes);
