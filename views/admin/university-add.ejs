@@ -253,10 +253,7 @@
             const logoFile = document.getElementById('logo_file').files[0];
             let logoUrl = null;
 
-            // Checkbox değerlerini ekle
-            formData.set('is_active', document.getElementById('is_active').checked);
-            formData.set('is_featured', document.getElementById('is_featured').checked);
-            formData.set('is_partner', document.getElementById('is_partner').checked);
+            // Durum ayarları kaldırıldı - tüm üniversiteler aktif olacak
             
             // Debug: FormData içeriğini kontrol et
             console.log('📝 FormData Debug:');
@@ -301,10 +298,14 @@
                 // Collect departments data
                 const departments = {};
                 departmentsContainer.querySelectorAll('.department-item').forEach((item, index) => {
-                    const name_tr = item.querySelector('[name^="departments["][name$="[name_tr]"]').value;
-                    const price = item.querySelector('[name^="departments["][name$="[price]"]').value;
-                    if (name_tr) {
-                        departments[index] = { name_tr, name_en: name_tr, price };
+                    const nameInput = item.querySelector('input[name*="[name_tr]"]');
+                    const priceInput = item.querySelector('input[name*="[price]"]');
+                    if (nameInput && nameInput.value.trim()) {
+                        departments[index] = { 
+                            name_tr: nameInput.value.trim(), 
+                            name_en: nameInput.value.trim(), 
+                            price: priceInput ? priceInput.value : 0 
+                        };
                     }
                 });
                 urlParams.append('departments', JSON.stringify(departments));

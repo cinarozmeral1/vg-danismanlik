@@ -1411,7 +1411,7 @@ router.post('/universities', async (req, res) => {
         const universityResult = await pool.query(
             `INSERT INTO universities (
                 name, country, city, logo_url, world_ranking, 
-                description, requirements, is_partner, is_active, is_featured,
+                description, requirements, is_active, is_featured,
                 created_at, updated_at
             ) VALUES ($1, $2, $3, $4, $5, $6, $7, true, false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *`,
             [
