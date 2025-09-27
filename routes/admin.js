@@ -28,13 +28,15 @@ const upload = multer({
             'image/jpeg',
             'image/jpg', 
             'image/png',
-            'image/svg+xml'
+            'image/svg+xml',
+            'image/heic',
+            'image/heif'
         ];
         
         if (allowedTypes.includes(file.mimetype)) {
             cb(null, true);
         } else {
-            cb(new Error('Logo için sadece resim dosyaları kabul edilir!'), false);
+            cb(new Error('Logo için sadece resim dosyaları kabul edilir! (JPG, PNG, SVG, HEIC desteklenir)'), false);
         }
     },
     limits: {
