@@ -15,9 +15,16 @@
                     
                     <div class="university-header">
                         <div class="d-flex align-items-center mb-3">
-                            <img src="<%= university.logo_url || '/images/default-university.png' %>" 
-                                 alt="<%= university.name %>" 
-                                 class="university-logo-large me-3">
+                            <% if (university.logo_url) { %>
+                                <img src="<%= university.logo_url %>" 
+                                     alt="<%= university.name %>" 
+                                     class="university-logo-large me-3">
+                            <% } else { %>
+                                <div class="university-logo-large me-3 d-flex align-items-center justify-content-center bg-light rounded" 
+                                     style="width: 80px; height: 80px; border: 1px solid #dee2e6;">
+                                    <i class="fas fa-university text-muted" style="font-size: 32px;"></i>
+                                </div>
+                            <% } %>
                             <div>
                                 <h1 class="university-title" data-tr="<%= university.name %>" data-en="<%= university.name_en || university.name %>"><%= university.name %></h1>
                                 <p class="university-location">
