@@ -170,25 +170,6 @@
                             </div>
                         </div>
 
-                        <!-- Fees Information -->
-                        <div class="sidebar-card">
-                            <h3>Ücret Bilgileri</h3>
-                            <div class="fees-info">
-                                <% if (university.tuition_fee) { %>
-                                <div class="fee-item">
-                                    <span class="fee-label">Yıllık Eğitim Ücreti:</span>
-                                    <span class="fee-value">€<%= Math.round(Number(university.tuition_fee)).toLocaleString() %></span>
-                                </div>
-                                <% } %>
-                                
-                                <% if (university.application_fee) { %>
-                                <div class="fee-item">
-                                    <span class="fee-label">Başvuru Ücreti:</span>
-                                    <span class="fee-value">€<%= university.application_fee %></span>
-                                </div>
-                                <% } %>
-                            </div>
-                        </div>
 
                         <!-- Rankings -->
                         <div class="sidebar-card">
