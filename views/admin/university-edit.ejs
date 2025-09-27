@@ -284,9 +284,19 @@ document.addEventListener('DOMContentLoaded', function() {
             submitButton.disabled = true;
             submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Kaydediliyor...';
             
-            const formData = new FormData(form);
+            // Form verilerini topla
+            const formData = new URLSearchParams();
             const logoFile = document.getElementById('logo_file').files[0];
-            let logoUrl = formData.get('logo_url'); // Mevcut logo URL'ini al
+            let logoUrl = document.querySelector('input[name="logo_url"]').value; // Mevcut logo URL'ini al
+            
+            // Temel bilgileri topla
+            formData.append('name', document.getElementById('name').value);
+            formData.append('country', document.getElementById('country').value);
+            formData.append('city', document.getElementById('city').value);
+            formData.append('world_ranking', document.getElementById('world_ranking').value);
+            formData.append('description', document.getElementById('description').value);
+            formData.append('requirements', document.getElementById('requirements').value);
+            formData.append('logo_url', logoUrl);
             
             console.log('📝 Form data collected:', {
                 name: formData.get('name'),
@@ -366,6 +376,9 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const response = await fetch(`/api/admin/universities/<%= university.id %>`, {
                 method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
                 body: formData,
                 signal: controller.signal
             });
