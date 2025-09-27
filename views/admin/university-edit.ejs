@@ -268,6 +268,12 @@
         // Debug log
         console.log('Form data being sent:', formData);
         
+        // Show loading state
+        const submitBtn = document.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Güncelleniyor...';
+        submitBtn.disabled = true;
+        
         // API'ye gönder (FormData ile)
         fetch(`/api/admin/universities/<%= university.id %>`, {
             method: 'PUT',
@@ -275,8 +281,12 @@
         })
         .then(response => {
             console.log('Response status:', response.status);
-            console.log('Response headers:', response.headers);
-            return response.json();
+            
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('Network response was not ok');
+            }
         })
         .then(result => {
             console.log('Response data:', result);
@@ -290,6 +300,11 @@
         .catch(error => {
             console.error('Error:', error);
             alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+        })
+        .finally(() => {
+            // Reset button state
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
         });
     });
 
