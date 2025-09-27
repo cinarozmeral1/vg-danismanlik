@@ -265,9 +265,9 @@ app.post('/admin/login', async (req, res) => {
             });
         }
 
-        // Find admin in admins table
+        // Find admin in users table
         const result = await pool.query(
-            'SELECT * FROM admins WHERE email = $1',
+            'SELECT * FROM users WHERE email = $1 AND is_admin = true',
             [email]
         );
 
@@ -290,16 +290,16 @@ app.post('/admin/login', async (req, res) => {
             });
         }
 
-        // Generate admin token
-        const { generateAdminToken } = require('./middleware/auth');
-        const token = generateAdminToken(admin.id);
+        // Generate user token (admin is also a user)
+        const { generateUserToken } = require('./middleware/auth');
+        const token = generateUserToken(admin.id);
 
-        // Set admin token cookie
-        res.cookie('adminToken', token, {
+        // Set user token cookie (admin is also a user)
+        res.cookie('userToken', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'lax',
-            maxAge: 24 * 60 * 60 * 1000 // 24 hours
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         });
 
         res.json({
