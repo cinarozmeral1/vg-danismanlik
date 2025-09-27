@@ -37,15 +37,6 @@
                         </select>
                     </div>
                     <div class="col-md-3">
-                        <select class="form-select" id="feeFilter">
-                            <option value="">Tüm Ücretler</option>
-                            <option value="0-5000">€0 - €5,000</option>
-                            <option value="5000-10000">€5,000 - €10,000</option>
-                            <option value="10000-20000">€10,000 - €20,000</option>
-                            <option value="20000+">€20,000+</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
                         <select class="form-select" id="programFilter">
                             <option value="">Tüm Bölüm Sayıları</option>
                             <option value="1-5">1-5 Bölüm</option>
@@ -69,7 +60,6 @@
                     <div class="col-lg-4 col-md-6 mb-4 university-card" 
                          data-country="<%= university.country || '' %>" 
                          data-ranking="<%= university.world_ranking || 0 %>"
-                         data-fee="<%= university.tuition_fee_min || 0 %>"
                          data-program-count="<%= university.department_count || 0 %>">
                         <div class="card h-100 university-card-inner">
                             <div class="card-header bg-transparent border-0">
@@ -214,7 +204,6 @@
             document.addEventListener('DOMContentLoaded', function() {
         const countryFilter = document.getElementById('countryFilter');
         const rankingFilter = document.getElementById('rankingFilter');
-        const feeFilter = document.getElementById('feeFilter');
         const programFilter = document.getElementById('programFilter');
         const universityCards = document.querySelectorAll('.university-card');
 
@@ -234,7 +223,6 @@
         function filterUniversities() {
             const selectedCountry = countryFilter.value;
             const selectedRanking = rankingFilter.value;
-            const selectedFee = feeFilter.value;
             const selectedProgram = programFilter.value;
 
             let visibleCount = 0;
@@ -242,7 +230,6 @@
             universityCards.forEach(card => {
                 const country = card.dataset.country || '';
                 const ranking = parseInt(card.dataset.ranking) || 0;
-                const fee = parseInt(card.dataset.fee) || 0;
                 const programCount = parseInt(card.dataset.programCount) || 0;
 
                 let showCard = true;
@@ -260,13 +247,6 @@
                     }
                 }
 
-                // Fee filter
-                if (selectedFee) {
-                    const [minFee, maxFee] = selectedFee.split('-').map(f => f === '+' ? Infinity : parseInt(f));
-                    if (fee < minFee || (maxFee !== Infinity && fee > maxFee)) {
-                        showCard = false;
-                    }
-                }
                 
                 // Program count filter
                 if (selectedProgram) {
@@ -310,7 +290,6 @@
 
         if (countryFilter) countryFilter.addEventListener('change', debouncedFilter);
         if (rankingFilter) rankingFilter.addEventListener('change', debouncedFilter);
-        if (feeFilter) feeFilter.addEventListener('change', debouncedFilter);
         if (programFilter) programFilter.addEventListener('change', debouncedFilter);
         
         // Clear filters button
@@ -320,12 +299,10 @@
     function clearFilters() {
         const countryFilter = document.getElementById('countryFilter');
         const rankingFilter = document.getElementById('rankingFilter');
-        const feeFilter = document.getElementById('feeFilter');
         const programFilter = document.getElementById('programFilter');
         
         if (countryFilter) countryFilter.value = '';
         if (rankingFilter) rankingFilter.value = '';
-        if (feeFilter) feeFilter.value = '';
         if (programFilter) programFilter.value = '';
         
         document.querySelectorAll('.university-card').forEach(card => {

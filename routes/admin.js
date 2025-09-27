@@ -1129,7 +1129,7 @@ router.get('/universities/:id', async (req, res) => {
 });
 
 // Update university with logo upload support
-router.put('/universities/:id', upload.single('logo_file'), async (req, res) => {
+router.put('/universities/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const {
@@ -1140,9 +1140,6 @@ router.put('/universities/:id', upload.single('logo_file'), async (req, res) => 
             description,
             requirements,
             world_ranking,
-            is_active,
-            is_featured,
-            is_partner,
             departments: departmentsRaw
         } = req.body;
         
@@ -1180,20 +1177,16 @@ router.put('/universities/:id', upload.single('logo_file'), async (req, res) => 
         const worldRanking = world_ranking === '' || typeof world_ranking === 'undefined' || world_ranking === null ? null : Number(world_ranking);
 
         // Normalize booleans
-        const isActiveBool = is_active === true || is_active === 'true';
-        const isFeaturedBool = is_featured === true || is_featured === 'true';
-        const isPartnerBool = is_partner === true || is_partner === 'true';
-
         const result = await pool.query(`
             UPDATE universities SET 
                 name = $1, country = $2, city = $3, logo_url = $4, 
                 description = $5, requirements = $6,
-                world_ranking = $7, is_active = $8, 
-                is_featured = $9, is_partner = $10, updated_at = CURRENT_TIMESTAMP
-            WHERE id = $11 RETURNING *
+                world_ranking = $7, is_active = true, 
+                is_featured = false, is_partner = true, updated_at = CURRENT_TIMESTAMP
+            WHERE id = $8 RETURNING *
         `, [
             name, country, city, finalLogoUrl, description, requirements,
-            worldRanking, isActiveBool, isFeaturedBool, isPartnerBool, id
+            worldRanking, id
         ]);
 
         if (result.rows.length === 0) {
@@ -1408,15 +1401,12 @@ router.post('/universities', async (req, res) => {
             world_ranking,
             description,
             requirements,
-            is_partner,
-            is_active,
-            is_featured,
             departments
         } = data;
 
         console.log('📝 Parsed Data:', {
             name, country, city, logo_url, world_ranking, 
-            description, requirements, is_partner, is_active, is_featured
+            description, requirements
         });
 
         console.log('📝 Validation Check:');
@@ -1444,7 +1434,7 @@ router.post('/universities', async (req, res) => {
                 name, country, city, logo_url, world_ranking, 
                 description, requirements, is_partner, is_active, is_featured,
                 created_at, updated_at
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *`,
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, true, true, false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *`,
             [
                 name,
                 country,
@@ -1452,10 +1442,7 @@ router.post('/universities', async (req, res) => {
                 logo_url || null,
                 world_ranking ? parseInt(world_ranking) : null,
                 description || null,
-                requirements || null,
-                is_partner === 'true' || is_partner === true,
-                is_active === 'true' || is_active === true,
-                is_featured === 'true' || is_featured === true
+                requirements || null
             ]
         );
 
