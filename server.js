@@ -389,6 +389,62 @@ app.use('/user', userRoutes);
 app.use('/admin/guardians', guardianRoutes);
 
 // Public university routes (no authentication required)
+app.get('/universities/detail/:id', async (req, res) => {
+    try {
+        const universityId = req.params.id;
+
+        // Get university details
+        console.log('Fetching university with ID:', universityId);
+        
+        const universityResult = await pool.query(`
+            SELECT 
+                u.*,
+                0 as actual_program_count
+            FROM universities u
+            WHERE u.id = $1
+        `, [universityId]);
+        
+        console.log('University query result:', universityResult.rows);
+
+        if (universityResult.rows.length === 0) {
+            return res.status(404).render('error', {
+                title: 'Üniversite Bulunamadı',
+                message: 'Aradığınız üniversite bulunamadı.'
+            });
+        }
+
+        const university = universityResult.rows[0];
+
+        // Get university departments
+        const departmentsResult = await pool.query(`
+            SELECT id, name_tr, name_en, price, currency
+            FROM university_departments 
+            WHERE university_id = $1 AND is_active = true
+            ORDER BY name_tr ASC
+        `, [universityId]);
+
+        // Get university programs (empty for now)
+        const programsResult = { rows: [] };
+
+        // Get university images (empty for now)
+        const imagesResult = { rows: [] };
+
+        res.render('university-detail', {
+            title: `${university.name} - Venture Global`,
+            university: university,
+            departments: departmentsResult.rows || [],
+            programs: programsResult.rows || [],
+            images: imagesResult.rows || []
+        });
+    } catch (error) {
+        console.error('University detail error:', error);
+        res.status(500).render('error', {
+            title: 'Sunucu Hatası',
+            message: 'Üniversite bilgileri yüklenirken bir hata oluştu.'
+        });
+    }
+});
+
 app.post('/universities/create', async (req, res) => {
     try {
         console.log('📝 Create University Request - Headers:', req.headers);
