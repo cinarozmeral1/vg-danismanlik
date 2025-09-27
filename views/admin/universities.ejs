@@ -49,9 +49,7 @@
                                 <th>Üniversite Adı</th>
                                 <th>Ülke</th>
                                 <th>Şehir</th>
-                                <th>Program Sayısı</th>
-                                <th>Eğitim Ücreti</th>
-                                <th>Başvuru Ücreti</th>
+                                <th>Bölüm Sayısı</th>
                                 <th>Dünya Sıralaması</th>
                                 <th>Durum</th>
                                 <th>İşlemler</th>
@@ -93,25 +91,7 @@
                                     <td><%= university.country %></td>
                                     <td><%= university.city %></td>
                                     <td>
-                                        <span class="badge bg-info"><%= university.actual_program_count || 0 %></span>
-                                    </td>
-                                    <td>
-                                        <% if (university.tuition_fee) { %>
-                                            <span class="text-muted">
-                                                €<%= Math.round(university.tuition_fee).toLocaleString() %>
-                                            </span>
-                                        <% } else { %>
-                                            <span class="text-muted">Belirtilmemiş</span>
-                                        <% } %>
-                                    </td>
-                                    <td>
-                                        <% if (university.application_fee) { %>
-                                            <span class="text-muted">
-                                                €<%= university.application_fee %>
-                                            </span>
-                                        <% } else { %>
-                                            <span class="text-muted">-</span>
-                                        <% } %>
+                                        <span class="badge bg-info"><%= university.department_count || 0 %></span>
                                     </td>
                                     <td>
                                         <% if (university.world_ranking) { %>

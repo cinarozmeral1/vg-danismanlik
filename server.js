@@ -415,17 +415,15 @@ app.get('/universities', async (req, res) => {
                 u.country,
                 u.city,
                 u.logo_url,
-                u.website_url,
-                u.tuition_fee_min,
-                u.tuition_fee_max,
-                u.application_fee,
                 u.world_ranking,
                 u.is_featured,
                 u.is_partner,
                 u.created_at,
-                0 as actual_program_count
+                COUNT(ud.id) as department_count
             FROM universities u
+            LEFT JOIN university_departments ud ON u.id = ud.university_id AND ud.is_active = true
             WHERE u.is_active = true
+            GROUP BY u.id, u.name, u.name_en, u.country, u.city, u.logo_url, u.world_ranking, u.is_featured, u.is_partner, u.created_at
             ORDER BY u.is_featured DESC, u.name ASC
             LIMIT 50
         `);

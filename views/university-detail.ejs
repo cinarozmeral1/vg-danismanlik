@@ -54,29 +54,6 @@
                             </div>
                         </div>
                         
-                        <% if (university.tuition_fee) { %>
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-euro-sign"></i>
-                            </div>
-                            <div class="stat-content">
-                                <h3>€<%= Math.round(Number(university.tuition_fee)).toLocaleString() %></h3>
-                                <p>Yıllık Ücret</p>
-                            </div>
-                        </div>
-                        <% } %>
-                        
-                        <% if (university.application_fee) { %>
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-file-alt"></i>
-                            </div>
-                            <div class="stat-content">
-                                <h3>€<%= university.application_fee %></h3>
-                                <p>Başvuru Ücreti</p>
-                            </div>
-                        </div>
-                        <% } %>
                     </div>
                 </div>
             </div>

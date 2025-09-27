@@ -47,11 +47,11 @@
                     </div>
                     <div class="col-md-3">
                         <select class="form-select" id="programFilter">
-                            <option value="">Tüm Program Sayıları</option>
-                            <option value="1-5">1-5 Program</option>
-                            <option value="6-10">6-10 Program</option>
-                            <option value="11-20">11-20 Program</option>
-                            <option value="21+">21+ Program</option>
+                            <option value="">Tüm Bölüm Sayıları</option>
+                            <option value="1-5">1-5 Bölüm</option>
+                            <option value="6-10">6-10 Bölüm</option>
+                            <option value="11-20">11-20 Bölüm</option>
+                            <option value="21+">21+ Bölüm</option>
                         </select>
                     </div>
                     <div class="col-md-3">
@@ -70,7 +70,7 @@
                          data-country="<%= university.country || '' %>" 
                          data-ranking="<%= university.world_ranking || 0 %>"
                          data-fee="<%= university.tuition_fee_min || 0 %>"
-                         data-program-count="<%= university.actual_program_count || 0 %>">
+                         data-program-count="<%= university.department_count || 0 %>">
                         <div class="card h-100 university-card-inner">
                             <div class="card-header bg-transparent border-0">
                                 <div class="d-flex justify-content-between align-items-start">
@@ -88,7 +88,7 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <h5 class="card-title"><%= university.name %></h5>
+                                <h5 class="card-title university-name" data-tr="<%= university.name %>" data-en="<%= university.name_en || university.name %>"><%= university.name %></h5>
                                 <p class="card-text text-muted">
                                     <i class="fas fa-map-marker-alt me-2"></i>
                                     <%= university.city %>, <%= university.country %>
@@ -98,13 +98,13 @@
                                     <div class="row">
                                         <div class="col-6">
                                             <div class="stat-item">
-                                                <span class="stat-label">Program Sayısı</span>
-                                                <span class="stat-value"><%= university.actual_program_count || 0 %></span>
+                                                <span class="stat-label" data-tr="Bölümler" data-en="Departments">Bölümler</span>
+                                                <span class="stat-value"><%= university.department_count || 0 %></span>
                                             </div>
                                         </div>
                                         <div class="col-6">
                                             <div class="stat-item">
-                                                <span class="stat-label">Dünya Sıralaması</span>
+                                                <span class="stat-label" data-tr="Dünya Sıralaması" data-en="World Ranking">Dünya Sıralaması</span>
                                                 <span class="stat-value">
                                                     <% if (university.world_ranking) { %>
                                                         #<%= university.world_ranking %>
@@ -208,6 +208,40 @@
         <script>
             // Optimized Filter functionality
             document.addEventListener('DOMContentLoaded', function() {
+                // Dil değiştirme fonksiyonu
+                function switchLanguage(lang) {
+                    if (lang === 'tr') {
+                        // Türkçe göster
+                        document.querySelectorAll('.university-name').forEach(el => {
+                            el.textContent = el.getAttribute('data-tr');
+                        });
+                        document.querySelectorAll('[data-tr]').forEach(el => {
+                            if (el.classList.contains('stat-label')) {
+                                el.textContent = el.getAttribute('data-tr');
+                            }
+                        });
+                    } else if (lang === 'en') {
+                        // İngilizce göster
+                        document.querySelectorAll('.university-name').forEach(el => {
+                            el.textContent = el.getAttribute('data-en');
+                        });
+                        document.querySelectorAll('[data-en]').forEach(el => {
+                            if (el.classList.contains('stat-label')) {
+                                el.textContent = el.getAttribute('data-en');
+                            }
+                        });
+                    }
+                }
+                
+                // Dil değiştirme butonlarına event listener ekle
+                const langButtons = document.querySelectorAll('.language-switcher');
+                langButtons.forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const lang = this.getAttribute('data-lang');
+                        switchLanguage(lang);
+                    });
+                });
         const countryFilter = document.getElementById('countryFilter');
         const rankingFilter = document.getElementById('rankingFilter');
         const feeFilter = document.getElementById('feeFilter');

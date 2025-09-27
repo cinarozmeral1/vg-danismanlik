@@ -1044,17 +1044,15 @@ router.get('/universities', async (req, res) => {
                     u.country,
                     u.city,
                     u.logo_url,
-                    u.website_url,
-                    u.tuition_fee_min,
-                    u.tuition_fee_max,
-                    u.application_fee,
                     u.world_ranking,
                     u.is_active,
                     u.is_featured,
                     u.is_partner,
                     u.created_at,
-                    0 as actual_program_count
+                    COUNT(ud.id) as department_count
                 FROM universities u
+                LEFT JOIN university_departments ud ON u.id = ud.university_id AND ud.is_active = true
+                GROUP BY u.id, u.name, u.name_en, u.country, u.city, u.logo_url, u.world_ranking, u.is_active, u.is_featured, u.is_partner, u.created_at
                 ORDER BY u.is_featured DESC, u.name ASC
             `);
             universities = result.rows;
@@ -1144,8 +1142,6 @@ router.put('/universities/:id', upload.single('logo_file'), async (req, res) => 
             description_en,
             requirements,
             requirements_en,
-            tuition_fee,
-            application_fee,
             world_ranking,
             is_active,
             is_featured,
@@ -1172,8 +1168,6 @@ router.put('/universities/:id', upload.single('logo_file'), async (req, res) => 
         }
 
         // Convert empty strings to null for optional numeric fields and convert to numbers
-        const tuitionFee = tuition_fee === '' || typeof tuition_fee === 'undefined' || tuition_fee === null ? null : Number(tuition_fee);
-        const applicationFee = application_fee === '' || typeof application_fee === 'undefined' || application_fee === null ? null : Number(application_fee);
         const worldRanking = world_ranking === '' || typeof world_ranking === 'undefined' || world_ranking === null ? null : Number(world_ranking);
 
         // Normalize booleans
@@ -1186,14 +1180,12 @@ router.put('/universities/:id', upload.single('logo_file'), async (req, res) => 
                 name = $1, name_en = $2, country = $3, city = $4, logo_url = $5, 
                 description = $6, description_en = $7,
                 requirements = $8, requirements_en = $9,
-                tuition_fee_min = $10, tuition_fee_max = $10, application_fee = $11,
-                world_ranking = $12, is_active = $13, 
-                is_featured = $14, is_partner = $15, updated_at = CURRENT_TIMESTAMP
-            WHERE id = $16 RETURNING *
+                world_ranking = $10, is_active = $11, 
+                is_featured = $12, is_partner = $13, updated_at = CURRENT_TIMESTAMP
+            WHERE id = $14 RETURNING *
         `, [
             name, name_en, country, city, finalLogoUrl, description, description_en,
             requirements, requirements_en,
-            tuitionFee, applicationFee,
             worldRanking, isActiveBool, isFeaturedBool, isPartnerBool, id
         ]);
 
@@ -1395,9 +1387,6 @@ router.post('/universities', async (req, res) => {
             city,
             logo_url,
             world_ranking,
-            tuition_fee,
-            application_fee,
-            currency,
             description,
             description_en,
             requirements,
@@ -1409,7 +1398,7 @@ router.post('/universities', async (req, res) => {
         } = data;
 
         console.log('📝 Parsed Data:', {
-            name, name_en, country, city, logo_url, world_ranking, tuition_fee, application_fee, currency, 
+            name, name_en, country, city, logo_url, world_ranking, 
             description, description_en, requirements, requirements_en, is_partner, is_active, is_featured
         });
 
@@ -1435,10 +1424,10 @@ router.post('/universities', async (req, res) => {
         // Create university
         const universityResult = await pool.query(
             `INSERT INTO universities (
-                name, name_en, country, city, logo_url, world_ranking, tuition_fee_min, tuition_fee_max, application_fee, currency, 
+                name, name_en, country, city, logo_url, world_ranking, 
                 description, description_en, requirements, requirements_en, is_partner, is_active, is_featured,
                 created_at, updated_at
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *`,
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *`,
             [
                 name,
                 name_en || null,
@@ -1446,10 +1435,6 @@ router.post('/universities', async (req, res) => {
                 city,
                 logo_url || null,
                 world_ranking ? parseInt(world_ranking) : null,
-                tuition_fee ? parseFloat(tuition_fee) : null,
-                tuition_fee ? parseFloat(tuition_fee) : null,
-                application_fee ? parseFloat(application_fee) : null,
-                currency || 'EUR',
                 description || null,
                 description_en || null,
                 requirements || null,
