@@ -1414,7 +1414,7 @@ router.post('/universities', async (req, res) => {
                 name, name_en, country, city, website_url, logo_url, world_ranking, tuition_fee, application_fee, currency, 
                 description, description_en, requirements, requirements_en, is_partner, is_active, is_featured,
                 created_at, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?0, ?1, ?2, ?3, ?4, ?5, ?6, ?7, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *`,
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *`,
             [
                 name,
                 name_en || null,
