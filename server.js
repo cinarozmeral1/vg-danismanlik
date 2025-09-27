@@ -471,6 +471,14 @@ app.get('/universities/:id', async (req, res) => {
 
         const university = universityResult.rows[0];
 
+        // Get university departments
+        const departmentsResult = await pool.query(`
+            SELECT id, name_tr, name_en, price, currency
+            FROM university_departments 
+            WHERE university_id = $1 AND is_active = true
+            ORDER BY name_tr ASC
+        `, [universityId]);
+
         // Get university programs (empty for now)
         const programsResult = { rows: [] };
 
@@ -480,6 +488,7 @@ app.get('/universities/:id', async (req, res) => {
         res.render('university-detail', {
             title: `${university.name} - Venture Global`,
             university: university,
+            departments: departmentsResult.rows || [],
             programs: programsResult.rows || [],
             images: imagesResult.rows || []
         });

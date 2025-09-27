@@ -49,8 +49,8 @@
                                 <i class="fas fa-graduation-cap"></i>
                             </div>
                             <div class="stat-content">
-                                <h3><%= university.actual_program_count || university.program_count || 0 %></h3>
-                                <p>Program</p>
+                                <h3><%= departments ? departments.length : 0 %></h3>
+                                <p>Bölüm</p>
                             </div>
                         </div>
                         
@@ -123,6 +123,28 @@
                                     <p><%= university.requirements_en %></p>
                                 </div>
                             <% } %>
+                        </div>
+                    </div>
+                    <% } %>
+
+                    <!-- Departments Section -->
+                    <% if (departments && departments.length > 0) { %>
+                    <div class="content-section">
+                        <h2>Bölümler</h2>
+                        <div class="departments-grid">
+                            <% departments.forEach(department => { %>
+                            <div class="department-card">
+                                <div class="department-header">
+                                    <h4><%= department.name_tr %></h4>
+                                    <% if (department.price) { %>
+                                        <span class="price-badge">€<%= department.price %></span>
+                                    <% } %>
+                                </div>
+                                <div class="department-details">
+                                    <p class="department-name-en"><%= department.name_en %></p>
+                                </div>
+                            </div>
+                            <% }); %>
                         </div>
                     </div>
                     <% } %>
@@ -242,6 +264,62 @@
         </div>
     </section>
 </div>
+
+<style>
+.departments-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.department-card {
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.department-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.department-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.department-header h4 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.1rem;
+}
+
+.price-badge {
+    background: #28a745;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.department-details {
+    margin-top: 0.5rem;
+}
+
+.department-name-en {
+    color: #6c757d;
+    font-style: italic;
+    margin: 0;
+    font-size: 0.9rem;
+}
+</style>
 
 <!-- Image Modal -->
 <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">

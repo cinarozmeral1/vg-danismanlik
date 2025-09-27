@@ -1365,7 +1365,6 @@ router.post('/universities', async (req, res) => {
             name_en,
             country,
             city,
-            website_url,
             logo_url,
             world_ranking,
             tuition_fee,
@@ -1377,7 +1376,8 @@ router.post('/universities', async (req, res) => {
             requirements_en,
             is_partner,
             is_active,
-            is_featured
+            is_featured,
+            departments
         } = data;
 
         console.log('📝 Parsed Data:', {
@@ -1407,16 +1407,15 @@ router.post('/universities', async (req, res) => {
         // Create university
         const universityResult = await pool.query(
             `INSERT INTO universities (
-                name, name_en, country, city, website_url, logo_url, world_ranking, tuition_fee_min, tuition_fee_max, application_fee, currency, 
+                name, name_en, country, city, logo_url, world_ranking, tuition_fee_min, tuition_fee_max, application_fee, currency, 
                 description, description_en, requirements, requirements_en, is_partner, is_active, is_featured,
                 created_at, updated_at
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *`,
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *`,
             [
                 name,
                 name_en || null,
                 country,
                 city,
-                website_url || null,
                 logo_url || null,
                 world_ranking ? parseInt(world_ranking) : null,
                 tuition_fee ? parseFloat(tuition_fee) : null,
@@ -1433,12 +1432,34 @@ router.post('/universities', async (req, res) => {
             ]
         );
 
-        console.log('✅ University created:', universityResult.rows[0]);
+        const university = universityResult.rows[0];
+        console.log('✅ University created:', university);
+
+        // Add departments if provided
+        if (departments && typeof departments === 'object') {
+            console.log('📝 Adding departments:', departments);
+            for (const [key, dept] of Object.entries(departments)) {
+                if (dept.name_tr && dept.name_en) {
+                    await pool.query(
+                        `INSERT INTO university_departments (university_id, name_tr, name_en, price, currency) 
+                         VALUES ($1, $2, $3, $4, $5)`,
+                        [
+                            university.id,
+                            dept.name_tr,
+                            dept.name_en,
+                            dept.price ? parseFloat(dept.price) : null,
+                            'EUR'
+                        ]
+                    );
+                    console.log(`✅ Department added: ${dept.name_tr}`);
+                }
+            }
+        }
 
         res.json({
             success: true,
             message: 'Üniversite başarıyla oluşturuldu',
-            university: universityResult.rows[0]
+            university: university
         });
     } catch (error) {
         console.error('❌ Create university error:', error);
