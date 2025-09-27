@@ -1128,6 +1128,16 @@ router.put('/universities/:id', async (req, res) => {
             try {
                 departments = typeof departmentsRaw === 'string' ? JSON.parse(departmentsRaw) : departmentsRaw;
                 console.log('Parsed departments:', departments);
+                
+                // Convert array to object if needed
+                if (Array.isArray(departments)) {
+                    const departmentsObj = {};
+                    departments.forEach((dept, index) => {
+                        departmentsObj[index] = dept;
+                    });
+                    departments = departmentsObj;
+                    console.log('Converted departments array to object:', departments);
+                }
             } catch (error) {
                 console.error('Error parsing departments:', error);
                 departments = null;
