@@ -389,7 +389,7 @@ app.use('/user', userRoutes);
 app.use('/admin/guardians', guardianRoutes);
 
 // Public university routes (no authentication required)
-app.post('/api/universities', async (req, res) => {
+app.post('/universities/create', async (req, res) => {
     try {
         console.log('📝 Create University Request - Headers:', req.headers);
         console.log('📝 Create University Request - Body:', req.body);
