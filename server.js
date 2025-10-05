@@ -13,6 +13,7 @@ const userInfoMiddleware = require('./middleware/userInfo');
 const nodemailer = require('nodemailer');
 const pool = require('./config/database');
 const multer = require('multer');
+const emailService = require('./services/emailService');
 
 // Multer configuration for file uploads
 const storage = multer.diskStorage({
@@ -2461,8 +2462,8 @@ const sendContactEmail = async (formData, language = 'tr') => {
         console.log('Mesaj:', formData.message);
         console.log('================================');
         
-        // EmailService'den transporter'ı import et
-        const { transporter } = require('./services/emailService');
+        // EmailService'den transporter'ı kullan
+        const transporter = emailService.transporter;
         
         const emailContent = {
             tr: {
@@ -2592,8 +2593,8 @@ const sendAssessmentEmail = async (formData, language = 'tr') => {
         console.log('Bütçe Aralığı:', translatedData.budget);
         console.log('================================');
         
-        // EmailService'den transporter'ı import et
-        const { transporter } = require('./services/emailService');
+        // EmailService'den transporter'ı kullan
+        const transporter = emailService.transporter;
         
         const emailContent = {
             tr: {
@@ -2743,10 +2744,10 @@ app.post('/api/contact', async (req, res) => {
 
 // API ve hata handler'ları
 app.post('/api/assessment', async (req, res) => {
-    const { firstName, lastName, email, phone, currentEducation, targetCountry, targetProgram, budget, educationLevel, country, program } = req.body;
+    const { firstName, lastName, email, phone, currentEducation, targetCountry, targetProgram, targetLevel, budget, educationLevel, country, program } = req.body;
     
     // Hem detaylı form hem de ana sayfa formu için alanları kontrol et
-    const educationLevelValue = currentEducation || educationLevel;
+    const educationLevelValue = currentEducation || targetLevel || educationLevel;
     const countryValue = targetCountry || country;
     const programValue = targetProgram || program;
     
