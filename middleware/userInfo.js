@@ -21,13 +21,11 @@ const userInfoMiddleware = async (req, res, next) => {
                 if (result.rows.length > 0) {
                     const user = result.rows[0];
                     console.log('🔍 User found:', { id: user.id, email: user.email, is_admin: user.is_admin, email_verified: user.email_verified });
-                    // Admin kullanıcıları için email_verified kontrolü yapma
-                    if (user.is_admin || user.email_verified) {
-                        res.locals.currentUser = user;
-                        res.locals.isLoggedIn = true;
-                        res.locals.isAdmin = user.is_admin || false;
-                        console.log('✅ User authenticated:', { isLoggedIn: res.locals.isLoggedIn, isAdmin: res.locals.isAdmin });
-                    }
+                    // Soft enforcement: kullanıcıyı her durumda oturum sahibi yap
+                    res.locals.currentUser = user;
+                    res.locals.isLoggedIn = true;
+                    res.locals.isAdmin = user.is_admin || false;
+                    console.log('✅ User authenticated:', { isLoggedIn: res.locals.isLoggedIn, isAdmin: res.locals.isAdmin });
                 }
             } else if (decoded.adminId) {
                 // Admin user

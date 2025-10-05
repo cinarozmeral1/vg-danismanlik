@@ -21,10 +21,8 @@ router.post('/register', async (req, res) => {
             birth_date,
             passport_number,
             passport_type,
-            schengen_visa_count = 0,
-            uk_visa_count = 0,
-            academic_exams,
-            annual_budget,
+            desired_country,
+            active_class,
             language = 'tr'
         } = req.body;
 
@@ -79,20 +77,63 @@ router.post('/register', async (req, res) => {
         // Insert user
         const result = await pool.query(`
             INSERT INTO users (
-                first_name, last_name, email, tc_number, phone, password_hash,
-                english_level, high_school_graduation_date, birth_date,
-                passport_number, passport_type, schengen_visa_count, uk_visa_count,
-                academic_exams, annual_budget, verification_token
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+                first_name,
+                last_name,
+                email,
+                tc_number,
+                phone,
+                password_hash,
+                english_level,
+                high_school_graduation_date,
+                birth_date,
+                passport_type,
+                passport_number,
+                desired_country,
+                active_class,
+                verification_token
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
             RETURNING id, first_name, email
         `, [
-            first_name, last_name, email, tc_number, phone, passwordHash,
-            english_level, high_school_graduation_date, birth_date,
-            passport_number, passport_type, schengen_visa_count, uk_visa_count,
-            academic_exams, annual_budget, verificationToken
+            first_name,
+            last_name,
+            email,
+            tc_number,
+            phone,
+            passwordHash,
+            english_level,
+            high_school_graduation_date,
+            birth_date,
+            passport_type,
+            passport_number,
+            desired_country,
+            active_class,
+            verificationToken
         ]);
 
         const user = result.rows[0];
+
+        // Initialize default checklist for new user
+        const defaultChecklistItems = [
+            'Her okul için niyet mektubu hazırlandı ve sisteme yüklendi.',
+            'CV düzenlendi ve sisteme yüklendi.',
+            'Referans mektupları alındı ve sisteme yüklendi.',
+            'Danışmanlık Ücreti ödendi.',
+            'Üniversite kayıt ücretleri ödendi.',
+            'Okullar tarafından düzenlenen video mülakat denemeleri ve genel deneme mülakatları tamamlandı.',
+            'Öğrenci kayıt ücretlerinin iade süreçleri için doktor ve okul raporları gerekli formatta hazırlandı.',
+            'Danışmanlık ücretinin iade süreçleri için gerekli belgeler sisteme yüklendi.',
+            'Kabul alınan okullar listelendi ve aralarından seçim yapıldı.',
+            'Finansal durumu kanıtlayan ve vize için gerekli olan belgeler sisteme yüklendi.',
+            'Üniversite başvurusu için gerekli yazılı belgeler eklendi.',
+            'Apostil ve çeviri gereken vize için gerekli belgeler sisteme yüklendi.'
+        ];
+        for (const item of defaultChecklistItems) {
+            await pool.query(
+                `INSERT INTO checklist_items (user_id, item_name, is_completed)
+                 VALUES ($1, $2, false)`,
+                [user.id, item]
+            );
+        }
 
         // Send verification email
         await sendVerificationEmail(email, first_name, verificationToken, language);
@@ -118,6 +159,55 @@ router.post('/register', async (req, res) => {
     }
 });
 
+// Resend verification email
+router.post('/resend-verification', async (req, res) => {
+    try {
+        const { email, language = 'tr' } = req.body;
+
+        if (!email) {
+            return res.status(400).json({
+                success: false,
+                message: language === 'tr' ? 'E-posta adresi gerekli' : 'Email address is required'
+            });
+        }
+
+        const userResult = await pool.query(
+            'SELECT id, first_name, email_verified FROM users WHERE email = $1 LIMIT 1',
+            [email]
+        );
+
+        if (userResult.rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: language === 'tr' ? 'Bu e-posta ile kullanıcı bulunamadı' : 'User not found for this email'
+            });
+        }
+
+        const user = userResult.rows[0];
+
+        if (user.email_verified) {
+            return res.json({
+                success: true,
+                message: language === 'tr' ? 'E-posta zaten doğrulanmış' : 'Email already verified'
+            });
+        }
+
+        const newToken = generateVerificationToken();
+        await pool.query('UPDATE users SET verification_token = $1 WHERE id = $2', [newToken, user.id]);
+        await sendVerificationEmail(email, user.first_name, newToken, language);
+
+        res.json({
+            success: true,
+            message: language === 'tr' ? 'Yeni doğrulama maili gönderildi' : 'New verification email sent'
+        });
+    } catch (error) {
+        console.error('Resend verification error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Verification email could not be resent'
+        });
+    }
+});
 // Email Verification
 router.get('/verify-email', async (req, res) => {
     try {
@@ -139,9 +229,30 @@ router.get('/verify-email', async (req, res) => {
         );
 
         if (result.rows.length === 0) {
-            return res.status(400).render('verification-error', { 
+            const fallback = await pool.query(
+                'SELECT id, first_name, email FROM users WHERE verification_token IS NULL AND email_verified = 0 ORDER BY created_at DESC LIMIT 1'
+            );
+
+            if (fallback.rows.length === 0) {
+                return res.status(400).render('verification-error', { 
+                    title: 'Doğrulama Hatası',
+                    message: language === 'tr' ? 'Geçersiz veya kullanılmış doğrulama tokeni' : 'Invalid or used verification token',
+                    language 
+                });
+            }
+
+            const user = fallback.rows[0];
+            const newToken = generateVerificationToken();
+            await pool.query(
+                'UPDATE users SET verification_token = $1 WHERE id = $2',
+                [newToken, user.id]
+            );
+
+            await sendVerificationEmail(user.email, user.first_name, newToken, language);
+
+            return res.render('verification-error', { 
                 title: 'Doğrulama Hatası',
-                message: language === 'tr' ? 'Geçersiz veya kullanılmış doğrulama tokeni' : 'Invalid or used verification token',
+                message: language === 'tr' ? 'Link süresi dolmuş. Yeni doğrulama e-postası gönderildi.' : 'Link expired. A new verification email has been sent.',
                 language 
             });
         }
@@ -261,13 +372,8 @@ router.post('/login', async (req, res) => {
 
         const user = result.rows[0];
 
-        // Check if eposta is verified (only for non-admin users)
-        if (!user.is_admin && !user.email_verified) {
-            return res.status(403).json({
-                success: false,
-                message: language === 'tr' ? 'Lütfen önce e-posta adresinizi doğrulayın' : 'Please verify your eposta address first'
-            });
-        }
+        // Soft enforcement: allow login but mark as unverified for banner/redirects
+        const needsVerification = !user.is_admin && !user.email_verified;
 
         // Check password
         const passwordMatch = await bcrypt.compare(password, user.password_hash);
@@ -278,8 +384,9 @@ router.post('/login', async (req, res) => {
             });
         }
 
-        // Generate token
+        // Generate token with login timestamp
         const token = generateUserToken(user.id);
+        await pool.query('UPDATE users SET last_login_at = NOW() WHERE id = $1', [user.id]);
 
         // Set cookie
         res.cookie('userToken', token, {
@@ -296,10 +403,12 @@ router.post('/login', async (req, res) => {
                 first_name: user.first_name,
                 last_name: user.last_name,
                 email: user.email,
-                is_admin: user.is_admin
+                is_admin: user.is_admin,
+                email_verified: user.email_verified
             },
             token,
-            is_admin: user.is_admin
+            is_admin: user.is_admin,
+            needs_verification: needsVerification
         });
 
     } catch (error) {

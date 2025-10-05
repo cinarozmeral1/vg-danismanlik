@@ -1,0 +1,128 @@
+<div class="partners-page">
+    <section class="partner-hero medczech-hero py-5">
+        <div class="container">
+            <div class="row align-items-center g-4">
+                <div class="col-md-4">
+                    <div class="partner-logo-card p-4 bg-white shadow-sm rounded-4 text-center">
+                        <img src="/images/partners/medczech/medczech-logo.png" alt="MedCzech Logo" class="hero-logo img-fluid">
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="partner-hero-text">
+                        <span class="partner-badge text-primary bg-light">MedCzech</span>
+                        <h1 class="display-5 fw-bold mt-3 text-dark"><%= t.partners.medczech.heroTitle %></h1>
+                        <p class="lead text-body-secondary mb-3"><%= t.partners.medczech.heroSubtitle %></p>
+                        <a href="https://medczech.cz" target="_blank" rel="noopener" class="partner-hero-link">
+                            <i class="fas fa-external-link-alt me-2"></i>
+                            <% if (currentLanguage === 'en') { %>Visit MedCzech Official Website<% } else { %>MedCzech Resmi Sitesini Ziyaret Et<% } %>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section py-5">
+        <div class="container">
+            <div class="row g-4 align-items-stretch">
+                <div class="col-lg-7">
+                    <article class="partner-card h-100">
+                        <h2 class="fw-bold text-dark mb-3"><%= t.partners.medczech.whyTitle %></h2>
+                        <% if (currentLanguage === 'en') { %>
+                            <p>At Venture Global, we continue to place students in the most prestigious universities across Europe. Medical faculties are among the most sought-after destinations for international students, and we are proud to announce our partnership with MedCheck, a leading preparation program for entrance exams to Czech medical universities.</p>
+                            <p>MedCheck prepares students with high-quality training delivered by experienced doctors and senior medical students. The program offers:</p>
+                        <% } else { %>
+                            <p>Venture Global olarak öğrencilerimizi Avrupa’daki en prestijli üniversitelere yerleştirmeye devam ediyoruz. Özellikle tıp fakülteleri, uluslararası öğrenciler için yüksek talep gören alanlardan biridir. Bu noktada, Çekya’daki tıp fakültelerinin giriş sınavlarına hazırlık konusunda uzman olan MedCheck ile iş birliği yapmaktan gurur duyuyoruz.</p>
+                            <p>MedCheck, deneyimli doktorlar ve üst sınıf tıp öğrencileri tarafından verilen eğitimlerle öğrencileri sınavlara en iyi şekilde hazırlar. Programın sundukları:</p>
+                        <% } %>
+                        <ul class="feature-list mt-4">
+                            <% if (currentLanguage === 'en') { %>
+                                <li><i class="fas fa-file-alt"></i> Real past exams and sample tests with detailed explanations</li>
+                                <li><i class="fas fa-video"></i> Flexible schedule and recorded lectures available anytime</li>
+                                <li><i class="fas fa-headset"></i> 24/7 academic and motivational support</li>
+                                <li><i class="fas fa-user-check"></i> Mock exams and interview simulations with doctors</li>
+                                <li><i class="fas fa-archive"></i> All study materials in one place, always accessible</li>
+                                <li><i class="fas fa-users"></i> International student and alumni community</li>
+                                <li><i class="fas fa-hands-helping"></i> Continued support even after admission in Czechia</li>
+                            <% } else { %>
+                                <li><i class="fas fa-file-alt"></i> Gerçek geçmiş sınavlar ve örnek testler (ayrıntılı açıklamalarla)</li>
+                                <li><i class="fas fa-video"></i> Esnek program ve her zaman erişilebilen kayıtlı dersler</li>
+                                <li><i class="fas fa-headset"></i> 7/24 akademik ve motivasyonel destek</li>
+                                <li><i class="fas fa-user-check"></i> Deneme sınavları ve doktorlarla mülakat simülasyonları</li>
+                                <li><i class="fas fa-archive"></i> Tüm materyallerin tek yerde, her zaman erişilebilir olması</li>
+                                <li><i class="fas fa-users"></i> Uluslararası öğrenci ve mezun topluluğu</li>
+                                <li><i class="fas fa-hands-helping"></i> Çekya’ya yerleştikten sonra da devam eden destek</li>
+                            <% } %>
+                        </ul>
+                    </article>
+                </div>
+                <div class="col-lg-5">
+                    <div class="partner-card h-100 gradient-card">
+                        <h3 class="fw-semibold text-dark mb-3"><i class="fas fa-lightbulb me-2 text-primary"></i>
+                            <% if (currentLanguage === 'en') { %>Program Advantages<% } else { %>Program Avantajları<% } %>
+                        </h3>
+                        <ul class="feature-list compact">
+                            <% if (currentLanguage === 'en') { %>
+                                <li><i class="fas fa-language"></i> English-friendly resources and bilingual mentors</li>
+                                <li><i class="fas fa-clock"></i> Tailored study plan matching your pace</li>
+                                <li><i class="fas fa-university"></i> Direct insight into Czech medical faculties</li>
+                                <li><i class="fas fa-map"></i> Campus and hospital tours after admission</li>
+                            <% } else { %>
+                                <li><i class="fas fa-language"></i> İngilizce destekli kaynaklar ve çift dilli mentorlar</li>
+                                <li><i class="fas fa-clock"></i> Temponuza uygun kişiselleştirilmiş çalışma planı</li>
+                                <li><i class="fas fa-university"></i> Çek tıp fakültelerine doğrudan gözlem imkânı</li>
+                                <li><i class="fas fa-map"></i> Kabul sonrası kampüs ve hastane turları</li>
+                            <% } %>
+                        </ul>
+                        <div class="highlight-box mt-4 text-dark">
+                            <% if (currentLanguage === 'en') { %>
+                                MedCzech students achieve one of the highest acceptance rates to Czech medical programs thanks to structured preparation and continuous mentoring.
+                            <% } else { %>
+                                MedCzech öğrencileri, sistematik hazırlık ve sürekli mentorluk sayesinde Çek tıp programlarında en yüksek kabul oranlarına ulaşmaktadır.
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section py-5">
+        <div class="container">
+            <div class="row g-4 align-items-center">
+                <div class="col-lg-6">
+                    <div class="partner-card shadow-sm h-100">
+                        <h2 class="fw-bold text-dark mb-3"><%= t.partners.medczech.onSiteTitle %></h2>
+                        <% if (currentLanguage === 'en') { %>
+                            <p>Once admitted, our students join guided tours of top medical faculties and teaching hospitals, gaining firsthand insight into their future academic environment. Even before arrival, they access exclusive behind-the-scenes video content from campuses and hospitals, helping them feel connected and inspired from day one.</p>
+                        <% } else { %>
+                            <p>Ayrıca öğrencilerimiz, kabul sonrası dönemde Çekya’daki önde gelen tıp fakülteleri ve eğitim hastanelerinde düzenlenen özel gezilerle, ileride eğitim görecekleri ortamı yakından tanıma şansı elde ederler. Daha gelmeden önce, üniversite kampüslerinden ve hastanelerden hazırlanan özel video içerikleri sayesinde geleceğe bir adım önden başlamış olurlar.</p>
+                        <% } %>
+                        <div class="partner-highlight d-flex gap-3 mt-4">
+                            <i class="fas fa-user-md text-primary"></i>
+                            <div>
+                                <h5 class="mb-1 text-dark"><%= t.partners.medczech.mentorshipTitle %></h5>
+                                <% if (currentLanguage === 'en') { %>
+                                    <p class="mb-0 text-body-secondary">Direct mentorship from MedCzech doctors and Venture Global advisors guides every step of your journey.</p>
+                                <% } else { %>
+                                    <p class="mb-0 text-body-secondary">MedCzech doktorları ve Venture Global danışmanlarının ortak mentorluk desteği, sürecin her adımında sizinle.</p>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="partner-cta">
+                        <h2 class="fw-bold text-dark mb-3"><%= t.partners.medczech.packagesTitle %></h2>
+                        <% if (currentLanguage === 'en') { %>
+                            <p class="mb-4 text-body-secondary">Special discounted packages are now available exclusively for Venture Global students. Turn your dream of studying medicine in Europe into reality with us.</p>
+                        <% } else { %>
+                            <p class="mb-4 text-body-secondary">Venture Global öğrencilerine özel indirimli paketler şimdi erişilebilir. Avrupa’da tıp eğitimi hayalinizi, bizimle gerçeğe dönüştürün.</p>
+                        <% } %>
+                        <a href="/contact" class="btn btn-primary btn-lg"><%= t.partners.medczech.packagesCTA %></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

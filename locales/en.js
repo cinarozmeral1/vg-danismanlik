@@ -11,7 +11,8 @@ module.exports = {
         profile: "Profile",
         myProfile: "My Profile",
         dashboard: "Dashboard",
-        logout: "Logout"
+        logout: "Logout",
+        partners: "Our Partners"
     },
     
     // Countries
@@ -422,7 +423,11 @@ module.exports = {
         },
         features: {
             title: "Why Venture Global®?",
-            subtitle: "We offer customized solutions to realize your education dream in Europe",
+            subtitle: "Venture Global is an education consultancy company dedicated to guiding students from Turkey to Europe’s most prestigious universities. Our mission is to help each student find the right university that matches their academic and personal goals while providing full support throughout the entire process.",
+            body: [
+                "Our services include placements in bachelor’s and master’s programs, preparatory courses, language training, and academic guidance. For students whose English proficiency needs improvement, we offer strong foundation programs at partner universities across Europe. With a wide network of institutions in fields such as law, engineering, business, medicine, and social sciences, we provide students with diverse academic opportunities.",
+                "At Venture Global, our role goes beyond securing admission. We assist with visa procedures, accommodation, and integration into European life, ensuring that students begin their journey with confidence. Professional and personal guidance is at the heart of what we do."
+            ],
             network: {
                 title: "Wide Network",
                 description: "Collaboration with 50+ universities"
@@ -2144,6 +2149,48 @@ module.exports = {
                 { name: "Economic and Political History", duration: "4", fee: "Free", start: "September" },
                 { name: "Regional Studies and Public Administration", duration: "4", fee: "Free", start: "September" }
             ]
+        }
+    },
+    
+    partners: {
+        medczech: {
+            heroTitle: "MedCzech Partnership",
+            heroSubtitle: "Delivering bespoke preparation for Czech medical universities",
+            whyTitle: "Why MedCzech?",
+            onSiteTitle: "On-Site Experience",
+            mentorshipTitle: "Shared Mentorship Support",
+            packagesTitle: "Exclusive Packages for Venture Global Students",
+            packagesCTA: "Request Package Details"
+        },
+        wcep: {
+            heroTitle: "WCEP – Venture Global Partnership",
+            heroSubtitle: "Discover WCEP, our trusted partner for global high school experiences",
+            whoTitle: "Who is WCEP?",
+            whoBody: "WCEP is a well-established organization that places high school students in public schools across the United States and Canada. Students live with volunteer host families, gaining not only academic growth but also cultural transformation. The education they receive is backed by official transcripts, fully recognized by the Turkish Ministry of Education, ensuring a smooth continuation of studies back home.",
+            visionTitle: "WCEP's Vision",
+            visionBody: "To shape every student into a global citizen. Their focus goes beyond academic success, fostering intercultural communication, adaptability, and confidence.",
+            missionTitle: "WCEP's Mission",
+            missionBody: "To prepare students for the future both academically and socially by bringing together young people from around the world. By offering intercultural experiences, WCEP expands students' worldviews and helps them build a strong profile for university admissions.",
+            offersTitle: "What WCEP Offers Students",
+            offerList: [
+                "The opportunity to study at public schools in the US and Canada",
+                "Safe, culturally rich experience with volunteer host families",
+                "Learning English through daily-life immersion",
+                "Official transcripts and guaranteed recognition in Turkey",
+                "A stronger CV and international vision for university admissions"
+            ],
+            highlightBody: "Venture Global stands beside each student at every step. Combining WCEP's cultural and academic opportunities with our placement expertise opens a real gateway to their future.",
+            storiesTitle: "Student Stories",
+            storiesBody: "Watch inspiring journeys of students who completed the WCEP program and returned with a broadened global perspective.",
+            videoAlt: "WCEP Introduction Video",
+            officialLink: "Visit WCEP Official Website"
+        },
+        bestschool: {
+            heroTitle: "BestSchool.cz Partnership",
+            heroSubtitle: "Partnering for top-tier education opportunities in Central Europe",
+            whyTitle: "Why BestSchool.cz?",
+            packagesTitle: "Exclusive Packages for Venture Global Students",
+            packagesCTA: "Request Package Details"
         }
     }
 }; 

@@ -66,7 +66,7 @@
         <div class="card">
             <div class="card-header p-0">
                 <div class="d-flex justify-content-center">
-                    <ul class="nav nav-tabs nav-fill" id="studentTabs" role="tablist" style="max-width: 100%; width: 100%;">
+                    <ul class="nav nav-tabs nav-fill student-tabs" id="studentTabs" role="tablist">
                         <li class="nav-item" role="presentation">
                             <button class="nav-link active" id="student-info-tab" data-bs-toggle="tab" data-bs-target="#student-info" type="button" role="tab">
                                 <i class="fas fa-user me-2"></i>ÖĞRENCİ
@@ -87,16 +87,6 @@
                                 <i class="fas fa-file me-2"></i>DOSYALAR
                             </button>
                         </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="guardians-tab" data-bs-toggle="tab" data-bs-target="#guardians" type="button" role="tab">
-                                <i class="fas fa-user-friends me-2"></i>VELİ BİLGİLERİ
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="checklist-tab" data-bs-toggle="tab" data-bs-target="#checklist" type="button" role="tab">
-                                <i class="fas fa-clipboard-check me-2"></i>KONTROL LİSTESİ
-                            </button>
-                        </li>
                     </ul>
                 </div>
             </div>
@@ -109,52 +99,26 @@
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <label for="first_name" class="form-label">Ad *</label>
-                                        <input type="text" class="form-control" id="first_name" name="first_name" value="<%= user.first_name || 'Ayda' %>" required>
+                                        <input type="text" class="form-control" id="first_name" name="first_name" value="<%= user.first_name || '' %>" required>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="last_name" class="form-label">Soyad *</label>
-                                        <input type="text" class="form-control" id="last_name" name="last_name" value="<%= user.last_name || 'Kahraman' %>" required>
+                                        <input type="text" class="form-control" id="last_name" name="last_name" value="<%= user.last_name || '' %>" required>
                                     </div>
-                                </div>
 
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label for="email" class="form-label">E-posta *</label>
-                                        <input type="email" class="form-control" id="email" name="email" value="<%= user.email || 'ayda.kahraman2010@gmail.com' %>" readonly>
-                                        <small class="text-muted">E-posta değiştirilemez</small>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="phone" class="form-label">Telefon *</label>
-                                        <input type="tel" class="form-control" id="phone" name="phone" value="<%= user.phone || '05053964692' %>" required>
-                                    </div>
-                                </div>
-
-                                <div class="row g-3">
                                     <div class="col-md-6">
                                         <label for="tc_number" class="form-label">TC Kimlik No *</label>
-                                        <input type="text" class="form-control" id="tc_number" name="tc_number" value="<%= user.tc_number || '18557933214' %>" maxlength="11" pattern="[0-9]{11}" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+                                        <input type="text" class="form-control" id="tc_number" name="tc_number" value="<%= user.tc_number || '' %>" maxlength="11" pattern="[0-9]{11}" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="birth_date" class="form-label">Doğum Tarihi *</label>
-                                        <input type="date" class="form-control" id="birth_date" name="birth_date" value="<%= user.birth_date ? new Date(user.birth_date).toISOString().split('T')[0] : '2010-01-01' %>" required>
+                                        <label for="email" class="form-label">E-posta *</label>
+                                        <input type="email" class="form-control" id="email" name="email" value="<%= user.email || '' %>" readonly>
                                     </div>
-                                </div>
 
-                                <div class="row g-3">
                                     <div class="col-md-6">
-                                        <label for="school" class="form-label">Okul</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="fas fa-school"></i></span>
-                                            <input type="text" class="form-control" id="school" name="school" value="<%= user.school || 'DOĞAN CÜCELOĞLU FEN LİSESİ' %>" placeholder="Okul adı">
-                                        </div>
+                                        <label for="phone" class="form-label">Telefon *</label>
+                                        <input type="tel" class="form-control" id="phone" name="phone" value="<%= user.phone || '' %>" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
                                     </div>
-                                    <div class="col-md-6">
-                                        <label for="class_level" class="form-label">Sınıf</label>
-                                        <input type="text" class="form-control" id="class_level" name="class_level" value="<%= user.class_level || '9' %>" placeholder="Sınıf">
-                                    </div>
-                                </div>
-
-                                <div class="row g-3">
                                     <div class="col-md-6">
                                         <label for="english_level" class="form-label">İngilizce Seviyesi *</label>
                                         <select class="form-select" id="english_level" name="english_level" required>
@@ -167,110 +131,42 @@
                                             <option value="C2" <%= user.english_level === 'C2' ? 'selected' : '' %>>C2</option>
                                         </select>
                                     </div>
+
                                     <div class="col-md-6">
                                         <label for="high_school_graduation_date" class="form-label">Lise Mezuniyet Tarihi *</label>
-                                        <input type="date" class="form-control" id="high_school_graduation_date" name="high_school_graduation_date" value="<%= user.high_school_graduation_date ? new Date(user.high_school_graduation_date).toISOString().split('T')[0] : '2028-06-15' %>" required>
+                                        <input type="text" class="form-control" id="high_school_graduation_date" name="high_school_graduation_date" value="<%= user.high_school_graduation_date ? new Date(user.high_school_graduation_date).toLocaleDateString('tr-TR').replace(/\./g, '/') : '' %>" placeholder="GG/AA/YYYY" required>
+                                        <small class="text-muted">GG/AA/YYYY formatında slash (/) kullanarak giriniz.</small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="birth_date" class="form-label">Doğum Tarihi *</label>
+                                        <input type="text" class="form-control" id="birth_date" name="birth_date" value="<%= user.birth_date ? new Date(user.birth_date).toLocaleDateString('tr-TR').replace(/\./g, '/') : '' %>" placeholder="GG/AA/YYYY" required>
+                                        <small class="text-muted">GG/AA/YYYY formatında slash (/) kullanarak giriniz.</small>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="passport_type" class="form-label">Pasaport Türü *</label>
+                                        <input type="text" class="form-control" id="passport_type" name="passport_type" value="<%= user.passport_type || '' %>" placeholder="Örn: Bordo" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="passport_number" class="form-label">Pasaport Numarası *</label>
+                                        <input type="text" class="form-control" id="passport_number" name="passport_number" value="<%= user.passport_number || '' %>" placeholder="Örn: P1234567" required>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="desired_country" class="form-label">Gitmek İstediği Ülke *</label>
+                                        <input type="text" class="form-control" id="desired_country" name="desired_country" value="<%= user.desired_country || '' %>" placeholder="Örn: Almanya" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="active_class" class="form-label">Aktif Sınıf *</label>
+                                        <input type="text" class="form-control" id="active_class" name="active_class" value="<%= user.active_class || '' %>" placeholder="Örn: 11" required>
                                     </div>
                                 </div>
 
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label for="country" class="form-label">Ülke</label>
-                                        <select class="form-select" id="country" name="country">
-                                            <option value="">Lütfen Seçin</option>
-                                            <option value="Türkiye" <%= (user.country === 'Türkiye' || !user.country) ? 'selected' : '' %>>Türkiye</option>
-                                            <option value="Almanya" <%= user.country === 'Almanya' ? 'selected' : '' %>>Almanya</option>
-                                            <option value="İngiltere" <%= user.country === 'İngiltere' ? 'selected' : '' %>>İngiltere</option>
-                                            <option value="Amerika" <%= user.country === 'Amerika' ? 'selected' : '' %>>Amerika</option>
-                                            <option value="Kanada" <%= user.country === 'Kanada' ? 'selected' : '' %>>Kanada</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="city" class="form-label">Şehir</label>
-                                        <select class="form-select" id="city" name="city">
-                                            <option value="">Lütfen Seçin</option>
-                                            <option value="İstanbul" <%= (user.city === 'İstanbul' || !user.city) ? 'selected' : '' %>>İstanbul</option>
-                                            <option value="Ankara" <%= user.city === 'Ankara' ? 'selected' : '' %>>Ankara</option>
-                                            <option value="İzmir" <%= user.city === 'İzmir' ? 'selected' : '' %>>İzmir</option>
-                                            <option value="Bursa" <%= user.city === 'Bursa' ? 'selected' : '' %>>Bursa</option>
-                                            <option value="Antalya" <%= user.city === 'Antalya' ? 'selected' : '' %>>Antalya</option>
-                                        </select>
-                                    </div>
+                                <div class="text-end mt-3">
+                                    <button type="button" class="btn btn-primary" onclick="showUpdateModal()">
+                                        <i class="fas fa-save me-2"></i>Değişiklikleri Kaydet
+                                    </button>
                                 </div>
-
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label for="address" class="form-label">Adres</label>
-                                        <input type="text" class="form-control" id="address" name="address" value="<%= user.address || '' %>" placeholder="Adres">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="nationality" class="form-label">Uyruk</label>
-                                        <select class="form-select" id="nationality" name="nationality">
-                                            <option value="TC Vatandaşı" <%= (user.nationality === 'TC Vatandaşı' || !user.nationality) ? 'selected' : '' %>>TC Vatandaşı</option>
-                                            <option value="Çifte Vatandaş" <%= user.nationality === 'Çifte Vatandaş' ? 'selected' : '' %>>Çifte Vatandaş</option>
-                                            <option value="Yabancı" <%= user.nationality === 'Yabancı' ? 'selected' : '' %>>Yabancı</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label for="target_country" class="form-label">Gitmek İstediği Ülke?</label>
-                                        <select class="form-select" id="target_country" name="target_country">
-                                            <option value="">Lütfen Seçin</option>
-                                            <option value="Almanya" <%= user.target_country === 'Almanya' ? 'selected' : '' %>>Almanya</option>
-                                            <option value="İngiltere" <%= user.target_country === 'İngiltere' ? 'selected' : '' %>>İngiltere</option>
-                                            <option value="Amerika" <%= user.target_country === 'Amerika' ? 'selected' : '' %>>Amerika</option>
-                                            <option value="Kanada" <%= user.target_country === 'Kanada' ? 'selected' : '' %>>Kanada</option>
-                                            <option value="Avustralya" <%= user.target_country === 'Avustralya' ? 'selected' : '' %>>Avustralya</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="active_class" class="form-label">Aktif Sınıf</label>
-                                        <input type="text" class="form-control" id="active_class" name="active_class" value="<%= user.active_class || '' %>" placeholder="Aktif sınıf">
-                                    </div>
-                                </div>
-
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label for="passport_number" class="form-label">Pasaport Numarası</label>
-                                        <input type="text" class="form-control" id="passport_number" name="passport_number" value="<%= user.passport_number || '' %>">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="passport_type" class="form-label">Pasaport Türü</label>
-                                        <select class="form-select" id="passport_type" name="passport_type">
-                                            <option value="">Seçiniz</option>
-                                            <option value="Bordo" <%= user.passport_type === 'Bordo' ? 'selected' : '' %>>Bordo</option>
-                                            <option value="Yeşil" <%= user.passport_type === 'Yeşil' ? 'selected' : '' %>>Yeşil</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label for="schengen_visa_count" class="form-label">Schengen Vize Sayısı</label>
-                                        <input type="number" class="form-control" id="schengen_visa_count" name="schengen_visa_count" value="<%= user.schengen_visa_count || 0 %>" min="0">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="uk_visa_count" class="form-label">İngiltere Vize Sayısı</label>
-                                        <input type="number" class="form-control" id="uk_visa_count" name="uk_visa_count" value="<%= user.uk_visa_count || 0 %>" min="0">
-                                    </div>
-                                </div>
-
-                                <div class="row g-3">
-                                    <div class="col-md-12">
-                                        <label for="academic_exams" class="form-label">Akademik Sınavlar (IELTS, SAT, AP vb.)</label>
-                                        <textarea class="form-control" id="academic_exams" name="academic_exams" rows="3"><%= user.academic_exams || '' %></textarea>
-                                    </div>
-                                </div>
-
-                                <div class="row g-3">
-                                    <div class="col-md-12">
-                                        <label for="annual_budget" class="form-label">Yıllık Bütçe (TL)</label>
-                                        <input type="number" class="form-control" id="annual_budget" name="annual_budget" value="<%= user.annual_budget || '' %>" min="0" step="0.01">
-                                    </div>
-                                </div>
-                                
                             </form>
                         </div>
                     </div>
@@ -499,114 +395,6 @@
                         </div>
                     </div>
                     
-                    
-                    <!-- Guardians Tab -->
-                    <div class="tab-pane fade" id="guardians" role="tabpanel" style="overflow: visible; max-height: none;">
-                        <div class="container-fluid px-0">
-                            <div class="d-flex justify-content-between align-items-center mb-4">
-                                <h5 class="mb-0 text-center"><strong>VELİ BİLGİLERİ</strong></h5>
-                                <button type="button" class="btn btn-primary" onclick="showEditGuardiansModal()">
-                                    <i class="fas fa-edit me-2"></i>VELİ BİLGİLERİNİ DÜZENLE
-                                </button>
-                            </div>
-                        
-                        <!-- Mother Information -->
-                        <div class="card guardian-card mb-4">
-                            <div class="guardian-card-header bg-primary text-white">
-                                <h6 class="mb-0"><i class="fas fa-female me-2"></i>ANNE BİLGİLERİ</h6>
-                            </div>
-                            <div class="guardian-card-body">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label"><strong>Ad Soyad:</strong></label>
-                                            <p class="guardian-info-value <%= (user.mother_name || user.mother_surname) ? '' : 'empty' %>" id="motherFullName">
-                                                <%= (user.mother_name || user.mother_surname) ? `${user.mother_name || ''} ${user.mother_surname || ''}`.trim() : 'Belirtilmemiş' %>
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label"><strong>Telefon:</strong></label>
-                                            <p class="guardian-info-value <%= user.mother_phone ? '' : 'empty' %>" id="motherPhone">
-                                                <%= user.mother_phone || 'Belirtilmemiş' %>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label"><strong>TC Kimlik No:</strong></label>
-                                            <p class="guardian-info-value <%= user.mother_tc ? '' : 'empty' %>" id="motherTc">
-                                                <%= user.mother_tc || 'Belirtilmemiş' %>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Father Information -->
-                        <div class="card guardian-card mb-4">
-                            <div class="guardian-card-header">
-                                <h6 class="mb-0"><i class="fas fa-male me-2"></i>BABA BİLGİLERİ</h6>
-                            </div>
-                            <div class="guardian-card-body">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label"><strong>Ad Soyad:</strong></label>
-                                            <p class="guardian-info-value <%= (user.father_name || user.father_surname) ? '' : 'empty' %>" id="fatherFullName">
-                                                <%= (user.father_name || user.father_surname) ? `${user.father_name || ''} ${user.father_surname || ''}`.trim() : 'Belirtilmemiş' %>
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label"><strong>Telefon:</strong></label>
-                                            <p class="guardian-info-value <%= user.father_phone ? '' : 'empty' %>" id="fatherPhone">
-                                                <%= user.father_phone || 'Belirtilmemiş' %>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label"><strong>TC Kimlik No:</strong></label>
-                                            <p class="guardian-info-value <%= user.father_tc ? '' : 'empty' %>" id="fatherTc">
-                                                <%= user.father_tc || 'Belirtilmemiş' %>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Checklist Tab -->
-                    <div class="tab-pane fade" id="checklist" role="tabpanel" style="overflow: visible; max-height: none;">
-                        <div class="container-fluid px-0">
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="card border-success">
-                                        <div class="card-header bg-success text-white text-center">
-                                            <h5 class="mb-0">
-                                                <i class="fas fa-clipboard-check me-2"></i>
-                                                Öğrenci Süreç Takip Listesi
-                                            </h5>
-                                        </div>
-                                        <div class="card-body p-4">
-                                            <div id="checklistContainer">
-                                                <!-- Checklist items will be loaded here -->
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -719,9 +507,17 @@ input:checked + .slider:before {
     box-shadow: 0 2px 4px rgba(13, 110, 253, 0.3);
 }
 
-.nav-tabs .nav-link i {
-    margin-right: 0.5rem;
-    font-size: 1.1em;
+.student-tabs .nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.student-tabs .nav-link i {
+    font-size: 1.25rem;
+    width: 1.4rem;
+    text-align: center;
 }
 
 /* Remove internal scrolling */
@@ -1463,16 +1259,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (checklistTab) {
         checklistTab.addEventListener('shown.bs.tab', function() {
-            console.log('Checklist tab shown, loading checklist...');
+            console.log('🔧 Checklist tab shown, refreshing checklist...');
             loadChecklist();
-        });
-        
-        // Also add click event as backup
-        checklistTab.addEventListener('click', function() {
-            console.log('Checklist tab clicked, loading checklist...');
-            setTimeout(() => {
-                loadChecklist();
-            }, 100);
+            hideRemainingButtonsKaydetButtons();
         });
     }
     
@@ -1626,10 +1415,36 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const data = await response.json();
             console.log('Checklist data:', data);
-            displayChecklist(data.checklist);
+            if (data.checklist && data.checklist.length > 0) {
+                displayChecklist(data.checklist);
+            } else {
+                console.log('Checklist empty, initializing defaults...');
+                await initializeChecklist();
+            }
         } catch (error) {
             console.error('Error loading checklist:', error);
             // Show default checklist if API fails
+            showDefaultChecklist();
+        }
+    }
+
+    async function initializeChecklist() {
+        try {
+            const response = await fetch(`/api/admin/users/<%= user.id %>/checklist/initialize`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`Initialize checklist failed: ${response.status}`);
+            }
+
+            await loadChecklist();
+        } catch (error) {
+            console.error('Checklist initialize error:', error);
             showDefaultChecklist();
         }
     }
@@ -1681,10 +1496,23 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showDefaultChecklist() {
-        console.log('Showing default checklist');
-        
-        // First, try to load real checklist from database
-        loadChecklistFromDatabase();
+        const container = document.getElementById('checklistContainer');
+        if (!container) {
+            console.error('Checklist container not found!');
+            return;
+        }
+
+        container.innerHTML = `
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                Kontrol listesi oluşturulmamış. Varsayılan maddeler ekleniyor...
+            </div>
+        `;
+
+        initializeChecklist().catch(err => {
+            console.error('Default checklist initialization failed:', err);
+            document.getElementById('checklistContainer').innerHTML = getDefaultChecklistHTML();
+        });
     }
 
     async function loadChecklistFromDatabase() {
@@ -2726,6 +2554,145 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 
+function showUpdateModal(){
+    const modalHtml = `
+        <div class="modal fade" id="confirmStudentUpdateModal" tabindex="-1" aria-labelledby="confirmStudentUpdateModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmStudentUpdateModalLabel">Öğrenci Bilgilerini Güncelle</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Değişiklikleri kaydetmek istediğinize emin misiniz?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                        <button type="button" class="btn btn-primary" id="confirmStudentUpdateBtn">
+                            <i class="fas fa-save me-2"></i>Kaydet
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+
+    const existingModal = document.getElementById('confirmStudentUpdateModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+
+    const modalContainer = document.getElementById('studentNoteModalContainer') || document.body;
+    modalContainer.insertAdjacentHTML('beforeend', modalHtml);
+    const modalElement = document.getElementById('confirmStudentUpdateModal');
+    const modalInstance = new bootstrap.Modal(modalElement);
+
+    modalElement.addEventListener('shown.bs.modal', () => {
+        const confirmBtn = document.getElementById('confirmStudentUpdateBtn');
+        if (confirmBtn) {
+            confirmBtn.focus();
+            confirmBtn.addEventListener('click', () => {
+                modalInstance.hide();
+                saveStudent();
+            }, { once: true });
+        }
+    });
+
+    modalElement.addEventListener('hidden.bs.modal', () => {
+        modalElement.remove();
+    });
+
+    modalInstance.show();
+}
+
+function saveStudent(){
+    let loadingToastId = null;
+    if (typeof showToast === 'function') {
+        loadingToastId = showToast({
+            title: 'Güncelleniyor',
+            message: 'Öğrenci bilgileri kaydediliyor...',
+            type: 'info'
+        });
+    }
+
+    const formatDate = (value) => {
+        if (!value) return null;
+        const parts = value.split(/[\.\/]/);
+        if (parts.length === 3) {
+            const [day, month, year] = parts;
+            if (year.length === 4) {
+                return `${year.padStart(4, '0')}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+            }
+        }
+        return value;
+    };
+
+    const payload = {
+        first_name: document.getElementById('first_name').value,
+        last_name: document.getElementById('last_name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        english_level: document.getElementById('english_level').value,
+        high_school_graduation_date: formatDate(document.getElementById('high_school_graduation_date').value),
+        birth_date: formatDate(document.getElementById('birth_date').value),
+        tc_number: document.getElementById('tc_number').value,
+        passport_type: document.getElementById('passport_type').value,
+        passport_number: document.getElementById('passport_number').value,
+        desired_country: document.getElementById('desired_country').value,
+        active_class: document.getElementById('active_class').value,
+    };
+
+    fetch('/api/admin/users/<%= user.id %>/details', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(result => {
+        if (typeof hideToast === 'function' && loadingToastId) {
+            hideToast(loadingToastId);
+        }
+        if (result.success) {
+            if (typeof showToast === 'function') {
+                showToast({
+                    title: 'Başarılı',
+                    message: 'Öğrenci bilgileri güncellendi.',
+                    type: 'success'
+                });
+            } else {
+                showAlert('success', 'Öğrenci bilgileri güncellendi.');
+            }
+            setTimeout(() => {
+                window.location.reload();
+            }, 1200);
+        } else {
+            if (typeof showToast === 'function') {
+                showToast({
+                    title: 'Hata',
+                    message: result.message || 'Öğrenci bilgileri kaydedilemedi.',
+                    type: 'danger'
+                });
+            } else {
+                showAlert('danger', result.message || 'Öğrenci bilgileri kaydedilemedi.');
+            }
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        if (typeof hideToast === 'function' && loadingToastId) {
+            hideToast(loadingToastId);
+        }
+        if (typeof showToast === 'function') {
+            showToast({
+                title: 'Sunucu Hatası',
+                message: 'İşlem sırasında beklenmedik bir hata oluştu.',
+                type: 'danger'
+            });
+        } else {
+            showAlert('danger', 'İşlem sırasında beklenmedik bir hata oluştu.');
+        }
+    });
+}
+
 async function changeAvatar() {
     console.log('🔧 Changing avatar...');
     
@@ -2961,10 +2928,10 @@ function displayStudentNotes(notes) {
 }
 
 // Show add note modal
-function showAddNoteModal() {
+function showAddNoteModal(existingNote = null) {
     try {
-        console.log('🔧 Showing add note modal');
-        currentNoteId = null;
+        console.log('🔧 Showing note modal', existingNote);
+        currentNoteId = existingNote ? existingNote.id : null;
     
     // Create modal HTML
     const modalHtml = `
@@ -2972,7 +2939,7 @@ function showAddNoteModal() {
             <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="studentNoteModalLabel">Yeni Not Ekle</h5>
+                        <h5 class="modal-title" id="studentNoteModalLabel">${existingNote ? 'Notu Düzenle' : 'Yeni Not Ekle'}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -2999,7 +2966,7 @@ function showAddNoteModal() {
                                         <label for="studentNotePriority" class="form-label">Öncelik</label>
                                         <select class="form-select" id="studentNotePriority">
                                             <option value="low">Düşük</option>
-                                            <option value="medium" selected>Orta</option>
+                                            <option value="medium">Orta</option>
                                             <option value="high">Yüksek</option>
                                         </select>
                                     </div>
@@ -3042,7 +3009,37 @@ function showAddNoteModal() {
     document.body.insertAdjacentHTML('beforeend', modalHtml);
     
     // Show modal
-    const modal = new bootstrap.Modal(document.getElementById('studentNoteModal'));
+    const modalElement = document.getElementById('studentNoteModal');
+    const modal = new bootstrap.Modal(modalElement);
+
+    const titleInput = document.getElementById('studentNoteTitle');
+    const contentInput = document.getElementById('studentNoteContent');
+    const categorySelect = document.getElementById('studentNoteCategory');
+    const prioritySelect = document.getElementById('studentNotePriority');
+    const importantCheckbox = document.getElementById('studentNoteImportant');
+
+    if (existingNote) {
+        titleInput.value = existingNote.title || '';
+        contentInput.value = existingNote.content || '';
+        categorySelect.value = existingNote.category || 'general';
+        prioritySelect.value = existingNote.priority || 'medium';
+        importantCheckbox.checked = Boolean(existingNote.is_important);
+    } else {
+        titleInput.value = '';
+        contentInput.value = '';
+        categorySelect.value = 'general';
+        prioritySelect.value = 'medium';
+        importantCheckbox.checked = false;
+    }
+
+    if (modalElement) {
+        modalElement.addEventListener('shown.bs.modal', () => {
+            if (titleInput) {
+                titleInput.focus();
+            }
+        }, { once: true });
+    }
+
     modal.show();
     } catch (error) {
         console.error('❌ Error showing add note modal:', error);
@@ -3115,37 +3112,16 @@ async function saveStudentNote() {
 async function editStudentNote(noteId) {
     try {
         console.log('🔧 Editing student note:', noteId);
-        
-        // Get current notes
-        const response = await fetch(`/api/admin/users/<%= user.id %>/notes`, {
+        const response = await fetch(`/api/admin/users/<%= user.id %>/notes/${noteId}`, {
             credentials: 'include'
         });
         const result = await response.json();
-        
-        if (!result.success) {
-            throw new Error(result.message);
-        }
-        
-        const note = result.notes.find(n => n.id === noteId);
-        if (!note) {
-            showAlert('danger', 'Not bulunamadı');
-            return;
+
+        if (!result.success || !result.note) {
+            throw new Error(result.message || 'Not bulunamadı');
         }
 
-        currentNoteId = noteId;
-        
-        // Show modal with existing data
-        showAddNoteModal();
-        
-        // Fill form with existing data
-        setTimeout(() => {
-            document.getElementById('studentNoteModalLabel').textContent = 'Notu Düzenle';
-            document.getElementById('studentNoteTitle').value = note.title;
-            document.getElementById('studentNoteContent').value = note.content;
-            document.getElementById('studentNoteCategory').value = note.category;
-            document.getElementById('studentNotePriority').value = note.priority;
-            document.getElementById('studentNoteImportant').checked = note.is_important;
-        }, 100);
+        showAddNoteModal(result.note);
         
     } catch (error) {
         console.error('❌ Error editing student note:', error);
@@ -3285,24 +3261,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Add event listener for checklist tab
     const checklistTab = document.getElementById('checklist-tab');
-    if (checklistTab) {
-        checklistTab.addEventListener('shown.bs.tab', function() {
-            console.log('🔧 Checklist tab shown, loading checklist...');
-            loadStudentChecklist();
-            hideRemainingButtonsKaydetButtons();
-        });
+    if (checklistTab && checklistTab.parentElement) {
+        checklistTab.parentElement.remove();
     }
-    
-    // Add event listener for guardians tab
+
     const guardiansTab = document.getElementById('guardians-tab');
-    if (guardiansTab) {
-        guardiansTab.addEventListener('shown.bs.tab', function() {
-            console.log('🔧 Guardians tab shown...');
-            hideRemainingButtonsKaydetButtons();
-            loadGuardians();
-        });
+    if (guardiansTab && guardiansTab.parentElement) {
+        guardiansTab.parentElement.remove();
     }
     
     // Initialize tooltips

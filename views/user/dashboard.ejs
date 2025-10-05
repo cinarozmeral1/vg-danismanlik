@@ -2,11 +2,10 @@
     <section class="section bg-light text-dark" style="min-height: 80vh;">
         <div class="container">
             <div class="row">
-                <!-- Sidebar -->
-                <div class="col-lg-3 mb-4">
+                <div class="col-lg-3 mb-4 d-none d-lg-block" id="studentSidebarContainer">
                     <div class="card shadow-sm">
                         <div class="card-header bg-primary text-white">
-                            <h5 class="mb-0"><i class="fas fa-user me-2"></i>Hesap Menüsü</h5>
+                            <h5 class="mb-0"><i class="fas fa-user me-2"></i>Öğrenci Menüsü</h5>
                         </div>
                         <div class="list-group list-group-flush">
                             <a href="/user/dashboard" class="list-group-item list-group-item-action active">
@@ -16,7 +15,7 @@
                                 <i class="fas fa-file-alt me-2"></i>Başvurularım
                             </a>
                             <a href="/user/files" class="list-group-item list-group-item-action">
-                                <i class="fas fa-folder me-2"></i>Dosyalarım
+                                <i class="fas fa-folder-open me-2"></i>Dosyalarım
                             </a>
                             <a href="/user/settings" class="list-group-item list-group-item-action">
                                 <i class="fas fa-cog me-2"></i>Ayarlar
@@ -25,186 +24,87 @@
                     </div>
                 </div>
 
-                <!-- Main Content -->
-                <div class="col-lg-9">
+                <div class="col-lg-9" id="studentMainContent">
                     <div class="card shadow-sm">
                         <div class="card-header bg-primary text-white">
                             <h4 class="mb-0"><i class="fas fa-user me-2"></i>Profil Bilgileri</h4>
                         </div>
                         <div class="card-body">
                             <div id="alertContainer"></div>
-                            
-                            <form id="profileForm">
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="first_name" class="form-label">Ad *</label>
-                                        <input type="text" class="form-control" id="first_name" name="first_name" value="<%= user.first_name %>" required>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="last_name" class="form-label">Soyad *</label>
-                                        <input type="text" class="form-control" id="last_name" name="last_name" value="<%= user.last_name %>" required>
-                                    </div>
+ 
+                            <form id="profileForm" class="row g-4">
+                                <div class="col-md-6">
+                                    <label for="first_name" class="form-label">Ad *</label>
+                                    <input type="text" class="form-control" id="first_name" name="first_name" value="<%= profile ? profile.first_name : '' %>" required>
                                 </div>
-
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="email" class="form-label">E-posta *</label>
-                                        <input type="email" class="form-control" id="email" name="email" value="<%= user.email %>" readonly>
-                                        <small class="text-muted">E-posta değiştirilemez</small>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="phone" class="form-label">Telefon *</label>
-                                        <input type="tel" class="form-control" id="phone" name="phone" value="<%= user.phone %>" required>
-                                    </div>
+                                <div class="col-md-6">
+                                    <label for="last_name" class="form-label">Soyad *</label>
+                                    <input type="text" class="form-control" id="last_name" name="last_name" value="<%= profile ? profile.last_name : '' %>" required>
                                 </div>
-
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="tc_number" class="form-label">TC Kimlik No *</label>
-                                        <input type="text" class="form-control" id="tc_number" name="tc_number" value="<%= user.tc_number %>" maxlength="11" pattern="[0-9]{11}" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="birth_date" class="form-label">Doğum Tarihi *</label>
-                                        <input type="date" class="form-control" id="birth_date" name="birth_date" value="<%= user.birth_date %>" required>
-                                    </div>
+ 
+                                <div class="col-md-6">
+                                    <label for="tc_number" class="form-label">TC Kimlik No *</label>
+                                    <input type="text" class="form-control" id="tc_number" name="tc_number" value="<%= profile ? profile.tc_number : '' %>" maxlength="11" pattern="[0-9]{11}" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
                                 </div>
-
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="school" class="form-label">Okul</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text"><i class="fas fa-school"></i></span>
-                                            <input type="text" class="form-control" id="school" name="school" value="<%= user.school || '' %>" placeholder="Okul adı">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="class_level" class="form-label">Sınıf</label>
-                                        <input type="text" class="form-control" id="class_level" name="class_level" value="<%= user.class_level || '' %>" placeholder="Sınıf">
-                                    </div>
+                                <div class="col-md-6">
+                                    <label for="phone" class="form-label">Telefon *</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone" value="<%= profile ? profile.phone : '' %>" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
                                 </div>
-
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="english_level" class="form-label">İngilizce Seviyesi *</label>
-                                        <select class="form-select" id="english_level" name="english_level" required>
-                                            <option value="">Seçiniz</option>
-                                            <option value="A1" <%= user.english_level === 'A1' ? 'selected' : '' %>>A1</option>
-                                            <option value="A2" <%= user.english_level === 'A2' ? 'selected' : '' %>>A2</option>
-                                            <option value="B1" <%= user.english_level === 'B1' ? 'selected' : '' %>>B1</option>
-                                            <option value="B2" <%= user.english_level === 'B2' ? 'selected' : '' %>>B2</option>
-                                            <option value="C1" <%= user.english_level === 'C1' ? 'selected' : '' %>>C1</option>
-                                            <option value="C2" <%= user.english_level === 'C2' ? 'selected' : '' %>>C2</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="high_school_graduation_date" class="form-label">Lise Mezuniyet Tarihi *</label>
-                                        <input type="date" class="form-control" id="high_school_graduation_date" name="high_school_graduation_date" value="<%= user.high_school_graduation_date %>" required>
-                                    </div>
+ 
+                                <div class="col-md-6">
+                                    <label for="english_level" class="form-label">İngilizce Seviyesi *</label>
+                                    <select class="form-select" id="english_level" name="english_level" required>
+                                        <option value="">Seçiniz</option>
+                                        <option value="A1" <%= profile && profile.english_level === 'A1' ? 'selected' : '' %>>A1</option>
+                                        <option value="A2" <%= profile && profile.english_level === 'A2' ? 'selected' : '' %>>A2</option>
+                                        <option value="B1" <%= profile && profile.english_level === 'B1' ? 'selected' : '' %>>B1</option>
+                                        <option value="B2" <%= profile && profile.english_level === 'B2' ? 'selected' : '' %>>B2</option>
+                                        <option value="C1" <%= profile && profile.english_level === 'C1' ? 'selected' : '' %>>C1</option>
+                                        <option value="C2" <%= profile && profile.english_level === 'C2' ? 'selected' : '' %>>C2</option>
+                                    </select>
                                 </div>
-
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="country" class="form-label">Ülke</label>
-                                        <select class="form-select" id="country" name="country">
-                                            <option value="">Lütfen Seçin</option>
-                                            <option value="Türkiye" <%= (user.country === 'Türkiye' || !user.country) ? 'selected' : '' %>>Türkiye</option>
-                                            <option value="Almanya" <%= user.country === 'Almanya' ? 'selected' : '' %>>Almanya</option>
-                                            <option value="İngiltere" <%= user.country === 'İngiltere' ? 'selected' : '' %>>İngiltere</option>
-                                            <option value="Amerika" <%= user.country === 'Amerika' ? 'selected' : '' %>>Amerika</option>
-                                            <option value="Kanada" <%= user.country === 'Kanada' ? 'selected' : '' %>>Kanada</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="city" class="form-label">Şehir</label>
-                                        <select class="form-select" id="city" name="city">
-                                            <option value="">Lütfen Seçin</option>
-                                            <option value="İstanbul" <%= (user.city === 'İstanbul' || !user.city) ? 'selected' : '' %>>İstanbul</option>
-                                            <option value="Ankara" <%= user.city === 'Ankara' ? 'selected' : '' %>>Ankara</option>
-                                            <option value="İzmir" <%= user.city === 'İzmir' ? 'selected' : '' %>>İzmir</option>
-                                            <option value="Bursa" <%= user.city === 'Bursa' ? 'selected' : '' %>>Bursa</option>
-                                            <option value="Antalya" <%= user.city === 'Antalya' ? 'selected' : '' %>>Antalya</option>
-                                        </select>
-                                    </div>
+                                <div class="col-md-6">
+                                    <label for="high_school_graduation_date" class="form-label">Lise Mezuniyet Tarihi *</label>
+                                    <input type="text" class="form-control" id="high_school_graduation_date" name="high_school_graduation_date" value="<%= profile && profile.high_school_graduation_date ? profile.high_school_graduation_date.toISOString().split('T')[0].split('-').reverse().join('/') : '' %>" placeholder="GG/AA/YYYY" required>
+                                    <small class="text-muted">GG/AA/YYYY formatında slash (/) kullanarak giriniz.</small>
                                 </div>
-
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="address" class="form-label">Adres</label>
-                                        <input type="text" class="form-control" id="address" name="address" value="<%= user.address || '' %>" placeholder="Adres">
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="nationality" class="form-label">Uyruk</label>
-                                        <select class="form-select" id="nationality" name="nationality">
-                                            <option value="TC Vatandaşı" <%= (user.nationality === 'TC Vatandaşı' || !user.nationality) ? 'selected' : '' %>>TC Vatandaşı</option>
-                                            <option value="Çifte Vatandaş" <%= user.nationality === 'Çifte Vatandaş' ? 'selected' : '' %>>Çifte Vatandaş</option>
-                                            <option value="Yabancı" <%= user.nationality === 'Yabancı' ? 'selected' : '' %>>Yabancı</option>
-                                        </select>
-                                    </div>
+ 
+                                <div class="col-md-6">
+                                    <label for="birth_date" class="form-label">Doğum Tarihi *</label>
+                                    <input type="text" class="form-control" id="birth_date" name="birth_date" value="<%= profile && profile.birth_date ? profile.birth_date.toISOString().split('T')[0].split('-').reverse().join('/') : '' %>" placeholder="GG/AA/YYYY" required>
+                                    <small class="text-muted">GG/AA/YYYY formatında slash (/) kullanarak giriniz.</small>
                                 </div>
-
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="target_country" class="form-label">Gitmek İstediği Ülke?</label>
-                                        <select class="form-select" id="target_country" name="target_country">
-                                            <option value="">Lütfen Seçin</option>
-                                            <option value="Almanya" <%= user.target_country === 'Almanya' ? 'selected' : '' %>>Almanya</option>
-                                            <option value="İngiltere" <%= user.target_country === 'İngiltere' ? 'selected' : '' %>>İngiltere</option>
-                                            <option value="Amerika" <%= user.target_country === 'Amerika' ? 'selected' : '' %>>Amerika</option>
-                                            <option value="Kanada" <%= user.target_country === 'Kanada' ? 'selected' : '' %>>Kanada</option>
-                                            <option value="Avustralya" <%= user.target_country === 'Avustralya' ? 'selected' : '' %>>Avustralya</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="active_class" class="form-label">Aktif Sınıf</label>
-                                        <input type="text" class="form-control" id="active_class" name="active_class" value="<%= user.active_class || '' %>" placeholder="Aktif sınıf">
-                                    </div>
+                                <div class="col-md-6">
+                                    <label for="passport_type" class="form-label">Pasaport Türü *</label>
+                                    <input type="text" class="form-control" id="passport_type" name="passport_type" value="<%= profile ? profile.passport_type : '' %>" placeholder="Örn: Bordo" required>
                                 </div>
-
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="passport_number" class="form-label">Pasaport Numarası</label>
-                                        <input type="text" class="form-control" id="passport_number" name="passport_number" value="<%= user.passport_number || '' %>">
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="passport_type" class="form-label">Pasaport Türü</label>
-                                        <select class="form-select" id="passport_type" name="passport_type">
-                                            <option value="">Seçiniz</option>
-                                            <option value="Bordo" <%= user.passport_type === 'Bordo' ? 'selected' : '' %>>Bordo</option>
-                                            <option value="Yeşil" <%= user.passport_type === 'Yeşil' ? 'selected' : '' %>>Yeşil</option>
-                                        </select>
-                                    </div>
+ 
+                                <div class="col-md-6">
+                                    <label for="passport_number" class="form-label">Pasaport Numarası *</label>
+                                    <input type="text" class="form-control" id="passport_number" name="passport_number" value="<%= profile ? profile.passport_number : '' %>" placeholder="Örn: P1234567" required>
                                 </div>
-
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="schengen_visa_count" class="form-label">Schengen Vize Sayısı</label>
-                                        <input type="number" class="form-control" id="schengen_visa_count" name="schengen_visa_count" value="<%= user.schengen_visa_count || 0 %>" min="0">
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="uk_visa_count" class="form-label">İngiltere Vize Sayısı</label>
-                                        <input type="number" class="form-control" id="uk_visa_count" name="uk_visa_count" value="<%= user.uk_visa_count || 0 %>" min="0">
-                                    </div>
+                                <div class="col-md-6">
+                                    <label for="desired_country" class="form-label">Gitmek İstediği Ülke *</label>
+                                    <input type="text" class="form-control" id="desired_country" name="desired_country" value="<%= profile ? profile.desired_country : '' %>" placeholder="Örn: Almanya" required>
                                 </div>
-
-                                <div class="mb-3">
-                                    <label for="academic_exams" class="form-label">Akademik Sınavlar (IELTS, SAT, AP vb.)</label>
-                                    <textarea class="form-control" id="academic_exams" name="academic_exams" rows="3"><%= user.academic_exams || '' %></textarea>
+ 
+                                <div class="col-md-6">
+                                    <label for="active_class" class="form-label">Aktif Sınıf *</label>
+                                    <input type="text" class="form-control" id="active_class" name="active_class" value="<%= profile ? profile.active_class : '' %>" placeholder="Örn: 11" required>
                                 </div>
-
-                                <div class="mb-3">
-                                    <label for="annual_budget" class="form-label">Yıllık Bütçe (TL)</label>
-                                    <input type="number" class="form-control" id="annual_budget" name="annual_budget" value="<%= user.annual_budget || '' %>" min="0" step="0.01">
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">E-posta *</label>
+                                    <input type="email" class="form-control" id="email" name="email" value="<%= user.email %>" readonly>
                                 </div>
-
-                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                    <button type="submit" class="btn btn-primary btn-lg">
+ 
+                                <div class="col-12 text-end">
+                                    <button type="submit" class="btn btn-primary">
                                         <i class="fas fa-save me-2"></i>Değişiklikleri Kaydet
                                     </button>
                                 </div>
                             </form>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -249,7 +149,33 @@
             e.preventDefault();
             
             const formData = new FormData(this);
-            const data = Object.fromEntries(formData);
+            const formatDate = (value) => {
+                if (!value) return null;
+                const slashRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+                if (slashRegex.test(value)) {
+                    const [, day, month, year] = value.match(slashRegex);
+                    return `${year}-${month}-${day}`;
+                }
+                const dashRegex = /^(\d{4})-(\d{2})-(\d{2})$/;
+                if (dashRegex.test(value)) {
+                    return value;
+                }
+                return value;
+            };
+
+            const data = {
+                first_name: formData.get('first_name'),
+                last_name: formData.get('last_name'),
+                phone: formData.get('phone'),
+                english_level: formData.get('english_level'),
+                high_school_graduation_date: formatDate(formData.get('high_school_graduation_date')),
+                birth_date: formatDate(formData.get('birth_date')),
+                passport_type: formData.get('passport_type'),
+                passport_number: formData.get('passport_number'),
+                desired_country: formData.get('desired_country'),
+                active_class: formData.get('active_class'),
+                tc_number: formData.get('tc_number')
+            };
             
             fetch('/api/user/profile', {
                 method: 'PUT',
@@ -262,6 +188,7 @@
             .then(data => {
                 if (data.success) {
                     showAlert('Profil bilgileriniz başarıyla güncellendi!', 'success');
+                    populateProfileForm(data.user);
                 } else {
                     showAlert(data.message || 'Bir hata oluştu!', 'danger');
                 }
@@ -271,6 +198,75 @@
                 showAlert('Bir hata oluştu!', 'danger');
             });
         });
+
+        async function fetchProfile() {
+            try {
+                const response = await fetch('/api/user/profile', {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include'
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+                if (data.success && data.user) {
+                    populateProfileForm(data.user);
+                }
+            } catch (error) {
+                console.error('Profil verisi alınırken hata:', error);
+                updateUserDropdown({ first_name: '<%= profile ? profile.first_name : "" %>', last_name: '<%= profile ? profile.last_name : "" %>', email: '<%= profile ? profile.email : currentUser.email %>' });
+            }
+        }
+
+        function populateProfileForm(user) {
+            const setValue = (id, value) => {
+                const el = document.getElementById(id);
+                if (el) el.value = value || '';
+            };
+
+            setValue('first_name', user.first_name);
+            setValue('last_name', user.last_name);
+            setValue('tc_number', user.tc_number);
+            setValue('phone', user.phone);
+            setValue('english_level', user.english_level);
+            setValue('high_school_graduation_date', formatDate(user.high_school_graduation_date));
+            setValue('birth_date', formatDate(user.birth_date));
+            setValue('passport_type', user.passport_type);
+            setValue('passport_number', user.passport_number);
+            setValue('desired_country', user.desired_country);
+            setValue('active_class', user.active_class);
+
+            const emailField = document.getElementById('email');
+            if (emailField) emailField.value = user.email;
+
+            updateUserDropdown(user);
+        }
+
+        function formatDate(value) {
+            if (!value) return '';
+            const date = new Date(value);
+            if (Number.isNaN(date.getTime())) return value;
+            const day = String(date.getUTCDate()).padStart(2, '0');
+            const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+            const year = date.getUTCFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        let dropdownInstance = null;
+
+        function updateUserDropdown(user) {
+            const trigger = document.querySelector('#studentDropdownTrigger');
+            if (trigger) {
+                const displayName = `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.email || 'Profil';
+                trigger.innerHTML = `<i class="fas fa-user-circle me-1"></i>${displayName}`;
+                if (typeof window.initializeGlobalDropdowns === 'function') {
+                    window.initializeGlobalDropdowns();
+                }
+            }
+        }
 
         // Alert function
         function showAlert(message, type) {
@@ -321,16 +317,15 @@
                 });
             });
 
-            // Logout butonu event listener
             const logoutBtn = document.getElementById('logoutBtn');
             if (logoutBtn) {
                 logoutBtn.addEventListener('click', function(e) {
                     e.preventDefault();
-                    console.log('Logout button clicked'); // Debug için
+                    console.log('Logout button clicked');
                     logout();
                 });
-            } else {
-                console.log('Logout button not found'); // Debug için
             }
+
+            fetchProfile();
         });
     </script> 

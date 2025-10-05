@@ -18,8 +18,8 @@
                 <div class="card shadow-lg border-0 mb-4 overflow-hidden">
                     <div class="row g-0">
                         <div class="col-md-4">
-                            <div class="image-container h-100">
-                                <img src="/images/countries/czech/AdobeStock_82979931.jpeg" class="img-fluid" alt="Czech Republic University Campus">
+                            <div class="student-life-card-img-wrapper">
+                                <img src="/images/countries/czech/AdobeStock_82979931.jpeg" class="student-life-card-img" alt="Czech Republic University Campus">
                             </div>
                         </div>
                         <div class="col-md-8">
@@ -47,7 +47,7 @@
                                         <h5 class="text-primary mb-3"><%= t.studentLifePage.sections.educationSystem.popularDepts %></h5>
                                         <div class="d-flex flex-wrap gap-2">
                                             <% t.studentLifePage.sections.educationSystem.departments.forEach(function(badge, idx) { %>
-                                                <span class="badge badge-style-<%= (idx % 3) + 1 %>"><%= badge %></span>
+                                                <span class="badge badge-style-<%= (idx % 3) + 1 %> text-dark fw-semibold bg-white border"><%= badge %></span>
                                             <% }); %>
                                         </div>
                                     </div>
@@ -89,8 +89,8 @@
                                                 {icon: 'fa-shopping-bag', text: t.studentLifePage.sections.accommodation.costs.other + ' 150-250€'}
                                             ]; %>
                                             <% costBadges.forEach(function(badge, idx) { %>
-                                                <span class="badge badge-style-<%= (idx % 3) + 1 %> p-2" style="font-size: 0.8rem;">
-                                                    <i class="fas <%= badge.icon %> me-1"></i><%= badge.text %>
+                                                <span class="badge badge-style-<%= (idx % 3) + 1 %> p-2 bg-white text-dark fw-semibold border" style="font-size: 0.85rem;">
+                                                    <i class="fas <%= badge.icon %> me-1 text-primary"></i><%= badge.text %>
                                                 </span>
                                             <% }); %>
                                         </div>
@@ -104,8 +104,8 @@
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="image-container h-100">
-                                <img src="/images/countries/czech/AdobeStock_134116954.jpeg" class="img-fluid" alt="Czech Republic Student Life">
+                            <div class="student-life-card-img-wrapper">
+                                <img src="/images/countries/czech/AdobeStock_134116954.jpeg" class="student-life-card-img" alt="Czech Republic Student Life">
                             </div>
                         </div>
                     </div>
@@ -114,8 +114,8 @@
                 <div class="card shadow-lg border-0 mb-4 overflow-hidden">
                     <div class="row g-0">
                         <div class="col-md-4">
-                            <div class="image-container h-100">
-                                <img src="/images/countries/czech/AdobeStock_297292184.jpeg" class="img-fluid" alt="Czech Republic Costs">
+                            <div class="student-life-card-img-wrapper">
+                                <img src="/images/countries/czech/AdobeStock_297292184.jpeg" class="student-life-card-img" alt="Czech Republic Costs">
                             </div>
                         </div>
                         <div class="col-md-8">

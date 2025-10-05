@@ -58,12 +58,35 @@ router.get('/dashboard', async (req, res) => {
             return res.redirect('/login');
         }
 
+        const profileResult = await pool.query(
+            `SELECT 
+                id,
+                first_name,
+                last_name,
+                email,
+                tc_number,
+                phone,
+                english_level,
+                high_school_graduation_date,
+                birth_date,
+                passport_type,
+                passport_number,
+                desired_country,
+                active_class
+             FROM users
+             WHERE id = $1`,
+            [res.locals.currentUser.id]
+        );
+
+        const profile = profileResult.rows[0] || null;
+
         res.render('user/dashboard', { 
             title: 'Profil Bilgileri',
             currentLanguage: res.locals.currentLanguage || 'tr',
             isLoggedIn: res.locals.isLoggedIn,
             currentUser: res.locals.currentUser,
-            user: res.locals.currentUser,
+            user: profile,
+            profile,
             t: res.locals.t
         });
     } catch (error) {
@@ -121,10 +144,20 @@ router.get('/profile', authenticateUser, async (req, res) => {
     try {
         const result = await pool.query(`
             SELECT 
-                id, first_name, last_name, email, tc_number, phone,
-                english_level, high_school_graduation_date, birth_date,
-                passport_number, passport_type, schengen_visa_count, uk_visa_count,
-                academic_exams, annual_budget, created_at
+                id,
+                first_name,
+                last_name,
+                email,
+                tc_number,
+                phone,
+                english_level,
+                high_school_graduation_date,
+                birth_date,
+                passport_type,
+                passport_number,
+                desired_country,
+                active_class,
+                created_at
             FROM users 
             WHERE id = $1
         `, [req.user.id]);
@@ -154,30 +187,71 @@ router.get('/profile', authenticateUser, async (req, res) => {
 router.put('/profile', authenticateUser, async (req, res) => {
     try {
         const {
-            first_name, last_name, phone, english_level, birth_date, high_school_graduation_date,
-            passport_number, passport_type, schengen_visa_count, uk_visa_count,
-            academic_exams, annual_budget
+            first_name,
+            last_name,
+            phone,
+            english_level,
+            high_school_graduation_date,
+            birth_date,
+            passport_type,
+            passport_number,
+            desired_country,
+            active_class,
+            tc_number
         } = req.body;
+
+        const parseDate = (value) => {
+            if (!value) return null;
+            // Accept GG/AA/YYYY or YYYY-MM-DD
+            const slashRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+            if (slashRegex.test(value)) {
+                const [, day, month, year] = value.match(slashRegex);
+                return `${year}-${month}-${day}`; // ISO format for Postgres
+            }
+            const dashRegex = /^(\d{4})-(\d{2})-(\d{2})$/;
+            if (dashRegex.test(value)) {
+                return value;
+            }
+            return value; // leave as-is; database will validate
+        };
+
+        const normalizedHighSchoolDate = parseDate(high_school_graduation_date);
+        const normalizedBirthDate = parseDate(birth_date);
 
         const result = await pool.query(
             `UPDATE users SET 
-                first_name = $1, last_name = $2, phone = $3, 
-                english_level = $4, birth_date = $5, high_school_graduation_date = $6,
-                passport_number = $7, passport_type = $8, schengen_visa_count = $9, 
-                uk_visa_count = $10, academic_exams = $11, annual_budget = $12,
+                first_name = $1,
+                last_name = $2,
+                phone = $3,
+                english_level = $4,
+                high_school_graduation_date = $5,
+                birth_date = $6,
+                passport_type = $7,
+                passport_number = $8,
+                desired_country = $9,
+                active_class = $10,
+                tc_number = $11,
                 updated_at = CURRENT_TIMESTAMP
-             WHERE id = $13 RETURNING *
+             WHERE id = $12 RETURNING *
             `,
-            [first_name, last_name, phone, english_level, birth_date, high_school_graduation_date,
-             passport_number, passport_type, schengen_visa_count, uk_visa_count,
-             academic_exams, annual_budget, req.user.id]
+            [
+                first_name,
+                last_name,
+                phone,
+                english_level,
+                normalizedHighSchoolDate,
+                normalizedBirthDate,
+                passport_type,
+                passport_number,
+                desired_country,
+                active_class,
+                tc_number,
+                req.user.id
+            ]
         );
 
         if (result.rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'User not found'
-            });
+            return res.status(404).json({ success: false, message: 'User not found' });
         }
 
         res.json({

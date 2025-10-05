@@ -387,6 +387,45 @@ app.use('/api/admin', adminRoutes);
 app.use('/admin', adminRoutes);
 app.use('/api/user', userRoutes);
 app.use('/user', userRoutes);
+
+// Scheduled cleanup for unverified users older than 72h since last login
+app.post('/api/maintenance/delete-unverified', async (req, res) => {
+  try {
+    await pool.query(`DELETE FROM users 
+      WHERE email_verified = 0 
+        AND last_login_at IS NOT NULL 
+        AND NOW() - last_login_at > INTERVAL '72 hours'`);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// Add missing columns to users table (idempotent)
+app.post('/api/maintenance/add-user-columns', async (req, res) => {
+  try {
+    await pool.query(`
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS school VARCHAR(200);
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS class_level VARCHAR(50);
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS country VARCHAR(100);
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS city VARCHAR(100);
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS address TEXT;
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS nationality VARCHAR(100);
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS desired_country VARCHAR(100);
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS active_class VARCHAR(50);
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS passport_number VARCHAR(50);
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS passport_type VARCHAR(20);
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS schengen_visa_count INTEGER DEFAULT 0;
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS uk_visa_count INTEGER DEFAULT 0;
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS academic_exams TEXT;
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS annual_budget DECIMAL(12,2);
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS last_login_at TIMESTAMP;
+    `);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
 app.use('/admin/guardians', guardianRoutes);
 
 // Public university routes (no authentication required)
@@ -619,6 +658,18 @@ app.get('/services', (req, res) => {
 
 app.get('/about-us', (req, res) => {
     res.render('about-us', { title: res.locals.t.nav.aboutUs });
+});
+
+app.get('/partners/wcep', (req, res) => {
+    res.render('partners/wcep', { title: 'WCEP - Venture Global' });
+});
+
+app.get('/partners/medczech', (req, res) => {
+    res.render('partners/medczech', { title: 'MedCzech - Venture Global' });
+});
+
+app.get('/partners/bestschool', (req, res) => {
+    res.render('partners/bestschool', { title: 'BestSchool.cz - Venture Global' });
 });
 
 
@@ -2410,35 +2461,87 @@ const sendContactEmail = async (formData, language = 'tr') => {
         console.log('Mesaj:', formData.message);
         console.log('================================');
         
-        // E-posta gönder - Gmail SMTP ayarları
-        const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            port: 587,
-            secure: false,
-            auth: {
-                user: 'cinarozmeral1@gmail.com',
-                pass: 'efnp zune naqc swjd'
+        // EmailService'den transporter'ı import et
+        const { transporter } = require('./services/emailService');
+        
+        const emailContent = {
+            tr: {
+                subject: 'Yeni İletişim Formu - Venture Global',
+                html: `
+                    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                        <div style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+                            <h1 style="margin: 0; font-size: 28px;">Venture Global</h1>
+                            <p style="margin: 10px 0 0 0; opacity: 0.9;">Yeni İletişim Formu</p>
+                        </div>
+                        
+                        <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
+                            <h2 style="color: #333; margin-bottom: 20px;">Yeni İletişim Formu Geldi!</h2>
+                            
+                            <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #0078D7;">
+                                <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>Ad Soyad:</strong> ${formData.firstName} ${formData.lastName}</p>
+                                <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>E-posta:</strong> ${formData.email}</p>
+                                <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>Telefon:</strong> ${formData.phone || 'Belirtilmemiş'}</p>
+                                <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>Konu:</strong> ${formData.subject}</p>
+                                <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>Mesaj:</strong></p>
+                                <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; white-space: pre-wrap; color: #333;">${formData.message}</div>
+                            </div>
+                            
+                            <p style="color: #666; font-size: 14px; margin-top: 25px;">
+                                Bu form ${new Date().toLocaleString('tr-TR')} tarihinde gönderilmiştir.
+                            </p>
+                            
+                            <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+                            
+                            <p style="color: #999; font-size: 12px; text-align: center;">
+                                Venture Global - Avrupa Üniversite ve Dil Okulu Danışmanlığı
+                            </p>
+                        </div>
+                    </div>
+                `
             },
-            tls: {
-                rejectUnauthorized: false
+            en: {
+                subject: 'New Contact Form - Venture Global',
+                html: `
+                    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                        <div style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+                            <h1 style="margin: 0; font-size: 28px;">Venture Global</h1>
+                            <p style="margin: 10px 0 0 0; opacity: 0.9;">New Contact Form</p>
+                        </div>
+                        
+                        <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
+                            <h2 style="color: #333; margin-bottom: 20px;">New Contact Form Received!</h2>
+                            
+                            <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #0078D7;">
+                                <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>Name:</strong> ${formData.firstName} ${formData.lastName}</p>
+                                <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>Email:</strong> ${formData.email}</p>
+                                <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>Phone:</strong> ${formData.phone || 'Not provided'}</p>
+                                <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>Subject:</strong> ${formData.subject}</p>
+                                <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>Message:</strong></p>
+                                <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; white-space: pre-wrap; color: #333;">${formData.message}</div>
+                            </div>
+                            
+                            <p style="color: #666; font-size: 14px; margin-top: 25px;">
+                                This form was sent on ${new Date().toLocaleString('en-US')}.
+                            </p>
+                            
+                            <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+                            
+                            <p style="color: #999; font-size: 12px; text-align: center;">
+                                Venture Global - European University and Language School Consultancy
+                            </p>
+                        </div>
+                    </div>
+                `
             }
-        });
+        };
+        
+        const content = emailContent[language] || emailContent.tr;
         
         const mailOptions = {
-            from: 'cinarozmeral1@gmail.com',
-            to: 'cinarozmeral1@gmail.com',
-            subject: language === 'tr' ? 'Yeni İletişim Formu - Venture Global' : 'New Contact Form - Venture Global',
-            html: `
-                <h2>${language === 'tr' ? 'Yeni İletişim Formu' : 'New Contact Form'}</h2>
-                <p><strong>${language === 'tr' ? 'Ad Soyad' : 'Name'}:</strong> ${formData.firstName} ${formData.lastName}</p>
-                <p><strong>${language === 'tr' ? 'E-posta' : 'Email'}:</strong> ${formData.email}</p>
-                <p><strong>${language === 'tr' ? 'Telefon' : 'Phone'}:</strong> ${formData.phone || 'Belirtilmemiş'}</p>
-                <p><strong>${language === 'tr' ? 'Konu' : 'Subject'}:</strong> ${formData.subject}</p>
-                <p><strong>${language === 'tr' ? 'Mesaj' : 'Message'}:</strong></p>
-                <p style="white-space: pre-wrap;">${formData.message}</p>
-                <hr>
-                <p><em>${language === 'tr' ? 'Bu form' : 'This form'} ${new Date().toLocaleString(language === 'tr' ? 'tr-TR' : 'en-US')} ${language === 'tr' ? 'tarihinde gönderilmiştir.' : 'has been sent.'}</em></p>
-            `
+            from: process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com',
+            to: process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com',
+            subject: content.subject,
+            html: content.html
         };
         
         console.log('E-posta gönderiliyor...');
@@ -2489,36 +2592,89 @@ const sendAssessmentEmail = async (formData, language = 'tr') => {
         console.log('Bütçe Aralığı:', translatedData.budget);
         console.log('================================');
         
-        // E-posta gönder - Gmail SMTP ayarları
-        const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            port: 587,
-            secure: false,
-            auth: {
-                user: 'cinarozmeral1@gmail.com',
-                pass: 'efnp zune naqc swjd'
+        // EmailService'den transporter'ı import et
+        const { transporter } = require('./services/emailService');
+        
+        const emailContent = {
+            tr: {
+                subject: 'Yeni Eğitim Değerlendirme Formu - Venture Global',
+                html: `
+                    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                        <div style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+                            <h1 style="margin: 0; font-size: 28px;">Venture Global</h1>
+                            <p style="margin: 10px 0 0 0; opacity: 0.9;">Yeni Eğitim Değerlendirme Formu</p>
+                        </div>
+                        
+                        <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
+                            <h2 style="color: #333; margin-bottom: 20px;">Yeni Eğitim Değerlendirme Formu Geldi!</h2>
+                            
+                            <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #0078D7;">
+                                <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>Ad Soyad:</strong> ${translatedData.firstName} ${translatedData.lastName}</p>
+                                <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>E-posta:</strong> ${translatedData.email}</p>
+                                <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>Telefon:</strong> ${translatedData.phone}</p>
+                                <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>Eğitim Seviyesi:</strong> ${translatedData.educationLevel}</p>
+                                <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>Tercih Ettiği Ülke:</strong> ${translatedData.country}</p>
+                                <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>Program Alanı:</strong> ${translatedData.program}</p>
+                                <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>Bütçe Aralığı:</strong> ${translatedData.budget}</p>
+                            </div>
+                            
+                            <p style="color: #666; font-size: 14px; margin-top: 25px;">
+                                Bu form ${new Date().toLocaleString('tr-TR')} tarihinde gönderilmiştir.
+                            </p>
+                            
+                            <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+                            
+                            <p style="color: #999; font-size: 12px; text-align: center;">
+                                Venture Global - Avrupa Üniversite ve Dil Okulu Danışmanlığı
+                            </p>
+                        </div>
+                    </div>
+                `
             },
-            tls: {
-                rejectUnauthorized: false
+            en: {
+                subject: 'New Education Assessment Form - Venture Global',
+                html: `
+                    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                        <div style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+                            <h1 style="margin: 0; font-size: 28px;">Venture Global</h1>
+                            <p style="margin: 10px 0 0 0; opacity: 0.9;">New Education Assessment Form</p>
+                        </div>
+                        
+                        <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
+                            <h2 style="color: #333; margin-bottom: 20px;">New Education Assessment Form Received!</h2>
+                            
+                            <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #0078D7;">
+                                <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>Name:</strong> ${translatedData.firstName} ${translatedData.lastName}</p>
+                                <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>Email:</strong> ${translatedData.email}</p>
+                                <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>Phone:</strong> ${translatedData.phone}</p>
+                                <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>Education Level:</strong> ${translatedData.educationLevel}</p>
+                                <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>Preferred Country:</strong> ${translatedData.country}</p>
+                                <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>Program Area:</strong> ${translatedData.program}</p>
+                                <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>Budget Range:</strong> ${translatedData.budget}</p>
+                            </div>
+                            
+                            <p style="color: #666; font-size: 14px; margin-top: 25px;">
+                                This form was sent on ${new Date().toLocaleString('en-US')}.
+                            </p>
+                            
+                            <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+                            
+                            <p style="color: #999; font-size: 12px; text-align: center;">
+                                Venture Global - European University and Language School Consultancy
+                            </p>
+                        </div>
+                    </div>
+                `
             }
-        });
+        };
+        
+        const content = emailContent[language] || emailContent.tr;
         
         const mailOptions = {
-            from: 'cinarozmeral1@gmail.com',
-            to: 'cinarozmeral1@gmail.com',
-            subject: language === 'tr' ? 'Yeni Eğitim Değerlendirme Formu - Venture Global' : 'New Education Assessment Form - Venture Global',
-            html: `
-                <h2>${language === 'tr' ? 'Yeni Eğitim Değerlendirme Formu' : 'New Education Assessment Form'}</h2>
-                <p><strong>${language === 'tr' ? 'Ad Soyad' : 'Name'}:</strong> ${translatedData.firstName} ${translatedData.lastName}</p>
-                <p><strong>${language === 'tr' ? 'E-posta' : 'Email'}:</strong> ${translatedData.email}</p>
-                <p><strong>${language === 'tr' ? 'Telefon' : 'Phone'}:</strong> ${translatedData.phone}</p>
-                <p><strong>${language === 'tr' ? 'Eğitim Seviyesi' : 'Education Level'}:</strong> ${translatedData.educationLevel}</p>
-                <p><strong>${language === 'tr' ? 'Tercih Ettiği Ülke' : 'Preferred Country'}:</strong> ${translatedData.country}</p>
-                <p><strong>${language === 'tr' ? 'Program Alanı' : 'Program Area'}:</strong> ${translatedData.program}</p>
-                <p><strong>${language === 'tr' ? 'Bütçe Aralığı' : 'Budget Range'}:</strong> ${translatedData.budget}</p>
-                <hr>
-                <p><em>${language === 'tr' ? 'Bu form' : 'This form'} ${new Date().toLocaleString(language === 'tr' ? 'tr-TR' : 'en-US')} ${language === 'tr' ? 'tarihinde gönderilmiştir.' : 'has been sent.'}</em></p>
-            `
+            from: process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com',
+            to: process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com',
+            subject: content.subject,
+            html: content.html
         };
         
         console.log('E-posta gönderiliyor...');

@@ -71,6 +71,15 @@ UPDATE universities SET
     logo_url = '/images/logos/' || LOWER(REPLACE(country, ' ', '-')) || '-logo.png',
     website_url = 'https://www.' || LOWER(REPLACE(name, ' ', '')) || '.edu',
     program_count = 3,
+
+-- Add missing columns to users table for admin sync
+ALTER TABLE users ADD COLUMN IF NOT EXISTS school VARCHAR(200);
+ALTER TABLE users ADD COLUMN IF NOT EXISTS class_level VARCHAR(50);
+ALTER TABLE users ADD COLUMN IF NOT EXISTS country VARCHAR(100);
+ALTER TABLE users ADD COLUMN IF NOT EXISTS city VARCHAR(100);
+ALTER TABLE users ADD COLUMN IF NOT EXISTS address TEXT;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS nationality VARCHAR(100);
+ALTER TABLE users ADD COLUMN IF NOT EXISTS last_login_at TIMESTAMP;
     application_fee = 100.00,
     world_ranking = ranking,
     country_ranking = 1,

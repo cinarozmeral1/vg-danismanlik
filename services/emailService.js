@@ -48,18 +48,21 @@ const generateResetToken = () => {
 const sendVerificationEmail = async (email, firstName, verificationToken, language = 'tr') => {
     // Vercel'de doğru URL'i al
     let baseUrl;
-    if (process.env.VERCEL_URL) {
-        // Vercel'de çalışıyor - production URL kullan
-        baseUrl = `https://veture-global-website.vercel.app`;
+    if (process.env.BASE_URL) {
+        baseUrl = process.env.BASE_URL;
     } else if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
         // Production URL
         baseUrl = `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
-    } else if (process.env.BASE_URL) {
-        // Manuel ayarlanmış BASE_URL
-        baseUrl = process.env.BASE_URL;
+    } else if (process.env.VERCEL_URL) {
+        baseUrl = `https://${process.env.VERCEL_URL}`;
     } else {
         // Localhost fallback
-        baseUrl = 'http://localhost:4000';
+        baseUrl = process.env.NODE_ENV === 'production'
+            ? 'https://vgdanismanlik.com'
+            : 'http://localhost:4000';
+    }
+    if (!baseUrl.includes('http')) {
+        baseUrl = `https://${baseUrl}`;
     }
     const verificationUrl = `${baseUrl}/verify-email?token=${verificationToken}`;
     
@@ -423,6 +426,7 @@ const sendApplicationStatusEmail = async (email, firstName, lastName, university
 };
 
 module.exports = {
+    transporter,
     sendVerificationEmail,
     sendPasswordResetEmail,
     sendApplicationStatusEmail,

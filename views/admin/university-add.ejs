@@ -104,6 +104,8 @@
                                     </div>
                                 </div>
                             </div>
+                            <!-- Hidden input to keep uploaded logo url (for sync with edit form behavior) -->
+                            <input type="hidden" id="logo_url_hidden" name="logo_url" value="">
 
                             <!-- Akademik Bilgiler -->
                             <div class="row mb-4">
@@ -257,6 +259,8 @@
             const world_ranking = document.getElementById('world_ranking').value;
             const description = document.getElementById('description').value;
             const requirements = document.getElementById('requirements').value;
+            const logoFile = document.getElementById('logo_file').files[0];
+            let logoUrl = document.getElementById('logo_url_hidden').value || null;
             
             // Validate required fields
             if (!name || !country || !city) {
@@ -271,6 +275,24 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Ekleniyor...';
             
             try {
+                // Upload logo if selected
+                if (logoFile) {
+                    console.log('📝 Uploading logo...');
+                    const logoFormData = new FormData();
+                    logoFormData.append('logo_file', logoFile);
+                    const logoResponse = await fetch('/api/admin/universities/upload-logo', {
+                        method: 'POST',
+                        body: logoFormData
+                    });
+                    const logoResult = await logoResponse.json();
+                    if (logoResult.success) {
+                        logoUrl = logoResult.logo_url;
+                        document.getElementById('logo_url_hidden').value = logoUrl;
+                        console.log('✅ Logo uploaded:', logoUrl);
+                    } else {
+                        throw new Error('Logo yükleme hatası: ' + logoResult.message);
+                    }
+                }
                 // Collect departments
                 const departments = [];
                 const departmentFields = document.querySelectorAll('.department-field');
@@ -286,15 +308,17 @@
                     }
                 });
                 
-                // Prepare data
-                const formData = new URLSearchParams();
-                formData.append('name', name);
-                formData.append('country', country);
-                formData.append('city', city);
-                formData.append('world_ranking', world_ranking);
-                formData.append('description', description);
-                formData.append('requirements', requirements);
-                formData.append('departments', JSON.stringify(departments));
+                // Prepare JSON payload (more robust across browsers)
+                const payload = {
+                    name,
+                    country,
+                    city,
+                    world_ranking,
+                    description,
+                    requirements,
+                    logo_url: logoUrl || null,
+                    departments
+                };
                 
                 console.log('📝 Sending data:', {
                     name, country, city, world_ranking, description, requirements, departments
@@ -304,9 +328,9 @@
                 const response = await fetch('/api/admin/universities', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
+                        'Content-Type': 'application/json'
                     },
-                    body: formData
+                    body: JSON.stringify(payload)
                 });
                 
                 const result = await response.json();
@@ -335,7 +359,7 @@
             // Form verilerini topla
             const formData = new URLSearchParams();
             const logoFile = document.getElementById('logo_file').files[0];
-            let logoUrl = null;
+            let logoUrl = document.getElementById('logo_url_hidden').value || null;
             
             // Temel bilgileri topla
             formData.append('name', document.getElementById('name').value);
@@ -359,15 +383,14 @@
                     console.log('📝 Uploading logo...');
                     const logoFormData = new FormData();
                     logoFormData.append('logo_file', logoFile);
-                    
                     const logoResponse = await fetch('/api/admin/universities/upload-logo', {
                         method: 'POST',
                         body: logoFormData
                     });
-                    
                     const logoResult = await logoResponse.json();
                     if (logoResult.success) {
                         logoUrl = logoResult.logo_url;
+                        document.getElementById('logo_url_hidden').value = logoUrl;
                         console.log('✅ Logo uploaded:', logoUrl);
                     } else {
                         throw new Error('Logo yükleme hatası: ' + logoResult.message);
@@ -387,20 +410,20 @@
                     urlParams.append('logo_url', logoUrl);
                 }
                 
-                // Collect departments data
-                const departments = {};
-                departmentsContainer.querySelectorAll('.department-item').forEach((item, index) => {
-                    const nameInput = item.querySelector('input[name*="[name_tr]"]');
-                    const priceInput = item.querySelector('input[name*="[price]"]');
+                // Collect departments data (consistent with addUniversity)
+                const backupDepartments = [];
+                departmentsContainer.querySelectorAll('.department-field').forEach((field) => {
+                    const nameInput = field.querySelector('.department-name');
+                    const priceInput = field.querySelector('.department-price');
                     if (nameInput && nameInput.value.trim()) {
-                        departments[index] = { 
-                            name_tr: nameInput.value.trim(), 
-                            name_en: nameInput.value.trim(), 
-                            price: priceInput ? priceInput.value : 0 
-                        };
+                        backupDepartments.push({
+                            name_tr: nameInput.value.trim(),
+                            name_en: nameInput.value.trim(),
+                            price: priceInput ? priceInput.value : 0
+                        });
                     }
                 });
-                urlParams.append('departments', JSON.stringify(departments));
+                urlParams.append('departments', JSON.stringify(backupDepartments));
                 
                 console.log('📝 URLSearchParams Debug:');
                 for (let [key, value] of urlParams.entries()) {
@@ -409,12 +432,12 @@
                 
                 // Üniversiteyi oluştur
                 console.log('📝 Creating university...');
-                const response = await fetch('/admin/universities', {
+                const response = await fetch('/api/admin/universities', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     },
-                    body: urlParams
+                    body: urlParams.toString()
                 });
                 
                 const result = await response.json();

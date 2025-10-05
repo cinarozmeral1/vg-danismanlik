@@ -12,11 +12,19 @@
 
 <!-- Main Content Section -->
 <section class="py-5">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 mx-auto">
-                <div class="card shadow-lg border-0" style="background-color: #e6f0fa !important;">
-                    <div class="card-body p-5">
+    <div class="container-fluid px-xxl-5 px-lg-4 px-md-3 px-3">
+        <div class="row align-items-stretch g-4 about-wrapper">
+            <div class="col-xxl-3 col-lg-3 d-none d-lg-flex flex-column about-gallery-col h-100">
+                <div class="about-pill-image">
+                    <img src="/images/about/tanisalim-1.jpg?v=20250929-1" alt="Students celebrating with Turkish flag" class="img-fluid rounded-4">
+                </div>
+                <div class="about-pill-image">
+                    <img src="/images/about/tanisalim-2.jpg?v=20250929-1" alt="Students socializing in hallway" class="img-fluid rounded-4">
+                </div>
+            </div>
+            <div class="col-xxl-6 col-lg-6 mx-auto mx-lg-0 about-main-card h-100">
+                <div class="card h-100 shadow-lg border-0" style="background-color: #e6f0fa !important;">
+                    <div class="card-body p-5 d-flex flex-column">
                         <div class="text-center mb-5">
                             <i class="fas fa-users fa-4x text-primary mb-3"></i>
                             <h2 class="display-6 fw-bold text-primary"><%= t.aboutUs.mainContent.title %></h2>
@@ -39,12 +47,24 @@
                             </div>
                         </div>
 
+                        <div class="about-social-links-row">
+                            <a href="https://www.instagram.com/ventureglobal/" target="_blank" rel="noopener" class="about-social-link">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="https://www.linkedin.com/company/venture-global-consultancy-start-up/" target="_blank" rel="noopener" class="about-social-link">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                            <a href="https://wa.me/message/O2KRAFDJAMX7F1" target="_blank" rel="noopener" class="about-social-link">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                        </div>
+
                         <div class="bg-white rounded-3 p-4 mb-4">
                             <h4 class="text-primary mb-3"><i class="fas fa-quote-left me-2"></i><%= t.aboutUs.mainContent.ourStory %></h4>
                             <p class="lead mb-0"><%= t.aboutUs.mainContent.storyText %></p>
                         </div>
 
-                        <div class="row mb-4">
+                        <div class="row mt-auto">
                             <div class="col-md-4 mb-3">
                                 <div class="text-center">
                                     <i class="fas fa-handshake fa-2x text-success mb-2"></i>
@@ -65,6 +85,14 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+            <div class="col-xxl-3 col-lg-3 d-none d-lg-flex flex-column about-gallery-col h-100">
+                <div class="about-pill-image">
+                    <img src="/images/about/tanisalim-3.jpg?v=20250929-1" alt="Erasmus presentation" class="img-fluid rounded-4">
+                </div>
+                <div class="about-pill-image">
+                    <img src="/images/about/tanisalim-4.jpg?v=20250929-1" alt="Student session" class="img-fluid rounded-4">
                 </div>
             </div>
         </div>

@@ -694,6 +694,37 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     window.addEventListener('scroll', requestTick, { passive: true });
+
+    // Smooth scroll for anchor links
+    const anchorLinks = document.querySelectorAll('a[href^="#"]');
+    anchorLinks.forEach((link) => {
+      link.addEventListener('click', function (event) {
+        const targetId = this.getAttribute('href');
+        if (targetId.length > 1) {
+          event.preventDefault();
+          const targetElement = document.querySelector(targetId);
+          if (targetElement) {
+            window.scrollTo({
+              top: targetElement.offsetTop - 80,
+              behavior: 'smooth'
+            });
+          }
+        }
+      });
+    });
+
+    const mobileNav = document.getElementById('mobileNav');
+    if (mobileNav) {
+      const offcanvas = document.getElementById('mobileNav');
+      const offcanvasInstance = bootstrap.Offcanvas.getOrCreateInstance(offcanvas, { backdrop: true, scroll: false });
+
+      offcanvas.addEventListener('hidden.bs.offcanvas', () => {
+        const openedAccordion = offcanvas.querySelector('.accordion-collapse.show');
+        if (openedAccordion) {
+          bootstrap.Collapse.getInstance(openedAccordion)?.hide();
+        }
+      });
+    }
 });
 
 // Utility functions

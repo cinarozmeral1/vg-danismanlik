@@ -1,0 +1,126 @@
+<div class="partners-page">
+    <% const wcepContent = (t && t.partners && t.partners.wcep) || {}; %>
+    <% const offers = Array.isArray(wcepContent.offerList) ? wcepContent.offerList : []; %>
+    <% const wcepGalleryLabels = currentLanguage === 'en'
+        ? {
+            hostFamilies: 'Host Family Connections',
+            culturalImmersion: 'Cultural Immersion Days',
+            classrooms: 'Inspired Classroom Moments',
+            weekend: 'Weekend Discoveries',
+            friendships: 'Global Friendships'
+        }
+        : {
+            hostFamilies: 'Ev Sahibi Ailelerle Bağlar',
+            culturalImmersion: 'Kültürel Deneyim Günleri',
+            classrooms: 'İlham Veren Sınıf Anları',
+            weekend: 'Hafta Sonu Keşifleri',
+            friendships: 'Küresel Dostluklar'
+        }; %>
+    <section class="partner-hero wcep-hero py-5">
+        <div class="container">
+            <div class="row align-items-center g-4">
+                <div class="col-md-4">
+                    <div class="partner-logo-card p-4 bg-white shadow-sm rounded-4 text-center">
+                        <img src="/images/partners/wcep/wcep-logo.png" alt="WCEP Logo" class="hero-logo img-fluid">
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="partner-hero-text">
+                        <span class="partner-badge text-primary bg-light">WCEP</span>
+                        <h1 class="display-5 fw-bold mt-3 text-dark"><%= wcepContent.heroTitle || 'WCEP – Venture Global Partnership' %></h1>
+                        <p class="lead text-body-secondary mb-3"><%= wcepContent.heroSubtitle || '' %></p>
+                        <a href="https://www.wcep.org" target="_blank" rel="noopener" class="partner-hero-link">
+                            <i class="fas fa-external-link-alt me-2"></i>
+                            <%= wcepContent.officialLink || 'Visit WCEP Official Website' %>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section py-5">
+        <div class="container">
+            <div class="row g-4 align-items-stretch">
+                <div class="col-lg-7">
+                    <article class="partner-card h-100">
+                        <h2 class="fw-bold text-dark mb-3"><%= wcepContent.whoTitle || '' %></h2>
+                        <p><%= wcepContent.whoBody || '' %></p>
+                        <h3 class="fw-semibold text-dark mt-4 mb-3"><%= wcepContent.visionTitle || '' %></h3>
+                        <p><%= wcepContent.visionBody || '' %></p>
+                        <h3 class="fw-semibold text-dark mt-4 mb-3"><%= wcepContent.missionTitle || '' %></h3>
+                        <p><%= wcepContent.missionBody || '' %></p>
+                    </article>
+                </div>
+                <div class="col-lg-5">
+                    <div class="partner-card h-100 gradient-card">
+                        <h3 class="fw-semibold text-dark mb-3"><i class="fas fa-star me-2 text-primary"></i>
+                            <%= wcepContent.offersTitle || '' %>
+                        </h3>
+                        <ul class="feature-list">
+                            <% offers.forEach(function(item) { %>
+                                <li><i class="fas fa-check"></i> <%= item %></li>
+                            <% }) %>
+                        </ul>
+                        <div class="highlight-box mt-4 text-dark">
+                            <%= wcepContent.highlightBody || '' %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section py-5 wcep-gallery-section">
+        <div class="container">
+            <div class="row g-5 align-items-start">
+                <div class="col-lg-7">
+                    <div class="wcep-gallery-grid">
+                        <figure class="wcep-gallery-item" data-figure="host">
+                            <img src="/images/partners/wcep/wcep-photo-3.jpg" alt="WCEP Host Family" class="wcep-gallery-img">
+                            <figcaption><%= wcepGalleryLabels.hostFamilies %></figcaption>
+                        </figure>
+                        <figure class="wcep-gallery-item" data-figure="immersion">
+                            <img src="/images/partners/wcep/wcep-photo-1.jpg" alt="WCEP Cultural Exchange" class="wcep-gallery-img">
+                            <figcaption><%= wcepGalleryLabels.culturalImmersion %></figcaption>
+                        </figure>
+                        <figure class="wcep-gallery-item" data-figure="classrooms">
+                            <img src="/images/partners/wcep/wcep-photo-2.jpg" alt="WCEP Classroom Experience" class="wcep-gallery-img">
+                            <figcaption><%= wcepGalleryLabels.classrooms %></figcaption>
+                        </figure>
+                        <figure class="wcep-gallery-item" data-figure="friendships">
+                            <img src="/images/partners/wcep/wcep-photo-5.jpg" alt="WCEP International Students" class="wcep-gallery-img">
+                            <figcaption><%= wcepGalleryLabels.friendships %></figcaption>
+                        </figure>
+                        <figure class="wcep-gallery-item" data-figure="weekend">
+                            <img src="/images/partners/wcep/wcep-photo-4.jpg" alt="WCEP Weekend Discoveries" class="wcep-gallery-img">
+                            <figcaption><%= wcepGalleryLabels.weekend %></figcaption>
+                        </figure>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="ratio ratio-16x9 partner-video-wrapper wcep-video-card">
+                        <iframe src="https://www.youtube.com/embed/y2zyyMiiL2s" title="<%= wcepContent.videoAlt || 'WCEP Introduction Video' %>" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="partner-video"></iframe>
+                    </div>
+                    <div class="partner-card h-100 mt-4 student-stories-card wcep-stories-card">
+                        <div class="student-stories-content">
+                            <h3 class="fw-bold text-dark mb-3"><%= wcepContent.storiesTitle || '' %></h3>
+                            <p class="text-body-secondary mb-0"><%= wcepContent.storiesBody || '' %></p>
+                        </div>
+                        <div class="student-stories-gallery wcep-stories-gallery">
+                            <div class="story-thumb">
+                                <img src="/images/partners/wcep/wcep-photo-1.jpg" alt="<%= wcepGalleryLabels.culturalImmersion %>" class="story-thumb-img">
+                            </div>
+                            <div class="story-thumb">
+                                <img src="/images/partners/wcep/wcep-photo-4.jpg" alt="<%= wcepGalleryLabels.weekend %>" class="story-thumb-img">
+                            </div>
+                            <div class="story-thumb">
+                                <img src="/images/partners/wcep/wcep-photo-5.jpg" alt="<%= wcepGalleryLabels.friendships %>" class="story-thumb-img">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

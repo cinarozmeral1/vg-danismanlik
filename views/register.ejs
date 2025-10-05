@@ -28,181 +28,90 @@
                         <div class="card-body p-4">
                             <div id="alertContainer"></div>
                             
-                            <form id="registerForm">
-                                <div class="row">
-                                    <!-- Personal Information -->
-                                    <div class="col-md-6">
-                                        <h5 class="mb-3">
-                                            <i class="fas fa-user me-2"></i>
-                                            <%= t.auth.register.personalInfo %>
-                                        </h5>
-                                        
-                                        <div class="mb-3">
-                                            <label for="first_name" class="form-label">
-                                                <i class="fas fa-user me-2"></i>
-                                                <%= t.auth.register.firstName %> *
-                                            </label>
-                                            <input type="text" class="form-control" id="first_name" name="first_name" required>
-                                        </div>
-                                        
-                                        <div class="mb-3">
-                                            <label for="last_name" class="form-label">
-                                                <i class="fas fa-user me-2"></i>
-                                                <%= t.auth.register.lastName %> *
-                                            </label>
-                                            <input type="text" class="form-control" id="last_name" name="last_name" required>
-                                        </div>
-                                        
-                                        <div class="mb-3">
-                                            <label for="email" class="form-label">
-                                                <i class="fas fa-envelope me-2"></i>
-                                                <%= t.auth.register.email %> *
-                                            </label>
-                                            <input type="email" class="form-control" id="email" name="email" required>
-                                        </div>
-                                        
-                                        <div class="mb-3">
-                                            <label for="tc_number" class="form-label">
-                                                <i class="fas fa-id-card me-2"></i>
-                                                <%= t.auth.register.tcNumber %> *
-                                            </label>
-                                            <input type="text" class="form-control" id="tc_number" name="tc_number" maxlength="11" pattern="[0-9]{11}" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
-                                            <div class="form-text"><%= t.auth.register.tcNumberHelp %></div>
-                                        </div>
-                                        
-                                        <div class="mb-3">
-                                            <label for="phone" class="form-label">
-                                                <i class="fas fa-phone me-2"></i>
-                                                <%= t.auth.register.phone %> *
-                                            </label>
-                                            <input type="tel" class="form-control" id="phone" name="phone" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
-                                        </div>
-                                        
-                                        <div class="mb-3">
-                                            <label for="password" class="form-label">
-                                                <i class="fas fa-lock me-2"></i>
-                                                <%= t.auth.register.password %> *
-                                            </label>
-                                            <input type="password" class="form-control" id="password" name="password" required>
-                                        </div>
-                                        
-                                        <div class="mb-3">
-                                            <label for="confirm_password" class="form-label">
-                                                <i class="fas fa-lock me-2"></i>
-                                                <%= t.auth.register.confirmPassword %> *
-                                            </label>
-                                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Academic Information -->
-                                    <div class="col-md-6">
-                                        <h5 class="mb-3">
-                                            <i class="fas fa-graduation-cap me-2"></i>
-                                            <%= t.auth.register.academicInfo %>
-                                        </h5>
-                                        
-                                        <div class="mb-3">
-                                            <label for="english_level" class="form-label">
-                                                <i class="fas fa-language me-2"></i>
-                                                <%= t.auth.register.englishLevel %> *
-                                            </label>
-                                            <select class="form-select" id="english_level" name="english_level" required>
-                                                <option value=""><%= t.auth.register.selectEnglishLevel %></option>
-                                                <option value="A1">A1</option>
-                                                <option value="A2">A2</option>
-                                                <option value="B1">B1</option>
-                                                <option value="B2">B2</option>
-                                                <option value="C1">C1</option>
-                                                <option value="C2">C2</option>
-                                            </select>
-                                        </div>
-                                        
-                                        <div class="mb-3">
-                                            <label for="high_school_graduation_date" class="form-label">
-                                                <i class="fas fa-calendar me-2"></i>
-                                                <%= t.auth.register.highSchoolGraduation %> *
-                                            </label>
-                                            <input type="date" class="form-control" id="high_school_graduation_date" name="high_school_graduation_date" required>
-                                        </div>
-                                        
-                                        <div class="mb-3">
-                                            <label for="birth_date" class="form-label">
-                                                <i class="fas fa-birthday-cake me-2"></i>
-                                                <%= t.auth.register.birthDate %> *
-                                            </label>
-                                            <input type="date" class="form-control" id="birth_date" name="birth_date" required>
-                                        </div>
-                                        
-                                        <div class="mb-3">
-                                            <label for="passport_number" class="form-label">
-                                                <i class="fas fa-passport me-2"></i>
-                                                <%= t.auth.register.passportNumber %>
-                                            </label>
-                                            <input type="text" class="form-control" id="passport_number" name="passport_number" placeholder="Örn: U23456789" oninput="this.value = this.value.toUpperCase()">
-                                            <div class="form-text">Pasaport numarası harf ile başlamalıdır (Örn: U23456789)</div>
-                                        </div>
-                                        
-                                        <div class="mb-3">
-                                            <label for="passport_type" class="form-label">
-                                                <i class="fas fa-passport me-2"></i>
-                                                <%= t.auth.register.passportType %>
-                                            </label>
-                                            <select class="form-select" id="passport_type" name="passport_type">
-                                                <option value=""><%= t.auth.register.selectPassportType %></option>
-                                                <option value="Bordo"><%= t.auth.register.bordo %></option>
-                                                <option value="Yeşil"><%= t.auth.register.yesil %></option>
-                                            </select>
-                                        </div>
-                                        
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label for="schengen_visa_count" class="form-label">
-                                                        <i class="fas fa-plane me-2"></i>
-                                                        <%= t.auth.register.schengenVisaCount %>
-                                                    </label>
-                                                    <input type="number" class="form-control" id="schengen_visa_count" name="schengen_visa_count" min="0" value="0" placeholder="0">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label for="uk_visa_count" class="form-label">
-                                                        <i class="fas fa-plane me-2"></i>
-                                                        <%= t.auth.register.ukVisaCount %>
-                                                    </label>
-                                                    <input type="number" class="form-control" id="uk_visa_count" name="uk_visa_count" min="0" value="0" placeholder="0">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="mb-3">
-                                            <label for="academic_exams" class="form-label">
-                                                <i class="fas fa-certificate me-2"></i>
-                                                <%= t.auth.register.academicExams %>
-                                            </label>
-                                            <textarea class="form-control" id="academic_exams" name="academic_exams" rows="3" placeholder="<%= t.auth.register.academicExamsPlaceholder %>"></textarea>
-                                        </div>
-                                        
-                                        <div class="mb-3">
-                                            <label for="annual_budget" class="form-label">
-                                                <i class="fas fa-euro-sign me-2"></i>
-                                                <%= t.auth.register.annualBudget %>
-                                            </label>
-                                            <input type="number" class="form-control" id="annual_budget" name="annual_budget" min="0" step="1" placeholder="Örn: 15000">
-                                        </div>
-                                    </div>
+                            <form id="registerForm" class="row g-4">
+                                <div class="col-md-6">
+                                    <label for="first_name" class="form-label">Ad *</label>
+                                    <input type="text" class="form-control" id="first_name" name="first_name" required>
                                 </div>
-                                
-                                <div class="mb-3 form-check">
+                                <div class="col-md-6">
+                                    <label for="last_name" class="form-label">Soyad *</label>
+                                    <input type="text" class="form-control" id="last_name" name="last_name" required>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="tc_number" class="form-label">TC Kimlik No *</label>
+                                    <input type="text" class="form-control" id="tc_number" name="tc_number" maxlength="11" pattern="[0-9]{11}" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+                                    <small class="text-muted">11 haneli olarak giriniz.</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">E-posta *</label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="phone" class="form-label">Telefon *</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="english_level" class="form-label">İngilizce Seviyesi *</label>
+                                    <select class="form-select" id="english_level" name="english_level" required>
+                                        <option value="">Seçiniz</option>
+                                        <option value="A1">A1</option>
+                                        <option value="A2">A2</option>
+                                        <option value="B1">B1</option>
+                                        <option value="B2">B2</option>
+                                        <option value="C1">C1</option>
+                                        <option value="C2">C2</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="high_school_graduation_date" class="form-label">Lise Mezuniyet Tarihi *</label>
+                                    <input type="text" class="form-control" id="high_school_graduation_date" name="high_school_graduation_date" placeholder="GG/AA/YYYY" required>
+                                    <small class="text-muted">Tarihi GG/AA/YYYY formatında, slash (/) kullanarak giriniz.</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="birth_date" class="form-label">Doğum Tarihi *</label>
+                                    <input type="text" class="form-control" id="birth_date" name="birth_date" placeholder="GG/AA/YYYY" required>
+                                    <small class="text-muted">Tarihi GG/AA/YYYY formatında, slash (/) kullanarak giriniz.</small>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="passport_type" class="form-label">Pasaport Türü *</label>
+                                    <input type="text" class="form-control" id="passport_type" name="passport_type" placeholder="Örn: Bordo" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="passport_number" class="form-label">Pasaport Numarası *</label>
+                                    <input type="text" class="form-control" id="passport_number" name="passport_number" placeholder="Örn: P1234567" required>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="desired_country" class="form-label">Gitmek İstediği Ülke *</label>
+                                    <input type="text" class="form-control" id="desired_country" name="desired_country" placeholder="Örn: Almanya" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="active_class" class="form-label">Aktif Sınıf *</label>
+                                    <input type="text" class="form-control" id="active_class" name="active_class" placeholder="Örn: 11" required>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="password" class="form-label">Şifre *</label>
+                                    <input type="password" class="form-control" id="password" name="password" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="confirm_password" class="form-label">Şifre Tekrar *</label>
+                                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                                </div>
+
+                                <div class="col-12 form-check">
                                     <input type="checkbox" class="form-check-input" id="terms" required>
                                     <label class="form-check-label" for="terms">
                                         <%= t.auth.register.termsText %>
                                         <a href="/terms" target="_blank"><%= t.auth.register.termsLink %></a>
                                     </label>
                                 </div>
-                                
-                                <div class="d-grid gap-2">
+
+                                <div class="col-12 d-grid">
                                     <button type="submit" class="btn btn-primary btn-lg">
                                         <i class="fas fa-user-plus me-2"></i>
                                         <%= t.auth.register.submit %>
@@ -254,6 +163,19 @@
                 e.preventDefault();
                 
                 const formData = new FormData(registerForm);
+                const toIsoDate = (value) => {
+                    if (!value) return null;
+                    const isoPattern = /^\d{4}-\d{2}-\d{2}$/;
+                    if (isoPattern.test(value)) return value;
+                    const parts = value.split(/[\.\/]/);
+                    if (parts.length === 3) {
+                        const [day, month, year] = parts;
+                        if (day.length === 1 || day.length === 2) {
+                            return `${year.padStart(4, '0')}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+                        }
+                    }
+                    return value;
+                };
                 const data = {
                     first_name: formData.get('first_name'),
                     last_name: formData.get('last_name'),
@@ -266,12 +188,12 @@
                     birth_date: formData.get('birth_date'),
                     passport_number: formData.get('passport_number'),
                     passport_type: formData.get('passport_type'),
-                    schengen_visa_count: parseInt(formData.get('schengen_visa_count')) || 0,
-                    uk_visa_count: parseInt(formData.get('uk_visa_count')) || 0,
-                    academic_exams: formData.get('academic_exams'),
-                    annual_budget: parseFloat(formData.get('annual_budget')) || null,
+                    desired_country: formData.get('desired_country'),
+                    active_class: formData.get('active_class'),
                     language: '<%= currentLanguage %>'
                 };
+                data.high_school_graduation_date = toIsoDate(data.high_school_graduation_date);
+                data.birth_date = toIsoDate(data.birth_date);
                 
                 try {
                     const response = await fetch('/api/auth/register', {

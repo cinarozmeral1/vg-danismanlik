@@ -6,6 +6,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const { sendApplicationStatusEmail } = require('../services/emailService');
+const { DateTime } = require('luxon');
 
 // File upload middleware for university logos
 const upload = multer({
@@ -514,9 +515,18 @@ router.get('/users/:id/guardians', async (req, res) => {
         );
         
         if (result.rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'User not found'
+            return res.json({
+                success: true,
+                guardians: {
+                    mother_name: null,
+                    mother_surname: null,
+                    mother_phone: null,
+                    mother_tc: null,
+                    father_name: null,
+                    father_surname: null,
+                    father_phone: null,
+                    father_tc: null
+                }
             });
         }
         
@@ -537,19 +547,20 @@ router.put('/users/:id/guardians', async (req, res) => {
         const { mother_name, mother_surname, mother_phone, mother_tc, father_name, father_surname, father_phone, father_tc } = req.body;
         
         const result = await pool.query(
-            `UPDATE users 
-             SET mother_name = $1, mother_surname = $2, mother_phone = $3, mother_tc = $4,
-                 father_name = $5, father_surname = $6, father_phone = $7, father_tc = $8,
-                 updated_at = CURRENT_TIMESTAMP
-             WHERE id = $9`,
-            [mother_name, mother_surname, mother_phone, mother_tc, 
-             father_name, father_surname, father_phone, father_tc, id]
-        );
-        
-        res.json({
-            success: true,
-            message: 'Veli bilgileri başarıyla güncellendi'
-        });
+             `UPDATE users 
+              SET mother_name = $1, mother_surname = $2, mother_phone = $3, mother_tc = $4,
+                  father_name = $5, father_surname = $6, father_phone = $7, father_tc = $8,
+                  updated_at = CURRENT_TIMESTAMP
+              WHERE id = $9 RETURNING mother_name, mother_surname, mother_phone, mother_tc, father_name, father_surname, father_phone, father_tc`,
+             [mother_name, mother_surname, mother_phone, mother_tc, 
+              father_name, father_surname, father_phone, father_tc, id]
+         );
+ 
+         res.json({
+             success: true,
+             message: 'Veli bilgileri başarıyla güncellendi',
+             guardians: result.rows[0]
+         });
     } catch (error) {
         console.error('Update guardians error:', error);
         res.status(500).json({ success: false, message: 'Server error' });
@@ -581,8 +592,12 @@ router.get('/users/:id/details', async (req, res) => {
         
         const userResult = await pool.query(
             `SELECT id, first_name, last_name, email, phone, english_level, 
+                    high_school_graduation_date, birth_date, tc_number,
+                    passport_type, passport_number, desired_country, active_class,
+                    mother_name, mother_surname, mother_phone, mother_tc,
+                    father_name, father_surname, father_phone, father_tc,
                     avatar_url, created_at, is_admin
-             FROM users WHERE id = $1`,
+              FROM users WHERE id = $1`,
             [id]
         );
 
@@ -615,26 +630,60 @@ router.put('/users/:id/details', async (req, res) => {
     try {
         const { id } = req.params;
         const {
-            first_name, last_name, email, phone, english_level, birth_date, high_school_graduation_date,
-            school, class_level, country, city, address, nationality, tc_number,
-            passport_number, passport_type, schengen_visa_count, uk_visa_count,
-            academic_exams, annual_budget
+            first_name,
+            last_name,
+            email,
+            phone,
+            english_level,
+            birth_date,
+            high_school_graduation_date,
+            tc_number,
+            passport_number,
+            passport_type,
+            desired_country,
+            active_class
         } = req.body;
+
+        const allowedPassportTypes = {
+            bordo: 'Bordo',
+            yeşil: 'Yeşil',
+            yesil: 'Yeşil',
+            gri: 'Gri',
+            siyah: 'Siyah'
+        };
+        const normalizedPassportType = passport_type ? passport_type.toLowerCase() : null;
+        const passportTypeFinal = normalizedPassportType ? (allowedPassportTypes[normalizedPassportType] || passport_type) : passport_type;
 
         const result = await pool.query(
             `UPDATE users SET 
-                first_name = $1, last_name = $2, email = $3, phone = $4, 
-                english_level = $5, birth_date = $6, high_school_graduation_date = $7,
-                school = $8, class_level = $9, country = $10, city = $11, address = $12, 
-                nationality = $13, tc_number = $14, passport_number = $15, passport_type = $16,
-                schengen_visa_count = $17, uk_visa_count = $18, academic_exams = $19,
-                annual_budget = $20, updated_at = CURRENT_TIMESTAMP
-             WHERE id = $21 RETURNING *`,
+                first_name = $1,
+                last_name = $2,
+                email = $3,
+                phone = $4,
+                english_level = $5,
+                birth_date = $6,
+                high_school_graduation_date = $7,
+                tc_number = $8,
+                passport_number = $9,
+                passport_type = $10,
+                desired_country = $11,
+                active_class = $12,
+                updated_at = CURRENT_TIMESTAMP
+             WHERE id = $13 RETURNING *`,
             [
-                first_name, last_name, email, phone, english_level, birth_date, high_school_graduation_date,
-                school, class_level, country, city, address, nationality, tc_number,
-                passport_number, passport_type, schengen_visa_count, uk_visa_count,
-                academic_exams, annual_budget, id
+                first_name,
+                last_name,
+                email,
+                phone,
+                english_level,
+                birth_date,
+                high_school_graduation_date,
+                tc_number,
+                passport_number,
+                passportTypeFinal,
+                desired_country,
+                active_class,
+                id
             ]
         );
 
@@ -1189,37 +1238,35 @@ router.get('/universities/:id/edit', async (req, res) => {
 router.put('/universities/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const {
-            name,
-            country,
-            city,
-            logo_url,
-            description,
-            requirements,
-            world_ranking,
-            departments: departmentsRaw
-        } = req.body;
-        
-        // Parse departments if it's a JSON string
-        let departments = null;
-        if (departmentsRaw) {
+        const name = req.body.name;
+        const country = req.body.country;
+        const city = req.body.city;
+        const logo_url = req.body.logo_url;
+        const description = req.body.description;
+        const requirements = req.body.requirements;
+        const world_ranking = req.body.world_ranking;
+        let departmentsRaw = req.body.departments;
+
+        // JSON body veya formdan gelebilir
+        let departments;
+        if (Array.isArray(departmentsRaw)) {
+            departments = departmentsRaw;
+        } else if (typeof departmentsRaw === 'string' && departmentsRaw.trim() !== '') {
             try {
-                departments = typeof departmentsRaw === 'string' ? JSON.parse(departmentsRaw) : departmentsRaw;
-                console.log('Parsed departments:', departments);
-                
-                // Convert array to object if needed
-                if (Array.isArray(departments)) {
-                    const departmentsObj = {};
-                    departments.forEach((dept, index) => {
-                        departmentsObj[index] = dept;
-                    });
-                    departments = departmentsObj;
-                    console.log('Converted departments array to object:', departments);
+                const parsed = JSON.parse(departmentsRaw);
+                if (Array.isArray(parsed)) {
+                    departments = parsed;
+                } else if (parsed && typeof parsed === 'object') {
+                    departments = Object.values(parsed);
+                } else {
+                    departments = [];
                 }
-            } catch (error) {
-                console.error('Error parsing departments:', error);
-                departments = null;
+            } catch (parseErr) {
+                console.warn('Departments parse error:', parseErr.message);
+                departments = [];
             }
+        } else {
+            departments = [];
         }
 
         // Validate required fields
@@ -1264,7 +1311,7 @@ router.put('/universities/:id', async (req, res) => {
         console.log('University update successful:', university);
 
         // Update departments if provided
-        if (departments && typeof departments === 'object') {
+        if (departments && Array.isArray(departments)) {
             console.log('📝 Updating departments:', departments);
             
             try {
@@ -1273,7 +1320,7 @@ router.put('/universities/:id', async (req, res) => {
                 console.log('✅ Existing departments deleted');
                 
                 // Add new departments
-                for (const [key, dept] of Object.entries(departments)) {
+                for (const dept of departments) {
                     if (dept.name_tr && dept.name_en) {
                         await pool.query(
                             `INSERT INTO university_departments (university_id, name_tr, name_en, price, currency) 
@@ -1389,36 +1436,24 @@ router.delete('/programs/:id', async (req, res) => {
     }
 });
 
-// Logo upload middleware
+// Logo upload middleware - memory storage for serverless (Vercel)
 const logoUpload = multer({
-    storage: multer.diskStorage({
-        destination: function (req, file, cb) {
-            const uploadDir = 'public/uploads/logos';
-            if (!fs.existsSync(uploadDir)) {
-                fs.mkdirSync(uploadDir, { recursive: true });
-            }
-            cb(null, uploadDir);
-        },
-        filename: function (req, file, cb) {
-            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-            cb(null, 'logo-' + uniqueSuffix + path.extname(file.originalname));
-        }
-    }),
+    storage: multer.memoryStorage(),
     fileFilter: function (req, file, cb) {
-        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/svg+xml'];
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/svg+xml', 'image/heic', 'image/heif'];
         if (allowedTypes.includes(file.mimetype)) {
             cb(null, true);
         } else {
-            cb(new Error('Sadece resim dosyaları kabul edilir (JPG, PNG, GIF, SVG)'), false);
+            cb(new Error('Sadece resim dosyaları kabul edilir (JPG, PNG, GIF, SVG, HEIC)'), false);
         }
     },
     limits: {
-        fileSize: 5 * 1024 * 1024 // 5MB limit
+        fileSize: 2 * 1024 * 1024 // 2MB limit to avoid timeouts
     }
 });
 
-// Upload logo for university
-router.post('/api/admin/universities/upload-logo', logoUpload.single('logo_file'), async (req, res) => {
+// Upload logo for university (mount-safe: available at /api/admin/universities/upload-logo and /admin/universities/upload-logo)
+router.post('/universities/upload-logo', logoUpload.single('logo_file'), async (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).json({
@@ -1427,11 +1462,13 @@ router.post('/api/admin/universities/upload-logo', logoUpload.single('logo_file'
             });
         }
 
-        const logoUrl = `/uploads/logos/${req.file.filename}`;
-        
+        // Convert to base64 data URL so it works on serverless without persistent disk
+        const mimeType = req.file.mimetype || 'image/png';
+        const base64 = `data:${mimeType};base64,${req.file.buffer.toString('base64')}`;
+
         res.json({
             success: true,
-            logo_url: logoUrl,
+            logo_url: base64,
             message: 'Logo başarıyla yüklendi'
         });
     } catch (error) {
@@ -1476,8 +1513,8 @@ router.post('/test-email', async (req, res) => {
     }
 });
 
-// Create new university
-router.post('/api/admin/universities', async (req, res) => {
+// Create new university (mount-safe)
+router.post('/universities', async (req, res) => {
     try {
         console.log('📝 Create University Request - Headers:', req.headers);
         console.log('📝 Create University Request - Body:', req.body);
@@ -1496,7 +1533,7 @@ router.post('/api/admin/universities', async (req, res) => {
             world_ranking,
             description,
             requirements,
-            departments
+            departments: departmentsRaw
         } = data;
 
         console.log('📝 Parsed Data:', {
@@ -1521,6 +1558,25 @@ router.post('/api/admin/universities', async (req, res) => {
                     city: city || 'MISSING'
                 }
             });
+        }
+
+        // Parse departments like update route supports both array/object and JSON string
+        let departments = null;
+        if (departmentsRaw) {
+            try {
+                departments = typeof departmentsRaw === 'string' ? JSON.parse(departmentsRaw) : departmentsRaw;
+                // Convert array to object if needed
+                if (Array.isArray(departments)) {
+                    const departmentsObj = {};
+                    departments.forEach((dept, index) => {
+                        departmentsObj[index] = dept;
+                    });
+                    departments = departmentsObj;
+                }
+            } catch (error) {
+                console.error('Error parsing departments (create):', error);
+                departments = null;
+            }
         }
 
         // Create university
@@ -1592,13 +1648,27 @@ router.post('/api/admin/universities', async (req, res) => {
     }
 });
 
+// Maintenance: expand logo_url column to TEXT to support base64 data URLs
+router.post('/maintenance/alter-logo-column', async (req, res) => {
+    try {
+        await pool.query('ALTER TABLE universities ALTER COLUMN logo_url TYPE TEXT');
+        res.json({ success: true, message: 'logo_url column converted to TEXT' });
+    } catch (error) {
+        console.error('Alter logo column error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
 // Get student checklist
 router.get('/users/:id/checklist', async (req, res) => {
     try {
         const { id } = req.params;
         
         const result = await pool.query(
-            'SELECT * FROM student_checklist WHERE user_id = $1 ORDER BY id',
+            `SELECT id, item_name, is_completed, completed_at, created_at
+             FROM checklist_items
+             WHERE user_id = $1
+             ORDER BY created_at ASC`,
             [id]
         );
         
@@ -1618,9 +1688,19 @@ router.patch('/users/:id/checklist/:itemId', async (req, res) => {
         const { id, itemId } = req.params;
         const { is_completed } = req.body;
         
+        const completed = typeof is_completed === 'boolean' ? is_completed : String(is_completed).toLowerCase() === 'true';
+        
         const result = await pool.query(
-            'UPDATE student_checklist SET is_completed = $1, completed_at = $2 WHERE id = $3 AND user_id = $4 RETURNING *',
-            [is_completed, is_completed ? new Date() : null, itemId, id]
+            `UPDATE checklist_items 
+             SET is_completed = $1, completed_at = $2, updated_at = CURRENT_TIMESTAMP
+             WHERE id = $3 AND user_id = $4
+             RETURNING id, item_name, is_completed, completed_at, updated_at`,
+            [
+                completed,
+                completed ? new Date() : null,
+                itemId,
+                id
+            ]
         );
         
         if (result.rows.length === 0) {
@@ -1651,41 +1731,25 @@ router.post('/users/:id/checklist/initialize', async (req, res) => {
             'CV düzenlendi ve sisteme yüklendi.',
             'Referans mektupları alındı ve sisteme yüklendi.',
             'Danışmanlık Ücreti ödendi.',
-            'Vize evraklarının tam olduğu kontrol edildi.',
-            'İlgili ülkede banka hesabı açıldı.',
-            'İlgili ülkenin telefon hattı açıldı',
-            'İlgili şehir kartı düzenlendi.',
-            'Üniversite kabul mektubu Türkiyeye gönderildi.',
-            'Dil yeterliliğini kanıtlayan sertifikalar sisteme yüklendi.',
-            'Eğitim geçmişini kanıtlayan belgeler sisteme yüklendi.',
+            'Üniversite kayıt ücretleri ödendi.',
+            'Okullar tarafından düzenlenen video mülakat denemeleri ve genel deneme mülakatları tamamlandı.',
+            'Öğrenci kayıt ücretlerinin iade süreçleri için doktor ve okul raporları gerekli formatta hazırlandı.',
+            'Danışmanlık ücretinin iade süreçleri için gerekli belgeler sisteme yüklendi.',
+            'Kabul alınan okullar listelendi ve aralarından seçim yapıldı.',
             'Finansal durumu kanıtlayan ve vize için gerekli olan belgeler sisteme yüklendi.',
             'Üniversite başvurusu için gerekli yazılı belgeler eklendi.',
             'Apostil ve çeviri gereken vize için gerekli belgeler sisteme yüklendi.'
         ];
         
-        // Check if checklist already exists
-        const existingChecklist = await pool.query(
-            'SELECT id FROM student_checklist WHERE user_id = $1 LIMIT 1',
-            [id]
-        );
-        
-        if (existingChecklist.rows.length > 0) {
-            return res.json({
-                success: true,
-                message: 'Checklist already exists',
-                checklist: existingChecklist.rows
-            });
-        }
-        
-        // Insert default checklist items
-        const insertPromises = defaultItems.map(item => 
+        // Remove old items and insert defaults
+        await pool.query('DELETE FROM checklist_items WHERE user_id = $1', [id]);
+        await Promise.all(defaultItems.map(item =>
             pool.query(
-                'INSERT INTO student_checklist (user_id, item_name) VALUES ($1, $2)',
+                `INSERT INTO checklist_items (user_id, item_name, is_completed)
+                 VALUES ($1, $2, false)`,
                 [id, item]
             )
-        );
-        
-        await Promise.all(insertPromises);
+        ));
         
         res.json({
             success: true,
@@ -1958,8 +2022,17 @@ router.post('/users/:id/services', async (req, res) => {
         // Insert service
         const serviceResult = await client.query(
             `INSERT INTO services (user_id, service_name, amount, currency, due_date, payment_date, is_paid, has_installments) 
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING *`,
-            [id, service_name, amount, currency, due_date, payment_date, is_paid, has_installments]
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+            [
+                id,
+                service_name,
+                amount,
+                currency,
+                due_date || null,
+                payment_date || null,
+                Boolean(is_paid),
+                Boolean(has_installments)
+            ]
         );
         
         const service = serviceResult.rows[0];
@@ -1990,8 +2063,14 @@ router.post('/users/:id/services', async (req, res) => {
                 
                 await client.query(
                     `INSERT INTO installments (service_id, installment_number, amount, due_date, is_paid) 
-                     VALUES (?, ?, ?, ?, ?)`,
-                    [service.id, i, installmentAmount, installmentDate.toISOString().split('T')[0], false]
+                     VALUES ($1, $2, $3, $4, $5)`,
+                    [
+                        service.id,
+                        i,
+                        installmentAmount,
+                        installmentDate.toISOString().split('T')[0],
+                        false
+                    ]
                 );
                 
                 console.log(`Installment ${i} created for date: ${installmentDate.toISOString().split('T')[0]}`);
@@ -2022,11 +2101,21 @@ router.put('/users/:id/services/:serviceId', async (req, res) => {
         
         const result = await pool.query(
             `UPDATE services SET service_name = $1, amount = $2, currency = $3, due_date = $4, payment_date = $5, is_paid = $6, has_installments = $7 
-             WHERE id = $8 AND user_id = $9`,
-            [service_name, amount, currency, due_date, payment_date, is_paid, has_installments, serviceId, id]
-        );
+             WHERE id = $8 AND user_id = $9 RETURNING *`,
+            [
+                service_name,
+                amount,
+                currency,
+                due_date || null,
+                payment_date || null,
+                Boolean(is_paid),
+                Boolean(has_installments),
+                serviceId,
+                id
+            ]
+         );
         
-        if (result.rows.length === 0) {
+        if (result.rowCount === 0) {
             return res.status(404).json({
                 success: false,
                 message: 'Service not found'
@@ -2034,10 +2123,10 @@ router.put('/users/:id/services/:serviceId', async (req, res) => {
         }
         
         res.json({
-            success: true,
-            message: 'Service updated successfully',
-            service: result.rows[0]
-        });
+             success: true,
+             message: 'Service updated successfully',
+             service: result.rows[0]
+         });
     } catch (error) {
         console.error('Update service error:', error);
         res.status(500).json({ success: false, message: 'Server error' });
@@ -2054,11 +2143,11 @@ router.delete('/users/:id/services/:serviceId', async (req, res) => {
         
         // Delete service
         const result = await pool.query(
-            'DELETE FROM services WHERE id = $1 AND user_id = $2',
+            'DELETE FROM services WHERE id = $1 AND user_id = $2 RETURNING id',
             [serviceId, id]
-        );
+         );
         
-        if (result.rows.length === 0) {
+        if (result.rowCount === 0) {
             return res.status(404).json({
                 success: false,
                 message: 'Service not found'
@@ -2090,8 +2179,15 @@ router.post('/users/:id/services/:serviceId/installments', async (req, res) => {
         
         const result = await pool.query(
             `INSERT INTO installments (service_id, amount, due_date, payment_date, is_paid, installment_number) 
-             VALUES (?, ?, ?, ?, ?, ?) RETURNING *`,
-            [serviceId, amount, due_date, payment_date, is_paid, installmentNumber]
+             VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+            [
+                serviceId,
+                amount,
+                due_date,
+                payment_date || null,
+                Boolean(is_paid),
+                installmentNumber
+            ]
         );
         
         res.json({
@@ -2113,11 +2209,18 @@ router.put('/users/:id/services/:serviceId/installments/:installmentId', async (
         
         const result = await pool.query(
             `UPDATE installments SET amount = $1, due_date = $2, payment_date = $3, is_paid = $4 
-             WHERE id = $5 AND service_id = $6`,
-            [amount, due_date, payment_date, is_paid, installmentId, serviceId]
-        );
+             WHERE id = $5 AND service_id = $6 RETURNING *`,
+            [
+                amount,
+                due_date,
+                payment_date || null,
+                Boolean(is_paid),
+                installmentId,
+                serviceId
+            ]
+         );
         
-        if (result.rows.length === 0) {
+        if (result.rowCount === 0) {
             return res.status(404).json({
                 success: false,
                 message: 'Installment not found'
@@ -2125,10 +2228,10 @@ router.put('/users/:id/services/:serviceId/installments/:installmentId', async (
         }
         
         res.json({
-            success: true,
-            message: 'Installment updated successfully',
-            installment: result.rows[0]
-        });
+             success: true,
+             message: 'Installment updated successfully',
+             installment: result.rows[0]
+         });
     } catch (error) {
         console.error('Update installment error:', error);
         res.status(500).json({ success: false, message: 'Server error' });
@@ -2141,11 +2244,11 @@ router.delete('/users/:id/services/:serviceId/installments/:installmentId', asyn
         const { id, serviceId, installmentId } = req.params;
         
         const result = await pool.query(
-            'DELETE FROM installments WHERE id = $1 AND service_id = $2',
+            'DELETE FROM installments WHERE id = $1 AND service_id = $2 RETURNING id',
             [installmentId, serviceId]
-        );
+         );
         
-        if (result.rows.length === 0) {
+        if (result.rowCount === 0) {
             return res.status(404).json({
                 success: false,
                 message: 'Installment not found'
@@ -2586,6 +2689,29 @@ router.get('/users/:id/notes', async (req, res) => {
     }
 });
 
+router.get('/users/:id/notes/:noteId', async (req, res) => {
+    try {
+        const { id, noteId } = req.params;
+
+        const result = await pool.query(
+            `SELECT * FROM notes WHERE user_id = $1 AND id = $2`,
+            [id, noteId]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Note not found' });
+        }
+
+        res.json({
+            success: true,
+            note: result.rows[0]
+        });
+    } catch (error) {
+        console.error('Get note detail error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
 // Add new note
 router.post('/users/:id/notes', async (req, res) => {
     try {
@@ -2596,8 +2722,15 @@ router.post('/users/:id/notes', async (req, res) => {
         
         const result = await pool.query(
             `INSERT INTO notes (user_id, title, content, category, priority, is_important) 
-             VALUES (?, ?, ?, ?, ?, ?) RETURNING *`,
-            [id, title, content, category || 'general', priority || 'medium', is_important || false]
+             VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+            [
+                id,
+                title,
+                content,
+                category || 'general',
+                priority || 'medium',
+                typeof is_important === 'boolean' ? is_important : String(is_important).toLowerCase() === 'true'
+            ]
         );
         
         res.json({
@@ -2618,12 +2751,20 @@ router.put('/users/:id/notes/:noteId', async (req, res) => {
         const { title, content, category, priority, is_important } = req.body;
         
         const result = await pool.query(
-            `UPDATE notes SET title = $1, content = $2, category = $3, priority = $4, is_important = $5 
-             WHERE id = $6 AND user_id = $7`,
-            [title, content, category, priority, is_important, noteId, id]
+            `UPDATE notes SET title = $1, content = $2, category = $3, priority = $4, is_important = $5, updated_at = CURRENT_TIMESTAMP 
+             WHERE id = $6 AND user_id = $7 RETURNING *`,
+            [
+                title,
+                content,
+                category || 'general',
+                priority || 'medium',
+                typeof is_important === 'boolean' ? is_important : String(is_important).toLowerCase() === 'true',
+                noteId,
+                id
+            ]
         );
         
-        if (result.rows.length === 0) {
+        if (result.rowCount === 0) {
             return res.status(404).json({
                 success: false,
                 message: 'Note not found'
@@ -2647,11 +2788,11 @@ router.delete('/users/:id/notes/:noteId', async (req, res) => {
         const { id, noteId } = req.params;
         
         const result = await pool.query(
-            'DELETE FROM notes WHERE id = $1 AND user_id = $2',
+            'DELETE FROM notes WHERE id = $1 AND user_id = $2 RETURNING id',
             [noteId, id]
         );
         
-        if (result.rows.length === 0) {
+        if (result.rowCount === 0) {
             return res.status(404).json({
                 success: false,
                 message: 'Note not found'
@@ -2718,7 +2859,10 @@ router.get('/users/:id/checklist', async (req, res) => {
         const { id } = req.params;
         
         const result = await pool.query(
-            'SELECT * FROM student_checklist WHERE user_id = $1 ORDER BY order_index',
+            `SELECT id, item_name, is_completed, completed_at, created_at
+             FROM checklist_items
+             WHERE user_id = $1
+             ORDER BY created_at ASC`,
             [id]
         );
         
@@ -2796,40 +2940,54 @@ router.post('/users/:id/documents/upload', upload.single('file'), async (req, re
         const { id } = req.params;
         const { title, description, category } = req.body;
         
+        console.log('📄 Admin upload request:', { id, title, description, category, filePresent: !!req.file });
+        
         if (!req.file) {
             return res.status(400).json({ success: false, message: 'No file uploaded' });
         }
         
-        if (!title || !category) {
-            return res.status(400).json({ success: false, message: 'Title and category are required' });
+        // Validate file type (PDF, DOCX, JPG, PNG, etc)
+        const allowedMimeTypes = [
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'image/jpeg',
+            'image/png'
+        ];
+        
+        if (!allowedMimeTypes.includes(req.file.mimetype)) {
+            return res.status(400).json({ success: false, message: 'Unsupported file type. Only PDF, DOC, DOCX, JPG, PNG allowed.' });
         }
         
-        // Convert file buffer to base64 for database storage
-        const fileData = req.file.buffer.toString('base64');
-        
-        const result = await pool.query(
-            `INSERT INTO user_documents 
-            (user_id, title, description, category, file_data, original_filename, file_size, mime_type)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-            RETURNING id, uploaded_at`,
-            [id, title, description, category, fileData, req.file.originalname, req.file.size, req.file.mimetype]
-        );
-        
-        res.json({
-            success: true,
-            message: 'Dosya başarıyla yüklendi',
-            document: {
-                id: result.rows[0].id,
-                title,
-                description,
-                category,
-                original_filename: req.file.originalname,
-                file_size: req.file.size,
-                uploaded_at: result.rows[0].uploaded_at
-            }
-        });
+        try {
+            const fileBuffer = req.file.buffer;
+            console.log('📄 Admin upload buffer size:', fileBuffer.length);
+            const base64Data = fileBuffer.toString('base64');
+            const fileDataUrl = `data:${req.file.mimetype};base64,${base64Data}`;
+            
+            console.log('✅ Admin file converted to Base64, size:', base64Data.length);
+
+            // Insert into user_documents table (same as user upload)
+            const result = await pool.query(`
+                INSERT INTO user_documents (user_id, title, category, description, file_path, original_filename, file_size, mime_type)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+                RETURNING id
+            `, [id, title, category, description || null, fileDataUrl, req.file.originalname, req.file.size, req.file.mimetype]);
+
+            console.log('✅ Admin file uploaded successfully:', result.rows[0].id);
+            
+            res.json({
+                success: true,
+                message: 'Belge başarıyla yüklendi!',
+                documentId: result.rows[0].id
+            });
+            
+        } catch (error) {
+            console.error('Upload document error:', error);
+            res.status(500).json({ success: false, message: 'Server error' });
+        }
     } catch (error) {
-        console.error('Upload document error:', error);
+        console.error('Error uploading document:', error);
         res.status(500).json({ success: false, message: 'Server error' });
     }
 });

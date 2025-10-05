@@ -11,7 +11,8 @@ module.exports = {
         profile: "Profil",
         myProfile: "Profilim",
         dashboard: "Dashboard",
-        logout: "Çıkış"
+        logout: "Çıkış",
+        partners: "Çözüm Ortaklarımız"
     },
     
     // Countries
@@ -426,7 +427,11 @@ module.exports = {
         },
         features: {
             title: "Neden Venture Global®?",
-            subtitle: "Avrupa'da eğitim hayalinizi gerçekleştirmeniz için size özel çözümler sunuyoruz",
+            subtitle: "Venture Global, Türkiye’deki öğrencileri Avrupa’nın en seçkin üniversitelerine yönlendiren bir eğitim danışmanlık şirketidir. Amacımız, her öğrencinin akademik ve kişisel hedeflerine uygun en doğru üniversiteyi bulmasına yardımcı olmak ve bu süreçte tüm adımlarda yanında olmaktır.",
+            body: [
+                "Öğrencilerimize sunduğumuz hizmetler arasında lisans ve yüksek lisans programlarına yerleştirme, hazırlık programları, dil eğitimi ve akademik danışmanlık bulunmaktadır. İngilizce seviyesi yeterli olmayan öğrenciler için Avrupa’daki hazırlık sınıflarıyla güçlü bir temel oluşturuyoruz. Ayrıca hukuk, mühendislik, işletme, tıp ve sosyal bilimler gibi farklı alanlarda geniş üniversite ağıyla öğrencilerimize çeşitli seçenekler sunuyoruz.",
+                "Venture Global yalnızca kabul süreciyle sınırlı kalmaz; aynı zamanda vize işlemleri, konaklama ve Avrupa’ya uyum sürecinde de destek verir. Öğrencilerimizin güvenle yeni hayatlarına başlaması için profesyonel ve kişisel rehberlik sağlamayı önceliğimiz olarak görüyoruz."
+            ],
             network: {
                 title: "Geniş Ağ",
                 description: "50+ üniversite ile işbirliği"
@@ -445,7 +450,7 @@ module.exports = {
             security: "Güvenlik: Tüm verileriniz SSL şifreleme ile korunmaktadır.",
             firstName: "Ad",
             lastName: "Soyad",
-            email: "E-posta Adresi",
+            email: "E-posta",
             phone: "Telefon",
             educationLevel: "Eğitim Seviyesi",
             selectOption: "Seçiniz",
@@ -2172,6 +2177,48 @@ module.exports = {
                 { name: "Economic and Politikal History(Ekonomi ve Politik Tarih)", duration: "4", fee: "Ücretsiz", start: "Eylül" },
                 { name: "Regional Studies and Public Administration (Bölgesel Çalışmalar ve Halkla İlişkiler Yönetimi)", duration: "4", fee: "Ücretsiz", start: "Eylül" }
             ]
+        }
+    },
+    
+    partners: {
+        medczech: {
+            heroTitle: "MedCzech İş Birliği",
+            heroSubtitle: "Çekya tıp fakültesi giriş sınavlarına premium hazırlık, Venture Global ayrıcalıklarıyla",
+            whyTitle: "Neden MedCzech?",
+            onSiteTitle: "Yerinde Deneyim",
+            mentorshipTitle: "Özel Mentorluk",
+            packagesTitle: "Venture Global'a Özel Paketler",
+            packagesCTA: "Paket Detaylarını İsteyin"
+        },
+        wcep: {
+            heroTitle: "WCEP – Venture Global Çözüm Ortaklığı",
+            heroSubtitle: "Öğrencilerimizi küresel vizyona taşıyan WCEP programı ile tanışın",
+            whoTitle: "WCEP kimdir?",
+            whoBody: "WCEP, lise öğrencilerini Amerika ve Kanada başta olmak üzere dünyanın farklı ülkelerindeki devlet okullarına yerleştiren köklü bir kuruluştur. Öğrenciler gönüllü ailelerin yanında kalarak, sadece akademik değil aynı zamanda kültürel bir dönüşüm yaşarlar. Program süresince aldıkları eğitim, Türkiye'de Milli Eğitim Bakanlığı tarafından denkliği onaylanmış transkriptlerle desteklenir, böylece öğrenciler eğitimlerine Türkiye'de kaldıkları yerden devam edebilir.",
+            visionTitle: "WCEP'in vizyonu",
+            visionBody: "Her öğrencinin bir \"küresel vatandaş\" olarak yetişmesini sağlamak. Öğrencilerin yalnızca ders başarısına değil; kültürlerarası iletişim, uyum ve özgüven gelişimine de katkı sunmak.",
+            missionTitle: "WCEP'in misyonu",
+            missionBody: "Dünyanın farklı yerlerinden öğrencileri bir araya getirerek onları hem akademik hem de sosyal olarak geleceğe hazırlamak. Kültürlerarası deneyimlerle öğrencilerin dünyaya bakış açısını genişletmek ve üniversiteye giden yolda güçlü bir profil oluşturmalarını sağlamak.",
+            offersTitle: "Öğrenciler için sundukları",
+            offerList: [
+                "ABD ve Kanada'da devlet okullarında eğitim alma imkânı",
+                "Gönüllü aile yanında güvenli ve kültürel açıdan zengin bir deneyim",
+                "İngilizceyi günlük yaşamın içinde öğrenme fırsatı",
+                "Resmî transkript ve Türkiye'de denklik garantisi",
+                "Üniversiteye geçişte güçlü bir özgeçmiş ve uluslararası vizyon"
+            ],
+            highlightBody: "Venture Global olarak biz de bu sürecin her aşamasında öğrencilerimizin yanındayız. WCEP'in sağladığı kültürel ve akademik fırsatlar ile bizim yerleştirme uzmanlığımız birleştiğinde gençler için geleceğe açılan gerçek bir kapı oluşuyor.",
+            storiesTitle: "Öğrenci Deneyimleri",
+            storiesBody: "WCEP programını tamamlayıp dönen öğrencilerin ilham verici hikâyelerini izleyin, kazandıkları küresel vizyonu keşfedin.",
+            videoAlt: "WCEP Tanıtım Videosu",
+            officialLink: "WCEP Resmi Sitesini Ziyaret Et"
+        },
+        bestschool: {
+            heroTitle: "BestSchool.cz Ortaklığı",
+            heroSubtitle: "Orta Avrupa'da üst düzey eğitim fırsatları için BestSchool.cz ile ortaklığımız",
+            whyTitle: "Neden BestSchool.cz?",
+            packagesTitle: "Öğrencilerimiz için özel fırsatlar",
+            packagesCTA: "Paket Detaylarını İsteyin"
         }
     }
 }; 
