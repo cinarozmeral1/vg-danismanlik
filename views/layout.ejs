@@ -326,24 +326,40 @@
                 globalLogoutBtn.addEventListener('click', handleLogout);
             }
 
+            // Add logout event listeners with better error handling
             document.querySelectorAll('[data-action="logout"]').forEach(el => {
                 el.addEventListener('click', handleLogout);
+                console.log('Added logout listener to element:', el); // Debug log
             });
 
             function handleLogout(e) {
                 e.preventDefault();
+                console.log('Logout clicked'); // Debug log
                 fetch('/api/auth/logout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include'
                 })
-                .then(res => res.json())
+                .then(res => {
+                    console.log('Logout response status:', res.status); // Debug log
+                    return res.json();
+                })
                 .then(data => {
+                    console.log('Logout response data:', data); // Debug log
                     if (data.success) {
+                        console.log('Logout successful, redirecting...'); // Debug log
+                        window.location.href = '/';
+                    } else {
+                        console.error('Logout failed:', data.message);
+                        // Force redirect anyway
                         window.location.href = '/';
                     }
                 })
-                .catch(err => console.error('Logout error:', err));
+                .catch(err => {
+                    console.error('Logout error:', err);
+                    // Force redirect on error
+                    window.location.href = '/';
+                });
             }
 
             function initializeDropdowns() {
