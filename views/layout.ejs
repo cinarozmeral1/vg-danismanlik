@@ -321,10 +321,10 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM Content Loaded, starting initialization...');
             
-            // Initialize dropdowns after a small delay to ensure Bootstrap is ready
+            // Initialize dropdowns after Bootstrap is fully loaded
             setTimeout(function() {
                 initializeDropdowns();
-            }, 100);
+            }, 1000);
 
             const globalLogoutBtn = document.getElementById('globalLogoutBtn');
             if (globalLogoutBtn) {
@@ -372,10 +372,12 @@
                 
                 // Wait for Bootstrap to be fully loaded
                 if (typeof bootstrap === 'undefined') {
-                    console.error('Bootstrap not loaded!');
-                    setTimeout(initializeDropdowns, 100);
+                    console.error('Bootstrap not loaded! Retrying in 500ms...');
+                    setTimeout(initializeDropdowns, 500);
                     return;
                 }
+                
+                console.log('Bootstrap loaded, initializing dropdowns...');
                 
                 // Simple approach: just initialize dropdowns without complex event handling
                 document.querySelectorAll('.dropdown-toggle').forEach(trigger => {
@@ -388,11 +390,8 @@
                             existingInstance.dispose();
                         }
                         
-                        // Initialize new dropdown
-                        new bootstrap.Dropdown(trigger, { 
-                            autoClose: true,
-                            boundary: 'viewport'
-                        });
+                        // Initialize new dropdown with minimal options
+                        new bootstrap.Dropdown(trigger);
                         
                         console.log('Dropdown initialized for:', trigger);
                         
@@ -401,7 +400,7 @@
                     }
                 });
                 
-                console.log('Dropdowns initialized successfully');
+                console.log('All dropdowns initialized successfully');
             }
 
             window.initializeGlobalDropdowns = initializeDropdowns;
