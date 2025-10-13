@@ -312,8 +312,9 @@
             // Re-initialize dropdowns for user pages
             if (window.initializeGlobalDropdowns) {
                 setTimeout(function() {
+                    console.log('Re-initializing dropdowns from dashboard page...');
                     window.initializeGlobalDropdowns();
-                }, 200);
+                }, 300);
             }
             
             const languageOptions = document.querySelectorAll('.language-option');

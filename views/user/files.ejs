@@ -306,4 +306,17 @@
                 alert.remove();
             }, 5000);
         }
+
+        // Initialize dropdowns when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Files page loaded, initializing dropdowns...');
+            
+            // Re-initialize dropdowns for user pages
+            if (window.initializeGlobalDropdowns) {
+                setTimeout(function() {
+                    console.log('Re-initializing dropdowns from files page...');
+                    window.initializeGlobalDropdowns();
+                }, 300);
+            }
+        });
     </script>
