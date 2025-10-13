@@ -127,7 +127,7 @@
 
         // Load applications
         function loadApplications() {
-            fetch('/api/user/applications')
+            fetch('/api/user/api/applications')
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('loadingSpinner').style.display = 'none';
@@ -206,7 +206,7 @@
 
         // View application details
         function viewApplicationDetails(applicationId) {
-            fetch(`/api/user/applications/${applicationId}`)
+            fetch(`/api/user/api/applications/${applicationId}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
@@ -285,7 +285,7 @@
             const formData = new FormData();
             formData.append('document', file);
             
-            fetch(`/api/user/applications/${applicationId}/documents`, {
+            fetch(`/api/user/api/applications/${applicationId}/documents`, {
                 method: 'POST',
                 body: formData
             })

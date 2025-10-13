@@ -270,7 +270,7 @@ router.put('/profile', authenticateUser, async (req, res) => {
 });
 
 // Get user applications (API endpoint)
-router.get('/applications', authenticateUser, async (req, res) => {
+router.get('/api/applications', authenticateUser, async (req, res) => {
     try {
         const result = await pool.query(`
             SELECT 
@@ -296,7 +296,7 @@ router.get('/applications', authenticateUser, async (req, res) => {
 });
 
 // Get application documents
-router.get('/applications/:id/documents', authenticateUser, async (req, res) => {
+router.get('/api/applications/:id/documents', authenticateUser, async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -831,7 +831,7 @@ router.post('/delete-account', authenticateUser, async (req, res) => {
 });
 
 // Get user files
-router.get('/files', authenticateUser, async (req, res) => {
+router.get('/api/files', authenticateUser, async (req, res) => {
     try {
         const result = await pool.query(
             `SELECT 
@@ -895,7 +895,7 @@ router.post('/files/upload', authenticateUser, upload.single('file'), async (req
 });
 
 // Download user file
-router.get('/files/:id/download', authenticateUser, async (req, res) => {
+router.get('/api/files/:id/download', authenticateUser, async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -921,7 +921,7 @@ router.get('/files/:id/download', authenticateUser, async (req, res) => {
 });
 
 // Delete user file
-router.delete('/files/:id', authenticateUser, async (req, res) => {
+router.delete('/api/files/:id', authenticateUser, async (req, res) => {
     try {
         const { id } = req.params;
 
