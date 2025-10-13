@@ -93,14 +93,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('refreshApplicationsBtn').addEventListener('click', refreshApplications);
             
-            // Event delegation for application detail buttons
-            document.addEventListener('click', function(e) {
-                const viewBtn = e.target.closest('.js-view-application-details');
-                if (viewBtn) {
-                    const appId = viewBtn.getAttribute('data-application-id');
-                    viewApplicationDetails(appId);
-                }
-            });
+            // Event delegation removed - details button no longer needed
         });
 
         // Logout function
@@ -170,13 +163,9 @@
                                 </p>
                             </div>
                             <div class="col-md-4 text-end">
-                                <span class="badge bg-${getStatusColor(app.status)} mb-2">
+                                <span class="badge bg-${getStatusColor(app.status)}">
                                     ${getStatusText(app.status)}
                                 </span>
-                                <br>
-                                <button class="btn btn-outline-primary btn-sm js-view-application-details" data-application-id="${app.id}">
-                                    <i class="fas fa-eye me-1"></i>Detaylar
-                                </button>
                             </div>
                         </div>
                     </div>
