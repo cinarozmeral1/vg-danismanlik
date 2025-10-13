@@ -385,8 +385,8 @@ app.post('/admin/login', async (req, res) => {
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
-app.use('/admin', adminRoutes);
 app.use('/api/user', userRoutes);
+app.use('/admin', adminRoutes);
 app.use('/user', userRoutes);
 
 // Scheduled cleanup for unverified users older than 72h since last login

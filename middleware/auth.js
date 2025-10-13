@@ -33,11 +33,9 @@ const authenticateUser = async (req, res, next) => {
         
         const user = result.rows[0];
         
+        // Soft enforcement: allow access but mark verification status
         if (!user.email_verified) {
-            return res.status(403).json({ 
-                success: false, 
-                message: 'Email verification required' 
-            });
+            console.log('⚠️ User email not verified, but allowing access:', user.email);
         }
         
         req.user = user;

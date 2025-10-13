@@ -270,7 +270,7 @@ router.put('/profile', authenticateUser, async (req, res) => {
 });
 
 // Get user applications (API endpoint)
-router.get('/api/applications', authenticateUser, async (req, res) => {
+router.get('/applications', authenticateUser, async (req, res) => {
     try {
         const result = await pool.query(`
             SELECT 
