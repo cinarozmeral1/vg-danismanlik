@@ -312,11 +312,11 @@
             console.log('Files page loaded, initializing dropdowns...');
             
             // Re-initialize dropdowns for user pages
-            if (window.initializeGlobalDropdowns) {
+            if (typeof bootstrap !== 'undefined' && window.initializeGlobalDropdowns) {
                 setTimeout(function() {
                     console.log('Re-initializing dropdowns from files page...');
                     window.initializeGlobalDropdowns();
-                }, 300);
+                }, 500);
             }
         });
     </script>

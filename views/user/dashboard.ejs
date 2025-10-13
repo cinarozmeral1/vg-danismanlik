@@ -310,11 +310,11 @@
             console.log('Dashboard page loaded, initializing...');
             
             // Re-initialize dropdowns for user pages
-            if (window.initializeGlobalDropdowns) {
+            if (typeof bootstrap !== 'undefined' && window.initializeGlobalDropdowns) {
                 setTimeout(function() {
                     console.log('Re-initializing dropdowns from dashboard page...');
                     window.initializeGlobalDropdowns();
-                }, 300);
+                }, 500);
             }
             
             const languageOptions = document.querySelectorAll('.language-option');

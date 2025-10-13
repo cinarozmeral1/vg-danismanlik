@@ -377,44 +377,24 @@
                     return;
                 }
                 
-                // Remove any existing dropdown instances
-                document.querySelectorAll('.dropdown-toggle').forEach(trigger => {
-                    const existingInstance = bootstrap.Dropdown.getInstance(trigger);
-                    if (existingInstance) {
-                        existingInstance.dispose();
-                    }
-                });
-                
-                // Initialize all dropdowns with more robust settings
+                // Simple approach: just initialize dropdowns without complex event handling
                 document.querySelectorAll('.dropdown-toggle').forEach(trigger => {
                     try {
                         console.log('Initializing dropdown for:', trigger);
                         
-                        // Create new dropdown instance
-                        const dropdown = new bootstrap.Dropdown(trigger, { 
+                        // Dispose existing instance if any
+                        const existingInstance = bootstrap.Dropdown.getInstance(trigger);
+                        if (existingInstance) {
+                            existingInstance.dispose();
+                        }
+                        
+                        // Initialize new dropdown
+                        new bootstrap.Dropdown(trigger, { 
                             autoClose: true,
-                            boundary: 'viewport',
-                            display: 'dynamic'
+                            boundary: 'viewport'
                         });
                         
-                        // Remove existing event listeners to prevent duplicates
-                        const newTrigger = trigger.cloneNode(true);
-                        trigger.parentNode.replaceChild(newTrigger, trigger);
-                        
-                        // Re-attach event listeners
-                        newTrigger.addEventListener('click', function(e) {
-                            console.log('Dropdown clicked:', newTrigger);
-                            e.preventDefault();
-                            e.stopPropagation();
-                        });
-                        
-                        newTrigger.addEventListener('show.bs.dropdown', function(e) {
-                            console.log('Dropdown showing:', newTrigger);
-                        });
-                        
-                        newTrigger.addEventListener('hide.bs.dropdown', function(e) {
-                            console.log('Dropdown hiding:', newTrigger);
-                        });
+                        console.log('Dropdown initialized for:', trigger);
                         
                     } catch (error) {
                         console.error('Error initializing dropdown:', error);
