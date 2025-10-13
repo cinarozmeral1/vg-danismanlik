@@ -448,6 +448,15 @@
 
         // Language options event listeners
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('Settings page loaded, initializing...');
+            
+            // Re-initialize dropdowns for user pages
+            if (window.initializeGlobalDropdowns) {
+                setTimeout(function() {
+                    window.initializeGlobalDropdowns();
+                }, 200);
+            }
+            
             const languageOptions = document.querySelectorAll('.language-option');
             
             languageOptions.forEach(option => {

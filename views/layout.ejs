@@ -319,7 +319,12 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            initializeDropdowns();
+            console.log('DOM Content Loaded, starting initialization...');
+            
+            // Initialize dropdowns after a small delay to ensure Bootstrap is ready
+            setTimeout(function() {
+                initializeDropdowns();
+            }, 100);
 
             const globalLogoutBtn = document.getElementById('globalLogoutBtn');
             if (globalLogoutBtn) {
@@ -363,13 +368,47 @@
             }
 
             function initializeDropdowns() {
-                if (typeof bootstrap === 'undefined') return;
+                console.log('Initializing dropdowns...');
+                
+                // Wait for Bootstrap to be fully loaded
+                if (typeof bootstrap === 'undefined') {
+                    console.error('Bootstrap not loaded!');
+                    setTimeout(initializeDropdowns, 100);
+                    return;
+                }
+                
+                // Remove any existing dropdown instances
                 document.querySelectorAll('.dropdown-toggle').forEach(trigger => {
-                    trigger.addEventListener('show.bs.dropdown', () => {
-                        // no-op but ensures listener exists
-                    });
-                    new bootstrap.Dropdown(trigger, { autoClose: true });
+                    const existingInstance = bootstrap.Dropdown.getInstance(trigger);
+                    if (existingInstance) {
+                        existingInstance.dispose();
+                    }
                 });
+                
+                // Initialize all dropdowns
+                document.querySelectorAll('.dropdown-toggle').forEach(trigger => {
+                    try {
+                        console.log('Initializing dropdown for:', trigger);
+                        const dropdown = new bootstrap.Dropdown(trigger, { 
+                            autoClose: true,
+                            boundary: 'viewport'
+                        });
+                        
+                        // Add event listeners for debugging
+                        trigger.addEventListener('click', function(e) {
+                            console.log('Dropdown clicked:', trigger);
+                        });
+                        
+                        trigger.addEventListener('show.bs.dropdown', function(e) {
+                            console.log('Dropdown showing:', trigger);
+                        });
+                        
+                    } catch (error) {
+                        console.error('Error initializing dropdown:', error);
+                    }
+                });
+                
+                console.log('Dropdowns initialized successfully');
             }
 
             window.initializeGlobalDropdowns = initializeDropdowns;
