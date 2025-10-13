@@ -1838,7 +1838,7 @@ router.get('/users/:id/files/:fileId/download', async (req, res) => {
         const { id, fileId } = req.params;
         
         const result = await pool.query(
-            'SELECT * FROM user_documents WHERE id = $1 AND user_id = $2',
+            'SELECT file_data, mime_type, original_filename FROM user_documents WHERE id = $1 AND user_id = $2',
             [fileId, id]
         );
         
@@ -1851,9 +1851,15 @@ router.get('/users/:id/files/:fileId/download', async (req, res) => {
         
         const file = result.rows[0];
         
-        // Extract Base64 data from data URL
-        const base64Data = file.file_path.split(',')[1];
-        const buffer = Buffer.from(base64Data, 'base64');
+        if (!file.file_data) {
+            return res.status(404).json({
+                success: false,
+                message: 'File data not found'
+            });
+        }
+        
+        // Convert base64 to buffer
+        const buffer = Buffer.from(file.file_data, 'base64');
         
         // Set appropriate headers for file download
         res.setHeader('Content-Disposition', `attachment; filename="${file.original_filename}"`);
@@ -1930,19 +1936,18 @@ router.post('/users/:id/files/upload', upload.single('file'), async (req, res) =
             });
         }
 
-        // Convert file buffer to Base64 for Vercel compatibility
+        // Convert file buffer to Base64 for database storage
         const fileBuffer = req.file.buffer; // Memory storage provides buffer directly
         const base64Data = fileBuffer.toString('base64');
-        const fileDataUrl = `data:${req.file.mimetype};base64,${base64Data}`;
 
         console.log('✅ Admin file converted to Base64, size:', base64Data.length);
 
-        // Insert into user_documents table (same as user upload)
+        // Insert into user_documents table using file_data column
         const result = await pool.query(`
-            INSERT INTO user_documents (user_id, title, category, description, file_path, original_filename, file_size, mime_type)
+            INSERT INTO user_documents (user_id, title, category, description, file_data, original_filename, file_size, mime_type)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
             RETURNING id
-        `, [id, title, category, description || null, fileDataUrl, req.file.originalname, req.file.size, req.file.mimetype]);
+        `, [id, title, category, description || null, base64Data, req.file.originalname, req.file.size, req.file.mimetype]);
 
         console.log('✅ Admin file uploaded successfully:', result.rows[0].id);
         
@@ -3237,7 +3242,7 @@ router.get('/users/:userId/file-categories', async (req, res) => {
 });
 
 // File upload endpoint
-router.post('/users/:userId/files/upload', documentUpload.single('file'), async (req, res) => {
+router.post('/users/:userId/files/upload', upload.single('file'), async (req, res) => {
     try {
         const { userId } = req.params;
         const { title, category, description } = req.body;
@@ -3249,16 +3254,21 @@ router.post('/users/:userId/files/upload', documentUpload.single('file'), async 
             });
         }
         
+        // Convert file buffer to Base64 for database storage
+        const fileBuffer = req.file.buffer;
+        const base64Data = fileBuffer.toString('base64');
+        
         const fileResult = await pool.query(`
-            INSERT INTO user_documents (user_id, title, original_filename, file_path, mime_type, category, description)
-            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            INSERT INTO user_documents (user_id, title, original_filename, file_data, mime_type, file_size, category, description)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
             RETURNING *
         `, [
             userId, 
             title, 
             req.file.originalname, 
-            req.file.path, 
-            req.file.mimetype, 
+            base64Data,
+            req.file.mimetype,
+            req.file.size,
             category, 
             description || ''
         ]);
@@ -3374,7 +3384,8 @@ router.get('/users/:userId/documents/:documentId/download', async (req, res) => 
         const { userId, documentId } = req.params;
         
         const documentResult = await pool.query(`
-            SELECT * FROM user_documents 
+            SELECT file_data, mime_type, original_filename 
+            FROM user_documents 
             WHERE id = $1 AND user_id = $2
         `, [documentId, userId]);
         
@@ -3386,16 +3397,24 @@ router.get('/users/:userId/documents/:documentId/download', async (req, res) => 
         }
         
         const document = documentResult.rows[0];
-        const filePath = path.join(__dirname, '..', document.file_path);
         
-        if (!fs.existsSync(filePath)) {
+        if (!document.file_data) {
             return res.status(404).json({
                 success: false,
-                message: 'Dosya dosya sisteminde bulunamadı'
+                message: 'Dosya verisi bulunamadı'
             });
         }
         
-        res.download(filePath, document.original_filename);
+        // Convert base64 to buffer
+        const buffer = Buffer.from(document.file_data, 'base64');
+        
+        // Set appropriate headers for file download
+        res.setHeader('Content-Disposition', `attachment; filename="${document.original_filename}"`);
+        res.setHeader('Content-Type', document.mime_type);
+        res.setHeader('Content-Length', buffer.length);
+        
+        // Send the file buffer
+        res.send(buffer);
     } catch (error) {
         console.error('Error downloading file:', error);
         res.status(500).json({
@@ -3411,7 +3430,7 @@ router.delete('/users/:userId/documents/:documentId', async (req, res) => {
         const { userId, documentId } = req.params;
         
         const documentResult = await pool.query(`
-            SELECT * FROM user_documents 
+            SELECT id FROM user_documents 
             WHERE id = $1 AND user_id = $2
         `, [documentId, userId]);
         
@@ -3422,15 +3441,7 @@ router.delete('/users/:userId/documents/:documentId', async (req, res) => {
             });
         }
         
-        const document = documentResult.rows[0];
-        
-        // Delete file from filesystem
-        const filePath = path.join(__dirname, '..', document.file_path);
-        if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath);
-        }
-        
-        // Delete from database
+        // Delete from database (no file system cleanup needed for base64 storage)
         await pool.query('DELETE FROM user_documents WHERE id = $1', [documentId]);
         
         res.json({

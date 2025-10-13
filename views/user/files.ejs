@@ -164,7 +164,7 @@
             let html = '';
             files.forEach(file => {
                 const fileSize = (file.file_size / 1024 / 1024).toFixed(2);
-                const uploadDate = new Date(file.uploaded_at).toLocaleDateString('tr-TR');
+                const uploadDate = new Date(file.created_at).toLocaleDateString('tr-TR');
                 
                 html += `
                     <div class="card mb-3">

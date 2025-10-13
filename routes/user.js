@@ -836,10 +836,10 @@ router.get('/files', authenticateUser, async (req, res) => {
         const result = await pool.query(
             `SELECT 
                 id, title, description, category, file_size, 
-                original_filename, uploaded_at
+                original_filename, created_at
             FROM user_documents 
             WHERE user_id = $1
-            ORDER BY uploaded_at DESC
+            ORDER BY created_at DESC
         `, [req.user.id]);
 
         res.json({
@@ -868,8 +868,8 @@ router.post('/files/upload', authenticateUser, upload.single('file'), async (req
         const result = await pool.query(
             `INSERT INTO user_documents 
             (user_id, title, description, category, file_data, file_size, 
-             original_filename, mime_type, uploaded_at)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, CURRENT_TIMESTAMP)
+             original_filename, mime_type)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
             RETURNING id`,
             [
                 req.user.id,
