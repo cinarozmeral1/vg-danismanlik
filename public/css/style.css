@@ -3711,18 +3711,18 @@ body {
     will-change: transform;
 }
 
-/* Complete offcanvas animation override for mobile */
+/* Disable all offcanvas animations to prevent explosion effect */
 .offcanvas-end {
     box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
-    /* Force hardware acceleration */
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
     will-change: transform;
-    /* Disable all Bootstrap transitions */
+    /* Completely disable all transitions and animations */
     transition: none !important;
+    animation: none !important;
 }
 
-/* Override Bootstrap completely */
+/* Override Bootstrap completely - disable all animations */
 .offcanvas {
     transition: none !important;
     animation: none !important;
@@ -3733,14 +3733,17 @@ body {
     animation: none !important;
 }
 
-/* Custom smooth slide animation */
+/* Disable slide animations completely */
 .offcanvas-end {
     transform: translateX(100%);
-    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    transition: none !important;
+    animation: none !important;
 }
 
 .offcanvas-end.show {
     transform: translateX(0) !important;
+    transition: none !important;
+    animation: none !important;
 }
 
 /* Mobile-specific optimizations */
@@ -3924,22 +3927,21 @@ body {
     }
     
     .offcanvas-title {
-        color: #ffffff !important;
+        color: #000000 !important;
         font-weight: 700 !important;
         font-size: 1.1rem !important;
     }
     
     .offcanvas-header small {
-        color: #ffffff !important;
+        color: #000000 !important;
         font-weight: 600 !important;
         font-size: 0.85rem !important;
         opacity: 1 !important;
     }
     
-    .btn-close-white {
-        filter: brightness(0) invert(1) !important;
-        opacity: 1 !important;
-        font-size: 1.2rem !important;
+    .btn-close {
+        color: #000000 !important;
+        font-size: 1.5rem !important;
         font-weight: bold !important;
         background: none !important;
         border: none !important;
@@ -3949,13 +3951,6 @@ body {
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-    }
-    
-    .btn-close-white::before {
-        content: "✕" !important;
-        font-size: 1.2rem !important;
-        font-weight: bold !important;
-        color: #ffffff !important;
     }
 }
 

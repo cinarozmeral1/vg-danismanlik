@@ -18,7 +18,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/css/style.css?v=20251018-mobile-header-fix">
+    <link rel="stylesheet" href="/css/style.css?v=20251018-mobile-final-fix">
 </head>
 <body>
     <!-- Professional Navigation -->
@@ -157,11 +157,11 @@
                     <img src="/images/logos/venture-global-logo.png" alt="Venture Global" style="height: 28px; width: auto; display:block;">
                 </span>
                 <div>
-                    <h5 class="offcanvas-title mb-0" id="mobileNavLabel" style="font-weight: 700; color:#ffffff; font-size: 1.1rem;">Venture Global</h5>
-                    <small style="opacity: 1; color:#ffffff; font-weight: 600; font-size: 0.85rem;">Eğitim Danışmanlığı</small>
+                    <h5 class="offcanvas-title mb-0" id="mobileNavLabel" style="font-weight: 700; color:#000000; font-size: 1.1rem;">Venture Global</h5>
+                    <small style="opacity: 1; color:#000000; font-weight: 600; font-size: 0.85rem;">Eğitim Danışmanlığı</small>
                 </div>
             </div>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close" style="filter: brightness(0) invert(1); opacity: 1; font-size: 1.2rem; font-weight: bold;"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" style="color: #000000; font-size: 1.5rem; font-weight: bold; background: none; border: none; padding: 0.5rem;">✕</button>
         </div>
         
         <div class="offcanvas-body p-0" style="background: #ffffff !important; background-color: #ffffff !important; background-image: none !important;">
@@ -670,6 +670,10 @@
                         
                         // Wait a bit for cleanup
                         setTimeout(() => {
+                            // Disable all transitions before showing
+                            mobileNav.style.transition = 'none';
+                            mobileNav.style.animation = 'none';
+                            
                             mobileNav.classList.add('show');
                             
                             // Force remove any existing backdrops first
@@ -680,13 +684,9 @@
                             const backdrop = document.createElement('div');
                             backdrop.className = 'mobile-menu-backdrop';
                             backdrop.id = 'mobileMenuBackdrop';
-                            backdrop.style.opacity = '0';
+                            backdrop.style.opacity = '1';
+                            backdrop.style.transition = 'none';
                             document.body.appendChild(backdrop);
-                            
-                            // Fade in backdrop
-                            setTimeout(() => {
-                                backdrop.style.opacity = '1';
-                            }, 10);
                             
                             // Close on backdrop click
                             backdrop.addEventListener('click', function() {
@@ -695,10 +695,14 @@
                             
                             // Prevent body scroll
                             document.body.style.overflow = 'hidden';
-                        }, 50);
+                        }, 10);
                     }
                     
                     function closeMobileMenu() {
+                        // Disable transitions before hiding
+                        mobileNav.style.transition = 'none';
+                        mobileNav.style.animation = 'none';
+                        
                         mobileNav.classList.remove('show');
                         
                         // Force remove ALL backdrops
@@ -724,7 +728,7 @@
                                     backdrop.parentNode.removeChild(backdrop);
                                 }
                             });
-                        }, 100);
+                        }, 10);
                     }
                 }
             });
