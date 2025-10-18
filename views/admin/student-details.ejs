@@ -350,8 +350,8 @@
                                 <!-- Left Sidebar - File Categories -->
                                 <div class="col-md-3">
                                     <div class="card">
-                                        <div class="card-header">
-                                            <h6 class="mb-0 text-center">Dosya Kategorileri</h6>
+                                        <div class="card-header bg-primary text-white" style="background-color: #0d6efd !important; color: white !important;">
+                                            <h6 class="mb-0 text-center" style="color: white !important;">Dosya Kategorileri</h6>
                                         </div>
                                         <div class="card-body p-0">
                                             <div id="fileCategoriesList">
@@ -382,8 +382,8 @@
                                 
                                 <!-- File List -->
                                 <div class="card">
-                                    <div class="card-header">
-                                        <h6 class="mb-0">Dosya Listesi</h6>
+                                    <div class="card-header bg-primary text-white" style="background-color: #0d6efd !important; color: white !important;">
+                                        <h6 class="mb-0" style="color: white !important;">Dosya Listesi</h6>
                                     </div>
                                     <div class="card-body">
                                         <div id="filesList">
@@ -3414,5 +3414,30 @@ async function saveGuardiansInfo() {
         alert('Veli bilgileri güncellenirken bir hata oluştu.');
     }
 }
+
+// Force update file section headers to blue
+document.addEventListener('DOMContentLoaded', function() {
+    // Update file categories header
+    const categoriesHeader = document.querySelector('#files .card-header:first-of-type');
+    if (categoriesHeader) {
+        categoriesHeader.style.backgroundColor = '#0d6efd';
+        categoriesHeader.style.color = 'white';
+        const h6 = categoriesHeader.querySelector('h6');
+        if (h6) {
+            h6.style.color = 'white';
+        }
+    }
+    
+    // Update file list header
+    const fileListHeader = document.querySelector('#files .card-header:last-of-type');
+    if (fileListHeader) {
+        fileListHeader.style.backgroundColor = '#0d6efd';
+        fileListHeader.style.color = 'white';
+        const h6 = fileListHeader.querySelector('h6');
+        if (h6) {
+            h6.style.color = 'white';
+        }
+    }
+});
 
 </script>

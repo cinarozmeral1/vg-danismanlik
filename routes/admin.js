@@ -2972,12 +2972,12 @@ router.post('/users/:id/documents/upload', upload.single('file'), async (req, re
             
             console.log('✅ Admin file converted to Base64, size:', base64Data.length);
 
-            // Insert into user_documents table (same as user upload)
+            // Insert into user_documents table using file_data column
             const result = await pool.query(`
-                INSERT INTO user_documents (user_id, title, category, description, file_path, original_filename, file_size, mime_type)
+                INSERT INTO user_documents (user_id, title, category, description, file_data, original_filename, file_size, mime_type)
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
                 RETURNING id
-            `, [id, title, category, description || null, fileDataUrl, req.file.originalname, req.file.size, req.file.mimetype]);
+            `, [id, title, category, description || null, base64Data, req.file.originalname, req.file.size, req.file.mimetype]);
 
             console.log('✅ Admin file uploaded successfully:', result.rows[0].id);
             

@@ -18,7 +18,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/css/style.css?v=20251001-7">
+    <link rel="stylesheet" href="/css/style.css?v=20251018-mobile-fix-2">
 </head>
 <body>
     <!-- Professional Navigation -->
@@ -26,7 +26,7 @@
         <div class="container-fluid px-3 px-md-4 px-lg-5">
             <!-- Brand -->
             <a class="navbar-brand" href="/">
-                <i class="fas fa-globe-americas text-primary me-2"></i>
+                <img src="/images/logos/venture-global-logo.png" alt="Venture Global" class="navbar-logo me-2" style="height: 36px; width: auto;">
                 Venture Global
             </a>
             
@@ -149,77 +149,285 @@
         </div>
     </nav>
 
-    <!-- Mobile Offcanvas Navigation -->
-    <div class="offcanvas offcanvas-top mobile-nav-offcanvas" tabindex="-1" id="mobileNav" aria-labelledby="mobileNavLabel" data-bs-scroll="false" data-bs-backdrop="true">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="mobileNavLabel">Venture Global</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        <!-- Clean Mobile Offcanvas Navigation -->
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="mobileNav" aria-labelledby="mobileNavLabel" style="width: 300px;">
+        <div class="offcanvas-header" style="background: var(--primary-600); color: white; padding: 1.25rem 1.5rem;">
+            <div class="d-flex align-items-center">
+                <span class="me-2" style="display:inline-flex; align-items:center; justify-content:center; width: 40px; height: 40px; background:#ffffff; border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.06);">
+                    <img src="/images/logos/venture-global-logo.png" alt="Venture Global" style="height: 28px; width: auto; display:block;">
+                </span>
+                <div>
+                    <h5 class="offcanvas-title mb-0" id="mobileNavLabel" style="font-weight: 700; color:#ffffff;">Venture Global</h5>
+                    <small style="opacity: 1; color:#eaf2ff; font-weight: 500;">Eğitim Danışmanlığı</small>
+                </div>
+            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
-        <div class="offcanvas-body">
-            <nav class="mobile-nav d-flex flex-column h-100">
-                <ul class="mobile-nav-list list-unstyled mb-3">
-                    <li><a class="nav-link" href="/"><i class="fas fa-home me-2"></i><%= (typeof t !== 'undefined' && t.nav) ? t.nav.home : 'Ana Sayfa' %></a></li>
-                    <li><a class="nav-link" href="/about-us"><i class="fas fa-info-circle me-2"></i><%= (typeof t !== 'undefined' && t.nav) ? t.nav.aboutUs : 'Tanışalım' %></a></li>
-                </ul>
-
-                <div class="mobile-nav-accordion accordion" id="mobileNavAccordion">
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="partnersHeading">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#partnersCollapse" aria-expanded="false" aria-controls="partnersCollapse">
-                                <i class="fas fa-handshake me-2 text-primary"></i><%= (typeof t !== 'undefined' && t.nav) ? (t.nav.partners || 'Çözüm Ortaklarımız') : 'Çözüm Ortaklarımız' %>
-                            </button>
-                        </h2>
-                        <div id="partnersCollapse" class="accordion-collapse collapse" aria-labelledby="partnersHeading" data-bs-parent="#mobileNavAccordion">
-                            <div class="accordion-body py-2">
-                                <ul class="list-unstyled mb-0">
-                                    <li><a class="nav-link" href="/partners/wcep"><i class="fas fa-arrow-right me-2"></i>WCEP</a></li>
-                                    <li><a class="nav-link" href="/partners/medczech"><i class="fas fa-arrow-right me-2"></i>MedCzech</a></li>
-                                    <li><a class="nav-link" href="/partners/bestschool"><i class="fas fa-arrow-right me-2"></i>BestSchool.cz</a></li>
-                                </ul>
+        
+        <div class="offcanvas-body p-0" style="background: #ffffff !important; background-color: #ffffff !important; background-image: none !important;">
+            <nav class="mobile-nav" style="background: #ffffff !important; background-color: #ffffff !important; background-image: none !important;">
+                <!-- User Section -->
+                <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn === true) { %>
+                    <div style="background: var(--gray-50); padding: 1.25rem; border-bottom: 1px solid var(--gray-200);">
+                        <div class="d-flex align-items-center mb-3">
+                            <div style="width: 40px; height: 40px; background: var(--primary-600); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; margin-right: 12px;">
+                                <i class="fas fa-user" style="font-size: 1rem;"></i>
+                            </div>
+                            <div>
+                                <h6 style="margin: 0; font-size: 1rem; font-weight: 600; color: var(--gray-900);">
+                                    <%= (currentUser && (currentUser.first_name || currentUser.name)) ? (currentUser.first_name || currentUser.name) : 'Kullanıcı' %>
+                                </h6>
+                                <small style="color: var(--gray-600);">
+                                    <% if (currentUser && currentUser.is_admin) { %>
+                                        <i class="fas fa-shield-alt" style="color: var(--warning); margin-right: 4px;"></i>Admin
+                                    <% } else { %>
+                                        <i class="fas fa-graduation-cap" style="color: var(--primary-600); margin-right: 4px;"></i>Öğrenci
+                                    <% } %>
+                                </small>
                             </div>
                         </div>
+                        
+                        <!-- User Quick Actions -->
+                        <% if (currentUser && currentUser.is_admin) { %>
+                            <a href="/admin/dashboard" style="display: block; background: var(--primary-600); color: white; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-size: 0.875rem; font-weight: 500; text-align: center;">
+                                <i class="fas fa-tachometer-alt me-2"></i>Admin Paneli
+                            </a>
+                        <% } else { %>
+                            <a href="/user/dashboard" style="display: block; background: var(--primary-600); color: white; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-size: 0.875rem; font-weight: 500; text-align: center;">
+                                <i class="fas fa-user me-2"></i>Profilim
+                            </a>
+                        <% } %>
                     </div>
+                <% } %>
 
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="studentLifeHeading">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#studentLifeCollapse" aria-expanded="false" aria-controls="studentLifeCollapse">
-                                <i class="fas fa-graduation-cap me-2 text-primary"></i><%= (typeof t !== 'undefined' && t.nav) ? t.nav.studentLife : 'Öğrenci Hayatı' %>
-                            </button>
-                        </h2>
-                        <div id="studentLifeCollapse" class="accordion-collapse collapse" aria-labelledby="studentLifeHeading" data-bs-parent="#mobileNavAccordion">
-                            <div class="accordion-body py-2">
-                                <ul class="list-unstyled mb-0">
-                                    <li><a class="nav-link" href="/student-life/germany"><i class="fas fa-flag me-2"></i><%= (typeof t !== 'undefined' && t.countries) ? t.countries.germany : 'Almanya' %></a></li>
-                                    <li><a class="nav-link" href="/student-life/czech"><i class="fas fa-flag me-2"></i><%= (typeof t !== 'undefined' && t.countries) ? t.countries.czech : 'Çek Cumhuriyeti' %></a></li>
-                                    <li><a class="nav-link" href="/student-life/italy"><i class="fas fa-flag me-2"></i><%= (typeof t !== 'undefined' && t.countries) ? t.countries.italy : 'İtalya' %></a></li>
-                                    <li><a class="nav-link" href="/student-life/austria"><i class="fas fa-flag me-2"></i><%= (typeof t !== 'undefined' && t.countries) ? t.countries.austria : 'Avusturya' %></a></li>
-                                    <li><a class="nav-link" href="/student-life/uk"><i class="fas fa-flag me-2"></i><%= (typeof t !== 'undefined' && t.countries) ? t.countries.uk : 'İngiltere' %></a></li>
-                                    <li><a class="nav-link" href="/student-life/poland"><i class="fas fa-flag me-2"></i><%= (typeof t !== 'undefined' && t.countries) ? t.countries.poland : 'Polonya' %></a></li>
-                                    <li><a class="nav-link" href="/student-life/hungary"><i class="fas fa-flag me-2"></i><%= (typeof t !== 'undefined' && t.countries) ? t.countries.hungary : 'Macaristan' %></a></li>
+                <!-- Main Navigation -->
+                <div style="border-bottom: 1px solid var(--gray-200);">
+                    <div style="background: var(--gray-50); padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--gray-200);">
+                        <small style="color: var(--gray-600); font-weight: 600; text-transform: uppercase; font-size: 0.75rem;">Ana Menü</small>
+                    </div>
+                    <ul style="list-style: none; margin: 0; padding: 0;">
+                        <li>
+                            <a href="/" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent;">
+                                <i class="fas fa-home" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.home : 'Ana Sayfa' %></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/about-us" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                <i class="fas fa-info-circle" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.aboutUs : 'Tanışalım' %></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/services" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                <i class="fas fa-briefcase" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.services : 'Hizmetler' %></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/universities" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                <i class="fas fa-university" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.universities : 'Üniversiteler' %></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/assessment" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                <i class="fas fa-clipboard-check" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.assessment : 'Değerlendirme' %></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/contact" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                <i class="fas fa-envelope" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.contact : 'İletişim' %></span>
+                            </a>
+                        </li>
                                 </ul>
                             </div>
-                        </div>
+
+                <!-- Student Life Section -->
+                <div style="border-bottom: 1px solid var(--gray-200);">
+                    <div style="background: var(--gray-50); padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--gray-200);">
+                        <small style="color: var(--gray-600); font-weight: 600; text-transform: uppercase; font-size: 0.75rem;">
+                            <i class="fas fa-graduation-cap" style="margin-right: 6px;"></i>Öğrenci Hayatı
+                        </small>
                     </div>
+                    <ul style="list-style: none; margin: 0; padding: 0;">
+                        <li>
+                            <a href="/student-life/germany" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                <i class="fas fa-flag" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.countries) ? t.countries.germany : 'Almanya' %></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/student-life/czech" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                <i class="fas fa-flag" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.countries) ? t.countries.czech : 'Çek Cumhuriyeti' %></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/student-life/italy" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                <i class="fas fa-flag" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.countries) ? t.countries.italy : 'İtalya' %></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/student-life/austria" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                <i class="fas fa-flag" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.countries) ? t.countries.austria : 'Avusturya' %></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/student-life/uk" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                <i class="fas fa-flag" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.countries) ? t.countries.uk : 'İngiltere' %></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/student-life/poland" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                <i class="fas fa-flag" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.countries) ? t.countries.poland : 'Polonya' %></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/student-life/hungary" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                <i class="fas fa-flag" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.countries) ? t.countries.hungary : 'Macaristan' %></span>
+                            </a>
+                        </li>
+                    </ul>
+                        </div>
+
+                <!-- Partners Section -->
+                <div style="border-bottom: 1px solid var(--gray-200);">
+                    <div style="background: var(--gray-50); padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--gray-200);">
+                        <small style="color: var(--gray-600); font-weight: 600; text-transform: uppercase; font-size: 0.75rem;">
+                            <i class="fas fa-handshake" style="margin-right: 6px;"></i>Çözüm Ortaklarımız
+                        </small>
+                    </div>
+                    <ul style="list-style: none; margin: 0; padding: 0;">
+                        <li>
+                            <a href="/partners/wcep" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                <i class="fas fa-handshake" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="font-size: 0.9rem; font-weight: 500;">WCEP</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/partners/medczech" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                <i class="fas fa-heartbeat" style="width: 20px; margin-right: 12px; color: #dc2626;"></i>
+                                <span style="font-size: 0.9rem; font-weight: 500;">MedCzech</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/partners/bestschool" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                <i class="fas fa-school" style="width: 20px; margin-right: 12px; color: #059669;"></i>
+                                <span style="font-size: 0.9rem; font-weight: 500;">BestSchool.cz</span>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
 
-                <ul class="mobile-nav-list list-unstyled mt-3 mb-4">
-                    <li><a class="nav-link" href="/services"><i class="fas fa-briefcase me-2"></i><%= (typeof t !== 'undefined' && t.nav) ? t.nav.services : 'Hizmetler' %></a></li>
-                    <li><a class="nav-link" href="/universities"><i class="fas fa-university me-2"></i><%= (typeof t !== 'undefined' && t.nav) ? t.nav.universities : 'Üniversiteler' %></a></li>
-                    <li><a class="nav-link" href="/assessment"><i class="fas fa-clipboard-check me-2"></i><%= (typeof t !== 'undefined' && t.nav) ? t.nav.assessment : 'Değerlendirme' %></a></li>
-                    <li><a class="nav-link" href="/contact"><i class="fas fa-envelope me-2"></i><%= (typeof t !== 'undefined' && t.nav) ? t.nav.contact : 'İletişim' %></a></li>
+                <!-- User Panel Section (if logged in) -->
+                <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn === true) { %>
+                    <div style="border-bottom: 1px solid var(--gray-200);">
+                        <div style="background: var(--gray-50); padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--gray-200);">
+                            <small style="color: var(--gray-600); font-weight: 600; text-transform: uppercase; font-size: 0.75rem;">
+                                <% if (currentUser && currentUser.is_admin) { %>
+                                    <i class="fas fa-shield-alt" style="margin-right: 6px;"></i>Yönetim Paneli
+                                <% } else { %>
+                                    <i class="fas fa-user" style="margin-right: 6px;"></i>Hesabım
+                                <% } %>
+                            </small>
+                        </div>
+                        <ul style="list-style: none; margin: 0; padding: 0;">
+                            <% if (currentUser && currentUser.is_admin) { %>
+                                <li>
+                                    <a href="/admin/dashboard" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                        <i class="fas fa-tachometer-alt" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 500;">Dashboard</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/admin/users" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                        <i class="fas fa-users" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 500;">Öğrenciler</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/admin/applications" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                        <i class="fas fa-file-alt" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 500;">Başvurular</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/admin/universities" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                        <i class="fas fa-university" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 500;">Üniversiteler</span>
+                                    </a>
+                                </li>
+                            <% } else { %>
+                                <li>
+                                    <a href="/user/dashboard" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                        <i class="fas fa-user" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 500;">Profil Bilgileri</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/user/applications" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                        <i class="fas fa-file-alt" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 500;">Başvurularım</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/user/files" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                        <i class="fas fa-folder-open" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 500;">Dosyalarım</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/user/settings" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                        <i class="fas fa-cog" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 500;">Ayarlar</span>
+                                    </a>
+                                </li>
+                            <% } %>
                 </ul>
-
-                <div class="mobile-nav-footer mt-auto pt-3 border-top">
-                    <div class="d-flex gap-2 mb-3">
-                        <a class="btn btn-outline-primary flex-fill" href="/change-language/tr">Türkçe</a>
-                        <a class="btn btn-outline-primary flex-fill" href="/change-language/en">English</a>
                     </div>
+                <% } %>
+
+                <!-- Footer Actions -->
+                <div style="background: #fff; border-top: 1px solid var(--gray-200); padding: 1.25rem; margin-top: auto;">
+                    <!-- Language Selector -->
+                    <div style="margin-bottom: 1rem;">
+                        <small style="color: var(--gray-600); display: block; margin-bottom: 0.5rem; font-size: 0.75rem;">
+                            <i class="fas fa-globe" style="margin-right: 4px;"></i>Dil Seçimi
+                        </small>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <a href="/change-language/tr" style="flex: 1; padding: 0.5rem; border-radius: 6px; text-decoration: none; text-align: center; font-size: 0.8rem; font-weight: 500; <%= currentLanguage === 'tr' ? 'background: var(--primary-600); color: white;' : 'background: var(--gray-100); color: var(--gray-700); border: 1px solid var(--gray-300);' %>">
+                                🇹🇷 Türkçe
+                            </a>
+                            <a href="/change-language/en" style="flex: 1; padding: 0.5rem; border-radius: 6px; text-decoration: none; text-align: center; font-size: 0.8rem; font-weight: 500; <%= currentLanguage === 'en' ? 'background: var(--primary-600); color: white;' : 'background: var(--gray-100); color: var(--gray-700); border: 1px solid var(--gray-300);' %>">
+                                🇬🇧 English
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Auth Actions -->
                     <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn === true) { %>
-                        <a class="btn btn-primary w-100 mb-2" href="/user/dashboard"><i class="fas fa-user me-2"></i>Panelim</a>
-                        <a class="btn btn-outline-danger w-100" href="#" data-action="logout"><i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap</a>
+                        <button style="width: 100%; background: var(--error); color: white; border: none; padding: 0.75rem; border-radius: 6px; font-size: 0.875rem; font-weight: 500; cursor: pointer;" data-action="logout">
+                            <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i>Çıkış Yap
+                        </button>
                     <% } else { %>
-                        <a class="btn btn-outline-primary w-100 mb-2" href="/login"><%= (typeof t !== 'undefined' && t.auth && t.auth.login) ? t.auth.login.title : 'Giriş' %></a>
-                        <a class="btn btn-primary w-100" href="/register"><%= (typeof t !== 'undefined' && t.auth && t.auth.register) ? t.auth.register.title : 'Kayıt Ol' %></a>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <a href="/login" style="display: block; background: transparent; color: var(--primary-600); border: 1px solid var(--primary-600); padding: 0.75rem; border-radius: 6px; text-decoration: none; text-align: center; font-size: 0.875rem; font-weight: 500;">
+                                <i class="fas fa-sign-in-alt" style="margin-right: 8px;"></i>
+                                <%= (typeof t !== 'undefined' && t.auth && t.auth.login) ? t.auth.login.title : 'Giriş' %>
+                            </a>
+                            <a href="/register" style="display: block; background: var(--primary-600); color: white; border: none; padding: 0.75rem; border-radius: 6px; text-decoration: none; text-align: center; font-size: 0.875rem; font-weight: 500;">
+                                <i class="fas fa-user-plus" style="margin-right: 8px;"></i>
+                                <%= (typeof t !== 'undefined' && t.auth && t.auth.register) ? t.auth.register.title : 'Kayıt Ol' %>
+                            </a>
+                        </div>
                     <% } %>
                 </div>
             </nav>
@@ -318,93 +526,212 @@
     <script src="/js/main.js?v=20250930-1"></script>
     
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM Content Loaded, starting initialization...');
+        // Prevent multiple initializations
+        if (window.mobileMenuInitialized) {
+            console.log('Mobile menu already initialized, skipping...');
+        } else {
+            window.mobileMenuInitialized = true;
             
-            // Initialize dropdowns after Bootstrap is fully loaded
-            setTimeout(function() {
-                initializeDropdowns();
-            }, 1000);
-
-            const globalLogoutBtn = document.getElementById('globalLogoutBtn');
-            if (globalLogoutBtn) {
-                globalLogoutBtn.addEventListener('click', handleLogout);
-            }
-
-            // Add logout event listeners with better error handling
-            document.querySelectorAll('[data-action="logout"]').forEach(el => {
-                el.addEventListener('click', handleLogout);
-                console.log('Added logout listener to element:', el); // Debug log
-            });
-
-            function handleLogout(e) {
-                e.preventDefault();
-                console.log('Logout clicked'); // Debug log
-                fetch('/api/auth/logout', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include'
-                })
-                .then(res => {
-                    console.log('Logout response status:', res.status); // Debug log
-                    return res.json();
-                })
-                .then(data => {
-                    console.log('Logout response data:', data); // Debug log
-                    if (data.success) {
-                        console.log('Logout successful, redirecting...'); // Debug log
-                        window.location.href = '/';
-                    } else {
-                        console.error('Logout failed:', data.message);
-                        // Force redirect anyway
-                        window.location.href = '/';
-                    }
-                })
-                .catch(err => {
-                    console.error('Logout error:', err);
-                    // Force redirect on error
-                    window.location.href = '/';
-                });
-            }
-
-            function initializeDropdowns() {
-                console.log('Initializing dropdowns...');
+            // Single initialization function
+            function initializeMobileMenu() {
+                console.log('Initializing mobile menu...');
                 
-                // Wait for Bootstrap to be fully loaded
-                if (typeof bootstrap === 'undefined') {
-                    console.error('Bootstrap not loaded! Retrying in 500ms...');
-                    setTimeout(initializeDropdowns, 500);
+                // Initialize dropdowns only once
+                if (typeof bootstrap !== 'undefined') {
+            initializeDropdowns();
+                } else {
+                    // Wait for Bootstrap with shorter interval
+                    setTimeout(initializeMobileMenu, 100);
                     return;
                 }
                 
-                console.log('Bootstrap loaded, initializing dropdowns...');
+                // Setup logout handlers only once
+                setupLogoutHandlers();
                 
-                // Simple approach: just initialize dropdowns without complex event handling
-                document.querySelectorAll('.dropdown-toggle').forEach(trigger => {
+                // Setup mobile nav events only once
+                setupMobileNavEvents();
+            }
+            
+            function initializeDropdowns() {
+                const dropdownTriggers = document.querySelectorAll('.dropdown-toggle');
+                
+                dropdownTriggers.forEach(trigger => {
                     try {
-                        console.log('Initializing dropdown for:', trigger);
-                        
-                        // Dispose existing instance if any
+                        // Dispose existing instance
                         const existingInstance = bootstrap.Dropdown.getInstance(trigger);
                         if (existingInstance) {
                             existingInstance.dispose();
                         }
                         
-                        // Initialize new dropdown with minimal options
-                        new bootstrap.Dropdown(trigger);
-                        
-                        console.log('Dropdown initialized for:', trigger);
+                        // Initialize with optimized options
+                        new bootstrap.Dropdown(trigger, {
+                            autoClose: true,
+                            boundary: 'viewport'
+                        });
                         
                     } catch (error) {
-                        console.error('Error initializing dropdown:', error);
+                        console.warn('Dropdown initialization failed:', error);
                     }
                 });
-                
-                console.log('All dropdowns initialized successfully');
             }
-
+            
+            function setupLogoutHandlers() {
+                // Remove existing listeners first
+                document.removeEventListener('click', handleLogoutClick);
+                
+                // Add single event listener
+                document.addEventListener('click', handleLogoutClick);
+            }
+            
+            function handleLogoutClick(e) {
+                if (e.target.matches('[data-action="logout"]') || 
+                    e.target.closest('[data-action="logout"]')) {
+                e.preventDefault();
+                    e.stopPropagation();
+                    handleLogout();
+                }
+            }
+            
+            function handleLogout() {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                
+                fetch('/api/auth/logout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    signal: controller.signal
+                })
+                .then(res => res.json())
+                .then(data => {
+                    clearTimeout(timeoutId);
+                        window.location.href = '/';
+                })
+                .catch(err => {
+                    clearTimeout(timeoutId);
+                    window.location.href = '/';
+                });
+            }
+            
+            function setupMobileNavEvents() {
+                const mobileNav = document.getElementById('mobileNav');
+                if (!mobileNav) return;
+                
+                // Completely remove all event listeners
+                const newMobileNav = mobileNav.cloneNode(true);
+                mobileNav.parentNode.replaceChild(newMobileNav, mobileNav);
+                
+                // Add only essential event listeners
+                newMobileNav.addEventListener('show.bs.offcanvas', function() {
+                    // Force show class for CSS animation
+                    this.classList.add('show');
+                });
+                
+                newMobileNav.addEventListener('hidden.bs.offcanvas', function() {
+                    // Clean up
+                    this.classList.remove('show');
+                });
+            }
+            
+            // Initialize on DOM ready
+            document.addEventListener('DOMContentLoaded', function() {
+                // Use requestAnimationFrame for better performance
+                requestAnimationFrame(initializeMobileMenu);
+                
+                // Disable Bootstrap's automatic offcanvas initialization
+                const mobileNav = document.getElementById('mobileNav');
+                if (mobileNav) {
+                    mobileNav.removeAttribute('data-bs-toggle');
+                    mobileNav.removeAttribute('data-bs-target');
+                    
+                    const toggleBtn = document.querySelector('[data-bs-target="#mobileNav"]');
+                    if (toggleBtn) {
+                        toggleBtn.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            if (mobileNav.classList.contains('show')) {
+                                closeMobileMenu();
+                            } else {
+                                openMobileMenu();
+                            }
+                        });
+                    }
+                    
+                    const closeBtn = mobileNav.querySelector('.btn-close');
+                    if (closeBtn) {
+                        closeBtn.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            closeMobileMenu();
+                        });
+                    }
+                    
+                    function openMobileMenu() {
+                        // First, force close any existing menu
+                        closeMobileMenu();
+                        
+                        // Wait a bit for cleanup
+                        setTimeout(() => {
+                            mobileNav.classList.add('show');
+                            
+                            // Force remove any existing backdrops first
+                            const existingBackdrops = document.querySelectorAll('.mobile-menu-backdrop, .offcanvas-backdrop, .modal-backdrop');
+                            existingBackdrops.forEach(backdrop => backdrop.remove());
+                            
+                            // Add new backdrop for left side darkening
+                            const backdrop = document.createElement('div');
+                            backdrop.className = 'mobile-menu-backdrop';
+                            backdrop.id = 'mobileMenuBackdrop';
+                            backdrop.style.opacity = '0';
+                            document.body.appendChild(backdrop);
+                            
+                            // Fade in backdrop
+                            setTimeout(() => {
+                                backdrop.style.opacity = '1';
+                            }, 10);
+                            
+                            // Close on backdrop click
+                            backdrop.addEventListener('click', function() {
+                                closeMobileMenu();
+                            });
+                            
+                            // Prevent body scroll
+                            document.body.style.overflow = 'hidden';
+                        }, 50);
+                    }
+                    
+                    function closeMobileMenu() {
+                        mobileNav.classList.remove('show');
+                        
+                        // Force remove ALL backdrops
+                        const allBackdrops = document.querySelectorAll('.mobile-menu-backdrop, .offcanvas-backdrop, .modal-backdrop, [class*="backdrop"]');
+                        allBackdrops.forEach(backdrop => {
+                            if (backdrop && backdrop.parentNode) {
+                                backdrop.parentNode.removeChild(backdrop);
+                            }
+                        });
+                        
+                        // Remove any remaining backdrop classes from body
+                        document.body.classList.remove('modal-open', 'offcanvas-open');
+                        document.body.style.overflow = '';
+                        document.body.style.paddingRight = '';
+                        document.body.style.removeProperty('overflow');
+                        document.body.style.removeProperty('padding-right');
+                        
+                        // Force cleanup of any remaining backdrop elements
+                        setTimeout(() => {
+                            const remainingBackdrops = document.querySelectorAll('.mobile-menu-backdrop, .offcanvas-backdrop, .modal-backdrop');
+                            remainingBackdrops.forEach(backdrop => {
+                                if (backdrop && backdrop.parentNode) {
+                                    backdrop.parentNode.removeChild(backdrop);
+                                }
+                            });
+                        }, 100);
+                    }
+                }
+            });
+            
+            // Expose for global access
             window.initializeGlobalDropdowns = initializeDropdowns;
-        });
+        }
     </script>
 </body>
 </html> 

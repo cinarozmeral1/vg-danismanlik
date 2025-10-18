@@ -269,7 +269,7 @@ router.put('/profile', authenticateUser, async (req, res) => {
     }
 });
 
-// Get user applications (API endpoint)
+// Get user applications API
 router.get('/api/applications', authenticateUser, async (req, res) => {
     try {
         const result = await pool.query(`
@@ -295,7 +295,7 @@ router.get('/api/applications', authenticateUser, async (req, res) => {
     }
 });
 
-// Get application documents
+// Get application documents API
 router.get('/api/applications/:id/documents', authenticateUser, async (req, res) => {
     try {
         const { id } = req.params;
@@ -542,12 +542,12 @@ router.post('/documents', authenticateUser, upload.single('document'), async (re
 
         console.log('✅ File converted to Base64, size:', base64Data.length);
 
-        // Insert into user_documents table
+        // Insert into user_documents table using file_data column
         const result = await pool.query(`
-            INSERT INTO user_documents (user_id, title, category, description, file_path, original_filename, file_size, mime_type)
+            INSERT INTO user_documents (user_id, title, category, description, file_data, original_filename, file_size, mime_type)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
             RETURNING id
-        `, [req.user.id, title, category, description || null, fileDataUrl, req.file.originalname, req.file.size, req.file.mimetype]);
+        `, [req.user.id, title, category, description || null, base64Data, req.file.originalname, req.file.size, req.file.mimetype]);
 
         res.json({
             success: true,
@@ -584,8 +584,16 @@ router.get('/user-documents/:id/download', authenticateUser, async (req, res) =>
 
         const document = result.rows[0];
         
-        // For Base64 data URLs, send the data directly
-        if (document.file_path.startsWith('data:')) {
+        // Check if file_data exists (new format) or file_path (legacy format)
+        if (document.file_data) {
+            // New format: use file_data column
+            const buffer = Buffer.from(document.file_data, 'base64');
+            
+            res.setHeader('Content-Type', document.mime_type);
+            res.setHeader('Content-Disposition', `attachment; filename="${document.original_filename}"`);
+            res.send(buffer);
+        } else if (document.file_path && document.file_path.startsWith('data:')) {
+            // Legacy format: data URL in file_path
             const base64Data = document.file_path.split(',')[1];
             const buffer = Buffer.from(base64Data, 'base64');
             
@@ -593,15 +601,10 @@ router.get('/user-documents/:id/download', authenticateUser, async (req, res) =>
             res.setHeader('Content-Disposition', `attachment; filename="${document.original_filename}"`);
             res.send(buffer);
         } else {
-            // For file paths (legacy support)
-            const fs = require('fs');
-            if (!fs.existsSync(document.file_path)) {
-                return res.status(404).json({
-                    success: false,
-                    message: 'File not found on server'
-                });
-            }
-            res.download(document.file_path, document.original_filename);
+            return res.status(404).json({
+                success: false,
+                message: 'File data not found'
+            });
         }
 
     } catch (error) {
@@ -830,16 +833,16 @@ router.post('/delete-account', authenticateUser, async (req, res) => {
     }
 });
 
-// Get user files
+// Get user files API
 router.get('/api/files', authenticateUser, async (req, res) => {
     try {
         const result = await pool.query(
             `SELECT 
                 id, title, description, category, file_size, 
-                original_filename, created_at
+                original_filename, uploaded_at
             FROM user_documents 
             WHERE user_id = $1
-            ORDER BY created_at DESC
+            ORDER BY uploaded_at DESC
         `, [req.user.id]);
 
         res.json({
@@ -852,8 +855,8 @@ router.get('/api/files', authenticateUser, async (req, res) => {
     }
 });
 
-// Upload user file
-router.post('/files/upload', authenticateUser, upload.single('file'), async (req, res) => {
+// Upload user file API
+router.post('/api/files/upload', authenticateUser, upload.single('file'), async (req, res) => {
     try {
         const { title, description, category } = req.body;
         const file = req.file;
@@ -890,11 +893,18 @@ router.post('/files/upload', authenticateUser, upload.single('file'), async (req
         });
     } catch (error) {
         console.error('Upload file error:', error);
-        res.status(500).json({ success: false, message: 'Server error' });
+        res.status(500).json({ 
+            success: false, 
+            message: 'Server error: ' + error.message,
+            error: error.message,
+            stack: error.stack,
+            details: error.toString(),
+            fullError: JSON.stringify(error)
+        });
     }
 });
 
-// Download user file
+// Download user file API
 router.get('/api/files/:id/download', authenticateUser, async (req, res) => {
     try {
         const { id } = req.params;
@@ -920,7 +930,7 @@ router.get('/api/files/:id/download', authenticateUser, async (req, res) => {
     }
 });
 
-// Delete user file
+// Delete user file API
 router.delete('/api/files/:id', authenticateUser, async (req, res) => {
     try {
         const { id } = req.params;

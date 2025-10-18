@@ -713,18 +713,7 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     });
 
-    const mobileNav = document.getElementById('mobileNav');
-    if (mobileNav) {
-      const offcanvas = document.getElementById('mobileNav');
-      const offcanvasInstance = bootstrap.Offcanvas.getOrCreateInstance(offcanvas, { backdrop: true, scroll: false });
-
-      offcanvas.addEventListener('hidden.bs.offcanvas', () => {
-        const openedAccordion = offcanvas.querySelector('.accordion-collapse.show');
-        if (openedAccordion) {
-          bootstrap.Collapse.getInstance(openedAccordion)?.hide();
-        }
-      });
-    }
+    // Mobile nav initialization moved to layout.ejs to prevent conflicts
 });
 
 // Utility functions

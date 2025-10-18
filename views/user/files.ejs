@@ -39,7 +39,7 @@
                             
                             <!-- Upload Section -->
                             <div class="card mb-4">
-                                <div class="card-header bg-light">
+                                <div class="card-header bg-primary text-white">
                                     <h5 class="mb-0"><i class="fas fa-upload me-2"></i>Dosya Yükle</h5>
                                 </div>
                                 <div class="card-body">
@@ -80,7 +80,7 @@
 
                             <!-- Files List -->
                             <div class="card">
-                                <div class="card-header bg-light">
+                                <div class="card-header bg-primary text-white">
                                     <h5 class="mb-0"><i class="fas fa-list me-2"></i>Yüklenen Dosyalar</h5>
                                 </div>
                                 <div class="card-body">
@@ -192,7 +192,7 @@
             let html = '';
             files.forEach(file => {
                 const fileSize = file.file_size ? (file.file_size / 1024 / 1024).toFixed(2) : '0';
-                const uploadDate = file.created_at ? new Date(file.created_at).toLocaleDateString('tr-TR') : 'Bilinmiyor';
+                const uploadDate = file.uploaded_at ? new Date(file.uploaded_at).toLocaleDateString('tr-TR') : 'Bilinmiyor';
                 
                 html += `
                     <div class="card mb-3">

@@ -394,17 +394,16 @@ body {
 .navbar {
   --navbar-height: 72px;
   height: var(--navbar-height);
-  background: rgba(255, 255, 255, 0.95);
+  background: #ffffff !important;
+  background-color: #ffffff !important;
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--gray-200);
   box-shadow: var(--shadow-sm);
   position: sticky;
-    top: 0;
+  top: 0;
   z-index: 9999;
   transition: all 0.2s ease;
   padding: 0.85rem 0;
-    box-shadow: var(--shadow-sm);
-    background-color: #fff;
 }
 
 .navbar-brand {
@@ -421,6 +420,25 @@ body {
 
 .navbar-brand i {
     font-size: 1.4rem;
+}
+
+/* Logo styling */
+.navbar-logo {
+    height: 36px;
+    width: auto;
+    object-fit: contain;
+    transition: transform 0.2s ease;
+}
+
+.navbar-logo:hover {
+    transform: scale(1.05);
+}
+
+/* Mobile logo adjustments */
+@media (max-width: 991px) {
+    .navbar-logo {
+        height: 32px;
+    }
 }
 
 .navbar .navbar-nav .nav-link {
@@ -1090,6 +1108,8 @@ body {
 @media (max-width: 991px) {
   .navbar {
     --navbar-height: 64px;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
   }
   
   .navbar-nav {
@@ -1108,11 +1128,11 @@ body {
     margin: var(--space-1) 0;
   }
   
-    .hero-title {
+  .hero-title {
     font-size: var(--text-2xl);
-    }
+  }
     
-    .hero-stats {
+  .hero-stats {
     gap: var(--space-4);
   }
   
@@ -3483,7 +3503,8 @@ body {
         left: 0;
         right: 0;
         bottom: 0;
-        background: #ffffff;
+        background: #ffffff !important;
+        background-color: #ffffff !important;
         padding: 1.75rem 1.75rem 2.5rem;
         overflow-y: auto;
         display: block !important;
@@ -3500,7 +3521,8 @@ body {
         left: 0;
         right: 0;
         bottom: 0;
-        background: #ffffff;
+        background: #ffffff !important;
+        background-color: #ffffff !important;
         padding: 1.75rem 1.75rem 2.5rem;
         overflow-y: auto;
         display: block !important;
@@ -3533,20 +3555,24 @@ body {
     }
 
     .navbar {
-        background-color: #ffffff;
+        background-color: #ffffff !important;
+        background: #ffffff !important;
         box-shadow: var(--shadow-md);
     }
 
     .mobile-nav-offcanvas {
         height: 100vh !important;
         top: 0;
-        background: #ffffff;
+        background: #ffffff !important;
+        background-color: #ffffff !important;
         overflow: hidden;
     }
 
     .mobile-nav-offcanvas .offcanvas-header {
         border-bottom: 1px solid rgba(15, 23, 42, 0.08);
         padding: 1rem 1.25rem;
+        background: #ffffff !important;
+        background-color: #ffffff !important;
     }
 
     .mobile-nav-offcanvas .offcanvas-body {
@@ -3554,6 +3580,8 @@ body {
         display: flex;
         flex-direction: column;
         height: calc(100vh - var(--navbar-height));
+        background: #ffffff !important;
+        background-color: #ffffff !important;
     }
 
     .mobile-nav-list .nav-link {
@@ -3594,7 +3622,8 @@ body {
 
 @media (max-width: 991px) {
     .navbar {
-        background-color: #ffffff;
+        background-color: #ffffff !important;
+        background: #ffffff !important;
         position: sticky;
         top: 0;
         z-index: 1030;
@@ -3604,13 +3633,16 @@ body {
     .mobile-nav-offcanvas {
         height: 100vh !important;
         top: 0;
-        background: #ffffff;
+        background: #ffffff !important;
+        background-color: #ffffff !important;
         overflow: hidden;
     }
 
     .mobile-nav-offcanvas .offcanvas-header {
         border-bottom: 1px solid rgba(15, 23, 42, 0.08);
         padding: 1rem 1.25rem;
+        background: #ffffff !important;
+        background-color: #ffffff !important;
     }
 
     .mobile-nav-offcanvas .offcanvas-body {
@@ -3618,6 +3650,8 @@ body {
         display: flex;
         flex-direction: column;
         height: calc(100vh - var(--navbar-height));
+        background: #ffffff !important;
+        background-color: #ffffff !important;
     }
 
     .mobile-nav-footer {
@@ -3654,4 +3688,258 @@ body {
     .hero-stats .stat-item {
         width: 100%;
     }
+}
+
+/* Force admin file section headers to blue */
+#files .card-header {
+    background-color: #0d6efd !important;
+    color: white !important;
+}
+
+#files .card-header h6 {
+    color: white !important;
+}
+
+/* Optimized Mobile Navigation Styles */
+.mobile-nav {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
+    /* Hardware acceleration for smooth scrolling */
+    -webkit-overflow-scrolling: touch;
+    will-change: transform;
+}
+
+/* Complete offcanvas animation override for mobile */
+.offcanvas-end {
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+    /* Force hardware acceleration */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    will-change: transform;
+    /* Disable all Bootstrap transitions */
+    transition: none !important;
+}
+
+/* Override Bootstrap completely */
+.offcanvas {
+    transition: none !important;
+    animation: none !important;
+}
+
+.offcanvas.show {
+    transition: none !important;
+    animation: none !important;
+}
+
+/* Custom smooth slide animation */
+.offcanvas-end {
+    transform: translateX(100%);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.offcanvas-end.show {
+    transform: translateX(0) !important;
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 991px) {
+    .offcanvas-end {
+        transform: translateX(100%);
+        transition: transform 0.2s ease-out !important;
+    }
+    
+    .offcanvas-end.show {
+        transform: translateX(0) !important;
+    }
+}
+
+/* Custom mobile menu backdrop - only on mobile */
+@media screen and (max-width: 991px) {
+    .mobile-menu-backdrop {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        z-index: 1039 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        background-color: rgba(0, 0, 0, 0.5) !important;
+        transition: opacity 0.3s ease !important;
+        opacity: 1 !important;
+        display: block !important;
+        visibility: visible !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+}
+
+/* Hide backdrop on desktop */
+@media screen and (min-width: 992px) {
+    .mobile-menu-backdrop {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+    }
+}
+
+/* Disable Bootstrap backdrops - only on mobile */
+@media screen and (max-width: 991px) {
+    .offcanvas-backdrop,
+    .modal-backdrop {
+        display: none !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+    }
+}
+
+/* Force remove any backdrop effects on desktop */
+@media screen and (min-width: 992px) {
+    body.modal-open,
+    body.offcanvas-open {
+        overflow: auto !important;
+        padding-right: 0 !important;
+    }
+    
+    .offcanvas-backdrop,
+    .modal-backdrop,
+    .mobile-menu-backdrop {
+        display: none !important;
+    }
+}
+
+/* Proper mobile offcanvas styling - Force solid white background */
+@media screen and (max-width: 991px) {
+    .offcanvas-end {
+        background: #ffffff !important;
+        background-color: #ffffff !important;
+        background-image: none !important;
+        border: none !important;
+        box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15) !important;
+        opacity: 1 !important;
+    }
+    
+    /* Force solid white background for all offcanvas elements */
+    .offcanvas, .offcanvas-end, .offcanvas.show {
+        background: #ffffff !important;
+        background-color: #ffffff !important;
+        background-image: none !important;
+        opacity: 1 !important;
+    }
+    
+    /* Force solid white background for offcanvas body */
+    .offcanvas-body {
+        background-color: #ffffff !important;
+        background: #ffffff !important;
+        background-image: none !important;
+        opacity: 1 !important;
+    }
+    
+    /* Mobile nav container - force solid background */
+    #mobileNav {
+        background-color: #ffffff !important;
+        background: #ffffff !important;
+        background-image: none !important;
+        opacity: 1 !important;
+    }
+    
+    /* Force all mobile nav elements to have solid white background */
+    #mobileNav * {
+        background-color: #ffffff !important;
+        background: #ffffff !important;
+        background-image: none !important;
+    }
+    
+    /* Override any transparent backgrounds */
+    .mobile-nav, .mobile-nav * {
+        background-color: #ffffff !important;
+        background: #ffffff !important;
+        background-image: none !important;
+    }
+    
+    /* Properly hide offcanvas when not shown */
+    .offcanvas:not(.show) {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        transform: translateX(100%) !important;
+    }
+}
+
+/* Hide offcanvas completely on desktop */
+@media screen and (min-width: 992px) {
+    .offcanvas, .offcanvas-end, #mobileNav {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+    }
+}
+
+/* Bootstrap offcanvas override - Force solid backgrounds */
+.offcanvas {
+    --bs-offcanvas-bg: #ffffff;
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    background-image: none !important;
+}
+
+.offcanvas-end {
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    background-image: none !important;
+}
+
+/* Force solid white background for mobile nav */
+#mobileNav {
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    background-image: none !important;
+}
+
+#mobileNav .offcanvas-body {
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    background-image: none !important;
+}
+
+#mobileNav .mobile-nav {
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    background-image: none !important;
+}
+
+/* Override any potential transparency */
+.offcanvas.show {
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    background-image: none !important;
+    opacity: 1 !important;
+}
+
+/* Mobile nav link optimizations */
+.mobile-nav a {
+    /* Optimize repaints */
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    /* Reduce layout thrashing */
+    contain: layout style paint;
+}
+
+/* Smooth transitions for mobile */
+@media (prefers-reduced-motion: no-preference) {
+    .mobile-nav a {
+        transition: background-color 0.15s ease, border-left-color 0.15s ease;
+    }
+}
+
+/* Disable animations for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .offcanvas.show {
+        animation: none;
+    }
+    
+    .mobile-nav a {
+        transition: none;
+    }
+}
 }
