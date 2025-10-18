@@ -3916,6 +3916,49 @@ body {
     opacity: 1 !important;
 }
 
+/* Mobile menu header improvements */
+@media screen and (max-width: 991px) {
+    .offcanvas-header {
+        background: var(--primary-600) !important;
+        background-color: var(--primary-600) !important;
+    }
+    
+    .offcanvas-title {
+        color: #ffffff !important;
+        font-weight: 700 !important;
+        font-size: 1.1rem !important;
+    }
+    
+    .offcanvas-header small {
+        color: #ffffff !important;
+        font-weight: 600 !important;
+        font-size: 0.85rem !important;
+        opacity: 1 !important;
+    }
+    
+    .btn-close-white {
+        filter: brightness(0) invert(1) !important;
+        opacity: 1 !important;
+        font-size: 1.2rem !important;
+        font-weight: bold !important;
+        background: none !important;
+        border: none !important;
+        padding: 0.5rem !important;
+        width: 2rem !important;
+        height: 2rem !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    
+    .btn-close-white::before {
+        content: "✕" !important;
+        font-size: 1.2rem !important;
+        font-weight: bold !important;
+        color: #ffffff !important;
+    }
+}
+
 /* Mobile nav link optimizations */
 .mobile-nav a {
     /* Optimize repaints */
