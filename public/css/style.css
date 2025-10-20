@@ -3981,40 +3981,4 @@ body {
     }
 }
 
-/* File Category Items */
-.file-category-item {
-    background: var(--primary-600) !important;
-    color: white !important;
-    padding: 12px 16px !important;
-    border-bottom: 1px solid rgba(255,255,255,0.1) !important;
-    cursor: pointer !important;
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    transition: all 0.2s ease !important;
-}
-
-.file-category-item:hover {
-    background: var(--primary-700) !important;
-}
-
-.file-category-item.active {
-    background: var(--primary-800) !important;
-    border-left: 4px solid #ffffff !important;
-}
-
-.file-category-name {
-    color: white !important;
-    font-weight: 500 !important;
-}
-
-.file-category-count {
-    color: white !important;
-    background: rgba(255,255,255,0.2) !important;
-    padding: 4px 8px !important;
-    border-radius: 12px !important;
-    font-size: 0.8rem !important;
-    min-width: 24px !important;
-    text-align: center !important;
-}
 }
