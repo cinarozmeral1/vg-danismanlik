@@ -410,9 +410,7 @@
 
                     <!-- Auth Actions -->
                     <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn === true) { %>
-                        <button style="width: 100%; background: var(--error); color: white; border: none; padding: 0.75rem; border-radius: 6px; font-size: 0.875rem; font-weight: 500; cursor: pointer;" data-action="logout">
-                            <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i>Çıkış Yap
-                        </button>
+                        
                     <% } else { %>
                         <div style="display: flex; flex-direction: column; gap: 0.5rem;">
                             <a href="/login" style="display: block; background: transparent; color: var(--primary-600); border: 1px solid var(--primary-600); padding: 0.75rem; border-radius: 6px; text-decoration: none; text-align: center; font-size: 0.875rem; font-weight: 500;">
