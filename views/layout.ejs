@@ -403,6 +403,11 @@
                                 🇬🇧 English
                             </a>
                         </div>
+                        <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn === true) { %>
+                            <button style="width: 100%; margin-top: 0.75rem; background: var(--error); color: #ffffff; border: none; padding: 0.6rem 0.75rem; border-radius: 6px; font-size: 0.9rem; font-weight: 600; cursor: pointer;" data-action="logout">
+                                <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i>Çıkış Yap
+                            </button>
+                        <% } %>
                     </div>
 
                     <!-- Auth Actions -->
