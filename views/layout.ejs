@@ -409,22 +409,18 @@
                     <div style="padding: 1rem; border-top: 1px solid #e5e7eb; background: #f9fafb;">
                         <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn === true) { %>
                             <!-- Logout Button (only when logged in) -->
-                            <button type="button" data-action="logout" style="display: block; width: 100%; background: #dc2626; color: #ffffff; border: 2px solid #dc2626; padding: 0.75rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer;">
-                                <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i>Çıkış Yap
-                            </button>
+                            <div class="btn btn-danger w-100 mb-2" data-action="logout" style="background: #dc2626; border: 2px solid #dc2626; color: white; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; text-align: center;">
+                                <i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap
+                            </div>
                         <% } else { %>
                             <!-- Login and Register buttons (only when not logged in) -->
-                            <div style="margin-bottom: 0.5rem;">
-                                <a href="/login" style="display: block; width: 100%; background: #ffffff; color: #2563eb; border: 2px solid #2563eb; padding: 0.75rem; border-radius: 8px; text-decoration: none; text-align: center; font-size: 0.9rem; font-weight: 600;">
-                                    <i class="fas fa-sign-in-alt" style="margin-right: 8px;"></i>Giriş Yap
-                                </a>
-                            </div>
+                            <a href="/login" class="btn btn-outline-primary w-100 mb-2" style="background: white; border: 2px solid #2563eb; color: #2563eb; padding: 12px; border-radius: 8px; font-weight: 600; text-decoration: none; text-align: center;">
+                                <i class="fas fa-sign-in-alt me-2"></i>Giriş Yap
+                            </a>
                             
-                            <div>
-                                <a href="/register" style="display: block; width: 100%; background: #2563eb; color: #ffffff; border: 2px solid #2563eb; padding: 0.75rem; border-radius: 8px; text-decoration: none; text-align: center; font-size: 0.9rem; font-weight: 600;">
-                                    <i class="fas fa-user-plus" style="margin-right: 8px;"></i>Kayıt Ol
-                                </a>
-                            </div>
+                            <a href="/register" class="btn btn-primary w-100" style="background: #2563eb; border: 2px solid #2563eb; color: white; padding: 12px; border-radius: 8px; font-weight: 600; text-decoration: none; text-align: center;">
+                                <i class="fas fa-user-plus me-2"></i>Kayıt Ol
+                            </a>
                         <% } %>
                     </div>
                 </div>
