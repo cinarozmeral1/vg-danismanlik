@@ -406,23 +406,25 @@
                     </div>
 
                     <!-- Auth Buttons -->
-                    <div style="padding: 1rem; border-top: 1px solid #e5e7eb;">
-                        <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn === true) { %>
-                            <!-- Logout Button (only when logged in) -->
-                            <button type="button" data-action="logout" style="display: block; width: 100%; background: #dc2626; color: #ffffff !important; border: 2px solid #dc2626; padding: 0.75rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer;">
-                                <i class="fas fa-sign-out-alt" style="margin-right: 8px; color: #ffffff !important;"></i><span style="color: #ffffff !important;">Çıkış Yap</span>
-                            </button>
-                        <% } else { %>
-                            <!-- Login Button (only when not logged in) -->
-                            <a href="/login" style="display: block; width: 100%; background: #ffffff; color: #2563eb; border: 2px solid #2563eb; padding: 0.75rem; border-radius: 8px; text-decoration: none; text-align: center; font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem;">
+                    <div style="padding: 1rem; border-top: 1px solid #e5e7eb; background: #f9fafb;">
+                        <!-- Always show all buttons for testing -->
+                        <div style="margin-bottom: 0.5rem;">
+                            <a href="/login" style="display: block; width: 100%; background: #ffffff; color: #2563eb; border: 2px solid #2563eb; padding: 0.75rem; border-radius: 8px; text-decoration: none; text-align: center; font-size: 0.9rem; font-weight: 600;">
                                 <i class="fas fa-sign-in-alt" style="margin-right: 8px;"></i>Giriş Yap
                             </a>
-                            
-                            <!-- Register Button (only when not logged in) -->
-                            <a href="/register" style="display: block; width: 100%; background: #2563eb; color: #ffffff !important; border: 2px solid #2563eb; padding: 0.75rem; border-radius: 8px; text-decoration: none; text-align: center; font-size: 0.9rem; font-weight: 600;">
-                                <i class="fas fa-user-plus" style="margin-right: 8px; color: #ffffff !important;"></i><span style="color: #ffffff !important;">Kayıt Ol</span>
+                        </div>
+                        
+                        <div style="margin-bottom: 0.5rem;">
+                            <a href="/register" style="display: block; width: 100%; background: #2563eb; color: #ffffff; border: 2px solid #2563eb; padding: 0.75rem; border-radius: 8px; text-decoration: none; text-align: center; font-size: 0.9rem; font-weight: 600;">
+                                <i class="fas fa-user-plus" style="margin-right: 8px;"></i>Kayıt Ol
                             </a>
-                        <% } %>
+                        </div>
+                        
+                        <div>
+                            <button type="button" data-action="logout" style="display: block; width: 100%; background: #dc2626; color: #ffffff; border: 2px solid #dc2626; padding: 0.75rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer;">
+                                <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i>Çıkış Yap
+                            </button>
+                        </div>
                     </div>
                 </div>
             </nav>
