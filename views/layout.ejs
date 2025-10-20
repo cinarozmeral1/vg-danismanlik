@@ -409,20 +409,16 @@
                     </div>
 
                     <!-- Auth Actions -->
-                    <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn === true) { %>
-                        
-                    <% } else { %>
-                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                            <a href="/login" style="display: block; background: transparent; color: var(--primary-600); border: 1px solid var(--primary-600); padding: 0.75rem; border-radius: 6px; text-decoration: none; text-align: center; font-size: 0.875rem; font-weight: 500;">
-                                <i class="fas fa-sign-in-alt" style="margin-right: 8px;"></i>
-                                <%= (typeof t !== 'undefined' && t.auth && t.auth.login) ? t.auth.login.title : 'Giriş' %>
-                            </a>
-                            <a href="/register" style="display: block; background: var(--primary-600); color: white; border: none; padding: 0.75rem; border-radius: 6px; text-decoration: none; text-align: center; font-size: 0.875rem; font-weight: 500;">
-                                <i class="fas fa-user-plus" style="margin-right: 8px;"></i>
-                                <%= (typeof t !== 'undefined' && t.auth && t.auth.register) ? t.auth.register.title : 'Kayıt Ol' %>
-                            </a>
-                        </div>
-                    <% } %>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.75rem;">
+                        <a href="/login" style="display: block; background: transparent; color: var(--primary-600); border: 1px solid var(--primary-600); padding: 0.75rem; border-radius: 6px; text-decoration: none; text-align: center; font-size: 0.875rem; font-weight: 500;">
+                            <i class="fas fa-sign-in-alt" style="margin-right: 8px;"></i>
+                            <%= (typeof t !== 'undefined' && t.auth && t.auth.login) ? t.auth.login.title : 'Giriş' %>
+                        </a>
+                        <a href="/register" style="display: block; background: var(--primary-600); color: white; border: none; padding: 0.75rem; border-radius: 6px; text-decoration: none; text-align: center; font-size: 0.875rem; font-weight: 500;">
+                            <i class="fas fa-user-plus" style="margin-right: 8px;"></i>
+                            <%= (typeof t !== 'undefined' && t.auth && t.auth.register) ? t.auth.register.title : 'Kayıt Ol' %>
+                        </a>
+                    </div>
                 </div>
             </nav>
         </div>
