@@ -403,11 +403,9 @@
                                 🇬🇧 English
                             </a>
                         </div>
-                        <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn === true) { %>
-                            <button style="width: 100%; background: var(--error); color: white; border: none; padding: 0.75rem; border-radius: 6px; font-size: 0.875rem; font-weight: 500; cursor: pointer;" data-action="logout">
-                                <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i>Çıkış Yap
-                            </button>
-                        <% } %>
+                        <button style="width: 100%; background: var(--error); color: white; border: none; padding: 0.75rem; border-radius: 6px; font-size: 0.875rem; font-weight: 500; cursor: pointer; margin-top: 0.75rem;" data-action="logout">
+                            <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i>Çıkış Yap
+                        </button>
                     </div>
 
                     <!-- Auth Actions -->
