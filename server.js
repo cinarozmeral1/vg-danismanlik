@@ -2458,7 +2458,6 @@ const sendContactEmail = async (formData, language = 'tr') => {
         console.log('Ad Soyad:', formData.firstName, formData.lastName);
         console.log('E-posta:', formData.email);
         console.log('Telefon:', formData.phone);
-        console.log('Konu:', formData.subject);
         console.log('Mesaj:', formData.message);
         console.log('================================');
         
@@ -2482,7 +2481,6 @@ const sendContactEmail = async (formData, language = 'tr') => {
                                 <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>Ad Soyad:</strong> ${formData.firstName} ${formData.lastName}</p>
                                 <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>E-posta:</strong> ${formData.email}</p>
                                 <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>Telefon:</strong> ${formData.phone || 'Belirtilmemiş'}</p>
-                                <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>Konu:</strong> ${formData.subject}</p>
                                 <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>Mesaj:</strong></p>
                                 <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; white-space: pre-wrap; color: #333;">${formData.message}</div>
                             </div>
@@ -2516,7 +2514,6 @@ const sendContactEmail = async (formData, language = 'tr') => {
                                 <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>Name:</strong> ${formData.firstName} ${formData.lastName}</p>
                                 <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>Email:</strong> ${formData.email}</p>
                                 <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>Phone:</strong> ${formData.phone || 'Not provided'}</p>
-                                <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>Subject:</strong> ${formData.subject}</p>
                                 <p style="color: #666; line-height: 1.6; margin: 0 0 15px 0;"><strong>Message:</strong></p>
                                 <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; white-space: pre-wrap; color: #333;">${formData.message}</div>
                             </div>
@@ -2691,13 +2688,13 @@ const sendAssessmentEmail = async (formData, language = 'tr') => {
 
 // İletişim formu API route'u
 app.post('/api/contact', async (req, res) => {
-    const { firstName, lastName, email, phone, subject, message } = req.body;
+    const { firstName, lastName, email, phone, message } = req.body;
     
     // Zorunlu alanları kontrol et
-    if (!firstName || !lastName || !email || !subject || !message) {
+    if (!firstName || !lastName || !email || !message) {
         return res.status(400).json({
             success: false,
-            error: 'Ad, soyad, e-posta, konu ve mesaj alanları zorunludur'
+            error: 'Ad, soyad, e-posta ve mesaj alanları zorunludur'
         });
     }
 
@@ -2707,7 +2704,6 @@ app.post('/api/contact', async (req, res) => {
         lastName: String(lastName).trim(),
         email: String(email).trim(),
         phone: phone ? String(phone).trim() : '',
-        subject: String(subject).trim(),
         message: String(message).trim()
     };
 

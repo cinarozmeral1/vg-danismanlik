@@ -47,18 +47,6 @@
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label for="contactSubject" class="form-label" style="color: black !important;"><%= t.contact.form.subject %> *</label>
-                                <select class="form-select" id="contactSubject" name="subject" required>
-                                    <option value=""><%= t.contact.form.selectOption %></option>
-                                    <option value="general"><%= t.contact.form.general %></option>
-                                    <option value="university"><%= t.contact.form.university %></option>
-                                    <option value="language"><%= t.contact.form.language %></option>
-                                    <option value="visa"><%= t.contact.form.visa %></option>
-                                    <option value="assessment"><%= t.contact.form.assessment %></option>
-                                    <option value="other"><%= t.contact.form.other %></option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
                                 <label for="contactMessage" class="form-label" style="color: black !important;"><%= t.contact.form.message %> *</label>
                                 <textarea class="form-control" id="contactMessage" name="message" rows="5" required placeholder="<%= t.contact.form.messagePlaceholder %>"></textarea>
                             </div>
@@ -181,7 +169,7 @@ document.getElementById('contactForm').addEventListener('submit', async function
     const data = Object.fromEntries(formData);
     
     // Check required fields
-    if (!data.firstName || !data.lastName || !data.email || !data.subject || !data.message) {
+    if (!data.firstName || !data.lastName || !data.email || !data.message) {
         alert('<%= t.contact.form.requiredFields %>');
         return;
     }
