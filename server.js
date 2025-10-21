@@ -10,6 +10,7 @@ const expressLayouts = require('express-ejs-layouts');
 const cookieParser = require('cookie-parser');
 const languageMiddleware = require('./middleware/language');
 const userInfoMiddleware = require('./middleware/userInfo');
+const htmlMinifier = require('./middleware/minify');
 const nodemailer = require('nodemailer');
 const pool = require('./config/database');
 const multer = require('multer');
@@ -164,17 +165,56 @@ app.use(cors({
 app.use(cookieParser());
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
+
+// HTML minification middleware (production only)
+app.use(htmlMinifier);
+// Static files with optimized caching
 app.use(express.static('public', {
     maxAge: '1y',
-    etag: true
+    etag: true,
+    lastModified: true,
+    setHeaders: (res, path) => {
+        // Set cache headers based on file type
+        if (path.endsWith('.css') || path.endsWith('.js')) {
+            res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        } else if (path.endsWith('.jpg') || path.endsWith('.jpeg') || path.endsWith('.png') || path.endsWith('.webp')) {
+            res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        } else if (path.endsWith('.svg') || path.endsWith('.ico')) {
+            res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        }
+    }
 }));
 
 // Ek static dosya yönlendirmeleri
-app.use('/css', express.static('public/css'));
-app.use('/js', express.static('public/js'));
-app.use('/images', express.static('public/images'));
-app.use('/uploads', express.static('public/uploads'));
-app.use('/uploads/logos', express.static('public/uploads/logos'));
+app.use('/css', express.static('public/css', {
+    maxAge: '1y',
+    etag: true,
+    setHeaders: (res) => {
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    }
+}));
+app.use('/js', express.static('public/js', {
+    maxAge: '1y',
+    etag: true,
+    setHeaders: (res) => {
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    }
+}));
+app.use('/images', express.static('public/images', {
+    maxAge: '1y',
+    etag: true,
+    setHeaders: (res) => {
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    }
+}));
+app.use('/uploads', express.static('public/uploads', {
+    maxAge: '7d',
+    etag: true
+}));
+app.use('/uploads/logos', express.static('public/uploads/logos', {
+    maxAge: '7d',
+    etag: true
+}));
 
 // Static dosya route'ları
 app.get('/css/:file', (req, res) => {
