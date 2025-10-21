@@ -858,7 +858,7 @@ router.get('/api/files', authenticateUser, async (req, res) => {
 // Upload user file API
 router.post('/api/files/upload', authenticateUser, upload.single('file'), async (req, res) => {
     try {
-        const { title, description, category } = req.body;
+        const { title, description } = req.body;
         const file = req.file;
 
         if (!file) {
@@ -870,15 +870,14 @@ router.post('/api/files/upload', authenticateUser, upload.single('file'), async 
 
         const result = await pool.query(
             `INSERT INTO user_documents 
-            (user_id, title, description, category, file_data, file_size, 
+            (user_id, title, description, file_data, file_size, 
              original_filename, mime_type)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
             RETURNING id`,
             [
                 req.user.id,
                 title,
                 description || '',
-                category,
                 fileBase64,
                 file.size,
                 file.originalname,

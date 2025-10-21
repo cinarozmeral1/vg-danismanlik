@@ -346,23 +346,8 @@
                     <!-- Files Tab -->
                     <div class="tab-pane fade" id="files" role="tabpanel" style="overflow: visible; max-height: none;">
                         <div class="container-fluid px-0">
-                            <div class="row">
-                                <!-- Left Sidebar - File Categories -->
-                                <div class="col-md-3">
-                                    <div class="card">
-                                        <div class="card-header bg-primary text-white" style="background-color: #2563eb !important; color: white !important; background: #2563eb !important;">
-                                            <h6 class="mb-0 text-center" style="color: white !important;">Dosya Kategorileri</h6>
-                                        </div>
-                                        <div class="card-body p-0">
-                                            <div id="fileCategoriesList">
-                                                <!-- Categories will be loaded here -->
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Right Main Content - File Management -->
-                                <div class="col-md-9">
+                            <!-- File Management -->
+                            <div class="col-12">
                                 <!-- File Upload Area -->
                                 <div class="card mb-4">
                                     <div class="card-body">
@@ -1277,7 +1262,6 @@ document.addEventListener('DOMContentLoaded', function() {
         filesTab.addEventListener('shown.bs.tab', function() {
             console.log('Files tab shown, loading files...');
             try {
-                loadFileCategories();
                 loadFiles();
             } catch (error) {
                 console.error('Error loading files:', error);
@@ -1288,7 +1272,6 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Files tab clicked, loading files...');
             setTimeout(() => {
                 try {
-                    loadFileCategories();
                     loadFiles();
                 } catch (error) {
                     console.error('Error loading files:', error);
@@ -1301,7 +1284,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (filesTab && filesTab.classList.contains('active')) {
         console.log('Files tab is initially active, loading files...');
         try {
-            loadFileCategories();
             loadFiles();
         } catch (error) {
             console.error('Error loading files:', error);
@@ -1736,79 +1718,9 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // File Management Functions
-    let selectedCategoryId = null;
 
-    async function loadFileCategories() {
-        try {
-            console.log('Loading file categories for user:', <%= user.id %>);
-            const response = await fetch(`/api/admin/users/<%= user.id %>/file-categories`, {
-                method: 'GET',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
 
-            console.log('File categories response status:', response.status);
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
 
-            const data = await response.json();
-            console.log('File categories data:', data);
-            displayFileCategories(data.categories);
-        } catch (error) {
-            console.error('Error loading file categories:', error);
-            // Fallback to default categories if API fails
-            const defaultCategories = [
-                { id: 'education', category_name: 'Eğitim Belgeleri', file_count: 0 },
-                { id: 'identity', category_name: 'Kimlik Belgeleri', file_count: 0 },
-                { id: 'language', category_name: 'Dil Sertifikaları', file_count: 0 },
-                { id: 'other', category_name: 'Diğer Belgeler', file_count: 0 }
-            ];
-            displayFileCategories(defaultCategories);
-        }
-    }
-
-    function displayFileCategories(categories) {
-        const container = document.getElementById('fileCategoriesList');
-        
-        if (!categories || categories.length === 0) {
-            container.innerHTML = '<div class="p-3 text-center text-muted">Kategori bulunamadı</div>';
-            return;
-        }
-
-        let html = '';
-        categories.forEach((category, index) => {
-            const isActive = index === 0 ? 'active' : '';
-            const categoryDisplayName = getCategoryDisplayName(category.category_name || category.id);
-            html += `
-                <div class="file-category-item ${isActive}" onclick="selectCategory('${category.id}')">
-                    <div class="file-category-name">${categoryDisplayName}</div>
-                    <div class="file-category-count">${category.file_count}</div>
-                </div>
-            `;
-        });
-
-        container.innerHTML = html;
-        
-        // Select first category by default
-        if (categories.length > 0) {
-            selectedCategoryId = categories[0].id;
-        }
-    }
-
-    // Convert category ID to Turkish display name
-    function getCategoryDisplayName(categoryId) {
-        const categoryMap = {
-            'education': 'Eğitim Belgeleri',
-            'identity': 'Kimlik Belgeleri', 
-            'language': 'Dil Sertifikaları',
-            'other': 'Diğer Belgeler'
-        };
-        return categoryMap[categoryId] || categoryId;
-    }
 
     async function loadFiles() {
         try {
@@ -1880,19 +1792,6 @@ document.addEventListener('DOMContentLoaded', function() {
         container.innerHTML = html;
     }
 
-    // Make file functions globally accessible
-    window.selectCategory = function(categoryId) {
-        selectedCategoryId = categoryId;
-        
-        // Update active category
-        document.querySelectorAll('.file-category-item').forEach(item => {
-            item.classList.remove('active');
-        });
-        event.target.closest('.file-category-item').classList.add('active');
-        
-        // Load files for selected category
-        loadFiles();
-    };
 
     window.downloadFile = async function(fileId) {
         try {
@@ -1957,7 +1856,6 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (result.success) {
                 showAlert('success', 'Dosya başarıyla silindi');
-                loadFileCategories();
                 loadFiles();
             } else {
                 throw new Error(result.message);
@@ -1990,10 +1888,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     async function uploadFiles(files) {
-        if (!selectedCategoryId) {
-            showAlert('warning', 'Lütfen önce bir kategori seçin');
-            return;
-        }
 
         const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png', 'image/heic'];
         const maxSize = 10 * 1024 * 1024; // 10MB
@@ -2034,7 +1928,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const formData = new FormData();
             formData.append('file', file);
             formData.append('title', title);
-            formData.append('category', selectedCategoryId);
             formData.append('description', description || '');
 
             const response = await fetch(`/api/admin/users/<%= user.id %>/files/upload`, {
@@ -2055,8 +1948,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (result.success) {
                 showAlert('success', `Dosya başarıyla yüklendi: ${file.name}`);
-                // Reload categories and files
-                loadFileCategories();
+                // Reload files
                 loadFiles();
             } else {
                 throw new Error(result.message);

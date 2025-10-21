@@ -1912,12 +1912,11 @@ router.delete('/users/:id/files/:fileId', async (req, res) => {
 router.post('/users/:id/files/upload', upload.single('file'), async (req, res) => {
     try {
         const { id } = req.params;
-        const { title, category, description } = req.body;
+        const { title, description } = req.body;
         
         console.log('📁 Admin upload request received:', { 
             userId: id, 
             title, 
-            category, 
             description,
             file: req.file ? req.file.originalname : 'No file' 
         });
@@ -1929,10 +1928,10 @@ router.post('/users/:id/files/upload', upload.single('file'), async (req, res) =
             });
         }
 
-        if (!title || !category) {
+        if (!title) {
             return res.status(400).json({
                 success: false,
-                message: 'Title and category are required'
+                message: 'Title is required'
             });
         }
 
@@ -1944,10 +1943,10 @@ router.post('/users/:id/files/upload', upload.single('file'), async (req, res) =
 
         // Insert into user_documents table using file_data column
         const result = await pool.query(`
-            INSERT INTO user_documents (user_id, title, category, description, file_data, original_filename, file_size, mime_type)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            INSERT INTO user_documents (user_id, title, description, file_data, original_filename, file_size, mime_type)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
             RETURNING id
-        `, [id, title, category, description || null, base64Data, req.file.originalname, req.file.size, req.file.mimetype]);
+        `, [id, title, description || null, base64Data, req.file.originalname, req.file.size, req.file.mimetype]);
 
         console.log('✅ Admin file uploaded successfully:', result.rows[0].id);
         
@@ -3245,7 +3244,7 @@ router.get('/users/:userId/file-categories', async (req, res) => {
 router.post('/users/:userId/files/upload', upload.single('file'), async (req, res) => {
     try {
         const { userId } = req.params;
-        const { title, category, description } = req.body;
+        const { title, description } = req.body;
         
         if (!req.file) {
             return res.status(400).json({
@@ -3259,8 +3258,8 @@ router.post('/users/:userId/files/upload', upload.single('file'), async (req, re
         const base64Data = fileBuffer.toString('base64');
         
         const fileResult = await pool.query(`
-            INSERT INTO user_documents (user_id, title, original_filename, file_data, mime_type, file_size, category, description)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            INSERT INTO user_documents (user_id, title, original_filename, file_data, mime_type, file_size, description)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
             RETURNING *
         `, [
             userId, 
@@ -3269,7 +3268,6 @@ router.post('/users/:userId/files/upload', upload.single('file'), async (req, re
             base64Data,
             req.file.mimetype,
             req.file.size,
-            category, 
             description || ''
         ]);
         
