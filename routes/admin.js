@@ -305,9 +305,13 @@ const getAdminSidebarCounts = async () => {
         let applicationCount = 0;
         let universityCount = 0;
         
+        let approvedApplicationCount = 0;
         try {
             const applicationsResult = await pool.query("SELECT COUNT(*) as count FROM applications WHERE status = 'pending'");
             applicationCount = parseInt(applicationsResult.rows[0].count);
+            
+            const approvedResult = await pool.query("SELECT COUNT(*) as count FROM applications WHERE status = 'approved'");
+            approvedApplicationCount = parseInt(approvedResult.rows[0].count);
         } catch (error) {
             console.log('ℹ️ Applications table not found, using 0');
         }
@@ -322,6 +326,8 @@ const getAdminSidebarCounts = async () => {
         return {
             userCount: parseInt(usersResult.rows[0].count),
             applicationCount: applicationCount,
+            pendingApplicationCount: applicationCount, // Pending applications count
+            approvedApplicationCount: approvedApplicationCount, // Approved applications count
             universityCount: universityCount
         };
     } catch (error) {

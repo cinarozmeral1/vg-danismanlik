@@ -70,7 +70,7 @@
                     <i class="fas fa-clock"></i>
                 </div>
                 <div class="stat-content">
-                    <h3>0</h3>
+                    <h3><%= typeof pendingApplicationCount !== 'undefined' ? pendingApplicationCount : applicationCount %></h3>
                     <p>Bekleyen Başvuru</p>
                     <div class="stat-trend neutral">
                         <i class="fas fa-minus"></i>
@@ -84,7 +84,7 @@
                     <i class="fas fa-check-circle"></i>
                 </div>
                 <div class="stat-content">
-                    <h3>0</h3>
+                    <h3><%= typeof approvedApplicationCount !== 'undefined' ? approvedApplicationCount : 0 %></h3>
                     <p>Onaylanan Başvuru</p>
                     <div class="stat-trend positive">
                         <i class="fas fa-arrow-up"></i>
