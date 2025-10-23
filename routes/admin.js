@@ -306,7 +306,7 @@ const getAdminSidebarCounts = async () => {
         let universityCount = 0;
         
         try {
-            const applicationsResult = await pool.query('SELECT COUNT(*) as count FROM applications');
+            const applicationsResult = await pool.query("SELECT COUNT(*) as count FROM applications WHERE status = 'pending'");
             applicationCount = parseInt(applicationsResult.rows[0].count);
         } catch (error) {
             console.log('ℹ️ Applications table not found, using 0');
