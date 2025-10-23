@@ -245,9 +245,10 @@
                     </div>
                     <div class="card-body text-center">
                         <p class="mb-4 text-dark" style="color: #111 !important; text-shadow: none !important; font-weight: 500 !important;"><%= t.studentLifePage.countries.austria.consultingText %></p>
-                        <a href="/contact" class="btn btn-primary btn-lg w-100 mb-3">
+                        <a href="/contact" class="btn btn-primary btn-lg w-100 mb-3" style="font-size: clamp(0.875rem, 2vw, 1rem); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                             <i class="fas fa-phone me-2"></i>
-                            <%= t.studentLifePage.sections.consulting.freeConsulting %>
+                            <span class="d-none d-sm-inline"><%= t.studentLifePage.sections.consulting.freeConsulting %></span>
+                            <span class="d-sm-none">Danışmanlık</span>
                         </a>
                     </div>
                 </div>
