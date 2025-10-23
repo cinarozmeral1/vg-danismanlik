@@ -99,19 +99,6 @@
                                            value="<%= application.program_name %>" placeholder="Eğitim programı">
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label for="englishLevel" class="form-label">İngilizce Seviyesi</label>
-                                    <select class="form-select" id="englishLevel" name="englishLevel">
-                                        <option value="">Seviye Seçin</option>
-                                        <option value="Beginner" <%= application.english_level === 'Beginner' ? 'selected' : '' %>>Başlangıç</option>
-                                        <option value="Elementary" <%= application.english_level === 'Elementary' ? 'selected' : '' %>>Temel</option>
-                                        <option value="Intermediate" <%= application.english_level === 'Intermediate' ? 'selected' : '' %>>Orta</option>
-                                        <option value="Upper Intermediate" <%= application.english_level === 'Upper Intermediate' ? 'selected' : '' %>>İyi</option>
-                                        <option value="Advanced" <%= application.english_level === 'Advanced' ? 'selected' : '' %>>İleri</option>
-                                    </select>
-                                </div>
-                            </div>
                         </div>
 
                         <div class="mb-3">
