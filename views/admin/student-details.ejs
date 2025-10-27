@@ -244,28 +244,28 @@
                             </div>
                         
                         <!-- Add Service Form (Initially Hidden) -->
-                        <div id="addServiceFormContainer" class="card mb-4" style="display: none;">
-                            <div class="card-header">
-                                <h6 class="mb-0">Yeni Hizmet Ekle</h6>
+                        <div id="addServiceFormContainer" class="card mb-4" style="display: none; background-color: #1e3a8a; border: 1px solid #1e40af;">
+                            <div class="card-header" style="background-color: #1e40af; border-bottom: 1px solid #1d4ed8;">
+                                <h6 class="mb-0 text-white">Yeni Hizmet Ekle</h6>
                             </div>
-                            <div class="card-body">
+                            <div class="card-body" style="background-color: #1e3a8a;">
                                 <form id="addServiceForm">
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="mb-3">
-                                                <label for="serviceName" class="form-label">Hizmet Adı *</label>
+                                                <label for="serviceName" class="form-label text-white">Hizmet Adı *</label>
                                                 <input type="text" class="form-control" id="serviceName" placeholder="Örn: Vize Başvuru Ücreti" required>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="mb-3">
-                                                <label for="serviceAmount" class="form-label">Tutar *</label>
+                                                <label for="serviceAmount" class="form-label text-white">Tutar *</label>
                                                 <input type="number" class="form-control" id="serviceAmount" step="0.01" min="0" placeholder="0.00" required>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="mb-3">
-                                                <label for="serviceCurrency" class="form-label">Para Birimi *</label>
+                                                <label for="serviceCurrency" class="form-label text-white">Para Birimi *</label>
                                                 <select class="form-select" id="serviceCurrency" required>
                                                     <option value="EUR">EUR (Euro)</option>
                                                     <option value="USD">USD (Dolar)</option>
@@ -277,20 +277,20 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                             <div class="mb-3">
-                                                <label for="serviceDueDate" class="form-label">Vade Tarihi</label>
+                                                <label for="serviceDueDate" class="form-label text-white">Vade Tarihi</label>
                                                 <input type="date" class="form-control" id="serviceDueDate">
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="mb-3">
-                                                <label for="servicePaymentDate" class="form-label">Ödeme Tarihi</label>
+                                                <label for="servicePaymentDate" class="form-label text-white">Ödeme Tarihi</label>
                                                 <input type="date" class="form-control" id="servicePaymentDate">
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="mb-3 form-check mt-4">
                                                 <input type="checkbox" class="form-check-input" id="serviceIsPaid">
-                                                <label class="form-check-label" for="serviceIsPaid">
+                                                <label class="form-check-label text-white" for="serviceIsPaid">
                                                     <strong>Ödendi</strong>
                                                 </label>
                                             </div>
@@ -299,7 +299,7 @@
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="mb-3">
-                                                <label for="serviceNotes" class="form-label">Notlar</label>
+                                                <label for="serviceNotes" class="form-label text-white">Notlar</label>
                                                 <textarea class="form-control" id="serviceNotes" rows="3" placeholder="Hizmet hakkında ek bilgiler..."></textarea>
                                             </div>
                                         </div>
