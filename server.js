@@ -169,23 +169,19 @@ app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 // HTML minification middleware (production only)
 app.use(htmlMinifier);
 
-// Favicon routes (before static files)
-app.get('/favicon.ico', (req, res) => {
-    res.setHeader('Cache-Control', 'public, max-age=86400');
-    res.setHeader('Content-Type', 'image/x-icon');
-    res.sendFile(path.join(__dirname, 'public', 'favicon.ico'));
-});
-
-app.get('/favicon.png', (req, res) => {
-    res.setHeader('Cache-Control', 'public, max-age=86400');
-    res.setHeader('Content-Type', 'image/png');
-    res.sendFile(path.join(__dirname, 'public', 'favicon.png'));
-});
-
+// Favicon route (before static files)
 app.get('/favicon.svg', (req, res) => {
     res.setHeader('Cache-Control', 'public, max-age=86400');
     res.setHeader('Content-Type', 'image/svg+xml');
     res.sendFile(path.join(__dirname, 'public', 'favicon.svg'));
+});
+
+app.get('/favicon.ico', (req, res) => {
+    res.redirect('/favicon.svg');
+});
+
+app.get('/favicon.png', (req, res) => {
+    res.redirect('/favicon.svg');
 });
 
 // Static files with optimized caching
