@@ -182,6 +182,12 @@ app.get('/favicon.png', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'favicon.png'));
 });
 
+app.get('/favicon.svg', (req, res) => {
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+    res.setHeader('Content-Type', 'image/svg+xml');
+    res.sendFile(path.join(__dirname, 'public', 'favicon.svg'));
+});
+
 // Static files with optimized caching
 app.use(express.static('public', {
     maxAge: '1y',
