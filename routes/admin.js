@@ -2027,21 +2027,17 @@ router.get('/users/:id/services', async (req, res) => {
 
 // Add new service
 router.post('/users/:id/services', async (req, res) => {
-    const client = await pool.connect();
-    
     try {
-        await client.query('BEGIN');
-        
         const { id } = req.params;
-        const { service_name, amount, currency, due_date, payment_date, is_paid, has_installments, installments } = req.body;
+        const { service_name, amount, currency, due_date, payment_date, is_paid, notes } = req.body;
         
-        console.log('Adding service with installments:', { 
-            id, service_name, amount, currency, due_date, payment_date, is_paid, has_installments, installments 
+        console.log('Adding service:', { 
+            id, service_name, amount, currency, due_date, payment_date, is_paid, notes 
         });
         
         // Insert service
-        const serviceResult = await client.query(
-            `INSERT INTO services (user_id, service_name, amount, currency, due_date, payment_date, is_paid, has_installments) 
+        const serviceResult = await pool.query(
+            `INSERT INTO services (user_id, service_name, amount, currency, due_date, payment_date, is_paid, notes) 
              VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
             [
                 id,
@@ -2051,65 +2047,25 @@ router.post('/users/:id/services', async (req, res) => {
                 due_date || null,
                 payment_date || null,
                 Boolean(is_paid),
-                Boolean(has_installments)
+                notes || null
             ]
         );
         
         const service = serviceResult.rows[0];
         console.log('Service created:', service);
         
-        // Create installments if provided
-        if (has_installments && installments) {
-            console.log('Creating installments:', installments);
-            
-            const { count, interval, amount: installmentAmount } = installments;
-            const startDate = new Date(due_date);
-            
-            for (let i = 1; i <= count; i++) {
-                let installmentDate = new Date(startDate);
-                
-                // Calculate installment date based on interval
-                switch (interval) {
-                    case 'weekly':
-                        installmentDate.setDate(startDate.getDate() + (i - 1) * 7);
-                        break;
-                    case 'monthly':
-                        installmentDate.setMonth(startDate.getMonth() + (i - 1));
-                        break;
-                    case 'quarterly':
-                        installmentDate.setMonth(startDate.getMonth() + (i - 1) * 3);
-                        break;
-                }
-                
-                await client.query(
-                    `INSERT INTO installments (service_id, installment_number, amount, due_date, is_paid) 
-                     VALUES ($1, $2, $3, $4, $5)`,
-                    [
-                        service.id,
-                        i,
-                        installmentAmount,
-                        installmentDate.toISOString().split('T')[0],
-                        false
-                    ]
-                );
-                
-                console.log(`Installment ${i} created for date: ${installmentDate.toISOString().split('T')[0]}`);
-            }
-        }
-        
-        await client.query('COMMIT');
-        
         res.json({
             success: true,
-            message: 'Service and installments added successfully',
+            message: 'Hizmet başarıyla eklendi',
             service: service
         });
+        
     } catch (error) {
-        await client.query('ROLLBACK');
         console.error('Add service error:', error);
-        res.status(500).json({ success: false, message: 'Server error: ' + error.message });
-    } finally {
-        client.release();
+        res.status(500).json({ 
+            success: false, 
+            message: 'Server error: ' + error.message 
+        });
     }
 });
 
@@ -2117,10 +2073,10 @@ router.post('/users/:id/services', async (req, res) => {
 router.put('/users/:id/services/:serviceId', async (req, res) => {
     try {
         const { id, serviceId } = req.params;
-        const { service_name, amount, currency, due_date, payment_date, is_paid, has_installments } = req.body;
+        const { service_name, amount, currency, due_date, payment_date, is_paid, notes } = req.body;
         
         const result = await pool.query(
-            `UPDATE services SET service_name = $1, amount = $2, currency = $3, due_date = $4, payment_date = $5, is_paid = $6, has_installments = $7 
+            `UPDATE services SET service_name = $1, amount = $2, currency = $3, due_date = $4, payment_date = $5, is_paid = $6, notes = $7, updated_at = CURRENT_TIMESTAMP
              WHERE id = $8 AND user_id = $9 RETURNING *`,
             [
                 service_name,
@@ -2129,7 +2085,7 @@ router.put('/users/:id/services/:serviceId', async (req, res) => {
                 due_date || null,
                 payment_date || null,
                 Boolean(is_paid),
-                Boolean(has_installments),
+                notes || null,
                 serviceId,
                 id
             ]
@@ -2138,15 +2094,15 @@ router.put('/users/:id/services/:serviceId', async (req, res) => {
         if (result.rowCount === 0) {
             return res.status(404).json({
                 success: false,
-                message: 'Service not found'
+                message: 'Hizmet bulunamadı'
             });
         }
         
         res.json({
-             success: true,
-             message: 'Service updated successfully',
-             service: result.rows[0]
-         });
+            success: true,
+            message: 'Hizmet başarıyla güncellendi',
+            service: result.rows[0]
+        });
     } catch (error) {
         console.error('Update service error:', error);
         res.status(500).json({ success: false, message: 'Server error' });
@@ -2158,9 +2114,6 @@ router.delete('/users/:id/services/:serviceId', async (req, res) => {
     try {
         const { id, serviceId } = req.params;
         
-        // Delete installments first (due to foreign key constraint)
-        await pool.query('DELETE FROM installments WHERE service_id = $1', [serviceId]);
-        
         // Delete service
         const result = await pool.query(
             'DELETE FROM services WHERE id = $1 AND user_id = $2 RETURNING id',
@@ -2170,13 +2123,13 @@ router.delete('/users/:id/services/:serviceId', async (req, res) => {
         if (result.rowCount === 0) {
             return res.status(404).json({
                 success: false,
-                message: 'Service not found'
+                message: 'Hizmet bulunamadı'
             });
         }
         
         res.json({
             success: true,
-            message: 'Service deleted successfully'
+            message: 'Hizmet başarıyla silindi'
         });
     } catch (error) {
         console.error('Delete service error:', error);

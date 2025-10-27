@@ -253,75 +253,54 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="mb-3">
-                                                <label for="serviceName" class="form-label">Hizmet Adı</label>
-                                                <input type="text" class="form-control" id="serviceName" required>
+                                                <label for="serviceName" class="form-label">Hizmet Adı *</label>
+                                                <input type="text" class="form-control" id="serviceName" placeholder="Örn: Vize Başvuru Ücreti" required>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="mb-3">
-                                                <label for="serviceAmount" class="form-label">Tutar</label>
-                                                <input type="number" class="form-control" id="serviceAmount" step="0.01" min="0" required onchange="calculateInstallments()">
+                                                <label for="serviceAmount" class="form-label">Tutar *</label>
+                                                <input type="number" class="form-control" id="serviceAmount" step="0.01" min="0" placeholder="0.00" required>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="mb-3">
-                                                <label for="serviceCurrency" class="form-label">Para Birimi</label>
+                                                <label for="serviceCurrency" class="form-label">Para Birimi *</label>
                                                 <select class="form-select" id="serviceCurrency" required>
                                                     <option value="EUR">EUR (Euro)</option>
-                                                    <option value="USD">USD (Amerikan Doları)</option>
-                                                    <option value="CAD">CAD (Kanada Doları)</option>
+                                                    <option value="USD">USD (Dolar)</option>
+                                                    <option value="TRY">TRY (Türk Lirası)</option>
                                                 </select>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="mb-3">
                                                 <label for="serviceDueDate" class="form-label">Vade Tarihi</label>
-                                                <input type="date" class="form-control" id="serviceDueDate" onchange="toggleInstallmentSystem()">
+                                                <input type="date" class="form-control" id="serviceDueDate">
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="servicePaymentDate" class="form-label">Ödeme Tarihi</label>
+                                                <input type="date" class="form-control" id="servicePaymentDate">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
                                             <div class="mb-3 form-check mt-4">
                                                 <input type="checkbox" class="form-check-input" id="serviceIsPaid">
                                                 <label class="form-check-label" for="serviceIsPaid">
-                                                    Ödendi
+                                                    <strong>Ödendi</strong>
                                                 </label>
                                             </div>
                                         </div>
                                     </div>
-                                    
-                                    <!-- Installment System (Initially Hidden) -->
-                                    <div id="installmentSystem" class="mt-4" style="display: block;">
-                                        <div class="card">
-                                            <div class="card-header">
-                                                <h6 class="mb-0">Taksit Planı</h6>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="row mb-3">
-                                                    <div class="col-md-4">
-                                                        <label for="installmentCount" class="form-label">Taksit Sayısı</label>
-                                                        <input type="number" class="form-control" id="installmentCount" min="1" max="12" value="1" onchange="calculateInstallments()">
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <label for="installmentInterval" class="form-label">Taksit Aralığı</label>
-                                                        <select class="form-select" id="installmentInterval" onchange="calculateInstallments()">
-                                                            <option value="monthly">Aylık</option>
-                                                            <option value="weekly">Haftalık</option>
-                                                            <option value="quarterly">3 Aylık</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <label for="installmentAmount" class="form-label">Taksit Tutarı</label>
-                                                        <input type="number" class="form-control" id="installmentAmount" step="0.01" readonly>
-                                                    </div>
-                                                </div>
-                                                <div id="installmentPreview" class="mb-3">
-                                                    <!-- Installment preview will be shown here -->
-                                                </div>
-                                                <button type="button" class="btn btn-info btn-sm" onclick="addInstallmentsToService()">
-                                                    <i class="fas fa-plus me-2"></i>Taksitleri Hizmete Ekle (YENİ VERSİYON)
-                                                </button>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="mb-3">
+                                                <label for="serviceNotes" class="form-label">Notlar</label>
+                                                <textarea class="form-control" id="serviceNotes" rows="3" placeholder="Hizmet hakkında ek bilgiler..."></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -337,9 +316,10 @@
                             </div>
                         </div>
                         
-                            <div id="servicesList">
-                                <!-- Services will be loaded here -->
-                            </div>
+                        <!-- Services List -->
+                        <div id="servicesList" class="row">
+                            <!-- Services will be loaded here -->
+                        </div>
                         </div>
                     </div>
                     
@@ -2008,7 +1988,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Displaying services:', services);
         
         if (!services || services.length === 0) {
-            container.innerHTML = '<div class="text-center text-muted py-4">Henüz hizmet eklenmemiş</div>';
+            container.innerHTML = '<div class="col-12"><div class="text-center text-muted py-4">Henüz hizmet eklenmemiş</div></div>';
             return;
         }
 
@@ -2016,68 +1996,55 @@ document.addEventListener('DOMContentLoaded', function() {
         services.forEach(service => {
             const statusClass = service.is_paid ? 'text-success' : 'text-danger';
             const statusText = service.is_paid ? 'Ödendi' : 'Ödenmedi';
-            const dueDateText = service.due_date ? new Date(service.due_date).toLocaleDateString('tr-TR') : 'Vade tarihi belirtilmemiş';
+            const dueDateText = service.due_date ? new Date(service.due_date).toLocaleDateString('tr-TR') : 'Belirtilmemiş';
+            const paymentDateText = service.payment_date ? new Date(service.payment_date).toLocaleDateString('tr-TR') : 'Ödenmedi';
 
             html += `
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div class="flex-grow-1">
-                                <h6 class="card-title">${service.service_name}</h6>
-                                <p class="card-text">
-                                    <strong>Tutar:</strong> ${service.amount} ${service.currency}<br>
-                                    <strong>Vade:</strong> ${dueDateText}<br>
-                                    <strong>Durum:</strong> <span class="${statusClass}">${statusText}</span>
-                                </p>
-                                
-                                ${service.has_installments && service.installments && service.installments.length > 0 ? `
-                                    <div class="mt-3">
-                                        <h6 class="mb-2">Taksit Planı (${service.installments.length} taksit)</h6>
-                                        <div class="table-responsive">
-                                            <table class="table table-sm table-bordered">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Taksit No</th>
-                                                        <th>Tutar</th>
-                                                        <th>Vade Tarihi</th>
-                                                        <th>Durum</th>
-                                                        <th>İşlem</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    ${service.installments.map(installment => {
-                                                        const installmentDueDate = new Date(installment.due_date).toLocaleDateString('tr-TR');
-                                                        const installmentStatusBadge = installment.is_paid ? 'badge bg-success' : 'badge bg-warning';
-                                                        const installmentStatusText = installment.is_paid ? 'Ödendi' : 'Bekliyor';
-                                                        return `
-                                                            <tr>
-                                                                <td>${installment.installment_number}</td>
-                                                                <td>${installment.amount} ${service.currency}</td>
-                                                                <td>${installmentDueDate}</td>
-                                                                <td><span class="${installmentStatusBadge}">${installmentStatusText}</span></td>
-                                                                <td>
-                                                                    ${!installment.is_paid ? `
-                                                                        <button class="btn btn-success btn-sm" onclick="markInstallmentPaid(${installment.id})">
-                                                                            <i class="fas fa-check"></i> Ödendi
-                                                                        </button>
-                                                                    ` : `
-                                                                        <button class="btn btn-secondary btn-sm" onclick="markInstallmentUnpaid(${installment.id})">
-                                                                            <i class="fas fa-undo"></i> Geri Al
-                                                                        </button>
-                                                                    `}
-                                                                </td>
-                                                            </tr>
-                                                        `;
-                                                    }).join('')}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                ` : ''}
-                            </div>
-                            <div class="ms-3">
-                                <button class="btn btn-sm btn-outline-danger" onclick="deleteService(${service.id})">
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h6 class="card-title mb-0">${service.service_name}</h6>
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteService(${service.id})" title="Sil">
                                     <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted">Tutar:</span>
+                                    <strong>${service.amount} ${service.currency}</strong>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted">Vade:</span>
+                                    <span>${dueDateText}</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted">Ödeme:</span>
+                                    <span>${paymentDateText}</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted">Durum:</span>
+                                    <span class="${statusClass} fw-bold">${statusText}</span>
+                                </div>
+                            </div>
+                            
+                            ${service.notes ? `
+                                <div class="mb-3">
+                                    <small class="text-muted">Notlar:</small>
+                                    <p class="small mb-0">${service.notes}</p>
+                                </div>
+                            ` : ''}
+                            
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-primary flex-fill" onclick="editService(${service.id})" title="Düzenle">
+                                    <i class="fas fa-edit me-1"></i>Düzenle
+                                </button>
+                                <button class="btn btn-sm ${service.is_paid ? 'btn-outline-warning' : 'btn-outline-success'} flex-fill" 
+                                        onclick="togglePaymentStatus(${service.id}, ${service.is_paid})" 
+                                        title="${service.is_paid ? 'Ödenmedi olarak işaretle' : 'Ödendi olarak işaretle'}">
+                                    <i class="fas fa-${service.is_paid ? 'undo' : 'check'} me-1"></i>
+                                    ${service.is_paid ? 'Geri Al' : 'Ödendi'}
                                 </button>
                             </div>
                         </div>
@@ -2099,26 +2066,60 @@ document.addEventListener('DOMContentLoaded', function() {
             button.innerHTML = '<i class="fas fa-minus me-2"></i>FORMU GİZLE';
             button.classList.remove('btn-success');
             button.classList.add('btn-secondary');
-            // Show installment system by default
-            document.getElementById('installmentSystem').style.display = 'block';
         } else {
             formContainer.style.display = 'none';
             button.innerHTML = '<i class="fas fa-plus me-2"></i>YENİ HİZMET EKLE';
             button.classList.remove('btn-secondary');
             button.classList.add('btn-success');
             document.getElementById('addServiceForm').reset();
-            // Hide installment system when form is closed
-            document.getElementById('installmentSystem').style.display = 'none';
         }
     };
 
     // Cancel add service
     window.cancelAddService = function() {
         document.getElementById('addServiceForm').reset();
-        document.getElementById('installmentSystem').style.display = 'none';
-        document.getElementById('installmentPreview').innerHTML = '';
-        window.serviceInstallments = null;
         toggleAddServiceForm();
+    };
+
+    // Toggle payment status
+    window.togglePaymentStatus = async function(serviceId, currentStatus) {
+        try {
+            const newStatus = !currentStatus;
+            const paymentDate = newStatus ? new Date().toISOString().split('T')[0] : null;
+            
+            const response = await fetch(`/api/admin/users/<%= user.id %>/services/${serviceId}`, {
+                method: 'PUT',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    is_paid: newStatus,
+                    payment_date: paymentDate
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            
+            if (result.success) {
+                showAlert('success', `Hizmet ${newStatus ? 'ödendi' : 'ödenmedi'} olarak işaretlendi`);
+                loadServices();
+            } else {
+                throw new Error(result.message);
+            }
+        } catch (error) {
+            console.error('Error toggling payment status:', error);
+            showAlert('danger', 'Durum güncellenirken hata oluştu: ' + error.message);
+        }
+    };
+
+    // Edit service (placeholder for now)
+    window.editService = function(serviceId) {
+        showAlert('info', 'Düzenleme özelliği yakında eklenecek');
     };
 
     // Toggle installment system based on due date
@@ -2265,49 +2266,17 @@ document.addEventListener('DOMContentLoaded', function() {
             const amount = parseFloat(document.getElementById('serviceAmount').value);
             const currency = document.getElementById('serviceCurrency').value;
             const dueDate = document.getElementById('serviceDueDate').value || null;
+            const paymentDate = document.getElementById('servicePaymentDate').value || null;
             const isPaid = document.getElementById('serviceIsPaid').checked;
+            const notes = document.getElementById('serviceNotes').value;
             
             if (!serviceName || !amount) {
                 showAlert('warning', 'Lütfen tüm gerekli alanları doldurun');
                 return;
             }
             
-            // Auto-prepare installments if due date exists and no installments prepared
-            if (dueDate && !window.serviceInstallments) {
-                const installmentCount = parseInt(document.getElementById('installmentCount').value) || 1;
-                const installmentInterval = document.getElementById('installmentInterval').value;
-                const installmentAmount = document.getElementById('installmentAmount').value;
-                
-                if (installmentAmount && installmentAmount > 0) {
-                    window.serviceInstallments = {
-                        count: installmentCount,
-                        interval: installmentInterval,
-                        amount: installmentAmount
-                    };
-                    console.log('Auto-prepared installments:', window.serviceInstallments);
-                }
-            }
-            
-            // If due date exists but no installments prepared, prepare them now
-            if (dueDate && !window.serviceInstallments) {
-                const installmentCount = parseInt(document.getElementById('installmentCount').value) || 1;
-                const installmentInterval = document.getElementById('installmentInterval').value;
-                const installmentAmount = document.getElementById('installmentAmount').value;
-                
-                if (installmentAmount && installmentAmount > 0) {
-                    window.serviceInstallments = {
-                        count: installmentCount,
-                        interval: installmentInterval,
-                        amount: installmentAmount
-                    };
-                    console.log('Last-minute prepared installments:', window.serviceInstallments);
-                }
-            }
-            
             console.log('Adding service with data:', {
-                serviceName, amount, currency, dueDate, isPaid,
-                has_installments: window.serviceInstallments ? true : false,
-                installments: window.serviceInstallments
+                serviceName, amount, currency, dueDate, paymentDate, isPaid, notes
             });
             
             const response = await fetch(`/api/admin/users/<%= user.id %>/services`, {
@@ -2321,10 +2290,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     amount: amount,
                     currency: currency,
                     due_date: dueDate,
-                    payment_date: null,
+                    payment_date: paymentDate,
                     is_paid: isPaid,
-                    has_installments: window.serviceInstallments ? true : false,
-                    installments: window.serviceInstallments || null
+                    notes: notes
                 })
             });
 
@@ -2337,12 +2305,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (result.success) {
                 showAlert('success', 'Hizmet başarıyla eklendi');
                 loadServices();
-                // Close form
                 cancelAddService();
-                // Clear installment data
-                window.serviceInstallments = null;
-                // Clear installment preview
-                document.getElementById('installmentPreview').innerHTML = '';
             } else {
                 throw new Error(result.message);
             }
