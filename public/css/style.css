@@ -1,3 +1,14 @@
+/* Force blue background for add service form header */
+#addServiceFormContainer .card-header {
+    background: #1e40af !important;
+    background-color: #1e40af !important;
+    border-bottom: 1px solid #1d4ed8 !important;
+}
+
+#addServiceFormContainer .card-header h6 {
+    color: white !important;
+}
+
 .about-social-links-row {
     display: flex;
     justify-content: center;
