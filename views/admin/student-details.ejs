@@ -2078,6 +2078,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Cancel add service
     window.cancelAddService = function() {
         document.getElementById('addServiceForm').reset();
+        
+        // Reset form to add mode
+        document.getElementById('addServiceForm').removeAttribute('data-edit-id');
+        document.querySelector('#addServiceFormContainer .card-header h6').textContent = 'Yeni Hizmet Ekle';
+        document.querySelector('#addServiceForm button[onclick="addService()"]').innerHTML = '<i class="fas fa-save me-2"></i>Hizmet Ekle';
+        
         toggleAddServiceForm();
     };
 
@@ -2117,9 +2123,33 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    // Edit service (placeholder for now)
+    // Edit service
     window.editService = function(serviceId) {
-        showAlert('info', 'Düzenleme özelliği yakında eklenecek');
+        // Find the service in the current services array
+        const service = services.find(s => s.id === serviceId);
+        if (!service) {
+            showAlert('danger', 'Hizmet bulunamadı');
+            return;
+        }
+
+        // Fill the add service form with existing data
+        document.getElementById('serviceName').value = service.service_name;
+        document.getElementById('serviceAmount').value = service.amount;
+        document.getElementById('serviceCurrency').value = service.currency;
+        document.getElementById('serviceDueDate').value = service.due_date || '';
+        document.getElementById('servicePaymentDate').value = service.payment_date || '';
+        document.getElementById('serviceIsPaid').checked = service.is_paid;
+        document.getElementById('serviceNotes').value = service.notes || '';
+
+        // Show the form
+        toggleAddServiceForm();
+
+        // Change the form title and button text
+        document.querySelector('#addServiceFormContainer .card-header h6').textContent = 'Hizmet Düzenle';
+        document.querySelector('#addServiceForm button[onclick="addService()"]').innerHTML = '<i class="fas fa-save me-2"></i>Güncelle';
+        
+        // Store the service ID for updating
+        document.getElementById('addServiceForm').setAttribute('data-edit-id', serviceId);
     };
 
     // Toggle installment system based on due date
@@ -2259,7 +2289,7 @@ document.addEventListener('DOMContentLoaded', function() {
         showAlert('success', `${installmentCount} taksit planı hazırlandı ve önizleme gösterildi!`);
     };
 
-    // Add service
+    // Add/Edit service
     window.addService = async function() {
         try {
             const serviceName = document.getElementById('serviceName').value;
@@ -2275,26 +2305,43 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            console.log('Adding service with data:', {
-                serviceName, amount, currency, dueDate, paymentDate, isPaid, notes
-            });
+            const serviceData = {
+                service_name: serviceName,
+                amount: amount,
+                currency: currency,
+                due_date: dueDate,
+                payment_date: paymentDate,
+                is_paid: isPaid,
+                notes: notes
+            };
             
-            const response = await fetch(`/api/admin/users/<%= user.id %>/services`, {
-                method: 'POST',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    service_name: serviceName,
-                    amount: amount,
-                    currency: currency,
-                    due_date: dueDate,
-                    payment_date: paymentDate,
-                    is_paid: isPaid,
-                    notes: notes
-                })
-            });
+            // Check if we're editing an existing service
+            const editId = document.getElementById('addServiceForm').getAttribute('data-edit-id');
+            let response;
+            
+            if (editId) {
+                // Update existing service
+                console.log('Updating service with data:', serviceData);
+                response = await fetch(`/api/admin/users/<%= user.id %>/services/${editId}`, {
+                    method: 'PUT',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(serviceData)
+                });
+            } else {
+                // Add new service
+                console.log('Adding service with data:', serviceData);
+                response = await fetch(`/api/admin/users/<%= user.id %>/services`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(serviceData)
+                });
+            }
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -2303,15 +2350,15 @@ document.addEventListener('DOMContentLoaded', function() {
             const result = await response.json();
             
             if (result.success) {
-                showAlert('success', 'Hizmet başarıyla eklendi');
+                showAlert('success', editId ? 'Hizmet başarıyla güncellendi' : 'Hizmet başarıyla eklendi');
                 loadServices();
                 cancelAddService();
             } else {
                 throw new Error(result.message);
             }
         } catch (error) {
-            console.error('Error adding service:', error);
-            showAlert('danger', 'Hizmet eklenirken hata oluştu: ' + error.message);
+            console.error('Error adding/updating service:', error);
+            showAlert('danger', 'Hizmet işlemi sırasında hata oluştu: ' + error.message);
         }
     };
 
