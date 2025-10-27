@@ -5,7 +5,7 @@ const pool = require('../config/database');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const { sendApplicationStatusEmail } = require('../services/emailService');
+const { sendApplicationCreationEmail, sendApplicationStatusEmail } = require('../services/emailService');
 const { DateTime } = require('luxon');
 
 // File upload middleware for university logos
@@ -765,6 +765,23 @@ router.post('/applications', async (req, res) => {
 
         console.log('✅ Application created:', applicationResult.rows[0]);
 
+        // Send email notification to student
+        const user = userResult.rows[0];
+        try {
+            await sendApplicationCreationEmail(
+                user.email,
+                user.first_name,
+                user.last_name,
+                university,
+                program,
+                'tr' // Default to Turkish
+            );
+            console.log(`📧 Application creation email sent to ${user.email}`);
+        } catch (emailError) {
+            console.error('❌ Failed to send application creation email:', emailError);
+            // Don't fail the request if email fails
+        }
+
         res.json({
             success: true,
             message: 'Başvuru başarıyla oluşturuldu',
@@ -1482,7 +1499,7 @@ router.post('/universities/upload-logo', logoUpload.single('logo_file'), async (
 // Test email endpoint
 router.post('/test-email', async (req, res) => {
     try {
-        const { sendApplicationStatusEmail } = require('../services/emailService');
+        const { sendApplicationCreationEmail, sendApplicationStatusEmail } = require('../services/emailService');
         
         console.log('📧 Sending test email to oguzhankose74@gmail.com');
         

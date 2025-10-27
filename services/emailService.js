@@ -284,6 +284,135 @@ const sendPasswordResetEmail = async (email, firstName, resetToken, language = '
     }
 };
 
+// Send application creation email
+const sendApplicationCreationEmail = async (email, firstName, lastName, universityName, programName, language = 'tr') => {
+    console.log('📧 Sending application creation email:', {
+        email, firstName, lastName, universityName, programName, language
+    });
+    
+    const emailContent = {
+        tr: {
+            subject: 'Venture Global - Başvurunuz Oluşturuldu',
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                    <div style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+                        <h1 style="margin: 0; font-size: 28px;">Venture Global</h1>
+                        <p style="margin: 10px 0 0 0; opacity: 0.9;">Başvuru Oluşturuldu</p>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
+                        <h2 style="color: #333; margin-bottom: 20px;">Merhaba ${firstName} ${lastName},</h2>
+                        
+                        <p style="color: #666; line-height: 1.6; margin-bottom: 25px;">
+                            Başvurunuz başarıyla oluşturulmuştur. Şu anda beklemede durumundadır ve değerlendirilmektedir.
+                        </p>
+                        
+                        <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #0078D7;">
+                            <h3 style="color: #333; margin-top: 0;">Başvuru Bilgileri</h3>
+                            <p style="margin: 10px 0;"><strong>Üniversite:</strong> ${universityName}</p>
+                            <p style="margin: 10px 0;"><strong>Program:</strong> ${programName}</p>
+                            <p style="margin: 10px 0;"><strong>Durum:</strong> 
+                                <span style="background: #ffc107; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold;">
+                                    Beklemede
+                                </span>
+                            </p>
+                        </div>
+                        
+                        <p style="color: #666; line-height: 1.6; margin-bottom: 25px;">
+                            Başvurunuz değerlendirildikten sonra size e-posta ile bilgi verilecektir. 
+                            Herhangi bir sorunuz olursa bizimle iletişime geçebilirsiniz.
+                        </p>
+                        
+                        <div style="text-align: center; margin: 30px 0;">
+                            <a href="https://veture-global-website.vercel.app/user/dashboard" style="background: #0078D7; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
+                                Başvurularımı Görüntüle
+                            </a>
+                        </div>
+                        
+                        <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+                        
+                        <p style="color: #999; font-size: 12px; text-align: center;">
+                            Venture Global - Avrupa Üniversite ve Dil Okulu Danışmanlığı
+                        </p>
+                    </div>
+                </div>
+            `
+        },
+        en: {
+            subject: 'Venture Global - Your Application Has Been Created',
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                    <div style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+                        <h1 style="margin: 0; font-size: 28px;">Venture Global</h1>
+                        <p style="margin: 10px 0 0 0; opacity: 0.9;">Application Created</p>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
+                        <h2 style="color: #333; margin-bottom: 20px;">Hello ${firstName} ${lastName},</h2>
+                        
+                        <p style="color: #666; line-height: 1.6; margin-bottom: 25px;">
+                            Your application has been successfully created and is currently pending review.
+                        </p>
+                        
+                        <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #0078D7;">
+                            <h3 style="color: #333; margin-top: 0;">Application Details</h3>
+                            <p style="margin: 10px 0;"><strong>University:</strong> ${universityName}</p>
+                            <p style="margin: 10px 0;"><strong>Program:</strong> ${programName}</p>
+                            <p style="margin: 10px 0;"><strong>Status:</strong> 
+                                <span style="background: #ffc107; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold;">
+                                    Pending
+                                </span>
+                            </p>
+                        </div>
+                        
+                        <p style="color: #666; line-height: 1.6; margin-bottom: 25px;">
+                            You will be notified via email once your application has been reviewed. 
+                            If you have any questions, please feel free to contact us.
+                        </p>
+                        
+                        <div style="text-align: center; margin: 30px 0;">
+                            <a href="https://veture-global-website.vercel.app/user/dashboard" style="background: #0078D7; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
+                                View My Applications
+                            </a>
+                        </div>
+                        
+                        <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+                        
+                        <p style="color: #999; font-size: 12px; text-align: center;">
+                            Venture Global - European University and Language School Consultancy
+                        </p>
+                    </div>
+                </div>
+            `
+        }
+    };
+    
+    const content = emailContent[language] || emailContent.tr;
+    
+    const mailOptions = {
+        from: process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com',
+        to: email,
+        subject: content.subject,
+        html: content.html
+    };
+    
+    try {
+        console.log('📧 Email credentials check:');
+        console.log('   EMAIL_USER:', process.env.EMAIL_USER ? 'SET' : 'NOT SET');
+        console.log('   EMAIL_PASS:', process.env.EMAIL_PASS ? 'SET' : 'NOT SET');
+        
+        await transporter.sendMail(mailOptions);
+        console.log(`✅ Application creation email sent to ${email}`);
+        return true;
+    } catch (error) {
+        console.error('❌ Application creation email sending failed:', error);
+        console.error('   Error code:', error.code);
+        console.error('   Error message:', error.message);
+        console.error('   Error response:', error.response);
+        return false;
+    }
+};
+
 // Send application status change email
 const sendApplicationStatusEmail = async (email, firstName, lastName, universityName, programName, status, language = 'tr') => {
     console.log('📧 Sending application status email:', {
@@ -429,6 +558,7 @@ module.exports = {
     transporter,
     sendVerificationEmail,
     sendPasswordResetEmail,
+    sendApplicationCreationEmail,
     sendApplicationStatusEmail,
     generateVerificationToken,
     generateResetToken
