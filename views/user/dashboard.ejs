@@ -51,7 +51,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label for="phone" class="form-label">Telefon *</label>
-                                    <input type="tel" class="form-control" id="phone" name="phone" value="<%= profile ? profile.phone : '' %>" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
+                                    <input type="tel" class="form-control" id="phone" name="phone" value="<%= profile ? profile.phone : '' %>" placeholder="Örn: +90 555 123 45 67" required>
                                 </div>
  
                                 <div class="col-md-6">
@@ -79,7 +79,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label for="passport_type" class="form-label">Pasaport Türü *</label>
-                                    <input type="text" class="form-control" id="passport_type" name="passport_type" value="<%= profile ? profile.passport_type : '' %>" placeholder="Örn: Bordo" required>
+                                    <input type="text" class="form-control" id="passport_type" name="passport_type" value="<%= profile ? profile.passport_type : '' %>" placeholder="Örn: Bordo, Yeşil, Gri, Siyah" required>
                                 </div>
  
                                 <div class="col-md-6">

@@ -650,15 +650,8 @@ router.put('/users/:id/details', async (req, res) => {
             active_class
         } = req.body;
 
-        const allowedPassportTypes = {
-            bordo: 'Bordo',
-            yeşil: 'Yeşil',
-            yesil: 'Yeşil',
-            gri: 'Gri',
-            siyah: 'Siyah'
-        };
-        const normalizedPassportType = passport_type ? passport_type.toLowerCase() : null;
-        const passportTypeFinal = normalizedPassportType ? (allowedPassportTypes[normalizedPassportType] || passport_type) : passport_type;
+        // Allow any passport type text input
+        const passportTypeFinal = passport_type;
 
         const result = await pool.query(
             `UPDATE users SET 
