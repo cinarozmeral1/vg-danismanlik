@@ -318,8 +318,8 @@
                         
                         <!-- Services List -->
                         <div id="servicesList" class="row">
-                            <!-- Services will be loaded here -->
-                        </div>
+                                <!-- Services will be loaded here -->
+                            </div>
                         </div>
                     </div>
                     
@@ -1981,11 +1981,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Store services globally for edit/delete functions
+    window.currentServices = [];
+
     // Display services
     function displayServices(services) {
         const container = document.getElementById('servicesList');
         
         console.log('Displaying services:', services);
+        
+        // Store services globally
+        window.currentServices = services || [];
         
         if (!services || services.length === 0) {
             container.innerHTML = '<div class="col-12"><div class="text-center text-muted py-4">Henüz hizmet eklenmemiş</div></div>';
@@ -2002,23 +2008,23 @@ document.addEventListener('DOMContentLoaded', function() {
             html += `
                 <div class="col-md-6 col-lg-4 mb-3">
                     <div class="card h-100">
-                        <div class="card-body">
+                    <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start mb-3">
                                 <h6 class="card-title mb-0">${service.service_name}</h6>
                                 <button class="btn btn-sm btn-outline-danger" onclick="deleteService(${service.id})" title="Sil">
                                     <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
+                                                                        </button>
+                                        </div>
                             
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between">
                                     <span class="text-muted">Tutar:</span>
                                     <strong>${service.amount} ${service.currency}</strong>
-                                </div>
+                                    </div>
                                 <div class="d-flex justify-content-between">
                                     <span class="text-muted">Vade:</span>
                                     <span>${dueDateText}</span>
-                                </div>
+                            </div>
                                 <div class="d-flex justify-content-between">
                                     <span class="text-muted">Ödeme:</span>
                                     <span>${paymentDateText}</span>
@@ -2061,7 +2067,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const formContainer = document.getElementById('addServiceFormContainer');
         const button = document.querySelector('button[onclick="toggleAddServiceForm()"]');
         
-        if (formContainer.style.display === 'none') {
+        if (formContainer.style.display === 'none' || formContainer.style.display === '') {
             formContainer.style.display = 'block';
             button.innerHTML = '<i class="fas fa-minus me-2"></i>FORMU GİZLE';
             button.classList.remove('btn-success');
@@ -2072,6 +2078,11 @@ document.addEventListener('DOMContentLoaded', function() {
             button.classList.remove('btn-secondary');
             button.classList.add('btn-success');
             document.getElementById('addServiceForm').reset();
+            
+            // Reset form to add mode when hiding
+            document.getElementById('addServiceForm').removeAttribute('data-edit-id');
+            document.querySelector('#addServiceFormContainer .card-header h6').textContent = 'Yeni Hizmet Ekle';
+            document.querySelector('#addServiceForm button[onclick="addService()"]').innerHTML = '<i class="fas fa-save me-2"></i>Hizmet Ekle';
         }
     };
 
@@ -2126,30 +2137,49 @@ document.addEventListener('DOMContentLoaded', function() {
     // Edit service
     window.editService = function(serviceId) {
         // Find the service in the current services array
-        const service = services.find(s => s.id === serviceId);
+        const service = window.currentServices.find(s => s.id == serviceId || s.id == parseInt(serviceId));
+        
         if (!service) {
-            showAlert('danger', 'Hizmet bulunamadı');
+            showAlert('danger', 'Hizmet bulunamadı. Lütfen sayfayı yenileyin.');
             return;
         }
 
         // Fill the add service form with existing data
-        document.getElementById('serviceName').value = service.service_name;
-        document.getElementById('serviceAmount').value = service.amount;
-        document.getElementById('serviceCurrency').value = service.currency;
-        document.getElementById('serviceDueDate').value = service.due_date || '';
-        document.getElementById('servicePaymentDate').value = service.payment_date || '';
-        document.getElementById('serviceIsPaid').checked = service.is_paid;
+        document.getElementById('serviceName').value = service.service_name || '';
+        document.getElementById('serviceAmount').value = service.amount || '';
+        document.getElementById('serviceCurrency').value = service.currency || 'EUR';
+        
+        // Format dates for input fields (YYYY-MM-DD)
+        const dueDate = service.due_date ? (service.due_date.includes('T') ? service.due_date.split('T')[0] : service.due_date) : '';
+        const paymentDate = service.payment_date ? (service.payment_date.includes('T') ? service.payment_date.split('T')[0] : service.payment_date) : '';
+        
+        document.getElementById('serviceDueDate').value = dueDate;
+        document.getElementById('servicePaymentDate').value = paymentDate;
+        document.getElementById('serviceIsPaid').checked = service.is_paid === true || service.is_paid === 1;
         document.getElementById('serviceNotes').value = service.notes || '';
 
-        // Show the form
-        toggleAddServiceForm();
+        // Show the form if hidden
+        const formContainer = document.getElementById('addServiceFormContainer');
+        if (formContainer.style.display === 'none' || formContainer.style.display === '') {
+            toggleAddServiceForm();
+        }
 
         // Change the form title and button text
-        document.querySelector('#addServiceFormContainer .card-header h6').textContent = 'Hizmet Düzenle';
-        document.querySelector('#addServiceForm button[onclick="addService()"]').innerHTML = '<i class="fas fa-save me-2"></i>Güncelle';
+        const header = document.querySelector('#addServiceFormContainer .card-header h6');
+        if (header) {
+            header.textContent = 'Hizmet Düzenle';
+        }
+        
+        const saveButton = document.querySelector('#addServiceForm button[onclick="addService()"]');
+        if (saveButton) {
+            saveButton.innerHTML = '<i class="fas fa-save me-2"></i>Güncelle';
+        }
         
         // Store the service ID for updating
         document.getElementById('addServiceForm').setAttribute('data-edit-id', serviceId);
+        
+        // Scroll to form
+        formContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     };
 
     // Toggle installment system based on due date
@@ -2334,11 +2364,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Add new service
                 console.log('Adding service with data:', serviceData);
                 response = await fetch(`/api/admin/users/<%= user.id %>/services`, {
-                    method: 'POST',
-                    credentials: 'include',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                     body: JSON.stringify(serviceData)
                 });
             }
