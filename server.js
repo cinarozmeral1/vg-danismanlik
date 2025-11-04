@@ -3092,22 +3092,25 @@ app.post('/api/assessment', async (req, res) => {
         });
     }
 });
+// Error handling middleware (improved with detailed logging)
 app.use((err, req, res, next) => {
-    console.error(err.stack);
+    console.error('❌ ERROR HANDLER TRIGGERED');
+    console.error('❌ Error Message:', err.message);
+    console.error('❌ Error Stack:', err.stack);
+    console.error('❌ Request URL:', req.url);
+    console.error('❌ Request Method:', req.method);
+    console.error('❌ Request Headers:', JSON.stringify(req.headers, null, 2));
+    
+    // If response already sent, don't send again
+    if (res.headersSent) {
+        console.error('❌ Response already sent, skipping error handler');
+        return next(err);
+    }
+    
     res.status(500).json({
         success: false,
-        error: 'Sunucu hatası'
-    });
-});
-app.use((req, res) => {
-    res.status(404).render('404', { title: 'Sayfa Bulunamadı' });
-});
-// Error handling middleware
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({
-        success: false,
-        error: 'Sunucu hatası'
+        error: err.message || 'Sunucu hatası',
+        message: err.message || 'Beklenmeyen bir hata oluştu'
     });
 });
 
