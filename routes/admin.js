@@ -4108,6 +4108,7 @@ router.get('/backups', authenticateAdmin, async (req, res) => {
         const sidebarCounts = await getAdminSidebarCounts();
         
         res.render('admin/backups', {
+            layout: 'admin/layout',
             title: 'Yedek Yönetimi - Admin Panel',
             activePage: 'backups',
             ...sidebarCounts
