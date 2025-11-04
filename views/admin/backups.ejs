@@ -1,60 +1,61 @@
-<div class="container-fluid mt-4">
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h2><i class="fas fa-database me-2"></i>Yedek Yönetimi</h2>
-                    <p class="text-muted mb-0">FTP sunucusundaki yedekleri görüntüleyin ve indirin</p>
-                </div>
-                <div>
-                    <button class="btn btn-primary" onclick="runBackup()">
-                        <i class="fas fa-plus-circle me-2"></i>Yeni Yedek Al
-                    </button>
-                    <button class="btn btn-outline-secondary" onclick="refreshBackups()">
-                        <i class="fas fa-sync-alt me-2"></i>Yenile
-                    </button>
-                </div>
-            </div>
+<!-- Section Header -->
+<div class="section-header">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+            <h2><i class="fas fa-database me-2"></i>Yedek Yönetimi</h2>
+            <p class="text-muted mb-0">FTP sunucusundaki yedekleri görüntüleyin ve indirin</p>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-primary" onclick="runBackup()">
+                <i class="fas fa-plus-circle me-2"></i>Yeni Yedek Al
+            </button>
+            <button class="btn btn-outline-secondary" onclick="refreshBackups()">
+                <i class="fas fa-sync-alt me-2"></i>Yenile
+            </button>
+        </div>
+    </div>
+</div>
 
-            <!-- Backup Info Card -->
-            <div class="card mb-4">
-                <div class="card-header bg-info text-white">
-                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Yedekleme Bilgileri</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <p><strong>Otomatik Yedekleme:</strong> Her gün saat 02:00</p>
-                            <p><strong>Yedek Saklama:</strong> 30 gün</p>
-                            <p><strong>FTP Sunucu:</strong> <%= typeof process !== 'undefined' && process.env && process.env.FTP_HOST ? process.env.FTP_HOST : 'Yapılandırılmamış' %></p>
-                        </div>
-                        <div class="col-md-6">
-                            <p><strong>Yedek İçeriği:</strong></p>
-                            <ul class="mb-0">
-                                <li>PostgreSQL veritabanı</li>
-                                <li>Tüm dosyalar (uploads, images, config, etc.)</li>
-                                <li>ZIP formatında sıkıştırılmış</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+<!-- Backup Info Card -->
+<div class="content-card mb-4">
+    <div class="card-header bg-info text-white">
+        <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Yedekleme Bilgileri</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6 mb-3 mb-md-0">
+                <p class="mb-2"><strong><i class="fas fa-clock me-2 text-primary"></i>Otomatik Yedekleme:</strong> Her gün saat 02:00</p>
+                <p class="mb-2"><strong><i class="fas fa-calendar-alt me-2 text-primary"></i>Yedek Saklama:</strong> 30 gün</p>
+                <p class="mb-0"><strong><i class="fas fa-server me-2 text-primary"></i>FTP Sunucu:</strong> 
+                    <span class="badge <%= typeof process !== 'undefined' && process.env && process.env.FTP_HOST ? 'bg-success' : 'bg-warning' %>">
+                        <%= typeof process !== 'undefined' && process.env && process.env.FTP_HOST ? process.env.FTP_HOST : 'Yapılandırılmamış' %>
+                    </span>
+                </p>
             </div>
+            <div class="col-md-6">
+                <p class="mb-2"><strong><i class="fas fa-archive me-2 text-primary"></i>Yedek İçeriği:</strong></p>
+                <ul class="mb-0 ps-3">
+                    <li>PostgreSQL veritabanı</li>
+                    <li>Tüm dosyalar (uploads, images, config, vs.)</li>
+                    <li>ZIP formatında sıkıştırılmış</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
 
-            <!-- Backups List -->
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-list me-2"></i>Yedek Listesi</h5>
+<!-- Backups List -->
+<div class="content-card">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="fas fa-list me-2"></i>Yedek Listesi</h5>
+    </div>
+    <div class="card-body">
+        <div id="backupsListContainer">
+            <div class="text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Yükleniyor...</span>
                 </div>
-                <div class="card-body">
-                    <div id="backupsListContainer">
-                        <div class="text-center py-5">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Yükleniyor...</span>
-                            </div>
-                            <p class="mt-3 text-muted">Yedekler yükleniyor...</p>
-                        </div>
-                    </div>
-                </div>
+                <p class="mt-3 text-muted">Yedekler yükleniyor...</p>
             </div>
         </div>
     </div>
@@ -62,16 +63,20 @@
 
 <style>
     .backup-item {
+        background: #f8f9fa;
         border: 1px solid #dee2e6;
         border-radius: 8px;
         padding: 1.25rem;
         margin-bottom: 1rem;
-        transition: all 0.2s ease;
+        transition: all 0.3s ease;
+        border-left: 4px solid #3498db;
     }
     
     .backup-item:hover {
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         transform: translateY(-2px);
+        border-left-color: #2980b9;
+        background: #ffffff;
     }
     
     .backup-info {
@@ -84,7 +89,7 @@
     
     .backup-details {
         flex: 1;
-        min-width: 200px;
+        min-width: 250px;
     }
     
     .backup-actions {
@@ -94,8 +99,13 @@
     
     .backup-filename {
         font-weight: 600;
-        color: #212529;
-        margin-bottom: 0.5rem;
+        color: #2c3e50;
+        margin-bottom: 0.75rem;
+        font-size: 1.05rem;
+    }
+    
+    .backup-filename i {
+        color: #3498db;
     }
     
     .backup-meta {
@@ -112,16 +122,48 @@
         gap: 0.5rem;
     }
     
+    .backup-meta-item i {
+        color: #7f8c8d;
+        width: 16px;
+    }
+    
     .empty-state {
         text-align: center;
-        padding: 3rem 1rem;
+        padding: 4rem 1rem;
         color: #6c757d;
     }
     
     .empty-state i {
-        font-size: 4rem;
-        margin-bottom: 1rem;
-        opacity: 0.5;
+        font-size: 5rem;
+        margin-bottom: 1.5rem;
+        opacity: 0.4;
+        color: #95a5a6;
+    }
+    
+    .empty-state h5 {
+        color: #34495e;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+    
+    .empty-state p {
+        color: #7f8c8d;
+        margin-bottom: 0;
+    }
+    
+    @media (max-width: 768px) {
+        .backup-info {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .backup-actions {
+            width: 100%;
+        }
+        
+        .backup-actions .btn {
+            width: 100%;
+        }
     }
 </style>
 
@@ -211,7 +253,7 @@ function displayBackups(backups) {
             <div class="backup-info">
                 <div class="backup-details">
                     <div class="backup-filename">
-                        <i class="fas fa-file-archive text-primary me-2"></i>
+                        <i class="fas fa-file-archive me-2"></i>
                         ${backup.filename}
                     </div>
                     <div class="backup-meta">
@@ -237,7 +279,8 @@ function displayBackups(backups) {
     `).join('');
     
     container.innerHTML = `
-        <div class="mb-3">
+        <div class="mb-4 p-2 bg-light rounded">
+            <i class="fas fa-info-circle text-primary me-2"></i>
             <strong>Toplam ${backups.length} yedek bulundu</strong>
         </div>
         ${backupsHTML}
