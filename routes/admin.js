@@ -3751,6 +3751,7 @@ router.get('/api/net-profit', async (req, res) => {
         });
         
         // Calculate net profit for each currency
+        // Net profit = revenue only (receivables are future payments, not debt)
         const allCurrencies = new Set([
             ...Object.keys(revenueByCurrency),
             ...Object.keys(receivablesByCurrency)
@@ -3760,7 +3761,7 @@ router.get('/api/net-profit', async (req, res) => {
             currency: currency,
             revenue: parseFloat((revenueByCurrency[currency] || 0).toFixed(2)),
             receivables: parseFloat((receivablesByCurrency[currency] || 0).toFixed(2)),
-            netProfit: parseFloat(((revenueByCurrency[currency] || 0) - (receivablesByCurrency[currency] || 0)).toFixed(2))
+            netProfit: parseFloat((revenueByCurrency[currency] || 0).toFixed(2)) // Net profit = revenue (alacaklar borç değil)
         }));
         
         res.json({

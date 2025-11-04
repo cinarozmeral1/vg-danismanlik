@@ -563,9 +563,12 @@ async function loadNetProfit() {
                 `${item.receivables.toFixed(2)} ${item.currency}`
             ).join(' + ') || '0.00 EUR';
             
-            const netProfitText = data.data.byCurrency.map(item => 
-                `${item.netProfit.toFixed(2)} ${item.currency}`
-            ).join(' + ') || '0.00 EUR';
+            // Net profit = revenue only (alacaklar borç değil, sadece henüz zamanı gelmemiş)
+            const netProfitText = data.data.byCurrency
+                .filter(item => item.revenue > 0) // Sadece geliri olan para birimleri
+                .map(item => 
+                    `${item.revenue.toFixed(2)} ${item.currency}`
+                ).join(' + ') || '0.00 EUR';
             
             document.getElementById('totalRevenue').textContent = revenueText;
             document.getElementById('totalReceivables').textContent = receivablesText;
