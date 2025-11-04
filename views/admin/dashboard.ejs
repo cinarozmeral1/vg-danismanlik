@@ -151,7 +151,7 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <label class="form-label">Zaman Aralığı:</label>
                                 <select class="form-select" id="periodFilter">
                                     <option value="7days">Son 7 Gün</option>
@@ -161,33 +161,12 @@
                                     <option value="all">Tüm Zamanlar</option>
                                 </select>
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Karşılaştırma Tipi:</label>
-                                <select class="form-select" id="comparisonTypeFilter">
-                                    <option value="monthly" selected>Aylık</option>
-                                    <option value="weekly">Haftalık</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4 d-flex align-items-end">
+                            <div class="col-md-6 d-flex align-items-end">
                                 <button class="btn btn-primary w-100" onclick="refreshFinancialData()">
                                     <i class="fas fa-sync-alt me-2"></i>Yenile
                                 </button>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Financial Charts -->
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-chart-area me-2"></i>Gelir Karşılaştırması</h5>
-                    </div>
-                    <div class="card-body">
-                        <canvas id="revenueComparisonChart" height="80"></canvas>
                     </div>
                 </div>
             </div>
@@ -369,30 +348,20 @@
 
 <script>
 // Financial Dashboard JavaScript
-let revenueChart = null;
 let currentFilters = {
-    period: '30days',
-    currency: 'EUR',
-    comparisonType: 'monthly'
+    period: '30days'
 };
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     loadFinancialData();
     loadNetProfit();
-    loadComparisonChart();
     
     // Add event listeners for filters
     document.getElementById('periodFilter').addEventListener('change', function() {
         currentFilters.period = this.value;
         loadFinancialData();
-        loadComparisonChart();
         loadNetProfit();
-    });
-    
-    document.getElementById('comparisonTypeFilter').addEventListener('change', function() {
-        currentFilters.comparisonType = this.value;
-        loadComparisonChart();
     });
     
     // Net profit filter
@@ -579,116 +548,6 @@ async function loadNetProfit() {
     }
 }
 
-// Load comparison chart
-async function loadComparisonChart() {
-    const type = document.getElementById('comparisonTypeFilter').value;
-    
-    try {
-        const response = await fetch(`/admin/api/financial-comparison?type=${type}`);
-        const data = await response.json();
-        
-        if (data.success) {
-            updateComparisonChart(data.data, type);
-        }
-    } catch (error) {
-        console.error('Error loading comparison chart:', error);
-    }
-}
-
-// Update comparison chart - show separate lines for each currency
-function updateComparisonChart(chartData, type) {
-    const ctx = document.getElementById('revenueComparisonChart').getContext('2d');
-    
-    // Destroy existing chart if it exists
-    if (revenueChart) {
-        revenueChart.destroy();
-    }
-    
-    // Group data by period and currency
-    const periodsMap = new Map();
-    chartData.forEach(item => {
-        const periodKey = item.period;
-        if (!periodsMap.has(periodKey)) {
-            periodsMap.set(periodKey, {});
-        }
-        periodsMap.get(periodKey)[item.currency] = parseFloat(item.total);
-    });
-    
-    // Get unique periods and currencies
-    const periods = Array.from(periodsMap.keys()).sort();
-    const currencies = [...new Set(chartData.map(item => item.currency))].sort();
-    
-    // Create labels
-    const labels = periods.map(period => {
-        const date = new Date(period);
-        if (type === 'monthly') {
-            return date.toLocaleDateString('tr-TR', { month: 'short', year: 'numeric' });
-        } else {
-            const d = new Date(date);
-            d.setHours(0,0,0,0);
-            d.setDate(d.getDate() + 4 - (d.getDay()||7));
-            const yearStart = new Date(d.getFullYear(),0,1);
-            const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1)/7);
-            return `Hafta ${weekNo}`;
-        }
-    });
-    
-    // Create datasets for each currency
-    const colors = [
-        { border: 'rgb(16, 185, 129)', background: 'rgba(16, 185, 129, 0.1)' }, // Green
-        { border: 'rgb(59, 130, 246)', background: 'rgba(59, 130, 246, 0.1)' }, // Blue
-        { border: 'rgb(245, 158, 11)', background: 'rgba(245, 158, 11, 0.1)' }  // Orange
-    ];
-    
-    const datasets = currencies.map((currency, index) => {
-        const data = periods.map(period => {
-            const periodData = periodsMap.get(period);
-            return periodData && periodData[currency] ? periodData[currency] : 0;
-        });
-        
-        return {
-            label: `Gelir (${currency})`,
-            data: data,
-            borderColor: colors[index % colors.length].border,
-            backgroundColor: colors[index % colors.length].background,
-            tension: 0.4,
-            fill: false
-        };
-    });
-    
-    revenueChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: datasets
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top'
-                },
-                tooltip: {
-                    mode: 'index',
-                    intersect: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            return parseFloat(value).toFixed(2);
-                        }
-                    }
-                }
-            }
-        }
-    });
-}
-
 // Export financial data
 function exportFinancialData(type) {
     const period = document.getElementById('periodFilter').value;
@@ -700,6 +559,5 @@ function exportFinancialData(type) {
 function refreshFinancialData() {
     loadFinancialData();
     loadNetProfit();
-    loadComparisonChart();
 }
 </script> 
