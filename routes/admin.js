@@ -358,6 +358,77 @@ router.get('/dashboard', async (req, res) => {
             console.log('ℹ️ Applications table not found, using empty array');
         }
 
+        // Get financial data (receivables - unpaid services)
+        let receivablesData = {
+            totalAmount: 0,
+            services: []
+        };
+        
+        try {
+            const receivablesQuery = await pool.query(`
+                SELECT 
+                    s.id,
+                    s.service_name,
+                    s.amount,
+                    s.currency,
+                    s.due_date,
+                    s.created_at,
+                    u.id as user_id,
+                    u.first_name,
+                    u.last_name,
+                    u.email
+                FROM services s
+                JOIN users u ON s.user_id = u.id
+                WHERE s.is_paid = false
+                ORDER BY s.due_date ASC NULLS LAST, s.created_at DESC
+            `);
+            
+            receivablesData.services = receivablesQuery.rows;
+            receivablesData.totalAmount = receivablesQuery.rows.reduce((sum, service) => {
+                // Convert all to EUR for now (can be enhanced later)
+                return sum + parseFloat(service.amount || 0);
+            }, 0);
+        } catch (error) {
+            console.log('ℹ️ Services table not found or error fetching receivables:', error.message);
+        }
+
+        // Get revenue data (paid services in last 30 days)
+        let revenueData = {
+            totalAmount: 0,
+            services: []
+        };
+        
+        try {
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            
+            const revenueQuery = await pool.query(`
+                SELECT 
+                    s.id,
+                    s.service_name,
+                    s.amount,
+                    s.currency,
+                    s.payment_date,
+                    s.created_at,
+                    u.id as user_id,
+                    u.first_name,
+                    u.last_name,
+                    u.email
+                FROM services s
+                JOIN users u ON s.user_id = u.id
+                WHERE s.is_paid = true 
+                AND s.payment_date >= $1
+                ORDER BY s.payment_date DESC
+            `, [thirtyDaysAgo.toISOString().split('T')[0]]);
+            
+            revenueData.services = revenueQuery.rows;
+            revenueData.totalAmount = revenueQuery.rows.reduce((sum, service) => {
+                return sum + parseFloat(service.amount || 0);
+            }, 0);
+        } catch (error) {
+            console.log('ℹ️ Services table not found or error fetching revenue:', error.message);
+        }
+
         // Get sidebar counts
         const sidebarCounts = await getAdminSidebarCounts();
 
@@ -366,6 +437,8 @@ router.get('/dashboard', async (req, res) => {
             activePage: 'dashboard',
             users: usersResult.rows,
             applications: applications,
+            receivablesData: receivablesData,
+            revenueData: revenueData,
             stats: {
                 totalUsers: sidebarCounts.userCount,
                 totalApplications: sidebarCounts.applicationCount,
