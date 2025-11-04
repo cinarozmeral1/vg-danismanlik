@@ -3879,6 +3879,33 @@ router.get('/api/financial-export', async (req, res) => {
 // BACKUP MANAGEMENT ROUTES
 // ============================================
 
+// Test endpoint to check authentication
+router.get('/api/backup/test-auth', async (req, res) => {
+    try {
+        res.json({
+            success: true,
+            data: {
+                isLoggedIn: res.locals.isLoggedIn,
+                isAdmin: res.locals.isAdmin,
+                currentUser: res.locals.currentUser ? {
+                    id: res.locals.currentUser.id,
+                    email: res.locals.currentUser.email,
+                    is_admin: res.locals.currentUser.is_admin
+                } : null,
+                cookies: {
+                    userToken: req.cookies.userToken ? 'exists' : 'missing',
+                    adminToken: req.cookies.adminToken ? 'exists' : 'missing'
+                }
+            }
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
 // List backups from FTP server
 router.get('/api/backup/list', authenticateAdmin, async (req, res) => {
     let client = null;
