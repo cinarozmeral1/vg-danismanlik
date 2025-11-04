@@ -15,7 +15,6 @@ const nodemailer = require('nodemailer');
 const pool = require('./config/database');
 const multer = require('multer');
 const emailService = require('./services/emailService');
-const cron = require('node-cron');
 
 // Multer configuration for file uploads
 const storage = multer.diskStorage({
@@ -133,9 +132,6 @@ const guardianRoutes = require('./routes/guardians');
 
 // Import authentication middleware
 const { authenticateAdmin } = require('./middleware/auth');
-
-// Backup system
-const { runBackup } = require('./scripts/backup');
 
 // Import SEO middleware
 const seoMiddleware = require('./middleware/seo');
@@ -492,31 +488,6 @@ app.post('/api/maintenance/add-user-columns', async (req, res) => {
   }
 });
 app.use('/admin/guardians', guardianRoutes);
-
-// Manual backup endpoint (admin only)
-app.post('/admin/api/backup/run', authenticateAdmin, async (req, res) => {
-    try {
-        console.log('🔄 Manuel yedekleme isteği alındı');
-        
-        // Run backup in background
-        runBackup().then(() => {
-            console.log('✅ Manuel yedekleme tamamlandı');
-        }).catch((error) => {
-            console.error('❌ Manuel yedekleme hatası:', error);
-        });
-        
-        res.json({
-            success: true,
-            message: 'Yedekleme başlatıldı. Arka planda çalışıyor...'
-        });
-    } catch (error) {
-        console.error('Backup endpoint error:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Yedekleme başlatılamadı: ' + error.message
-        });
-    }
-});
 
 // Public university routes (no authentication required)
 app.get('/admin/universities/edit/:id', async (req, res) => {
@@ -3092,25 +3063,22 @@ app.post('/api/assessment', async (req, res) => {
         });
     }
 });
-// Error handling middleware (improved with detailed logging)
 app.use((err, req, res, next) => {
-    console.error('❌ ERROR HANDLER TRIGGERED');
-    console.error('❌ Error Message:', err.message);
-    console.error('❌ Error Stack:', err.stack);
-    console.error('❌ Request URL:', req.url);
-    console.error('❌ Request Method:', req.method);
-    console.error('❌ Request Headers:', JSON.stringify(req.headers, null, 2));
-    
-    // If response already sent, don't send again
-    if (res.headersSent) {
-        console.error('❌ Response already sent, skipping error handler');
-        return next(err);
-    }
-    
+    console.error(err.stack);
     res.status(500).json({
         success: false,
-        error: err.message || 'Sunucu hatası',
-        message: err.message || 'Beklenmeyen bir hata oluştu'
+        error: 'Sunucu hatası'
+    });
+});
+app.use((req, res) => {
+    res.status(404).render('404', { title: 'Sayfa Bulunamadı' });
+});
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({
+        success: false,
+        error: 'Sunucu hatası'
     });
 });
 
@@ -3135,23 +3103,4 @@ if (isVercel) {
 
     // Local development için HTTPS Server (self-signed certificate) - Geçici olarak devre dışı
     console.log('HTTPS modu geçici olarak devre dışı bırakıldı.');
-}
-
-// Initialize backup cron job (runs daily at 2:00 AM)
-// Schedule daily backup at 2:00 AM
-if (process.env.ENABLE_AUTO_BACKUP !== 'false') {
-    cron.schedule('0 2 * * *', async () => {
-        console.log('🔄 Otomatik yedekleme başlatılıyor...');
-        try {
-            await runBackup();
-            console.log('✅ Otomatik yedekleme tamamlandı');
-        } catch (error) {
-            console.error('❌ Otomatik yedekleme hatası:', error);
-        }
-    }, {
-        timezone: 'Europe/Istanbul'
-    });
-    console.log('✅ Otomatik günlük yedekleme zamanlandı (Her gün 02:00)');
 } 
-
- 

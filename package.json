@@ -11,8 +11,7 @@
     "vercel-build": "echo 'Vercel build completed'",
     "migrate:vercel": "node scripts/migrate-to-vercel.js",
     "db:test": "node scripts/test-database.js",
-    "db:check": "node -e \"console.log('Database URL:', process.env.DATABASE_URL || 'Not set')\"",
-    "backup": "node scripts/backup.js"
+    "db:check": "node -e \"console.log('Database URL:', process.env.DATABASE_URL || 'Not set')\""
   },
   "dependencies": {
     "archiver": "^7.0.1",
