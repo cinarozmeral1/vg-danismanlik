@@ -2046,12 +2046,6 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <button class="btn btn-sm btn-outline-primary flex-fill" onclick="editService(${service.id})" title="Düzenle">
                                     <i class="fas fa-edit me-1"></i>Düzenle
                                 </button>
-                                <button class="btn btn-sm ${service.is_paid ? 'btn-outline-warning' : 'btn-outline-success'} flex-fill" 
-                                        onclick="togglePaymentStatus(${service.id}, ${service.is_paid})" 
-                                        title="${service.is_paid ? 'Ödenmedi olarak işaretle' : 'Ödendi olarak işaretle'}">
-                                    <i class="fas fa-${service.is_paid ? 'undo' : 'check'} me-1"></i>
-                                    ${service.is_paid ? 'Geri Al' : 'Ödendi'}
-                                </button>
                             </div>
                         </div>
                     </div>
