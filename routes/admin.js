@@ -3550,14 +3550,14 @@ const convertCurrency = (amount, fromCurrency, toCurrency) => {
 // Get financial data with filters (API endpoint)
 router.get('/api/financial-data', async (req, res) => {
     try {
-        const { period = '30days', currency = 'EUR', type = 'revenue' } = req.query;
+        const { period = '30days', type = 'revenue' } = req.query;
         
         const dateRange = getDateRange(period);
         let query;
         let params = [];
         
         if (type === 'receivables') {
-            // Unpaid services
+            // Unpaid services - show all currencies
             query = `
                 SELECT 
                     s.id,
@@ -3573,17 +3573,10 @@ router.get('/api/financial-data', async (req, res) => {
                 FROM services s
                 JOIN users u ON s.user_id = u.id
                 WHERE s.is_paid = false
+                ORDER BY s.due_date ASC NULLS LAST, s.created_at DESC
             `;
-            
-            // Filter by currency if specified
-            if (currency !== 'ALL') {
-                query += ' AND s.currency = $1';
-                params.push(currency);
-            }
-            
-            query += ' ORDER BY s.due_date ASC NULLS LAST, s.created_at DESC';
         } else {
-            // Paid services (revenue)
+            // Paid services (revenue) - show all currencies
             query = `
                 SELECT 
                     s.id,
@@ -3606,41 +3599,38 @@ router.get('/api/financial-data', async (req, res) => {
                 params.push(dateRange.startDate);
             }
             
-            // Filter by currency if specified
-            if (currency !== 'ALL') {
-                query += ` AND s.currency = $${params.length + 1}`;
-                params.push(currency);
-            }
-            
             query += ' ORDER BY s.payment_date DESC';
         }
         
         const result = await pool.query(query, params);
         
-        // Convert currency if needed
-        let totalAmount = 0;
+        // Group totals by currency (no conversion, show each currency separately)
+        const totalsByCurrency = {};
         const services = result.rows.map(service => {
-            let convertedAmount = parseFloat(service.amount || 0);
-            
-            if (currency !== 'ALL' && service.currency !== currency) {
-                convertedAmount = convertCurrency(service.amount, service.currency, currency);
+            const currency = service.currency || 'EUR';
+            if (!totalsByCurrency[currency]) {
+                totalsByCurrency[currency] = 0;
             }
-            
-            totalAmount += convertedAmount;
+            totalsByCurrency[currency] += parseFloat(service.amount || 0);
             
             return {
                 ...service,
-                converted_amount: convertedAmount.toFixed(2),
-                display_currency: currency === 'ALL' ? service.currency : currency
+                converted_amount: parseFloat(service.amount).toFixed(2),
+                display_currency: currency
             };
         });
+        
+        // Format totals by currency
+        const totalAmounts = Object.keys(totalsByCurrency).map(currency => ({
+            currency: currency,
+            amount: totalsByCurrency[currency].toFixed(2)
+        }));
         
         res.json({
             success: true,
             data: {
                 services: services,
-                totalAmount: totalAmount.toFixed(2),
-                currency: currency === 'ALL' ? 'MIXED' : currency,
+                totalsByCurrency: totalAmounts,
                 period: period,
                 count: services.length
             }
@@ -3657,11 +3647,11 @@ router.get('/api/financial-data', async (req, res) => {
 // Get monthly/weekly comparison data
 router.get('/api/financial-comparison', async (req, res) => {
     try {
-        const { type = 'monthly', currency = 'EUR' } = req.query;
+        const { type = 'monthly' } = req.query;
         
         let query;
         if (type === 'monthly') {
-            // Last 12 months
+            // Last 12 months - show all currencies separately
             query = `
                 SELECT 
                     DATE_TRUNC('month', payment_date) as period,
@@ -3672,10 +3662,10 @@ router.get('/api/financial-comparison', async (req, res) => {
                 WHERE is_paid = true 
                 AND payment_date >= NOW() - INTERVAL '12 months'
                 GROUP BY DATE_TRUNC('month', payment_date), currency
-                ORDER BY period ASC
+                ORDER BY period ASC, currency ASC
             `;
         } else {
-            // Last 12 weeks
+            // Last 12 weeks - show all currencies separately
             query = `
                 SELECT 
                     DATE_TRUNC('week', payment_date) as period,
@@ -3686,33 +3676,24 @@ router.get('/api/financial-comparison', async (req, res) => {
                 WHERE is_paid = true 
                 AND payment_date >= NOW() - INTERVAL '12 weeks'
                 GROUP BY DATE_TRUNC('week', payment_date), currency
-                ORDER BY period ASC
+                ORDER BY period ASC, currency ASC
             `;
         }
         
         const result = await pool.query(query);
         
-        // Process and convert currency
-        const comparisonData = [];
-        result.rows.forEach(row => {
-            let convertedAmount = parseFloat(row.total || 0);
-            if (currency !== 'ALL' && row.currency !== currency) {
-                convertedAmount = convertCurrency(row.total, row.currency, currency);
-            }
-            
-            comparisonData.push({
-                period: row.period.toISOString().split('T')[0],
-                count: parseInt(row.count),
-                total: parseFloat(convertedAmount.toFixed(2)),
-                currency: currency === 'ALL' ? row.currency : currency
-            });
-        });
+        // Process data - keep currencies separate (no conversion)
+        const comparisonData = result.rows.map(row => ({
+            period: row.period.toISOString().split('T')[0],
+            count: parseInt(row.count),
+            total: parseFloat(row.total || 0).toFixed(2),
+            currency: row.currency || 'EUR'
+        }));
         
         res.json({
             success: true,
             data: comparisonData,
-            type: type,
-            currency: currency
+            type: type
         });
     } catch (error) {
         console.error('Financial comparison API error:', error);
@@ -3723,14 +3704,14 @@ router.get('/api/financial-comparison', async (req, res) => {
     }
 });
 
-// Get net profit (revenue - receivables)
+// Get net profit (revenue - receivables) - by currency
 router.get('/api/net-profit', async (req, res) => {
     try {
-        const { currency = 'EUR', period = 'all' } = req.query;
+        const { period = 'all' } = req.query;
         
         const dateRange = getDateRange(period);
         
-        // Get total revenue
+        // Get total revenue by currency
         let revenueQuery = `
             SELECT SUM(amount) as total, currency
             FROM services
@@ -3743,61 +3724,49 @@ router.get('/api/net-profit', async (req, res) => {
             revenueParams.push(dateRange.startDate);
         }
         
-        if (currency !== 'ALL') {
-            revenueQuery += ` AND currency = $${revenueParams.length + 1}`;
-            revenueParams.push(currency);
-        }
-        
         revenueQuery += ' GROUP BY currency';
         
         const revenueResult = await pool.query(revenueQuery, revenueParams);
         
-        // Get total receivables
+        // Get total receivables by currency
         let receivablesQuery = `
             SELECT SUM(amount) as total, currency
             FROM services
             WHERE is_paid = false
+            GROUP BY currency
         `;
-        const receivablesParams = [];
         
-        if (currency !== 'ALL') {
-            receivablesQuery += ' AND currency = $1';
-            receivablesParams.push(currency);
-        }
+        const receivablesResult = await pool.query(receivablesQuery);
         
-        receivablesQuery += ' GROUP BY currency';
-        
-        const receivablesResult = await pool.query(receivablesQuery, receivablesParams);
-        
-        // Calculate totals with currency conversion
-        let totalRevenue = 0;
-        let totalReceivables = 0;
+        // Group by currency (no conversion)
+        const revenueByCurrency = {};
+        const receivablesByCurrency = {};
         
         revenueResult.rows.forEach(row => {
-            let amount = parseFloat(row.total || 0);
-            if (currency !== 'ALL' && row.currency !== currency) {
-                amount = convertCurrency(row.total, row.currency, currency);
-            }
-            totalRevenue += amount;
+            revenueByCurrency[row.currency || 'EUR'] = parseFloat(row.total || 0);
         });
         
         receivablesResult.rows.forEach(row => {
-            let amount = parseFloat(row.total || 0);
-            if (currency !== 'ALL' && row.currency !== currency) {
-                amount = convertCurrency(row.total, row.currency, currency);
-            }
-            totalReceivables += amount;
+            receivablesByCurrency[row.currency || 'EUR'] = parseFloat(row.total || 0);
         });
         
-        const netProfit = totalRevenue - totalReceivables;
+        // Calculate net profit for each currency
+        const allCurrencies = new Set([
+            ...Object.keys(revenueByCurrency),
+            ...Object.keys(receivablesByCurrency)
+        ]);
+        
+        const profitByCurrency = Array.from(allCurrencies).map(currency => ({
+            currency: currency,
+            revenue: parseFloat((revenueByCurrency[currency] || 0).toFixed(2)),
+            receivables: parseFloat((receivablesByCurrency[currency] || 0).toFixed(2)),
+            netProfit: parseFloat(((revenueByCurrency[currency] || 0) - (receivablesByCurrency[currency] || 0)).toFixed(2))
+        }));
         
         res.json({
             success: true,
             data: {
-                revenue: parseFloat(totalRevenue.toFixed(2)),
-                receivables: parseFloat(totalReceivables.toFixed(2)),
-                netProfit: parseFloat(netProfit.toFixed(2)),
-                currency: currency === 'ALL' ? 'MIXED' : currency,
+                byCurrency: profitByCurrency,
                 period: period
             }
         });
@@ -3813,9 +3782,9 @@ router.get('/api/net-profit', async (req, res) => {
 // Export financial data as CSV
 router.get('/api/financial-export', async (req, res) => {
     try {
-        const { period = '30days', currency = 'EUR', type = 'revenue' } = req.query;
+        const { period = '30days', type = 'revenue' } = req.query;
         
-        // Get data using same logic as financial-data endpoint
+        // Get data using same logic as financial-data endpoint - all currencies
         const dateRange = getDateRange(period);
         let query;
         let params = [];
@@ -3833,12 +3802,8 @@ router.get('/api/financial-export', async (req, res) => {
                 FROM services s
                 JOIN users u ON s.user_id = u.id
                 WHERE s.is_paid = false
+                ORDER BY s.due_date ASC NULLS LAST, s.created_at DESC
             `;
-            
-            if (currency !== 'ALL') {
-                query += ' AND s.currency = $1';
-                params.push(currency);
-            }
         } else {
             query = `
                 SELECT 
@@ -3859,10 +3824,7 @@ router.get('/api/financial-export', async (req, res) => {
                 params.push(dateRange.startDate);
             }
             
-            if (currency !== 'ALL') {
-                query += ` AND s.currency = $${params.length + 1}`;
-                params.push(currency);
-            }
+            query += ' ORDER BY s.payment_date DESC';
         }
         
         const result = await pool.query(query, params);

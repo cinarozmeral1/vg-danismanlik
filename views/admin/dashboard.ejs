@@ -126,7 +126,7 @@
                             </div>
                         </div>
                         <div class="row mt-3">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <label class="form-label">Zaman Aralığı:</label>
                                 <select class="form-select form-select-sm" id="profitPeriodFilter">
                                     <option value="7days">Son 7 Gün</option>
@@ -134,15 +134,6 @@
                                     <option value="90days">Son 90 Gün</option>
                                     <option value="1year">Son 1 Yıl</option>
                                     <option value="all" selected>Tüm Zamanlar</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Para Birimi:</label>
-                                <select class="form-select form-select-sm" id="profitCurrencyFilter">
-                                    <option value="EUR" selected>EUR (Euro)</option>
-                                    <option value="USD">USD (Dolar)</option>
-                                    <option value="TRY">TRY (Türk Lirası)</option>
-                                    <option value="ALL">Tümü (Karışık)</option>
                                 </select>
                             </div>
                         </div>
@@ -160,7 +151,7 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <label class="form-label">Zaman Aralığı:</label>
                                 <select class="form-select" id="periodFilter">
                                     <option value="7days">Son 7 Gün</option>
@@ -170,23 +161,14 @@
                                     <option value="all">Tüm Zamanlar</option>
                                 </select>
                             </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Para Birimi:</label>
-                                <select class="form-select" id="currencyFilter">
-                                    <option value="EUR" selected>EUR (Euro)</option>
-                                    <option value="USD">USD (Dolar)</option>
-                                    <option value="TRY">TRY (Türk Lirası)</option>
-                                    <option value="ALL">Tümü (Karışık)</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <label class="form-label">Karşılaştırma Tipi:</label>
                                 <select class="form-select" id="comparisonTypeFilter">
                                     <option value="monthly" selected>Aylık</option>
                                     <option value="weekly">Haftalık</option>
                                 </select>
                             </div>
-                            <div class="col-md-3 d-flex align-items-end">
+                            <div class="col-md-4 d-flex align-items-end">
                                 <button class="btn btn-primary w-100" onclick="refreshFinancialData()">
                                     <i class="fas fa-sync-alt me-2"></i>Yenile
                                 </button>
@@ -405,12 +387,6 @@ document.addEventListener('DOMContentLoaded', function() {
         currentFilters.period = this.value;
         loadFinancialData();
         loadComparisonChart();
-    });
-    
-    document.getElementById('currencyFilter').addEventListener('change', function() {
-        currentFilters.currency = this.value;
-        loadFinancialData();
-        loadComparisonChart();
         loadNetProfit();
     });
     
@@ -419,12 +395,8 @@ document.addEventListener('DOMContentLoaded', function() {
         loadComparisonChart();
     });
     
-    // Net profit filters
+    // Net profit filter
     document.getElementById('profitPeriodFilter').addEventListener('change', function() {
-        loadNetProfit();
-    });
-    
-    document.getElementById('profitCurrencyFilter').addEventListener('change', function() {
         loadNetProfit();
     });
 });
@@ -432,11 +404,10 @@ document.addEventListener('DOMContentLoaded', function() {
 // Load financial data (receivables and revenue)
 async function loadFinancialData() {
     const period = document.getElementById('periodFilter').value;
-    const currency = document.getElementById('currencyFilter').value;
     
-    // Load receivables
+    // Load receivables (all currencies)
     try {
-        const receivablesResponse = await fetch(`/admin/api/financial-data?type=receivables&currency=${currency}`);
+        const receivablesResponse = await fetch(`/admin/api/financial-data?type=receivables`);
         const receivablesData = await receivablesResponse.json();
         
         if (receivablesData.success) {
@@ -446,9 +417,9 @@ async function loadFinancialData() {
         console.error('Error loading receivables:', error);
     }
     
-    // Load revenue
+    // Load revenue (all currencies)
     try {
-        const revenueResponse = await fetch(`/admin/api/financial-data?type=revenue&period=${period}&currency=${currency}`);
+        const revenueResponse = await fetch(`/admin/api/financial-data?type=revenue&period=${period}`);
         const revenueData = await revenueResponse.json();
         
         if (revenueData.success) {
@@ -461,7 +432,16 @@ async function loadFinancialData() {
 
 // Update receivables display
 function updateReceivablesDisplay(data) {
-    document.getElementById('receivablesTotal').textContent = `${parseFloat(data.totalAmount).toFixed(2)} ${data.currency}`;
+    // Show totals by currency
+    let totalText = '';
+    if (data.totalsByCurrency && data.totalsByCurrency.length > 0) {
+        totalText = data.totalsByCurrency.map(item => 
+            `${parseFloat(item.amount).toFixed(2)} ${item.currency}`
+        ).join(' + ');
+    } else {
+        totalText = '0.00 EUR';
+    }
+    document.getElementById('receivablesTotal').textContent = totalText;
     document.getElementById('receivablesCount').textContent = data.count;
     
     const tbody = document.getElementById('receivablesTableBody');
@@ -494,7 +474,7 @@ function updateReceivablesDisplay(data) {
                 <span class="badge bg-secondary">${service.service_name}</span>
             </td>
             <td>
-                <strong>${parseFloat(service.converted_amount || service.amount).toFixed(2)} ${service.display_currency || service.currency}</strong>
+                <strong>${parseFloat(service.amount).toFixed(2)} ${service.currency || 'EUR'}</strong>
             </td>
             <td>
                 ${service.due_date ? new Date(service.due_date).toLocaleDateString('tr-TR') : '<span class="text-muted">Belirtilmemiş</span>'}
@@ -513,7 +493,16 @@ function updateRevenueDisplay(data, period) {
         'all': 'Tüm Zamanlar - Toplam Ciro'
     };
     
-    document.getElementById('revenueTotal').textContent = `${parseFloat(data.totalAmount).toFixed(2)} ${data.currency}`;
+    // Show totals by currency
+    let totalText = '';
+    if (data.totalsByCurrency && data.totalsByCurrency.length > 0) {
+        totalText = data.totalsByCurrency.map(item => 
+            `${parseFloat(item.amount).toFixed(2)} ${item.currency}`
+        ).join(' + ');
+    } else {
+        totalText = '0.00 EUR';
+    }
+    document.getElementById('revenueTotal').textContent = totalText;
     document.getElementById('revenuePeriodLabel').textContent = periodLabels[period] || 'Toplam Ciro';
     document.getElementById('revenueCount').textContent = data.count;
     
@@ -547,7 +536,7 @@ function updateRevenueDisplay(data, period) {
                 <span class="badge bg-success">${service.service_name}</span>
             </td>
             <td>
-                <strong>${parseFloat(service.converted_amount || service.amount).toFixed(2)} ${service.display_currency || service.currency}</strong>
+                <strong>${parseFloat(service.amount).toFixed(2)} ${service.currency || 'EUR'}</strong>
             </td>
             <td>
                 ${service.payment_date ? new Date(service.payment_date).toLocaleDateString('tr-TR') : '<span class="text-muted">Belirtilmemiş</span>'}
@@ -559,16 +548,28 @@ function updateRevenueDisplay(data, period) {
 // Load net profit
 async function loadNetProfit() {
     const period = document.getElementById('profitPeriodFilter').value;
-    const currency = document.getElementById('profitCurrencyFilter').value;
     
     try {
-        const response = await fetch(`/admin/api/net-profit?period=${period}&currency=${currency}`);
+        const response = await fetch(`/admin/api/net-profit?period=${period}`);
         const data = await response.json();
         
-        if (data.success) {
-            document.getElementById('totalRevenue').textContent = `${data.data.revenue.toFixed(2)} ${data.data.currency}`;
-            document.getElementById('totalReceivables').textContent = `${data.data.receivables.toFixed(2)} ${data.data.currency}`;
-            document.getElementById('netProfit').textContent = `${data.data.netProfit.toFixed(2)} ${data.data.currency}`;
+        if (data.success && data.data.byCurrency) {
+            // Show totals by currency
+            const revenueText = data.data.byCurrency.map(item => 
+                `${item.revenue.toFixed(2)} ${item.currency}`
+            ).join(' + ') || '0.00 EUR';
+            
+            const receivablesText = data.data.byCurrency.map(item => 
+                `${item.receivables.toFixed(2)} ${item.currency}`
+            ).join(' + ') || '0.00 EUR';
+            
+            const netProfitText = data.data.byCurrency.map(item => 
+                `${item.netProfit.toFixed(2)} ${item.currency}`
+            ).join(' + ') || '0.00 EUR';
+            
+            document.getElementById('totalRevenue').textContent = revenueText;
+            document.getElementById('totalReceivables').textContent = receivablesText;
+            document.getElementById('netProfit').textContent = netProfitText;
         }
     } catch (error) {
         console.error('Error loading net profit:', error);
@@ -578,10 +579,9 @@ async function loadNetProfit() {
 // Load comparison chart
 async function loadComparisonChart() {
     const type = document.getElementById('comparisonTypeFilter').value;
-    const currency = document.getElementById('currencyFilter').value;
     
     try {
-        const response = await fetch(`/admin/api/financial-comparison?type=${type}&currency=${currency}`);
+        const response = await fetch(`/admin/api/financial-comparison?type=${type}`);
         const data = await response.json();
         
         if (data.success) {
@@ -592,7 +592,7 @@ async function loadComparisonChart() {
     }
 }
 
-// Update comparison chart
+// Update comparison chart - show separate lines for each currency
 function updateComparisonChart(chartData, type) {
     const ctx = document.getElementById('revenueComparisonChart').getContext('2d');
     
@@ -601,12 +601,26 @@ function updateComparisonChart(chartData, type) {
         revenueChart.destroy();
     }
     
-    const labels = chartData.map(item => {
-        const date = new Date(item.period);
+    // Group data by period and currency
+    const periodsMap = new Map();
+    chartData.forEach(item => {
+        const periodKey = item.period;
+        if (!periodsMap.has(periodKey)) {
+            periodsMap.set(periodKey, {});
+        }
+        periodsMap.get(periodKey)[item.currency] = parseFloat(item.total);
+    });
+    
+    // Get unique periods and currencies
+    const periods = Array.from(periodsMap.keys()).sort();
+    const currencies = [...new Set(chartData.map(item => item.currency))].sort();
+    
+    // Create labels
+    const labels = periods.map(period => {
+        const date = new Date(period);
         if (type === 'monthly') {
             return date.toLocaleDateString('tr-TR', { month: 'short', year: 'numeric' });
         } else {
-            // Calculate week number
             const d = new Date(date);
             d.setHours(0,0,0,0);
             d.setDate(d.getDate() + 4 - (d.getDay()||7));
@@ -616,20 +630,34 @@ function updateComparisonChart(chartData, type) {
         }
     });
     
-    const amounts = chartData.map(item => parseFloat(item.total));
+    // Create datasets for each currency
+    const colors = [
+        { border: 'rgb(16, 185, 129)', background: 'rgba(16, 185, 129, 0.1)' }, // Green
+        { border: 'rgb(59, 130, 246)', background: 'rgba(59, 130, 246, 0.1)' }, // Blue
+        { border: 'rgb(245, 158, 11)', background: 'rgba(245, 158, 11, 0.1)' }  // Orange
+    ];
+    
+    const datasets = currencies.map((currency, index) => {
+        const data = periods.map(period => {
+            const periodData = periodsMap.get(period);
+            return periodData && periodData[currency] ? periodData[currency] : 0;
+        });
+        
+        return {
+            label: `Gelir (${currency})`,
+            data: data,
+            borderColor: colors[index % colors.length].border,
+            backgroundColor: colors[index % colors.length].background,
+            tension: 0.4,
+            fill: false
+        };
+    });
     
     revenueChart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: labels,
-            datasets: [{
-                label: 'Gelir',
-                data: amounts,
-                borderColor: 'rgb(16, 185, 129)',
-                backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                tension: 0.4,
-                fill: true
-            }]
+            datasets: datasets
         },
         options: {
             responsive: true,
@@ -641,12 +669,7 @@ function updateComparisonChart(chartData, type) {
                 },
                 tooltip: {
                     mode: 'index',
-                    intersect: false,
-                    callbacks: {
-                        label: function(context) {
-                            return `${context.dataset.label}: ${parseFloat(context.parsed.y).toFixed(2)} ${chartData[context.dataIndex]?.currency || 'EUR'}`;
-                        }
-                    }
+                    intersect: false
                 }
             },
             scales: {
@@ -666,9 +689,8 @@ function updateComparisonChart(chartData, type) {
 // Export financial data
 function exportFinancialData(type) {
     const period = document.getElementById('periodFilter').value;
-    const currency = document.getElementById('currencyFilter').value;
     
-    window.location.href = `/admin/api/financial-export?type=${type}&period=${period}&currency=${currency}`;
+    window.location.href = `/admin/api/financial-export?type=${type}&period=${period}`;
 }
 
 // Refresh all financial data
