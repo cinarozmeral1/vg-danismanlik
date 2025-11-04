@@ -3862,4 +3862,170 @@ router.get('/api/financial-export', async (req, res) => {
     }
 });
 
+// ============================================
+// BACKUP MANAGEMENT ROUTES
+// ============================================
+
+// List backups from FTP server
+router.get('/api/backup/list', authenticateAdmin, async (req, res) => {
+    try {
+        const { Client } = require('basic-ftp');
+        const client = new Client();
+        
+        const FTP_CONFIG = {
+            host: process.env.FTP_HOST || '',
+            user: process.env.FTP_USER || '',
+            password: process.env.FTP_PASSWORD || '',
+            secure: process.env.FTP_SECURE === 'true',
+            port: parseInt(process.env.FTP_PORT || '21'),
+            remotePath: process.env.FTP_REMOTE_PATH || '/backups'
+        };
+        
+        if (!FTP_CONFIG.host || !FTP_CONFIG.user || !FTP_CONFIG.password) {
+            return res.json({
+                success: false,
+                message: 'FTP bilgileri yapılandırılmamış',
+                backups: []
+            });
+        }
+        
+        await client.access({
+            host: FTP_CONFIG.host,
+            user: FTP_CONFIG.user,
+            password: FTP_CONFIG.password,
+            secure: FTP_CONFIG.secure,
+            port: FTP_CONFIG.port
+        });
+        
+        // List files in backup directory
+        const files = await client.list(FTP_CONFIG.remotePath);
+        const backupFiles = files
+            .filter(file => file.name.startsWith('venture-global-backup-') && file.name.endsWith('.zip'))
+            .map(file => ({
+                filename: file.name,
+                size: file.size,
+                sizeMB: (file.size / 1024 / 1024).toFixed(2),
+                modifiedAt: file.modifiedAt ? file.modifiedAt.toISOString() : null,
+                modifiedAtFormatted: file.modifiedAt ? file.modifiedAt.toLocaleString('tr-TR') : null
+            }))
+            .sort((a, b) => {
+                // Sort by date, newest first
+                if (a.modifiedAt && b.modifiedAt) {
+                    return new Date(b.modifiedAt) - new Date(a.modifiedAt);
+                }
+                return 0;
+            });
+        
+        client.close();
+        
+        res.json({
+            success: true,
+            backups: backupFiles,
+            count: backupFiles.length
+        });
+        
+    } catch (error) {
+        console.error('Backup list error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Yedek listesi alınamadı: ' + error.message,
+            backups: []
+        });
+    }
+});
+
+// Download backup from FTP
+router.get('/api/backup/download/:filename', authenticateAdmin, async (req, res) => {
+    try {
+        const { Client } = require('basic-ftp');
+        const path = require('path');
+        const fs = require('fs');
+        const client = new Client();
+        
+        const filename = req.params.filename;
+        
+        // Security: prevent directory traversal
+        if (filename.includes('..') || !filename.startsWith('venture-global-backup-') || !filename.endsWith('.zip')) {
+            return res.status(400).json({
+                success: false,
+                message: 'Geçersiz dosya adı'
+            });
+        }
+        
+        const FTP_CONFIG = {
+            host: process.env.FTP_HOST || '',
+            user: process.env.FTP_USER || '',
+            password: process.env.FTP_PASSWORD || '',
+            secure: process.env.FTP_SECURE === 'true',
+            port: parseInt(process.env.FTP_PORT || '21'),
+            remotePath: process.env.FTP_REMOTE_PATH || '/backups'
+        };
+        
+        if (!FTP_CONFIG.host || !FTP_CONFIG.user || !FTP_CONFIG.password) {
+            return res.status(500).json({
+                success: false,
+                message: 'FTP bilgileri yapılandırılmamış'
+            });
+        }
+        
+        await client.access({
+            host: FTP_CONFIG.host,
+            user: FTP_CONFIG.user,
+            password: FTP_CONFIG.password,
+            secure: FTP_CONFIG.secure,
+            port: FTP_CONFIG.port
+        });
+        
+        // Create temp directory if it doesn't exist
+        const tempDir = path.join(__dirname, '..', 'backups', 'temp');
+        if (!fs.existsSync(tempDir)) {
+            fs.mkdirSync(tempDir, { recursive: true });
+        }
+        
+        const localPath = path.join(tempDir, filename);
+        const remotePath = path.join(FTP_CONFIG.remotePath, filename);
+        
+        // Download file
+        await client.downloadTo(localPath, remotePath);
+        client.close();
+        
+        // Send file
+        res.download(localPath, filename, (err) => {
+            if (err) {
+                console.error('Download error:', err);
+            }
+            // Cleanup temp file after download
+            if (fs.existsSync(localPath)) {
+                fs.unlinkSync(localPath);
+            }
+        });
+        
+    } catch (error) {
+        console.error('Backup download error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Yedek indirilemedi: ' + error.message
+        });
+    }
+});
+
+// Backup management page
+router.get('/backups', authenticateAdmin, async (req, res) => {
+    try {
+        const sidebarCounts = await getAdminSidebarCounts();
+        
+        res.render('admin/backups', {
+            title: 'Yedek Yönetimi - Admin Panel',
+            activePage: 'backups',
+            ...sidebarCounts
+        });
+    } catch (error) {
+        console.error('Backup page error:', error);
+        res.status(500).render('error', {
+            title: 'Hata',
+            message: 'Yedek yönetim sayfası yüklenemedi'
+        });
+    }
+});
+
 module.exports = router; 
