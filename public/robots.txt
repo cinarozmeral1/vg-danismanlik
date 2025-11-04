@@ -1,0 +1,69 @@
+# robots.txt for Venture Global Website
+# https://ventureglobal.com/robots.txt
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /user/
+Disallow: /api/
+Disallow: /uploads/documents/
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /*.json$
+Disallow: /test-*
+
+# Allow important pages
+Allow: /services
+Allow: /universities
+Allow: /about-us
+Allow: /contact
+Allow: /student-life/
+Allow: /partners/
+
+# Sitemap
+Sitemap: https://ventureglobal.com/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 1
+
+# Specific bots
+User-agent: Googlebot
+Allow: /
+Disallow: /admin/
+Disallow: /user/
+Disallow: /api/
+
+User-agent: Bingbot
+Allow: /
+Disallow: /admin/
+Disallow: /user/
+Disallow: /api/
+
+User-agent: Slurp
+Allow: /
+Disallow: /admin/
+Disallow: /user/
+Disallow: /api/
+
+User-agent: DuckDuckBot
+Allow: /
+Disallow: /admin/
+Disallow: /user/
+Disallow: /api/
+
+User-agent: Baiduspider
+Allow: /
+Disallow: /admin/
+Disallow: /user/
+Disallow: /api/
+
+# Block bad bots
+User-agent: AhrefsBot
+Crawl-delay: 10
+
+User-agent: SemrushBot
+Crawl-delay: 10
+
+User-agent: MJ12bot
+Crawl-delay: 10

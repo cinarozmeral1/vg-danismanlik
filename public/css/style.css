@@ -3992,4 +3992,41 @@ body {
     }
 }
 
+/* ===== SEO OPTIMIZATION - Screen Reader Only Content ===== */
+/* Hidden visually but accessible to screen readers and search engines */
+.sr-only,
+.seo-content {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
 }
+
+.seo-content {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+/* Ensure search engines can still read the content */
+.seo-content h2,
+.seo-content h3,
+.seo-content p,
+.seo-content ul,
+.seo-content li {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+}
+
+/* ===== PROFESSIONAL DROPDOWNS ===== */

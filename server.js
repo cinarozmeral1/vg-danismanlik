@@ -133,6 +133,9 @@ const guardianRoutes = require('./routes/guardians');
 // Import authentication middleware
 const { authenticateAdmin } = require('./middleware/auth');
 
+// Import SEO middleware
+const seoMiddleware = require('./middleware/seo');
+
 const app = express();
 const PORT = process.env.PORT || 4000;
 const HTTPS_PORT = process.env.HTTPS_PORT || 4443;
@@ -276,6 +279,9 @@ app.get('/change-language/:lang', (req, res) => {
 
 // User info middleware'ini ekle
 app.use(userInfoMiddleware);
+
+// SEO middleware'ini ekle
+app.use(seoMiddleware);
 
 // Force HTTPS in production (only on Vercel)
 if (process.env.NODE_ENV === 'production' && process.env.VERCEL === '1') {
@@ -572,6 +578,16 @@ app.get('/c/:id', async (req, res) => {
         // Get university images (empty for now)
         const imagesResult = { rows: [] };
 
+        // Set SEO metadata for university detail page
+        res.locals.seoTitle = `${university.name} - ${university.country} | Venture Global`;
+        res.locals.seoDescription = `${university.name} (${university.city}, ${university.country}) hakkında bilgiler, bölümler, programlar ve başvuru süreci. ${university.country} üniversite başvurunuzda profesyonel destek alın. Yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı ve Avrupa eğitim danışmanlığı hizmetlerimiz.`;
+        res.locals.seoKeywords = `${university.name.toLowerCase()}, ${university.country.toLowerCase()} üniversite, ${university.city.toLowerCase()} üniversite, ${university.country.toLowerCase()} eğitim, ${university.country.toLowerCase()} başvuru, yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı`;
+        res.locals.schemaType = 'CollegeOrUniversity';
+        res.locals.ogType = 'article';
+        if (university.logo_url) {
+            res.locals.ogImage = res.locals.baseUrl + university.logo_url;
+        }
+
         res.render('university-detail', {
             title: `${university.name} - Venture Global`,
             university: university,
@@ -694,9 +710,180 @@ app.post('/change-language', (req, res) => {
     }
 });
 
+// SEO Routes - robots.txt and sitemap.xml
+app.get('/robots.txt', (req, res) => {
+    res.setHeader('Content-Type', 'text/plain');
+    res.sendFile(path.join(__dirname, 'public', 'robots.txt'));
+});
+
+app.get('/sitemap.xml', async (req, res) => {
+    try {
+        const baseUrl = res.locals.baseUrl || 'https://ventureglobal.com';
+        
+        // Get all universities from database
+        let universities = [];
+        try {
+            const universitiesResult = await pool.query(`
+                SELECT id, name, updated_at
+                FROM universities 
+                WHERE is_active = true
+                ORDER BY updated_at DESC
+            `);
+            universities = universitiesResult.rows;
+        } catch (dbError) {
+            console.error('Database error fetching universities for sitemap:', dbError);
+        }
+        
+        const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+    <!-- Homepage -->
+    <url>
+        <loc>${baseUrl}/</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+        <xhtml:link rel="alternate" hreflang="tr" href="${baseUrl}/change-language/tr"/>
+        <xhtml:link rel="alternate" hreflang="en" href="${baseUrl}/change-language/en"/>
+    </url>
+    
+    <!-- Services -->
+    <url>
+        <loc>${baseUrl}/services</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+        <xhtml:link rel="alternate" hreflang="tr" href="${baseUrl}/change-language/tr"/>
+        <xhtml:link rel="alternate" hreflang="en" href="${baseUrl}/change-language/en"/>
+    </url>
+    
+    <!-- About Us -->
+    <url>
+        <loc>${baseUrl}/about-us</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+        <xhtml:link rel="alternate" hreflang="tr" href="${baseUrl}/change-language/tr"/>
+        <xhtml:link rel="alternate" hreflang="en" href="${baseUrl}/change-language/en"/>
+    </url>
+    
+    <!-- Universities -->
+    <url>
+        <loc>${baseUrl}/universities</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+        <xhtml:link rel="alternate" hreflang="tr" href="${baseUrl}/change-language/tr"/>
+        <xhtml:link rel="alternate" hreflang="en" href="${baseUrl}/change-language/en"/>
+    </url>
+    
+    <!-- Contact -->
+    <url>
+        <loc>${baseUrl}/contact</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="tr" href="${baseUrl}/change-language/tr"/>
+        <xhtml:link rel="alternate" hreflang="en" href="${baseUrl}/change-language/en"/>
+    </url>
+    
+    <!-- Student Life Pages -->
+    <url>
+        <loc>${baseUrl}/student-life/germany</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>${baseUrl}/student-life/czech</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>${baseUrl}/student-life/italy</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>${baseUrl}/student-life/austria</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>${baseUrl}/student-life/uk</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>${baseUrl}/student-life/poland</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>${baseUrl}/student-life/hungary</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <!-- Partners -->
+    <url>
+        <loc>${baseUrl}/partners/wcep</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>${baseUrl}/partners/medczech</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>${baseUrl}/partners/bestschool</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    
+    <!-- University Detail Pages -->
+    ${universities.map(uni => {
+        const lastmod = uni.updated_at 
+            ? new Date(uni.updated_at).toISOString().split('T')[0]
+            : new Date().toISOString().split('T')[0];
+        return `    <url>
+        <loc>${baseUrl}/university/${uni.id}</loc>
+        <lastmod>${lastmod}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>`;
+    }).join('\n')}
+</urlset>`;
+        
+        res.setHeader('Content-Type', 'application/xml');
+        res.send(sitemap);
+    } catch (error) {
+        console.error('Sitemap generation error:', error);
+        res.status(500).send('Error generating sitemap');
+    }
+});
+
 // Temel route'lar
 app.get('/', async (req, res) => {
     try {
+        // Set SEO metadata with competitive keywords
+        res.locals.seoTitle = 'Venture Global | Yurt Dışı Danışmanlık - Yurt Dışı Eğitim Danışmanlığı | Avrupa Eğitim Danışmanlığı';
+        res.locals.seoDescription = 'Venture Global: Yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı, yurt dışı dil okulu danışmanlığı ve Avrupa eğitim danışmanlığı hizmetleri. Almanya, Çekya, İtalya, Avusturya, İngiltere, Polonya ve Macaristan\'da üniversite başvuru süreçlerinizde profesyonel danışmanlık. 50+ üniversite seçeneği ile hayallerinizi gerçeğe dönüştürün.';
+        res.locals.seoKeywords = 'Venture Global, yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı, yurt dışı dil okulu danışmanlığı, Avrupa eğitim danışmanlığı, üniversite danışmanlığı, yurtdışı üniversite başvurusu, Avrupa üniversite danışmanlığı, yurtdışı eğitim danışmanlığı, eğitim danışmanlığı, üniversite başvuru danışmanlığı, vize danışmanlığı, almanya üniversite, çekya üniversite, italya üniversite, avusturya üniversite, ingiltere üniversite, polonya üniversite, macaristan üniversite';
+        res.locals.ogTitle = 'Venture Global - Yurt Dışı Danışmanlık ve Eğitim Danışmanlığı';
+        res.locals.ogDescription = 'Yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı, yurt dışı dil okulu danışmanlığı ve Avrupa eğitim danışmanlığı hizmetleri. Profesyonel üniversite başvuru danışmanlığı.';
+        res.locals.ogType = 'website';
+        
         res.render('index', {
             title: res.locals.t.nav.home
         });
@@ -708,10 +895,20 @@ app.get('/', async (req, res) => {
     }
 });
 app.get('/services', (req, res) => {
+    res.locals.seoTitle = 'Hizmetlerimiz - Yurt Dışı Danışmanlık ve Eğitim Danışmanlığı | Venture Global';
+    res.locals.seoDescription = 'Venture Global yurt dışı danışmanlık hizmetleri: Üniversite başvuru danışmanlığı, yurt dışı eğitim danışmanlığı, yurt dışı dil okulu danışmanlığı, vize işlemleri, konaklama desteği ve Avrupa eğitim danışmanlığı. Profesyonel eğitim danışmanlığı hizmetlerimiz hakkında bilgi alın.';
+    res.locals.seoKeywords = 'yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı, yurt dışı dil okulu danışmanlığı, Avrupa eğitim danışmanlığı, üniversite başvuru danışmanlığı, vize işlemleri, dil okulu, konaklama, eğitim danışmanlığı hizmetleri, yurtdışı eğitim danışmanlığı, üniversite danışmanlığı';
+    res.locals.ogTitle = 'Yurt Dışı Danışmanlık Hizmetleri - Venture Global';
+    res.locals.ogDescription = 'Yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı ve yurt dışı dil okulu danışmanlığı hizmetlerimiz. Profesyonel Avrupa eğitim danışmanlığı.';
     res.render('services', { title: res.locals.t.nav.services });
 });
 
 app.get('/about-us', (req, res) => {
+    res.locals.seoTitle = 'Venture Global Hakkında - Yurt Dışı Eğitim Danışmanlığı | Profesyonel Eğitim Danışmanlığı';
+    res.locals.seoDescription = 'Venture Global yurt dışı eğitim danışmanlığı firması. Yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı, yurt dışı dil okulu danışmanlığı ve Avrupa eğitim danışmanlığı alanında 7 ülkede, 50+ üniversite seçeneği ile profesyonel danışmanlık hizmeti sunuyoruz.';
+    res.locals.seoKeywords = 'Venture Global, venture global, yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı, yurt dışı dil okulu danışmanlığı, Avrupa eğitim danışmanlığı, eğitim danışmanlığı, yurtdışı eğitim, avrupa üniversite, eğitim danışmanlığı firması, venture global eğitim';
+    res.locals.ogTitle = 'Venture Global - Yurt Dışı Eğitim Danışmanlığı';
+    res.locals.ogDescription = 'Venture Global yurt dışı danışmanlık ve eğitim danışmanlığı firması. 7 ülkede profesyonel hizmet.';
     res.render('about-us', { title: res.locals.t.nav.aboutUs });
 });
 
@@ -731,6 +928,11 @@ app.get('/partners/bestschool', (req, res) => {
 // Universities page route - Optimized
 app.get('/universities', async (req, res) => {
     try {
+        // Set SEO metadata with competitive keywords
+        res.locals.seoTitle = 'Üniversiteler - Yurt Dışı Üniversite Başvurusu | Venture Global Eğitim Danışmanlığı';
+        res.locals.seoDescription = 'Almanya, Çekya, İtalya, Avusturya, İngiltere, Polonya ve Macaristan\'daki prestijli üniversiteleri keşfedin. Yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı ve Avrupa eğitim danışmanlığı hizmetlerimiz ile 50+ üniversite seçeneği. Size en uygun eğitim fırsatını bulun.';
+        res.locals.seoKeywords = 'yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı, Avrupa eğitim danışmanlığı, avrupa üniversiteleri, almanya üniversiteleri, çekya üniversiteleri, italya üniversiteleri, avusturya üniversiteleri, ingiltere üniversiteleri, polonya üniversiteleri, macaristan üniversiteleri, yurtdışı üniversite başvurusu';
+        
         // Get all universities from database with optimized query
         const universitiesResult = await pool.query(`
             SELECT 
@@ -806,6 +1008,16 @@ app.get('/university/:id', async (req, res) => {
 
         // Get university images (empty for now)
         const imagesResult = { rows: [] };
+
+        // Set SEO metadata for university detail page
+        res.locals.seoTitle = `${university.name} - ${university.country} | Venture Global`;
+        res.locals.seoDescription = `${university.name} (${university.city}, ${university.country}) hakkında bilgiler, bölümler, programlar ve başvuru süreci. ${university.country} üniversite başvurunuzda profesyonel destek alın. Yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı ve Avrupa eğitim danışmanlığı hizmetlerimiz.`;
+        res.locals.seoKeywords = `${university.name.toLowerCase()}, ${university.country.toLowerCase()} üniversite, ${university.city.toLowerCase()} üniversite, ${university.country.toLowerCase()} eğitim, ${university.country.toLowerCase()} başvuru, yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı`;
+        res.locals.schemaType = 'CollegeOrUniversity';
+        res.locals.ogType = 'article';
+        if (university.logo_url) {
+            res.locals.ogImage = res.locals.baseUrl + university.logo_url;
+        }
 
         res.render('university-detail', {
             title: `${university.name} - Venture Global`,

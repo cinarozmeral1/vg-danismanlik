@@ -1,13 +1,67 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="<%= typeof currentLanguage !== 'undefined' ? currentLanguage : 'tr' %>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Venture Global - Profesyonel Eğitim Danışmanlığı</title>
+    
+    <!-- Primary Meta Tags -->
+    <title><%= typeof seoTitle !== 'undefined' && seoTitle ? seoTitle : 'Venture Global - Profesyonel Eğitim Danışmanlığı' %></title>
+    <meta name="title" content="<%= typeof seoTitle !== 'undefined' && seoTitle ? seoTitle : 'Venture Global - Profesyonel Eğitim Danışmanlığı' %>">
+    <meta name="description" content="<%= typeof seoDescription !== 'undefined' && seoDescription ? seoDescription : 'Venture Global - Avrupa üniversite ve dil okulu danışmanlığı. Almanya, Çekya, İtalya, Avusturya, İngiltere, Polonya ve Macaristan\'da üniversite başvuru süreçlerinizde profesyonel danışmanlık hizmeti.' %>">
+    <meta name="keywords" content="<%= typeof seoKeywords !== 'undefined' && seoKeywords ? seoKeywords : 'yurtdışı eğitim, avrupa üniversite, dil okulu, eğitim danışmanlığı, almanya üniversite, çekya üniversite, italya üniversite, avusturya üniversite, ingiltere üniversite, polonya üniversite, macaristan üniversite, üniversite başvurusu, vize danışmanlığı' %>">
+    <meta name="author" content="Venture Global">
+    <meta name="robots" content="<%= typeof seoRobots !== 'undefined' && seoRobots ? seoRobots : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' %>">
+    <meta name="language" content="<%= typeof currentLanguage !== 'undefined' ? currentLanguage : 'tr' %>">
+    <meta name="revisit-after" content="7 days">
+    <meta name="distribution" content="global">
+    <meta name="rating" content="general">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="<%= typeof canonicalUrl !== 'undefined' && canonicalUrl ? canonicalUrl : (typeof baseUrl !== 'undefined' ? baseUrl : 'https://ventureglobal.com') + (typeof currentPath !== 'undefined' ? currentPath : '') %>">
+    
+    <!-- Alternate Languages -->
+    <link rel="alternate" hreflang="tr" href="<%= typeof baseUrl !== 'undefined' ? baseUrl : 'https://ventureglobal.com' %>/change-language/tr">
+    <link rel="alternate" hreflang="en" href="<%= typeof baseUrl !== 'undefined' ? baseUrl : 'https://ventureglobal.com' %>/change-language/en">
+    <link rel="alternate" hreflang="x-default" href="<%= typeof baseUrl !== 'undefined' ? baseUrl : 'https://ventureglobal.com' %>">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="<%= typeof ogType !== 'undefined' && ogType ? ogType : 'website' %>">
+    <meta property="og:url" content="<%= typeof ogUrl !== 'undefined' && ogUrl ? ogUrl : (typeof baseUrl !== 'undefined' ? baseUrl : 'https://ventureglobal.com') + (typeof currentPath !== 'undefined' ? currentPath : '') %>">
+    <meta property="og:title" content="<%= typeof ogTitle !== 'undefined' && ogTitle ? ogTitle : (typeof seoTitle !== 'undefined' && seoTitle ? seoTitle : 'Venture Global - Profesyonel Eğitim Danışmanlığı') %>">
+    <meta property="og:description" content="<%= typeof ogDescription !== 'undefined' && ogDescription ? ogDescription : (typeof seoDescription !== 'undefined' && seoDescription ? seoDescription : 'Avrupa üniversite ve dil okulu danışmanlığı. Profesyonel eğitim danışmanlığı hizmetleri ile hayallerinizi gerçeğe dönüştürün.') %>">
+    <meta property="og:image" content="<%= typeof ogImage !== 'undefined' && ogImage ? ogImage : (typeof baseUrl !== 'undefined' ? baseUrl : 'https://ventureglobal.com') + '/images/logos/venture-global-logo.png' %>">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Venture Global - Eğitim Danışmanlığı">
+    <meta property="og:site_name" content="Venture Global">
+    <meta property="og:locale" content="<%= typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'en_US' : 'tr_TR' %>">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="<%= typeof ogUrl !== 'undefined' && ogUrl ? ogUrl : (typeof baseUrl !== 'undefined' ? baseUrl : 'https://ventureglobal.com') + (typeof currentPath !== 'undefined' ? currentPath : '') %>">
+    <meta name="twitter:title" content="<%= typeof ogTitle !== 'undefined' && ogTitle ? ogTitle : (typeof seoTitle !== 'undefined' && seoTitle ? seoTitle : 'Venture Global - Profesyonel Eğitim Danışmanlığı') %>">
+    <meta name="twitter:description" content="<%= typeof ogDescription !== 'undefined' && ogDescription ? ogDescription : (typeof seoDescription !== 'undefined' && seoDescription ? seoDescription : 'Avrupa üniversite ve dil okulu danışmanlığı. Profesyonel eğitim danışmanlığı hizmetleri.') %>">
+    <meta name="twitter:image" content="<%= typeof ogImage !== 'undefined' && ogImage ? ogImage : (typeof baseUrl !== 'undefined' ? baseUrl : 'https://ventureglobal.com') + '/images/logos/venture-global-logo.png' %>">
+    <meta name="twitter:image:alt" content="Venture Global - Eğitim Danışmanlığı">
+    <meta name="twitter:site" content="@ventureglobal">
+    <meta name="twitter:creator" content="@ventureglobal">
+    
+    <!-- Additional Meta Tags for Competitive SEO -->
+    <meta name="application-name" content="Venture Global - Yurt Dışı Danışmanlık">
+    <meta name="apple-mobile-web-app-title" content="Venture Global">
+    <meta name="theme-color" content="#0078D7">
+    
+    <!-- Geographic Targeting -->
+    <meta name="geo.region" content="TR">
+    <meta name="geo.placename" content="İstanbul">
+    <meta name="ICBM" content="41.0082, 28.9784">
+    
+    <!-- Business Information for Local SEO -->
+    <meta name="contact" content="info@ventureglobal.com">
+    <meta name="copyright" content="Venture Global">
+    <meta name="category" content="Education, Consulting, Yurt Dışı Danışmanlık, Yurt Dışı Eğitim Danışmanlığı">
     
     <!-- Performance optimizations -->
-    <meta name="description" content="Venture Global - Avrupa üniversite ve dil okulu danışmanlığı. Profesyonel eğitim danışmanlığı hizmetleri.">
-    <meta name="robots" content="index, follow">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     
     <!-- DNS prefetch for external resources -->
@@ -453,6 +507,27 @@
         <%- body %>
     </main>
 
+    <!-- SEO-Optimized Hidden Content (Screen Reader Accessible) -->
+    <div class="sr-only seo-content" aria-hidden="false">
+        <h2>Venture Global - Yurt Dışı Eğitim Danışmanlığı</h2>
+        <p>Venture Global olarak yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı, yurt dışı dil okulu danışmanlığı ve Avrupa eğitim danışmanlığı hizmetleri sunuyoruz. Almanya, Çekya, İtalya, Avusturya, İngiltere, Polonya ve Macaristan'da üniversite eğitimi için profesyonel danışmanlık hizmeti veriyoruz.</p>
+        <h3>Yurt Dışı Danışmanlık Hizmetleri</h3>
+        <p>Venture Global yurt dışı danışmanlık alanında uzman ekibimiz ile üniversite başvuru süreçlerinizde yanınızdayız. Yurt dışı eğitim danışmanlığı konusunda deneyimli danışmanlarımız, size en uygun üniversite ve programı bulmanızda yardımcı olur.</p>
+        <h3>Yurt Dışı Dil Okulu Danışmanlığı</h3>
+        <p>Yurt dışı dil okulu danışmanlığı hizmetimiz ile İngilizce, Almanca, İtalyanca ve diğer dilleri öğrenmek için en uygun dil okullarını seçmenize yardımcı oluyoruz. Avrupa eğitim danışmanlığı kapsamında dil eğitimi programları sunuyoruz.</p>
+        <h3>Avrupa Eğitim Danışmanlığı</h3>
+        <p>Avrupa eğitim danışmanlığı alanında lider firmalardan biri olan Venture Global, 7 ülkede 50+ üniversite ile çalışmaktadır. Yurt dışı üniversite başvuru süreçlerinizde profesyonel destek sağlıyoruz.</p>
+        <ul>
+            <li>Yurt dışı danışmanlık hizmetleri</li>
+            <li>Yurt dışı eğitim danışmanlığı</li>
+            <li>Yurt dışı dil okulu danışmanlığı</li>
+            <li>Avrupa eğitim danışmanlığı</li>
+            <li>Üniversite başvuru danışmanlığı</li>
+            <li>Vize danışmanlığı</li>
+            <li>Konaklama desteği</li>
+        </ul>
+    </div>
+
     <!-- Professional Footer -->
     <footer class="footer bg-primary text-white py-5 mt-5">
         <div class="container">
@@ -740,6 +815,97 @@
             // Expose for global access
             window.initializeGlobalDropdowns = initializeDropdowns;
         }
+    </script>
+    <!-- Schema.org Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "<%= typeof schemaType !== 'undefined' && schemaType ? schemaType : 'EducationalOrganization' %>",
+        "name": "Venture Global",
+        "alternateName": "Venture Global Eğitim Danışmanlığı",
+        "url": "<%= typeof baseUrl !== 'undefined' ? baseUrl : 'https://ventureglobal.com' %>",
+        "logo": "<%= typeof baseUrl !== 'undefined' ? baseUrl : 'https://ventureglobal.com' %>/images/logos/venture-global-logo.png",
+        "description": "<%= typeof seoDescription !== 'undefined' && seoDescription ? seoDescription.replace(/"/g, '\\"') : 'Avrupa üniversite ve dil okulu danışmanlığı hizmeti veren profesyonel eğitim danışmanlığı firması.' %>",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Na Větriniku 2513/4",
+            "addressLocality": "Prag",
+            "addressCountry": "CZ",
+            "addressRegion": "Prag"
+        },
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+90-539-927-3008",
+            "contactType": "customer service",
+            "email": "info@ventureglobal.com",
+            "availableLanguage": ["tr", "en"]
+        },
+        "sameAs": [
+            "https://www.instagram.com/ventureglobal/",
+            "https://www.linkedin.com/company/104334371/admin/dashboard/"
+        ],
+        "areaServed": [
+            { "@type": "Country", "name": "Turkey" },
+            { "@type": "Country", "name": "Germany" },
+            { "@type": "Country", "name": "Czech Republic" },
+            { "@type": "Country", "name": "Italy" },
+            { "@type": "Country", "name": "Austria" },
+            { "@type": "Country", "name": "United Kingdom" },
+            { "@type": "Country", "name": "Poland" },
+            { "@type": "Country", "name": "Hungary" }
+        ],
+        "serviceType": "Educational Consulting",
+        "priceRange": "$$",
+        "keywords": "Venture Global, yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı, yurt dışı dil okulu danışmanlığı, Avrupa eğitim danışmanlığı, üniversite danışmanlığı, yurtdışı üniversite başvurusu, Avrupa üniversite danışmanlığı"
+    }
+    </script>
+    
+    <!-- Additional Schema.org for Organization -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Venture Global",
+        "alternateName": ["Venture Global Eğitim Danışmanlığı", "Venture Global Yurtdışı Eğitim", "Venture Global Avrupa Eğitim Danışmanlığı"],
+        "url": "<%= typeof baseUrl !== 'undefined' ? baseUrl : 'https://ventureglobal.com' %>",
+        "logo": "<%= typeof baseUrl !== 'undefined' ? baseUrl : 'https://ventureglobal.com' %>/images/logos/venture-global-logo.png",
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+90-539-927-3008",
+            "contactType": "customer service",
+            "email": "info@ventureglobal.com"
+        },
+        "sameAs": [
+            "https://www.instagram.com/ventureglobal/",
+            "https://www.linkedin.com/company/104334371/admin/dashboard/"
+        ]
+    }
+    </script>
+    
+    <!-- Additional LocalBusiness Schema for better local SEO -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "@id": "<%= typeof baseUrl !== 'undefined' ? baseUrl : 'https://ventureglobal.com' %>",
+        "name": "Venture Global",
+        "image": "<%= typeof baseUrl !== 'undefined' ? baseUrl : 'https://ventureglobal.com' %>/images/logos/venture-global-logo.png",
+        "telephone": "+90-539-927-3008",
+        "email": "info@ventureglobal.com",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Na Větriniku 2513/4",
+            "addressLocality": "Prag",
+            "addressCountry": "CZ"
+        },
+        "priceRange": "$$",
+        "openingHoursSpecification": {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+            "opens": "09:00",
+            "closes": "18:00"
+        }
+    }
     </script>
 </body>
 </html> 
