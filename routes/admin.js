@@ -286,14 +286,27 @@ ensureTablesExist().then(() => {
 // Admin authentication middleware (simplified)
 const authenticateAdmin = async (req, res, next) => {
     try {
+        console.log('🔐 authenticateAdmin middleware called');
+        console.log('📋 res.locals:', { isLoggedIn: res.locals.isLoggedIn, isAdmin: res.locals.isAdmin });
+        
         // Check if user is logged in and is admin using res.locals
         if (!res.locals.isLoggedIn || !res.locals.isAdmin) {
-            return res.status(403).json({ success: false, message: 'Admin access required' });
+            console.log('❌ Admin access denied - isLoggedIn:', res.locals.isLoggedIn, 'isAdmin:', res.locals.isAdmin);
+            return res.status(403).json({ 
+                success: false, 
+                error: 'Admin access required',
+                message: 'Admin yetkisi gerekli. Lütfen admin olarak giriş yapın.' 
+            });
         }
+        console.log('✅ Admin access granted');
         next();
     } catch (error) {
-        console.error('Admin authentication error:', error);
-        res.status(401).json({ success: false, message: 'Authentication failed' });
+        console.error('❌ Admin authentication error:', error);
+        res.status(401).json({ 
+            success: false, 
+            error: 'Authentication failed',
+            message: 'Kimlik doğrulama hatası: ' + error.message
+        });
     }
 };
 
@@ -3870,6 +3883,7 @@ router.get('/api/financial-export', async (req, res) => {
 router.get('/api/backup/list', authenticateAdmin, async (req, res) => {
     let client = null;
     try {
+        console.log('📦 Backup list API called');
         const { Client } = require('basic-ftp');
         client = new Client();
         
