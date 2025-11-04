@@ -154,9 +154,13 @@ async function loadBackups() {
         const response = await fetch('/admin/api/backup/list');
         const data = await response.json();
         
+        if (!response.ok) {
+            throw new Error(data.error || data.message || 'Sunucu hatası');
+        }
+        
         if (data.success && data.backups && data.backups.length > 0) {
             displayBackups(data.backups);
-        } else {
+        } else if (data.success && (!data.backups || data.backups.length === 0)) {
             container.innerHTML = `
                 <div class="empty-state">
                     <i class="fas fa-inbox"></i>
@@ -164,13 +168,24 @@ async function loadBackups() {
                     <p class="text-muted">İlk yedeği almak için "Yeni Yedek Al" butonuna tıklayın.</p>
                 </div>
             `;
+        } else {
+            // Show error message from server
+            const errorMsg = data.error || data.message || 'Bilinmeyen hata';
+            container.innerHTML = `
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Uyarı:</strong> ${errorMsg}
+                    ${errorMsg.includes('FTP') ? '<br><small class="text-muted">Lütfen ortam değişkenlerini kontrol edin (FTP_HOST, FTP_USER, FTP_PASSWORD).</small>' : ''}
+                </div>
+                ${data.backups && data.backups.length > 0 ? displayBackups(data.backups) : ''}
+            `;
         }
     } catch (error) {
         console.error('Error loading backups:', error);
         container.innerHTML = `
             <div class="alert alert-danger">
                 <i class="fas fa-exclamation-triangle me-2"></i>
-                Yedekler yüklenirken bir hata oluştu: ${error.message}
+                <strong>Hata:</strong> Yedekler yüklenirken bir hata oluştu: ${error.message}
             </div>
         `;
     } finally {
@@ -257,6 +272,10 @@ async function runBackup() {
         
         const data = await response.json();
         
+        if (!response.ok) {
+            throw new Error(data.error || data.message || 'Sunucu hatası');
+        }
+        
         if (data.success) {
             alert('Yedekleme başlatıldı! Arka planda çalışıyor. Birkaç dakika sonra listeyi yenileyin.');
             // Refresh list after 5 seconds
@@ -264,7 +283,8 @@ async function runBackup() {
                 refreshBackups();
             }, 5000);
         } else {
-            alert('Yedekleme başlatılamadı: ' + data.message);
+            const errorMsg = data.error || data.message || 'Yedekleme başlatılamadı';
+            alert('Yedekleme başlatılamadı: ' + errorMsg);
         }
     } catch (error) {
         console.error('Backup error:', error);
