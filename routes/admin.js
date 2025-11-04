@@ -3868,9 +3868,10 @@ router.get('/api/financial-export', async (req, res) => {
 
 // List backups from FTP server
 router.get('/api/backup/list', authenticateAdmin, async (req, res) => {
+    let client = null;
     try {
         const { Client } = require('basic-ftp');
-        const client = new Client();
+        client = new Client();
         
         const FTP_CONFIG = {
             host: process.env.FTP_HOST || '',
@@ -3884,27 +3885,64 @@ router.get('/api/backup/list', authenticateAdmin, async (req, res) => {
         if (!FTP_CONFIG.host || !FTP_CONFIG.user || !FTP_CONFIG.password) {
             return res.json({
                 success: false,
+                error: 'FTP bilgileri yapılandırılmamış. Lütfen FTP_HOST, FTP_USER ve FTP_PASSWORD ortam değişkenlerini ayarlayın.',
                 message: 'FTP bilgileri yapılandırılmamış',
                 backups: []
             });
         }
         
-        await client.access({
-            host: FTP_CONFIG.host,
-            user: FTP_CONFIG.user,
-            password: FTP_CONFIG.password,
-            secure: FTP_CONFIG.secure,
-            port: FTP_CONFIG.port
-        });
+        try {
+            await client.access({
+                host: FTP_CONFIG.host,
+                user: FTP_CONFIG.user,
+                password: FTP_CONFIG.password,
+                secure: FTP_CONFIG.secure,
+                port: FTP_CONFIG.port
+            });
+        } catch (ftpError) {
+            console.error('FTP bağlantı hatası:', ftpError);
+            return res.json({
+                success: false,
+                error: 'FTP sunucusuna bağlanılamadı: ' + ftpError.message,
+                message: 'FTP bağlantı hatası',
+                backups: []
+            });
+        }
         
         // List files in backup directory
-        const files = await client.list(FTP_CONFIG.remotePath);
+        let files = [];
+        try {
+            files = await client.list(FTP_CONFIG.remotePath);
+        } catch (listError) {
+            console.error('FTP liste hatası:', listError);
+            // Try to create directory if it doesn't exist
+            try {
+                await client.ensureDir(FTP_CONFIG.remotePath);
+                files = await client.list(FTP_CONFIG.remotePath);
+            } catch (createError) {
+                console.error('FTP dizin oluşturma hatası:', createError);
+                if (client) {
+                    try {
+                        client.close();
+                    } catch (closeError) {
+                        // Ignore close errors
+                    }
+                }
+                return res.json({
+                    success: false,
+                    error: 'Yedek dizini bulunamadı veya oluşturulamadı: ' + createError.message,
+                    message: 'Dizin hatası',
+                    backups: []
+                });
+            }
+        }
+        
         const backupFiles = files
-            .filter(file => file.name.startsWith('venture-global-backup-') && file.name.endsWith('.zip'))
+            .filter(file => file.name && file.name.startsWith('venture-global-backup-') && file.name.endsWith('.zip'))
             .map(file => ({
                 filename: file.name,
-                size: file.size,
-                sizeMB: (file.size / 1024 / 1024).toFixed(2),
+                size: file.size || 0,
+                sizeMB: ((file.size || 0) / 1024 / 1024).toFixed(2),
                 modifiedAt: file.modifiedAt ? file.modifiedAt.toISOString() : null,
                 modifiedAtFormatted: file.modifiedAt ? file.modifiedAt.toLocaleString('tr-TR') : null
             }))
@@ -3916,7 +3954,13 @@ router.get('/api/backup/list', authenticateAdmin, async (req, res) => {
                 return 0;
             });
         
-        client.close();
+        if (client) {
+            try {
+                client.close();
+            } catch (closeError) {
+                console.error('FTP kapatma hatası:', closeError);
+            }
+        }
         
         res.json({
             success: true,
@@ -3926,9 +3970,17 @@ router.get('/api/backup/list', authenticateAdmin, async (req, res) => {
         
     } catch (error) {
         console.error('Backup list error:', error);
+        if (client) {
+            try {
+                client.close();
+            } catch (closeError) {
+                // Ignore close errors
+            }
+        }
         res.status(500).json({
             success: false,
-            message: 'Yedek listesi alınamadı: ' + error.message,
+            error: 'Yedek listesi alınamadı: ' + error.message,
+            message: error.message,
             backups: []
         });
     }
