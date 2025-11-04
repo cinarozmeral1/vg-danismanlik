@@ -3497,4 +3497,406 @@ router.delete('/users/:userId/documents/:documentId', async (req, res) => {
     }
 });
 
+// ===== FINANCIAL API ENDPOINTS =====
+
+// Helper function to calculate date range based on period
+const getDateRange = (period) => {
+    const now = new Date();
+    let startDate = new Date();
+    
+    switch(period) {
+        case '7days':
+            startDate.setDate(now.getDate() - 7);
+            break;
+        case '30days':
+            startDate.setDate(now.getDate() - 30);
+            break;
+        case '90days':
+            startDate.setDate(now.getDate() - 90);
+            break;
+        case '1year':
+            startDate.setFullYear(now.getFullYear() - 1);
+            break;
+        case 'all':
+        default:
+            startDate = new Date('2020-01-01'); // Very old date for "all time"
+            break;
+    }
+    
+    return {
+        startDate: startDate.toISOString().split('T')[0],
+        endDate: now.toISOString().split('T')[0]
+    };
+};
+
+// Helper function to convert currency (simplified - can be enhanced with real API)
+const convertCurrency = (amount, fromCurrency, toCurrency) => {
+    if (fromCurrency === toCurrency) return parseFloat(amount);
+    
+    // Simplified conversion rates (should use real API in production)
+    const rates = {
+        'EUR': { 'USD': 1.10, 'TRY': 35.0 },
+        'USD': { 'EUR': 0.91, 'TRY': 32.0 },
+        'TRY': { 'EUR': 0.029, 'USD': 0.031 }
+    };
+    
+    if (rates[fromCurrency] && rates[fromCurrency][toCurrency]) {
+        return parseFloat(amount) * rates[fromCurrency][toCurrency];
+    }
+    
+    return parseFloat(amount); // Fallback to original amount
+};
+
+// Get financial data with filters (API endpoint)
+router.get('/api/financial-data', async (req, res) => {
+    try {
+        const { period = '30days', currency = 'EUR', type = 'revenue' } = req.query;
+        
+        const dateRange = getDateRange(period);
+        let query;
+        let params = [];
+        
+        if (type === 'receivables') {
+            // Unpaid services
+            query = `
+                SELECT 
+                    s.id,
+                    s.service_name,
+                    s.amount,
+                    s.currency,
+                    s.due_date,
+                    s.created_at,
+                    u.id as user_id,
+                    u.first_name,
+                    u.last_name,
+                    u.email
+                FROM services s
+                JOIN users u ON s.user_id = u.id
+                WHERE s.is_paid = false
+            `;
+            
+            // Filter by currency if specified
+            if (currency !== 'ALL') {
+                query += ' AND s.currency = $1';
+                params.push(currency);
+            }
+            
+            query += ' ORDER BY s.due_date ASC NULLS LAST, s.created_at DESC';
+        } else {
+            // Paid services (revenue)
+            query = `
+                SELECT 
+                    s.id,
+                    s.service_name,
+                    s.amount,
+                    s.currency,
+                    s.payment_date,
+                    s.created_at,
+                    u.id as user_id,
+                    u.first_name,
+                    u.last_name,
+                    u.email
+                FROM services s
+                JOIN users u ON s.user_id = u.id
+                WHERE s.is_paid = true
+            `;
+            
+            if (period !== 'all') {
+                query += ' AND s.payment_date >= $1';
+                params.push(dateRange.startDate);
+            }
+            
+            // Filter by currency if specified
+            if (currency !== 'ALL') {
+                query += ` AND s.currency = $${params.length + 1}`;
+                params.push(currency);
+            }
+            
+            query += ' ORDER BY s.payment_date DESC';
+        }
+        
+        const result = await pool.query(query, params);
+        
+        // Convert currency if needed
+        let totalAmount = 0;
+        const services = result.rows.map(service => {
+            let convertedAmount = parseFloat(service.amount || 0);
+            
+            if (currency !== 'ALL' && service.currency !== currency) {
+                convertedAmount = convertCurrency(service.amount, service.currency, currency);
+            }
+            
+            totalAmount += convertedAmount;
+            
+            return {
+                ...service,
+                converted_amount: convertedAmount.toFixed(2),
+                display_currency: currency === 'ALL' ? service.currency : currency
+            };
+        });
+        
+        res.json({
+            success: true,
+            data: {
+                services: services,
+                totalAmount: totalAmount.toFixed(2),
+                currency: currency === 'ALL' ? 'MIXED' : currency,
+                period: period,
+                count: services.length
+            }
+        });
+    } catch (error) {
+        console.error('Financial data API error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Financial data fetch error: ' + error.message
+        });
+    }
+});
+
+// Get monthly/weekly comparison data
+router.get('/api/financial-comparison', async (req, res) => {
+    try {
+        const { type = 'monthly', currency = 'EUR' } = req.query;
+        
+        let query;
+        if (type === 'monthly') {
+            // Last 12 months
+            query = `
+                SELECT 
+                    DATE_TRUNC('month', payment_date) as period,
+                    COUNT(*) as count,
+                    SUM(amount) as total,
+                    currency
+                FROM services
+                WHERE is_paid = true 
+                AND payment_date >= NOW() - INTERVAL '12 months'
+                GROUP BY DATE_TRUNC('month', payment_date), currency
+                ORDER BY period ASC
+            `;
+        } else {
+            // Last 12 weeks
+            query = `
+                SELECT 
+                    DATE_TRUNC('week', payment_date) as period,
+                    COUNT(*) as count,
+                    SUM(amount) as total,
+                    currency
+                FROM services
+                WHERE is_paid = true 
+                AND payment_date >= NOW() - INTERVAL '12 weeks'
+                GROUP BY DATE_TRUNC('week', payment_date), currency
+                ORDER BY period ASC
+            `;
+        }
+        
+        const result = await pool.query(query);
+        
+        // Process and convert currency
+        const comparisonData = [];
+        result.rows.forEach(row => {
+            let convertedAmount = parseFloat(row.total || 0);
+            if (currency !== 'ALL' && row.currency !== currency) {
+                convertedAmount = convertCurrency(row.total, row.currency, currency);
+            }
+            
+            comparisonData.push({
+                period: row.period.toISOString().split('T')[0],
+                count: parseInt(row.count),
+                total: parseFloat(convertedAmount.toFixed(2)),
+                currency: currency === 'ALL' ? row.currency : currency
+            });
+        });
+        
+        res.json({
+            success: true,
+            data: comparisonData,
+            type: type,
+            currency: currency
+        });
+    } catch (error) {
+        console.error('Financial comparison API error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Financial comparison error: ' + error.message
+        });
+    }
+});
+
+// Get net profit (revenue - receivables)
+router.get('/api/net-profit', async (req, res) => {
+    try {
+        const { currency = 'EUR', period = 'all' } = req.query;
+        
+        const dateRange = getDateRange(period);
+        
+        // Get total revenue
+        let revenueQuery = `
+            SELECT SUM(amount) as total, currency
+            FROM services
+            WHERE is_paid = true
+        `;
+        const revenueParams = [];
+        
+        if (period !== 'all') {
+            revenueQuery += ' AND payment_date >= $1';
+            revenueParams.push(dateRange.startDate);
+        }
+        
+        if (currency !== 'ALL') {
+            revenueQuery += ` AND currency = $${revenueParams.length + 1}`;
+            revenueParams.push(currency);
+        }
+        
+        revenueQuery += ' GROUP BY currency';
+        
+        const revenueResult = await pool.query(revenueQuery, revenueParams);
+        
+        // Get total receivables
+        let receivablesQuery = `
+            SELECT SUM(amount) as total, currency
+            FROM services
+            WHERE is_paid = false
+        `;
+        const receivablesParams = [];
+        
+        if (currency !== 'ALL') {
+            receivablesQuery += ' AND currency = $1';
+            receivablesParams.push(currency);
+        }
+        
+        receivablesQuery += ' GROUP BY currency';
+        
+        const receivablesResult = await pool.query(receivablesQuery, receivablesParams);
+        
+        // Calculate totals with currency conversion
+        let totalRevenue = 0;
+        let totalReceivables = 0;
+        
+        revenueResult.rows.forEach(row => {
+            let amount = parseFloat(row.total || 0);
+            if (currency !== 'ALL' && row.currency !== currency) {
+                amount = convertCurrency(row.total, row.currency, currency);
+            }
+            totalRevenue += amount;
+        });
+        
+        receivablesResult.rows.forEach(row => {
+            let amount = parseFloat(row.total || 0);
+            if (currency !== 'ALL' && row.currency !== currency) {
+                amount = convertCurrency(row.total, row.currency, currency);
+            }
+            totalReceivables += amount;
+        });
+        
+        const netProfit = totalRevenue - totalReceivables;
+        
+        res.json({
+            success: true,
+            data: {
+                revenue: parseFloat(totalRevenue.toFixed(2)),
+                receivables: parseFloat(totalReceivables.toFixed(2)),
+                netProfit: parseFloat(netProfit.toFixed(2)),
+                currency: currency === 'ALL' ? 'MIXED' : currency,
+                period: period
+            }
+        });
+    } catch (error) {
+        console.error('Net profit API error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Net profit calculation error: ' + error.message
+        });
+    }
+});
+
+// Export financial data as CSV
+router.get('/api/financial-export', async (req, res) => {
+    try {
+        const { period = '30days', currency = 'EUR', type = 'revenue' } = req.query;
+        
+        // Get data using same logic as financial-data endpoint
+        const dateRange = getDateRange(period);
+        let query;
+        let params = [];
+        
+        if (type === 'receivables') {
+            query = `
+                SELECT 
+                    u.first_name || ' ' || u.last_name as student_name,
+                    u.email,
+                    s.service_name,
+                    s.amount,
+                    s.currency,
+                    s.due_date,
+                    s.created_at
+                FROM services s
+                JOIN users u ON s.user_id = u.id
+                WHERE s.is_paid = false
+            `;
+            
+            if (currency !== 'ALL') {
+                query += ' AND s.currency = $1';
+                params.push(currency);
+            }
+        } else {
+            query = `
+                SELECT 
+                    u.first_name || ' ' || u.last_name as student_name,
+                    u.email,
+                    s.service_name,
+                    s.amount,
+                    s.currency,
+                    s.payment_date,
+                    s.created_at
+                FROM services s
+                JOIN users u ON s.user_id = u.id
+                WHERE s.is_paid = true
+            `;
+            
+            if (period !== 'all') {
+                query += ' AND s.payment_date >= $1';
+                params.push(dateRange.startDate);
+            }
+            
+            if (currency !== 'ALL') {
+                query += ` AND s.currency = $${params.length + 1}`;
+                params.push(currency);
+            }
+        }
+        
+        const result = await pool.query(query, params);
+        
+        // Generate CSV
+        const headers = type === 'receivables' 
+            ? ['Öğrenci Adı', 'E-posta', 'Hizmet', 'Tutar', 'Para Birimi', 'Vade Tarihi', 'Oluşturulma Tarihi']
+            : ['Öğrenci Adı', 'E-posta', 'Hizmet', 'Tutar', 'Para Birimi', 'Ödeme Tarihi', 'Oluşturulma Tarihi'];
+        
+        let csv = headers.join(',') + '\n';
+        
+        result.rows.forEach(row => {
+            const dateField = type === 'receivables' ? row.due_date : row.payment_date;
+            csv += [
+                `"${row.student_name || ''}"`,
+                `"${row.email || ''}"`,
+                `"${row.service_name || ''}"`,
+                row.amount || '0',
+                row.currency || 'EUR',
+                dateField ? new Date(dateField).toLocaleDateString('tr-TR') : '',
+                row.created_at ? new Date(row.created_at).toLocaleDateString('tr-TR') : ''
+            ].join(',') + '\n';
+        });
+        
+        res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+        res.setHeader('Content-Disposition', `attachment; filename="financial-${type}-${period}-${Date.now()}.csv"`);
+        res.send('\ufeff' + csv); // BOM for UTF-8 Excel compatibility
+    } catch (error) {
+        console.error('Financial export error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Export error: ' + error.message
+        });
+    }
+});
+
 module.exports = router; 

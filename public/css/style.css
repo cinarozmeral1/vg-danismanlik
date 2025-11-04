@@ -4144,6 +4144,27 @@ body {
     text-decoration: underline !important;
 }
 
+.financial-stat {
+    text-align: center;
+    padding: 1rem;
+    border-radius: 8px;
+    background-color: #f9fafb;
+}
+
+.financial-stat h6 {
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+}
+
+.financial-stat h4 {
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+
+.profit-card .financial-stat {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+}
+
 /* Sticky header for scrollable tables */
 .financial-list .table-responsive .sticky-top {
     position: sticky;

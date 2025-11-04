@@ -94,31 +94,149 @@
             </div>
         </div>
 
+        <!-- Net Profit Card -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card financial-card profit-card" id="netProfitCard">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-calculator me-2"></i>
+                            Net Kar Hesaplama
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="financial-stat">
+                                    <h6 class="text-muted mb-2">Toplam Gelir</h6>
+                                    <h4 class="mb-0 text-success" id="totalRevenue">0.00 EUR</h4>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="financial-stat">
+                                    <h6 class="text-muted mb-2">Toplam Alacaklar</h6>
+                                    <h4 class="mb-0 text-warning" id="totalReceivables">0.00 EUR</h4>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="financial-stat">
+                                    <h6 class="text-muted mb-2">Net Kar</h6>
+                                    <h4 class="mb-0 text-primary" id="netProfit">0.00 EUR</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Zaman Aralığı:</label>
+                                <select class="form-select form-select-sm" id="profitPeriodFilter">
+                                    <option value="7days">Son 7 Gün</option>
+                                    <option value="30days">Son 30 Gün</option>
+                                    <option value="90days">Son 90 Gün</option>
+                                    <option value="1year">Son 1 Yıl</option>
+                                    <option value="all" selected>Tüm Zamanlar</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Para Birimi:</label>
+                                <select class="form-select form-select-sm" id="profitCurrencyFilter">
+                                    <option value="EUR" selected>EUR (Euro)</option>
+                                    <option value="USD">USD (Dolar)</option>
+                                    <option value="TRY">TRY (Türk Lirası)</option>
+                                    <option value="ALL">Tümü (Karışık)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Financial Filters and Controls -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Finansal Filtreler</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="form-label">Zaman Aralığı:</label>
+                                <select class="form-select" id="periodFilter">
+                                    <option value="7days">Son 7 Gün</option>
+                                    <option value="30days" selected>Son 30 Gün</option>
+                                    <option value="90days">Son 90 Gün</option>
+                                    <option value="1year">Son 1 Yıl</option>
+                                    <option value="all">Tüm Zamanlar</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Para Birimi:</label>
+                                <select class="form-select" id="currencyFilter">
+                                    <option value="EUR" selected>EUR (Euro)</option>
+                                    <option value="USD">USD (Dolar)</option>
+                                    <option value="TRY">TRY (Türk Lirası)</option>
+                                    <option value="ALL">Tümü (Karışık)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Karşılaştırma Tipi:</label>
+                                <select class="form-select" id="comparisonTypeFilter">
+                                    <option value="monthly" selected>Aylık</option>
+                                    <option value="weekly">Haftalık</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button class="btn btn-primary w-100" onclick="refreshFinancialData()">
+                                    <i class="fas fa-sync-alt me-2"></i>Yenile
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Financial Charts -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-chart-area me-2"></i>Gelir Karşılaştırması</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="revenueComparisonChart" height="80"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Financial Overview -->
         <div class="row mt-4">
             <div class="col-lg-6">
                 <div class="card financial-card receivables-card">
-                    <div class="card-header bg-warning text-dark">
+                    <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">
                             <i class="fas fa-money-bill-wave me-2"></i>
                             Alacaklar (Ödenmemiş)
                         </h5>
+                        <button class="btn btn-sm btn-outline-dark" onclick="exportFinancialData('receivables')" title="CSV Olarak İndir">
+                            <i class="fas fa-download"></i>
+                        </button>
                     </div>
                     <div class="card-body">
                         <div class="financial-total">
-                            <h3 class="mb-0">
-                                <%= typeof receivablesData !== 'undefined' && receivablesData.totalAmount ? receivablesData.totalAmount.toFixed(2) : '0.00' %> EUR
-                            </h3>
+                            <h3 class="mb-0" id="receivablesTotal">0.00 EUR</h3>
                             <p class="text-muted mb-3">Toplam Alacak</p>
                         </div>
                         <div class="financial-list">
                             <h6 class="mb-3">
                                 <i class="fas fa-list me-2"></i>
-                                Öğrenci Listesi (<%= typeof receivablesData !== 'undefined' && receivablesData.services ? receivablesData.services.length : 0 %> öğrenci)
+                                Öğrenci Listesi (<span id="receivablesCount">0</span> öğrenci)
                             </h6>
-                            <% if (typeof receivablesData !== 'undefined' && receivablesData.services && receivablesData.services.length > 0) { %>
+                            <div id="receivablesListContainer">
                                 <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
-                                    <table class="table table-sm table-hover">
+                                    <table class="table table-sm table-hover" id="receivablesTable">
                                         <thead class="table-light sticky-top">
                                             <tr>
                                                 <th>Öğrenci</th>
@@ -127,44 +245,16 @@
                                                 <th>Vade Tarihi</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            <% receivablesData.services.forEach(service => { %>
+                                        <tbody id="receivablesTableBody">
                                             <tr>
-                                                <td>
-                                                    <div>
-                                                        <strong>
-                                                            <a href="/admin/users/<%= service.user_id %>" class="text-decoration-none" style="color: inherit;">
-                                                                <%= service.first_name %> <%= service.last_name %>
-                                                            </a>
-                                                        </strong>
-                                                        <br>
-                                                        <small class="text-muted"><%= service.email %></small>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <span class="badge bg-secondary"><%= service.service_name %></span>
-                                                </td>
-                                                <td>
-                                                    <strong><%= parseFloat(service.amount).toFixed(2) %> <%= service.currency || 'EUR' %></strong>
-                                                </td>
-                                                <td>
-                                                    <% if (service.due_date) { %>
-                                                        <%= new Date(service.due_date).toLocaleDateString('tr-TR') %>
-                                                    <% } else { %>
-                                                        <span class="text-muted">Belirtilmemiş</span>
-                                                    <% } %>
+                                                <td colspan="4" class="text-center text-muted py-3">
+                                                    <i class="fas fa-spinner fa-spin me-2"></i>Yükleniyor...
                                                 </td>
                                             </tr>
-                                            <% }); %>
                                         </tbody>
                                     </table>
                                 </div>
-                            <% } else { %>
-                                <p class="text-muted mb-0 text-center py-3">
-                                    <i class="fas fa-inbox me-2"></i>
-                                    Henüz ödenmemiş hizmet bulunmuyor.
-                                </p>
-                            <% } %>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -172,27 +262,28 @@
 
             <div class="col-lg-6">
                 <div class="card financial-card revenue-card">
-                    <div class="card-header bg-success text-white">
+                    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">
                             <i class="fas fa-chart-line me-2"></i>
-                            Gelirler (Son 30 Gün)
+                            Gelirler
                         </h5>
+                        <button class="btn btn-sm btn-outline-light" onclick="exportFinancialData('revenue')" title="CSV Olarak İndir">
+                            <i class="fas fa-download"></i>
+                        </button>
                     </div>
                     <div class="card-body">
                         <div class="financial-total">
-                            <h3 class="mb-0">
-                                <%= typeof revenueData !== 'undefined' && revenueData.totalAmount ? revenueData.totalAmount.toFixed(2) : '0.00' %> EUR
-                            </h3>
-                            <p class="text-muted mb-3">Son 30 Günlük Ciro</p>
+                            <h3 class="mb-0" id="revenueTotal">0.00 EUR</h3>
+                            <p class="text-muted mb-3" id="revenuePeriodLabel">Son 30 Günlük Ciro</p>
                         </div>
                         <div class="financial-list">
                             <h6 class="mb-3">
                                 <i class="fas fa-list me-2"></i>
-                                Öğrenci Listesi (<%= typeof revenueData !== 'undefined' && revenueData.services ? revenueData.services.length : 0 %> öğrenci)
+                                Öğrenci Listesi (<span id="revenueCount">0</span> öğrenci)
                             </h6>
-                            <% if (typeof revenueData !== 'undefined' && revenueData.services && revenueData.services.length > 0) { %>
+                            <div id="revenueListContainer">
                                 <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
-                                    <table class="table table-sm table-hover">
+                                    <table class="table table-sm table-hover" id="revenueTable">
                                         <thead class="table-light sticky-top">
                                             <tr>
                                                 <th>Öğrenci</th>
@@ -201,44 +292,16 @@
                                                 <th>Ödeme Tarihi</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            <% revenueData.services.forEach(service => { %>
+                                        <tbody id="revenueTableBody">
                                             <tr>
-                                                <td>
-                                                    <div>
-                                                        <strong>
-                                                            <a href="/admin/users/<%= service.user_id %>" class="text-decoration-none" style="color: inherit;">
-                                                                <%= service.first_name %> <%= service.last_name %>
-                                                            </a>
-                                                        </strong>
-                                                        <br>
-                                                        <small class="text-muted"><%= service.email %></small>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <span class="badge bg-success"><%= service.service_name %></span>
-                                                </td>
-                                                <td>
-                                                    <strong><%= parseFloat(service.amount).toFixed(2) %> <%= service.currency || 'EUR' %></strong>
-                                                </td>
-                                                <td>
-                                                    <% if (service.payment_date) { %>
-                                                        <%= new Date(service.payment_date).toLocaleDateString('tr-TR') %>
-                                                    <% } else { %>
-                                                        <span class="text-muted">Belirtilmemiş</span>
-                                                    <% } %>
+                                                <td colspan="4" class="text-center text-muted py-3">
+                                                    <i class="fas fa-spinner fa-spin me-2"></i>Yükleniyor...
                                                 </td>
                                             </tr>
-                                            <% }); %>
                                         </tbody>
                                     </table>
                                 </div>
-                            <% } else { %>
-                                <p class="text-muted mb-0 text-center py-3">
-                                    <i class="fas fa-inbox me-2"></i>
-                                    Son 30 günde tahsil edilen hizmet bulunmuyor.
-                                </p>
-                            <% } %>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -321,3 +384,297 @@
         </div>
     </div>
 </div> 
+
+<script>
+// Financial Dashboard JavaScript
+let revenueChart = null;
+let currentFilters = {
+    period: '30days',
+    currency: 'EUR',
+    comparisonType: 'monthly'
+};
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadFinancialData();
+    loadNetProfit();
+    loadComparisonChart();
+    
+    // Add event listeners for filters
+    document.getElementById('periodFilter').addEventListener('change', function() {
+        currentFilters.period = this.value;
+        loadFinancialData();
+        loadComparisonChart();
+    });
+    
+    document.getElementById('currencyFilter').addEventListener('change', function() {
+        currentFilters.currency = this.value;
+        loadFinancialData();
+        loadComparisonChart();
+        loadNetProfit();
+    });
+    
+    document.getElementById('comparisonTypeFilter').addEventListener('change', function() {
+        currentFilters.comparisonType = this.value;
+        loadComparisonChart();
+    });
+    
+    // Net profit filters
+    document.getElementById('profitPeriodFilter').addEventListener('change', function() {
+        loadNetProfit();
+    });
+    
+    document.getElementById('profitCurrencyFilter').addEventListener('change', function() {
+        loadNetProfit();
+    });
+});
+
+// Load financial data (receivables and revenue)
+async function loadFinancialData() {
+    const period = document.getElementById('periodFilter').value;
+    const currency = document.getElementById('currencyFilter').value;
+    
+    // Load receivables
+    try {
+        const receivablesResponse = await fetch(`/admin/api/financial-data?type=receivables&currency=${currency}`);
+        const receivablesData = await receivablesResponse.json();
+        
+        if (receivablesData.success) {
+            updateReceivablesDisplay(receivablesData.data);
+        }
+    } catch (error) {
+        console.error('Error loading receivables:', error);
+    }
+    
+    // Load revenue
+    try {
+        const revenueResponse = await fetch(`/admin/api/financial-data?type=revenue&period=${period}&currency=${currency}`);
+        const revenueData = await revenueResponse.json();
+        
+        if (revenueData.success) {
+            updateRevenueDisplay(revenueData.data, period);
+        }
+    } catch (error) {
+        console.error('Error loading revenue:', error);
+    }
+}
+
+// Update receivables display
+function updateReceivablesDisplay(data) {
+    document.getElementById('receivablesTotal').textContent = `${parseFloat(data.totalAmount).toFixed(2)} ${data.currency}`;
+    document.getElementById('receivablesCount').textContent = data.count;
+    
+    const tbody = document.getElementById('receivablesTableBody');
+    
+    if (data.services.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="4" class="text-center text-muted py-3">
+                    <i class="fas fa-inbox me-2"></i>Henüz ödenmemiş hizmet bulunmuyor.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    tbody.innerHTML = data.services.map(service => `
+        <tr>
+            <td>
+                <div>
+                    <strong>
+                        <a href="/admin/users/${service.user_id}" class="text-decoration-none" style="color: inherit;">
+                            ${service.first_name} ${service.last_name}
+                        </a>
+                    </strong>
+                    <br>
+                    <small class="text-muted">${service.email}</small>
+                </div>
+            </td>
+            <td>
+                <span class="badge bg-secondary">${service.service_name}</span>
+            </td>
+            <td>
+                <strong>${parseFloat(service.converted_amount || service.amount).toFixed(2)} ${service.display_currency || service.currency}</strong>
+            </td>
+            <td>
+                ${service.due_date ? new Date(service.due_date).toLocaleDateString('tr-TR') : '<span class="text-muted">Belirtilmemiş</span>'}
+            </td>
+        </tr>
+    `).join('');
+}
+
+// Update revenue display
+function updateRevenueDisplay(data, period) {
+    const periodLabels = {
+        '7days': 'Son 7 Günlük Ciro',
+        '30days': 'Son 30 Günlük Ciro',
+        '90days': 'Son 90 Günlük Ciro',
+        '1year': 'Son 1 Yıllık Ciro',
+        'all': 'Tüm Zamanlar - Toplam Ciro'
+    };
+    
+    document.getElementById('revenueTotal').textContent = `${parseFloat(data.totalAmount).toFixed(2)} ${data.currency}`;
+    document.getElementById('revenuePeriodLabel').textContent = periodLabels[period] || 'Toplam Ciro';
+    document.getElementById('revenueCount').textContent = data.count;
+    
+    const tbody = document.getElementById('revenueTableBody');
+    
+    if (data.services.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="4" class="text-center text-muted py-3">
+                    <i class="fas fa-inbox me-2"></i>Seçilen dönemde tahsil edilen hizmet bulunmuyor.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    tbody.innerHTML = data.services.map(service => `
+        <tr>
+            <td>
+                <div>
+                    <strong>
+                        <a href="/admin/users/${service.user_id}" class="text-decoration-none" style="color: inherit;">
+                            ${service.first_name} ${service.last_name}
+                        </a>
+                    </strong>
+                    <br>
+                    <small class="text-muted">${service.email}</small>
+                </div>
+            </td>
+            <td>
+                <span class="badge bg-success">${service.service_name}</span>
+            </td>
+            <td>
+                <strong>${parseFloat(service.converted_amount || service.amount).toFixed(2)} ${service.display_currency || service.currency}</strong>
+            </td>
+            <td>
+                ${service.payment_date ? new Date(service.payment_date).toLocaleDateString('tr-TR') : '<span class="text-muted">Belirtilmemiş</span>'}
+            </td>
+        </tr>
+    `).join('');
+}
+
+// Load net profit
+async function loadNetProfit() {
+    const period = document.getElementById('profitPeriodFilter').value;
+    const currency = document.getElementById('profitCurrencyFilter').value;
+    
+    try {
+        const response = await fetch(`/admin/api/net-profit?period=${period}&currency=${currency}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            document.getElementById('totalRevenue').textContent = `${data.data.revenue.toFixed(2)} ${data.data.currency}`;
+            document.getElementById('totalReceivables').textContent = `${data.data.receivables.toFixed(2)} ${data.data.currency}`;
+            document.getElementById('netProfit').textContent = `${data.data.netProfit.toFixed(2)} ${data.data.currency}`;
+        }
+    } catch (error) {
+        console.error('Error loading net profit:', error);
+    }
+}
+
+// Load comparison chart
+async function loadComparisonChart() {
+    const type = document.getElementById('comparisonTypeFilter').value;
+    const currency = document.getElementById('currencyFilter').value;
+    
+    try {
+        const response = await fetch(`/admin/api/financial-comparison?type=${type}&currency=${currency}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            updateComparisonChart(data.data, type);
+        }
+    } catch (error) {
+        console.error('Error loading comparison chart:', error);
+    }
+}
+
+// Update comparison chart
+function updateComparisonChart(chartData, type) {
+    const ctx = document.getElementById('revenueComparisonChart').getContext('2d');
+    
+    // Destroy existing chart if it exists
+    if (revenueChart) {
+        revenueChart.destroy();
+    }
+    
+    const labels = chartData.map(item => {
+        const date = new Date(item.period);
+        if (type === 'monthly') {
+            return date.toLocaleDateString('tr-TR', { month: 'short', year: 'numeric' });
+        } else {
+            // Calculate week number
+            const d = new Date(date);
+            d.setHours(0,0,0,0);
+            d.setDate(d.getDate() + 4 - (d.getDay()||7));
+            const yearStart = new Date(d.getFullYear(),0,1);
+            const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1)/7);
+            return `Hafta ${weekNo}`;
+        }
+    });
+    
+    const amounts = chartData.map(item => parseFloat(item.total));
+    
+    revenueChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Gelir',
+                data: amounts,
+                borderColor: 'rgb(16, 185, 129)',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.dataset.label}: ${parseFloat(context.parsed.y).toFixed(2)} ${chartData[context.dataIndex]?.currency || 'EUR'}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return parseFloat(value).toFixed(2);
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Export financial data
+function exportFinancialData(type) {
+    const period = document.getElementById('periodFilter').value;
+    const currency = document.getElementById('currencyFilter').value;
+    
+    window.location.href = `/admin/api/financial-export?type=${type}&period=${period}&currency=${currency}`;
+}
+
+// Refresh all financial data
+function refreshFinancialData() {
+    loadFinancialData();
+    loadNetProfit();
+    loadComparisonChart();
+}
+</script> 
