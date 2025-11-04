@@ -15,6 +15,7 @@ const nodemailer = require('nodemailer');
 const pool = require('./config/database');
 const multer = require('multer');
 const emailService = require('./services/emailService');
+const cron = require('node-cron');
 
 // Multer configuration for file uploads
 const storage = multer.diskStorage({
@@ -132,6 +133,9 @@ const guardianRoutes = require('./routes/guardians');
 
 // Import authentication middleware
 const { authenticateAdmin } = require('./middleware/auth');
+
+// Backup system
+const { runBackup } = require('./scripts/backup');
 
 // Import SEO middleware
 const seoMiddleware = require('./middleware/seo');
@@ -488,6 +492,31 @@ app.post('/api/maintenance/add-user-columns', async (req, res) => {
   }
 });
 app.use('/admin/guardians', guardianRoutes);
+
+// Manual backup endpoint (admin only)
+app.post('/admin/api/backup/run', authenticateAdmin, async (req, res) => {
+    try {
+        console.log('🔄 Manuel yedekleme isteği alındı');
+        
+        // Run backup in background
+        runBackup().then(() => {
+            console.log('✅ Manuel yedekleme tamamlandı');
+        }).catch((error) => {
+            console.error('❌ Manuel yedekleme hatası:', error);
+        });
+        
+        res.json({
+            success: true,
+            message: 'Yedekleme başlatıldı. Arka planda çalışıyor...'
+        });
+    } catch (error) {
+        console.error('Backup endpoint error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Yedekleme başlatılamadı: ' + error.message
+        });
+    }
+});
 
 // Public university routes (no authentication required)
 app.get('/admin/universities/edit/:id', async (req, res) => {
@@ -3103,4 +3132,23 @@ if (isVercel) {
 
     // Local development için HTTPS Server (self-signed certificate) - Geçici olarak devre dışı
     console.log('HTTPS modu geçici olarak devre dışı bırakıldı.');
+}
+
+// Initialize backup cron job (runs daily at 2:00 AM)
+// Schedule daily backup at 2:00 AM
+if (process.env.ENABLE_AUTO_BACKUP !== 'false') {
+    cron.schedule('0 2 * * *', async () => {
+        console.log('🔄 Otomatik yedekleme başlatılıyor...');
+        try {
+            await runBackup();
+            console.log('✅ Otomatik yedekleme tamamlandı');
+        } catch (error) {
+            console.error('❌ Otomatik yedekleme hatası:', error);
+        }
+    }, {
+        timezone: 'Europe/Istanbul'
+    });
+    console.log('✅ Otomatik günlük yedekleme zamanlandı (Her gün 02:00)');
 } 
+
+ 

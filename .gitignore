@@ -110,3 +110,8 @@ Thumbs.db
 *.tmp
 *.temp
 .env*.local
+
+# Backup files
+backups/
+*.zip
+*.sql
