@@ -113,30 +113,47 @@
         </div>
 
         <!-- Configuration Cards -->
-        <div class="info-grid">
+        <div class="row">
             <!-- FTP Configuration -->
-            <div class="info-card">
-                <h6><i class="fas fa-cog me-2 text-primary"></i>FTP Sunucu Ayarları</h6>
-                <div class="info-item">
-                    <span class="info-label">FTP Host</span>
-                    <span class="info-value"><%= backupInfo.ftpHost %></span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">FTP Kullanıcı</span>
-                    <span class="info-value"><%= backupInfo.ftpUser %></span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Yedek Klasörü</span>
-                    <span class="info-value"><%= backupInfo.ftpDir %></span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Otomatik Temizlik</span>
-                    <span class="tag <%= backupInfo.autoCleanup ? 'partner' : 'featured' %>">
-                        <%= backupInfo.autoCleanup ? 'Aktif' : 'Pasif' %>
-                    </span>
+            <div class="col-lg-12 mb-4">
+                <div class="content-card">
+                    <div class="card-header" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);">
+                        <h5 class="mb-0"><i class="fas fa-cog me-2"></i>FTP Sunucu Ayarları</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="info-item">
+                                    <span class="info-label">FTP Host</span>
+                                    <span class="info-value"><%= backupInfo.ftpHost %></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">FTP Kullanıcı</span>
+                                    <span class="info-value"><%= backupInfo.ftpUser %></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-item">
+                                    <span class="info-label">Yedek Klasörü</span>
+                                    <span class="info-value"><%= backupInfo.ftpDir %></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Otomatik Temizlik</span>
+                                    <span class="tag <%= backupInfo.autoCleanup ? 'partner' : 'featured' %>">
+                                        <%= backupInfo.autoCleanup ? 'Aktif' : 'Pasif' %>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </div>
 
+        <div class="info-grid">
+            <!-- Backup Schedule -->
+            <div class="info-card">
+                <h6><i class="fas fa-calendar-alt me-2 text-success"></i>Yedekleme Programı</h6>
             <!-- Backup Schedule -->
             <div class="info-card">
                 <h6><i class="fas fa-calendar-alt me-2 text-success"></i>Yedekleme Programı</h6>
@@ -198,7 +215,7 @@
 
         <!-- Information Section -->
         <div class="content-card">
-            <div class="card-header">
+            <div class="card-header" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);">
                 <h5><i class="fas fa-lightbulb me-2"></i>Yedekleme Sistemi Bilgileri</h5>
             </div>
             <div class="card-body">
@@ -235,7 +252,7 @@
 
         <!-- Restore Instructions -->
         <div class="content-card">
-            <div class="card-header">
+            <div class="card-header" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);">
                 <h5><i class="fas fa-undo me-2"></i>Yedekten Geri Yükleme</h5>
             </div>
             <div class="card-body">
