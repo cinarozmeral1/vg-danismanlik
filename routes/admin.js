@@ -3885,17 +3885,15 @@ router.get('/backups', async (req, res) => {
             emailNotifications: process.env.EMAIL_NOTIFICATIONS === 'true'
         };
 
+        // Get sidebar counts
+        const sidebarCounts = await getAdminSidebarCounts();
+
         res.render('admin/backups', {
             title: 'Yedekleme Sistemi',
             activePage: 'backups',
             currentUser: res.locals.currentUser,
-            user: {
-                firstName: res.locals.currentUser.first_name,
-                lastName: res.locals.currentUser.last_name,
-                email: res.locals.currentUser.email
-            },
             backupInfo,
-            layout: 'admin/layout'
+            ...sidebarCounts
         });
 
     } catch (error) {
