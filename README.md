@@ -273,6 +273,34 @@ npm run lint
 npm test
 ```
 
+## 🔐 Otomatik Yedekleme Sistemi
+
+✅ **Günlük otomatik veritabanı yedekleme aktif!**
+
+Sistem her gün saat 03:00 UTC'de otomatik olarak tüm veritabanını yedekler ve FTP sunucusuna güvenli şekilde kaydeder.
+
+### Özellikler
+- ✅ Günlük otomatik yedekleme
+- ✅ FTP/SFTP desteği
+- ✅ Email bildirimleri
+- ✅ Otomatik eski yedek temizleme (30 gün)
+- ✅ Dinamik tablo algılama (yeni tablolar otomatik yedeklenir)
+- ✅ Sadece okuma - veritabanına zarar vermez
+
+### Kullanım
+
+**Manuel yedekleme:**
+```bash
+node scripts/backup-to-ftp.js
+```
+
+**Yedekten geri yükleme:**
+```bash
+node scripts/restore-from-backup.js path/to/backup.json
+```
+
+**Detaylı dokümantasyon:** [BACKUP_SYSTEM.md](BACKUP_SYSTEM.md)
+
 ## 📈 Gelecek Özellikler
 
 - [ ] Kullanıcı hesap sistemi

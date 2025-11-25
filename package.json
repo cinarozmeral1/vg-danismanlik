@@ -11,7 +11,10 @@
     "vercel-build": "echo 'Vercel build completed'",
     "migrate:vercel": "node scripts/migrate-to-vercel.js",
     "db:test": "node scripts/test-database.js",
-    "db:check": "node -e \"console.log('Database URL:', process.env.DATABASE_URL || 'Not set')\""
+    "db:check": "node -e \"console.log('Database URL:', process.env.DATABASE_URL || 'Not set')\"",
+    "backup": "node scripts/backup-to-ftp.js",
+    "backup:restore": "node scripts/restore-from-backup.js",
+    "backup:test-email": "node -e \"require('./services/backupNotificationService').testEmailConfiguration()\""
   },
   "dependencies": {
     "archiver": "^7.0.1",
