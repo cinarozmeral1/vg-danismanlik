@@ -3887,12 +3887,15 @@ router.get('/backups', async (req, res) => {
 
         res.render('admin/backups', {
             title: 'Yedekleme Sistemi',
+            activePage: 'backups',
+            currentUser: res.locals.currentUser,
             user: {
                 firstName: res.locals.currentUser.first_name,
                 lastName: res.locals.currentUser.last_name,
                 email: res.locals.currentUser.email
             },
-            backupInfo
+            backupInfo,
+            layout: 'admin/layout'
         });
 
     } catch (error) {

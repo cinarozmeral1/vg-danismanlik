@@ -1,429 +1,287 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %> - Venture Global Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #2563eb;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --info: #06b6d4;
-        }
-        body {
-            background: #f8fafc;
-            font-family: 'Inter', sans-serif;
-        }
-        .backup-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            padding: 24px;
-            margin-bottom: 24px;
-            transition: all 0.3s;
-        }
-        .backup-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        .stat-card {
-            text-align: center;
-            padding: 20px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, var(--primary), #1d4ed8);
-            color: white;
-        }
-        .stat-icon {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-        .stat-label {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-        .config-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        .config-item:last-child {
-            border-bottom: none;
-        }
-        .config-label {
-            font-weight: 600;
-            color: #374151;
-        }
-        .config-value {
-            color: #6b7280;
-            font-family: 'Monaco', monospace;
-        }
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-        .status-active {
-            background: #d1fae5;
-            color: #065f46;
-        }
-        .status-inactive {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-        .btn-backup {
-            background: linear-gradient(135deg, var(--success), #059669);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        .btn-backup:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
-        }
-        .alert-custom {
-            border-left: 4px solid;
-            border-radius: 8px;
-        }
-    </style>
-</head>
-<body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/admin/dashboard">
-                <i class="fas fa-shield-alt me-2"></i>
-                Admin Panel
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/dashboard">
-                            <i class="fas fa-home me-1"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/applications">
-                            <i class="fas fa-file-alt me-1"></i> Başvurular
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/users">
-                            <i class="fas fa-users me-1"></i> Kullanıcılar
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/admin/backups">
-                            <i class="fas fa-database me-1"></i> Yedekleme
-                        </a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <span class="navbar-text me-3">
-                            <i class="fas fa-user-shield me-1"></i>
-                            <%= user.firstName %> <%= user.lastName %>
-                        </span>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/api/auth/logout">
-                            <i class="fas fa-sign-out-alt me-1"></i> Çıkış
-                        </a>
-                    </li>
-                </ul>
-            </div>
+<!-- Yedekleme Sistemi -->
+<div class="section-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h2><i class="fas fa-database me-2"></i>Yedekleme Sistemi</h2>
+            <p class="text-muted mb-0">Otomatik veritabanı yedekleme durumu ve kontrolleri</p>
         </div>
-    </nav>
+        <button onclick="triggerBackup()" class="btn btn-success btn-action" id="backupBtn">
+            <i class="fas fa-play-circle me-2"></i>
+            Manuel Yedekleme Başlat
+        </button>
+    </div>
+</div>
 
-    <!-- Main Content -->
-    <div class="container-fluid mt-4">
-        <div class="row">
-            <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2>
-                        <i class="fas fa-database me-2"></i>
-                        Otomatik Yedekleme Sistemi
-                    </h2>
-                    <button onclick="triggerBackup()" class="btn btn-backup" id="backupBtn">
-                        <i class="fas fa-play-circle me-2"></i>
-                        Manuel Yedekleme Başlat
-                    </button>
-                </div>
-            </div>
+<!-- Alert Area -->
+<div id="alertArea"></div>
+
+<!-- Statistics Cards -->
+<div class="stats-grid">
+    <div class="stat-card primary">
+        <div class="stat-icon">
+            <i class="fas fa-check-circle"></i>
         </div>
-
-        <!-- Alert Area -->
-        <div id="alertArea"></div>
-
-        <div class="row">
-            <!-- System Status -->
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="stat-value">Aktif</div>
-                    <div class="stat-label">Sistem Durumu</div>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="stat-card" style="background: linear-gradient(135deg, var(--success), #059669);">
-                    <div class="stat-icon">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <div class="stat-value"><%= backupInfo.cronScheduleTR %></div>
-                    <div class="stat-label">Otomatik Yedekleme</div>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="stat-card" style="background: linear-gradient(135deg, var(--info), #0891b2);">
-                    <div class="stat-icon">
-                        <i class="fas fa-server"></i>
-                    </div>
-                    <div class="stat-value">FTP</div>
-                    <div class="stat-label">Yedekleme Yöntemi</div>
-                </div>
-            </div>
-
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="stat-card" style="background: linear-gradient(135deg, var(--warning), #d97706);">
-                    <div class="stat-icon">
-                        <i class="fas fa-trash-alt"></i>
-                    </div>
-                    <div class="stat-value">30 Gün</div>
-                    <div class="stat-label">Saklama Süresi</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <!-- FTP Configuration -->
-            <div class="col-lg-6 mb-4">
-                <div class="backup-card">
-                    <h5 class="mb-3">
-                        <i class="fas fa-cog me-2 text-primary"></i>
-                        FTP Sunucu Ayarları
-                    </h5>
-                    <div class="config-item">
-                        <span class="config-label">FTP Host:</span>
-                        <span class="config-value"><%= backupInfo.ftpHost %></span>
-                    </div>
-                    <div class="config-item">
-                        <span class="config-label">FTP Kullanıcı:</span>
-                        <span class="config-value"><%= backupInfo.ftpUser %></span>
-                    </div>
-                    <div class="config-item">
-                        <span class="config-label">Yedek Klasörü:</span>
-                        <span class="config-value"><%= backupInfo.ftpDir %></span>
-                    </div>
-                    <div class="config-item">
-                        <span class="config-label">Otomatik Temizlik:</span>
-                        <span class="<%= backupInfo.autoCleanup ? 'status-badge status-active' : 'status-badge status-inactive' %>">
-                            <%= backupInfo.autoCleanup ? 'Aktif' : 'Pasif' %>
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Backup Schedule -->
-            <div class="col-lg-6 mb-4">
-                <div class="backup-card">
-                    <h5 class="mb-3">
-                        <i class="fas fa-calendar-alt me-2 text-success"></i>
-                        Yedekleme Programı
-                    </h5>
-                    <div class="config-item">
-                        <span class="config-label">Çalışma Zamanı (UTC):</span>
-                        <span class="config-value"><%= backupInfo.cronSchedule %></span>
-                    </div>
-                    <div class="config-item">
-                        <span class="config-label">Çalışma Zamanı (TR):</span>
-                        <span class="config-value"><%= backupInfo.cronScheduleTR %></span>
-                    </div>
-                    <div class="config-item">
-                        <span class="config-label">Email Bildirimleri:</span>
-                        <span class="<%= backupInfo.emailNotifications ? 'status-badge status-active' : 'status-badge status-inactive' %>">
-                            <%= backupInfo.emailNotifications ? 'Aktif' : 'Pasif' %>
-                        </span>
-                    </div>
-                    <div class="config-item">
-                        <span class="config-label">Sıklık:</span>
-                        <span class="config-value">Günlük</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Information Cards -->
-        <div class="row">
-            <div class="col-lg-4 mb-4">
-                <div class="backup-card">
-                    <h6 class="text-primary mb-3">
-                        <i class="fas fa-info-circle me-2"></i>
-                        Yedeklenen Veriler
-                    </h6>
-                    <ul class="list-unstyled mb-0">
-                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Kullanıcılar</li>
-                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Başvurular</li>
-                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Belgeler</li>
-                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Admin Hesapları</li>
-                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Servisler & Taksitler</li>
-                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Notlar & Checklist</li>
-                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Tüm Diğer Tablolar</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="col-lg-4 mb-4">
-                <div class="backup-card">
-                    <h6 class="text-success mb-3">
-                        <i class="fas fa-shield-alt me-2"></i>
-                        Güvenlik Özellikleri
-                    </h6>
-                    <ul class="list-unstyled mb-0">
-                        <li class="mb-2"><i class="fas fa-lock text-success me-2"></i> Şifreli FTP Bağlantısı</li>
-                        <li class="mb-2"><i class="fas fa-database text-success me-2"></i> Sadece Okuma İşlemi</li>
-                        <li class="mb-2"><i class="fas fa-user-shield text-success me-2"></i> Admin Yetki Kontrolü</li>
-                        <li class="mb-2"><i class="fas fa-key text-success me-2"></i> CRON Secret Key</li>
-                        <li class="mb-2"><i class="fas fa-file-code text-success me-2"></i> JSON Format</li>
-                        <li class="mb-2"><i class="fas fa-cloud text-success me-2"></i> Otomatik Vercel Deploy</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="col-lg-4 mb-4">
-                <div class="backup-card">
-                    <h6 class="text-warning mb-3">
-                        <i class="fas fa-lightbulb me-2"></i>
-                        Önemli Notlar
-                    </h6>
-                    <div class="alert alert-custom alert-info border-info">
-                        <i class="fas fa-info-circle me-2"></i>
-                        Yedekler FTP sunucunuzda <code><%= backupInfo.ftpDir %></code> klasöründe saklanır.
-                    </div>
-                    <div class="alert alert-custom alert-warning border-warning">
-                        <i class="fas fa-clock me-2"></i>
-                        30 günden eski yedekler otomatik olarak silinir.
-                    </div>
-                    <div class="alert alert-custom alert-success border-success">
-                        <i class="fas fa-download me-2"></i>
-                        Manuel yedekleme istediğiniz zaman yapılabilir.
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- How to Restore -->
-        <div class="row">
-            <div class="col-12">
-                <div class="backup-card">
-                    <h5 class="mb-3">
-                        <i class="fas fa-undo me-2 text-info"></i>
-                        Yedekten Geri Yükleme Nasıl Yapılır?
-                    </h5>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6 class="text-muted mb-3">Adım 1: Yedek Dosyasını İndirin</h6>
-                            <p>FTP istemciniz ile FTP sunucunuza bağlanın ve <code><%= backupInfo.ftpDir %></code> klasöründen yedek dosyasını indirin.</p>
-                            
-                            <h6 class="text-muted mb-3 mt-4">Adım 2: Geri Yükleme Komutu</h6>
-                            <div class="bg-dark text-light p-3 rounded">
-                                <code>node scripts/restore-from-backup.js backup.json</code>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="alert alert-danger">
-                                <h6><i class="fas fa-exclamation-triangle me-2"></i>DİKKAT!</h6>
-                                <ul class="mb-0">
-                                    <li>Geri yükleme mevcut verileri silecektir!</li>
-                                    <li>Bu işlem geri alınamaz!</li>
-                                    <li>Mutlaka yeni bir yedek aldıktan sonra geri yükleme yapın!</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div class="stat-content">
+            <h3>Aktif</h3>
+            <p>Sistem Durumu</p>
+            <div class="stat-trend positive">
+                <i class="fas fa-circle"></i>
+                <span>Çalışıyor</span>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        function showAlert(message, type = 'success') {
-            const alertArea = document.getElementById('alertArea');
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type} alert-dismissible fade show`;
-            alert.innerHTML = `
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            alertArea.appendChild(alert);
-            
-            // Auto dismiss after 5 seconds
-            setTimeout(() => {
-                alert.remove();
-            }, 5000);
-        }
+    <div class="stat-card success">
+        <div class="stat-icon">
+            <i class="fas fa-clock"></i>
+        </div>
+        <div class="stat-content">
+            <h3>06:00</h3>
+            <p>Türkiye Saati</p>
+            <div class="stat-trend positive">
+                <i class="fas fa-redo"></i>
+                <span>Her Gün</span>
+            </div>
+        </div>
+    </div>
 
-        async function triggerBackup() {
-            const btn = document.getElementById('backupBtn');
-            const originalText = btn.innerHTML;
+    <div class="stat-card info">
+        <div class="stat-icon">
+            <i class="fas fa-server"></i>
+        </div>
+        <div class="stat-content">
+            <h3>FTP</h3>
+            <p>Yedekleme Yöntemi</p>
+            <div class="stat-trend neutral">
+                <i class="fas fa-cloud"></i>
+                <span>Bulut</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="stat-card warning">
+        <div class="stat-icon">
+            <i class="fas fa-trash-alt"></i>
+        </div>
+        <div class="stat-content">
+            <h3>30 Gün</h3>
+            <p>Saklama Süresi</p>
+            <div class="stat-trend neutral">
+                <i class="fas fa-calendar"></i>
+                <span>Otomatik Temizlik</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Configuration Cards -->
+<div class="info-grid">
+    <!-- FTP Configuration -->
+    <div class="info-card">
+        <h6><i class="fas fa-cog me-2 text-primary"></i>FTP Sunucu Ayarları</h6>
+        <div class="info-item">
+            <span class="info-label">FTP Host</span>
+            <span class="info-value"><%= backupInfo.ftpHost %></span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">FTP Kullanıcı</span>
+            <span class="info-value"><%= backupInfo.ftpUser %></span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Yedek Klasörü</span>
+            <span class="info-value"><%= backupInfo.ftpDir %></span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Otomatik Temizlik</span>
+            <span class="tag <%= backupInfo.autoCleanup ? 'partner' : 'featured' %>">
+                <%= backupInfo.autoCleanup ? 'Aktif' : 'Pasif' %>
+            </span>
+        </div>
+    </div>
+
+    <!-- Backup Schedule -->
+    <div class="info-card">
+        <h6><i class="fas fa-calendar-alt me-2 text-success"></i>Yedekleme Programı</h6>
+        <div class="info-item">
+            <span class="info-label">Çalışma Zamanı (UTC)</span>
+            <span class="info-value"><%= backupInfo.cronSchedule %></span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Çalışma Zamanı (TR)</span>
+            <span class="info-value"><%= backupInfo.cronScheduleTR %></span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Email Bildirimleri</span>
+            <span class="tag <%= backupInfo.emailNotifications ? 'partner' : 'featured' %>">
+                <%= backupInfo.emailNotifications ? 'Aktif' : 'Pasif' %>
+            </span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Sıklık</span>
+            <span class="info-value">Günlük</span>
+        </div>
+    </div>
+
+    <!-- Backup Info -->
+    <div class="info-card">
+        <h6><i class="fas fa-info-circle me-2 text-info"></i>Yedeklenen Veriler</h6>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-check-circle text-success me-2"></i>
+                <span style="color: #6c757d;">Kullanıcılar</span>
+            </div>
+            <div class="d-flex align-items-center">
+                <i class="fas fa-check-circle text-success me-2"></i>
+                <span style="color: #6c757d;">Başvurular</span>
+            </div>
+            <div class="d-flex align-items-center">
+                <i class="fas fa-check-circle text-success me-2"></i>
+                <span style="color: #6c757d;">Belgeler</span>
+            </div>
+            <div class="d-flex align-items-center">
+                <i class="fas fa-check-circle text-success me-2"></i>
+                <span style="color: #6c757d;">Admin Hesapları</span>
+            </div>
+            <div class="d-flex align-items-center">
+                <i class="fas fa-check-circle text-success me-2"></i>
+                <span style="color: #6c757d;">Servisler & Taksitler</span>
+            </div>
+            <div class="d-flex align-items-center">
+                <i class="fas fa-check-circle text-success me-2"></i>
+                <span style="color: #6c757d;">Notlar & Checklist</span>
+            </div>
+            <div class="d-flex align-items-center">
+                <i class="fas fa-check-circle text-success me-2"></i>
+                <span style="color: #6c757d;">Tüm Diğer Tablolar</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Information Section -->
+<div class="content-card">
+    <div class="card-header">
+        <h5><i class="fas fa-lightbulb me-2"></i>Yedekleme Sistemi Bilgileri</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <h6 class="text-primary"><i class="fas fa-shield-alt me-2"></i>Güvenlik Özellikleri</h6>
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Şifreli FTP Bağlantısı</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Sadece Okuma İşlemi</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Admin Yetki Kontrolü</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>CRON Secret Key</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>JSON Format</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Otomatik Vercel Deploy</li>
+                </ul>
+            </div>
+            <div class="col-md-6 mb-3">
+                <h6 class="text-warning"><i class="fas fa-exclamation-triangle me-2"></i>Önemli Notlar</h6>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Yedekler FTP sunucunuzda <code><%= backupInfo.ftpDir %></code> klasöründe saklanır.
+                </div>
+                <div class="alert alert-warning">
+                    <i class="fas fa-clock me-2"></i>
+                    30 günden eski yedekler otomatik olarak silinir.
+                </div>
+                <div class="alert alert-success">
+                    <i class="fas fa-download me-2"></i>
+                    Manuel yedekleme istediğiniz zaman yapılabilir.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Restore Instructions -->
+<div class="content-card">
+    <div class="card-header">
+        <h5><i class="fas fa-undo me-2"></i>Yedekten Geri Yükleme</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <h6 class="mb-3">Adım 1: Yedek Dosyasını İndirin</h6>
+                <p>FTP istemciniz ile FTP sunucunuza bağlanın ve <code><%= backupInfo.ftpDir %></code> klasöründen yedek dosyasını indirin.</p>
+                
+                <h6 class="mb-3 mt-4">Adım 2: Geri Yükleme Komutu</h6>
+                <div class="bg-dark text-light p-3 rounded">
+                    <code style="color: #fff;">node scripts/restore-from-backup.js backup.json</code>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="alert alert-danger">
+                    <h6><i class="fas fa-exclamation-triangle me-2"></i>DİKKAT!</h6>
+                    <ul class="mb-0">
+                        <li>Geri yükleme mevcut verileri silecektir!</li>
+                        <li>Bu işlem geri alınamaz!</li>
+                        <li>Mutlaka yeni bir yedek aldıktan sonra geri yükleme yapın!</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showAlert(message, type = 'success') {
+        const alertArea = document.getElementById('alertArea');
+        const alert = document.createElement('div');
+        alert.className = `alert alert-${type} alert-dismissible fade show`;
+        alert.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        alertArea.appendChild(alert);
+        
+        // Auto dismiss after 5 seconds
+        setTimeout(() => {
+            alert.remove();
+        }, 5000);
+    }
+
+    async function triggerBackup() {
+        const btn = document.getElementById('backupBtn');
+        const originalText = btn.innerHTML;
+        
+        try {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Yedekleme yapılıyor...';
             
-            try {
-                btn.disabled = true;
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Yedekleme yapılıyor...';
-                
-                const response = await fetch('/admin/backups/trigger', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    showAlert(`
-                        <i class="fas fa-check-circle me-2"></i>
-                        <strong>Başarılı!</strong> Yedekleme tamamlandı.
-                        <br>
-                        <small>Tablo sayısı: ${data.data.stats.totalTables} | 
-                        Toplam kayıt: ${data.data.stats.totalRecords} | 
-                        Dosya boyutu: ${data.data.stats.fileSize}</small>
-                    `, 'success');
-                } else {
-                    showAlert(`
-                        <i class="fas fa-times-circle me-2"></i>
-                        <strong>Hata!</strong> ${data.message}
-                    `, 'danger');
+            const response = await fetch('/admin/backups/trigger', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
                 }
-            } catch (error) {
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                showAlert(`
+                    <i class="fas fa-check-circle me-2"></i>
+                    <strong>Başarılı!</strong> Yedekleme tamamlandı.
+                    <br>
+                    <small>Tablo sayısı: ${data.data.stats.totalTables} | 
+                    Toplam kayıt: ${data.data.stats.totalRecords} | 
+                    Dosya boyutu: ${data.data.stats.fileSize}</small>
+                `, 'success');
+            } else {
                 showAlert(`
                     <i class="fas fa-times-circle me-2"></i>
-                    <strong>Hata!</strong> Yedekleme başarısız: ${error.message}
+                    <strong>Hata!</strong> ${data.message}
                 `, 'danger');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = originalText;
             }
+        } catch (error) {
+            showAlert(`
+                <i class="fas fa-times-circle me-2"></i>
+                <strong>Hata!</strong> Yedekleme başarısız: ${error.message}
+            `, 'danger');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
         }
-    </script>
-</body>
-</html>
-
+    }
+</script>
