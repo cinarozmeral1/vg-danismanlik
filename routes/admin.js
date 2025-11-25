@@ -1233,10 +1233,14 @@ router.get('/universities', async (req, res) => {
             role: 'admin'
         };
         
+        // Get sidebar counts
+        const sidebarCounts = await getAdminSidebarCounts();
+        
         res.render('admin/universities', {
             title: 'Universities Management',
             universities: universities,
-            user: fakeUser
+            user: fakeUser,
+            ...sidebarCounts
         });
     } catch (error) {
         console.error('Get universities error:', error);
