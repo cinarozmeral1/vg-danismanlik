@@ -3862,4 +3862,96 @@ router.get('/api/financial-export', async (req, res) => {
     }
 });
 
+// ==========================================
+// YEDEKLEME SİSTEMİ - ADMIN PANEL
+// ==========================================
+
+// Yedekleme sayfası
+router.get('/backups', async (req, res) => {
+    try {
+        // Admin kontrolü (user session'dan)
+        if (!req.session || !req.session.userId) {
+            return res.redirect('/login');
+        }
+
+        // Admin yetkisi kontrolü
+        const adminCheck = await pool.query(
+            'SELECT is_admin FROM users WHERE id = $1',
+            [req.session.userId]
+        );
+
+        if (!adminCheck.rows[0] || !adminCheck.rows[0].is_admin) {
+            return res.redirect('/user/dashboard');
+        }
+
+        // Yedekleme bilgileri
+        const backupInfo = {
+            ftpHost: process.env.FTP_HOST || 'Ayarlanmamış',
+            ftpUser: process.env.FTP_USER || 'Ayarlanmamış',
+            ftpDir: process.env.FTP_BACKUP_DIR || '/venture-global-backups',
+            autoCleanup: process.env.FTP_AUTO_CLEANUP === 'true',
+            cronSchedule: '03:00 UTC (Her gün)',
+            cronScheduleTR: '06:00 Türkiye Saati (Her gün)',
+            emailNotifications: process.env.EMAIL_NOTIFICATIONS === 'true'
+        };
+
+        res.render('admin/backups', {
+            title: 'Yedekleme Sistemi',
+            user: req.session,
+            backupInfo
+        });
+
+    } catch (error) {
+        console.error('Backup page error:', error);
+        res.status(500).render('error', {
+            message: 'Sayfa yüklenirken hata oluştu'
+        });
+    }
+});
+
+// Manuel yedekleme başlat
+router.post('/backups/trigger', async (req, res) => {
+    try {
+        // Admin kontrolü
+        if (!req.session || !req.session.userId) {
+            return res.status(401).json({
+                success: false,
+                message: 'Oturum bulunamadı'
+            });
+        }
+
+        const adminCheck = await pool.query(
+            'SELECT is_admin FROM users WHERE id = $1',
+            [req.session.userId]
+        );
+
+        if (!adminCheck.rows[0] || !adminCheck.rows[0].is_admin) {
+            return res.status(403).json({
+                success: false,
+                message: 'Yetkiniz yok'
+            });
+        }
+
+        // Yedekleme fonksiyonunu çağır
+        const { backupToFTP } = require('../scripts/backup-to-ftp');
+        
+        console.log('📋 Manuel yedekleme başlatıldı:', req.session.email);
+        
+        const result = await backupToFTP();
+        
+        res.json({
+            success: true,
+            message: 'Yedekleme başarılı!',
+            data: result
+        });
+
+    } catch (error) {
+        console.error('Manuel yedekleme hatası:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Yedekleme başarısız: ' + error.message
+        });
+    }
+});
+
 module.exports = router; 
