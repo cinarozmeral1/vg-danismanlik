@@ -3869,19 +3869,9 @@ router.get('/api/financial-export', async (req, res) => {
 // Yedekleme sayfası
 router.get('/backups', async (req, res) => {
     try {
-        // Admin kontrolü (user session'dan)
-        if (!req.session || !req.session.userId) {
+        // Admin kontrolü (res.locals'dan)
+        if (!res.locals.isLoggedIn || !res.locals.isAdmin) {
             return res.redirect('/login');
-        }
-
-        // Admin yetkisi kontrolü
-        const adminCheck = await pool.query(
-            'SELECT is_admin FROM users WHERE id = $1',
-            [req.session.userId]
-        );
-
-        if (!adminCheck.rows[0] || !adminCheck.rows[0].is_admin) {
-            return res.redirect('/user/dashboard');
         }
 
         // Yedekleme bilgileri
@@ -3897,7 +3887,11 @@ router.get('/backups', async (req, res) => {
 
         res.render('admin/backups', {
             title: 'Yedekleme Sistemi',
-            user: req.session,
+            user: {
+                firstName: res.locals.currentUser.first_name,
+                lastName: res.locals.currentUser.last_name,
+                email: res.locals.currentUser.email
+            },
             backupInfo
         });
 
@@ -3912,30 +3906,18 @@ router.get('/backups', async (req, res) => {
 // Manuel yedekleme başlat
 router.post('/backups/trigger', async (req, res) => {
     try {
-        // Admin kontrolü
-        if (!req.session || !req.session.userId) {
+        // Admin kontrolü (res.locals'dan)
+        if (!res.locals.isLoggedIn || !res.locals.isAdmin) {
             return res.status(401).json({
                 success: false,
                 message: 'Oturum bulunamadı'
             });
         }
 
-        const adminCheck = await pool.query(
-            'SELECT is_admin FROM users WHERE id = $1',
-            [req.session.userId]
-        );
-
-        if (!adminCheck.rows[0] || !adminCheck.rows[0].is_admin) {
-            return res.status(403).json({
-                success: false,
-                message: 'Yetkiniz yok'
-            });
-        }
-
         // Yedekleme fonksiyonunu çağır
         const { backupToFTP } = require('../scripts/backup-to-ftp');
         
-        console.log('📋 Manuel yedekleme başlatıldı:', req.session.email);
+        console.log('📋 Manuel yedekleme başlatıldı:', res.locals.currentUser.email);
         
         const result = await backupToFTP();
         
