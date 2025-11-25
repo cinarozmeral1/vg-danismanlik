@@ -43,14 +43,20 @@
             <a href="/admin/users" class="nav-item">
                 <i class="fas fa-users"></i>
                 <span>Öğrenciler</span>
+                <span class="badge bg-primary ms-auto"><%= userCount %></span>
             </a>
             <a href="/admin/applications" class="nav-item">
                 <i class="fas fa-file-alt"></i>
                 <span>Başvurular</span>
+                <span class="badge bg-success ms-auto"><%= applicationCount %></span>
             </a>
             <a href="/admin/universities" class="nav-item active">
                 <i class="fas fa-university"></i>
                 <span>Üniversiteler</span>
+            </a>
+            <a href="/admin/backups" class="nav-item">
+                <i class="fas fa-database"></i>
+                <span>Yedekleme</span>
             </a>
         </nav>
     </div>
