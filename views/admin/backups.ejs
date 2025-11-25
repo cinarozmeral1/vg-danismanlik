@@ -117,7 +117,7 @@
             <!-- FTP Configuration -->
             <div class="col-lg-12 mb-4">
                 <div class="content-card">
-                    <div class="card-header" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);">
+                    <div class="card-header" style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%);">
                         <h5 class="mb-0"><i class="fas fa-cog me-2"></i>FTP Sunucu Ayarları</h5>
                     </div>
                     <div class="card-body">
@@ -150,64 +150,73 @@
             </div>
         </div>
 
-        <div class="info-grid">
+        <div class="row">
             <!-- Backup Schedule -->
-            <div class="info-card">
-                <h6><i class="fas fa-calendar-alt me-2 text-success"></i>Yedekleme Programı</h6>
-            <!-- Backup Schedule -->
-            <div class="info-card">
-                <h6><i class="fas fa-calendar-alt me-2 text-success"></i>Yedekleme Programı</h6>
-                <div class="info-item">
-                    <span class="info-label">Çalışma Zamanı (UTC)</span>
-                    <span class="info-value"><%= backupInfo.cronSchedule %></span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Çalışma Zamanı (TR)</span>
-                    <span class="info-value"><%= backupInfo.cronScheduleTR %></span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Email Bildirimleri</span>
-                    <span class="tag <%= backupInfo.emailNotifications ? 'partner' : 'featured' %>">
-                        <%= backupInfo.emailNotifications ? 'Aktif' : 'Pasif' %>
-                    </span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Sıklık</span>
-                    <span class="info-value">Günlük</span>
+            <div class="col-lg-6 mb-4">
+                <div class="content-card">
+                    <div class="card-header" style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%);">
+                        <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Yedekleme Programı</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="info-item">
+                            <span class="info-label">Çalışma Zamanı (UTC)</span>
+                            <span class="info-value"><%= backupInfo.cronSchedule %></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Çalışma Zamanı (TR)</span>
+                            <span class="info-value"><%= backupInfo.cronScheduleTR %></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Email Bildirimleri</span>
+                            <span class="tag <%= backupInfo.emailNotifications ? 'partner' : 'featured' %>">
+                                <%= backupInfo.emailNotifications ? 'Aktif' : 'Pasif' %>
+                            </span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Sıklık</span>
+                            <span class="info-value">Günlük</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <!-- Backup Info -->
-            <div class="info-card">
-                <h6><i class="fas fa-info-circle me-2 text-info"></i>Yedeklenen Veriler</h6>
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-check-circle text-success me-2"></i>
-                        <span style="color: #6c757d;">Kullanıcılar</span>
+            <div class="col-lg-6 mb-4">
+                <div class="content-card">
+                    <div class="card-header" style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%);">
+                        <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Yedeklenen Veriler</h5>
                     </div>
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-check-circle text-success me-2"></i>
-                        <span style="color: #6c757d;">Başvurular</span>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-check-circle text-success me-2"></i>
-                        <span style="color: #6c757d;">Belgeler</span>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-check-circle text-success me-2"></i>
-                        <span style="color: #6c757d;">Admin Hesapları</span>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-check-circle text-success me-2"></i>
-                        <span style="color: #6c757d;">Servisler & Taksitler</span>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-check-circle text-success me-2"></i>
-                        <span style="color: #6c757d;">Notlar & Checklist</span>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <i class="fas fa-check-circle text-success me-2"></i>
-                        <span style="color: #6c757d;">Tüm Diğer Tablolar</span>
+                    <div class="card-body">
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <span style="color: #6c757d;">Kullanıcılar</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <span style="color: #6c757d;">Başvurular</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <span style="color: #6c757d;">Belgeler</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <span style="color: #6c757d;">Admin Hesapları</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <span style="color: #6c757d;">Servisler & Taksitler</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <span style="color: #6c757d;">Notlar & Checklist</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <span style="color: #6c757d;">Tüm Diğer Tablolar</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -215,7 +224,7 @@
 
         <!-- Information Section -->
         <div class="content-card">
-            <div class="card-header" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);">
+            <div class="card-header" style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%);">
                 <h5><i class="fas fa-lightbulb me-2"></i>Yedekleme Sistemi Bilgileri</h5>
             </div>
             <div class="card-body">
@@ -252,7 +261,7 @@
 
         <!-- Restore Instructions -->
         <div class="content-card">
-            <div class="card-header" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);">
+            <div class="card-header" style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%);">
                 <h5><i class="fas fa-undo me-2"></i>Yedekten Geri Yükleme</h5>
             </div>
             <div class="card-body">
