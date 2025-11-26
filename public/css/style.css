@@ -4204,16 +4204,16 @@ body {
 
 /* ===== PROMO POPUP - MODERN CAROUSEL ===== */
 
-/* Overlay (backdrop) with blur */
+/* Overlay (backdrop) with blur - LIGHTER */
 .promo-popup-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
     z-index: 10000;
     display: none;
     align-items: center;
@@ -4509,14 +4509,14 @@ body {
 }
 
 .promo-btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%);
     color: white;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 120, 215, 0.3);
 }
 
 .promo-btn-primary:hover {
     transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 12px 35px rgba(102, 126, 234, 0.5);
+    box-shadow: 0 12px 35px rgba(0, 120, 215, 0.5);
     color: white;
 }
 
@@ -4526,20 +4526,20 @@ body {
 
 .promo-btn-secondary {
     background: white;
-    color: #667eea;
-    border: 3px solid #667eea;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+    color: #0078D7;
+    border: 3px solid #0078D7;
+    box-shadow: 0 4px 15px rgba(0, 120, 215, 0.15);
 }
 
 .promo-btn-secondary::before {
-    background: rgba(102, 126, 234, 0.1);
+    background: rgba(0, 120, 215, 0.1);
 }
 
 .promo-btn-secondary:hover {
-    background: #667eea;
+    background: #0078D7;
     color: white;
     transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 12px 35px rgba(0, 120, 215, 0.4);
 }
 
 .promo-btn-secondary:active {
