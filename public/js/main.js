@@ -729,4 +729,274 @@ function validateEmail(email) {
 function validatePhone(phone) {
     const re = /^[\+]?[1-9][\d]{0,15}$/;
     return re.test(phone);
-} 
+}
+
+// ===== PROMOTIONAL CAROUSEL SYSTEM =====
+
+class PromoCarousel {
+    constructor() {
+        this.modal = document.getElementById('promoCarouselModal');
+        this.slides = [];
+        this.dots = [];
+        this.currentIndex = 0;
+        this.autoPlayInterval = null;
+        this.autoPlayDelay = 5000; // 5 seconds
+        this.storageKey = 'promoCarouselLastShown';
+    }
+    
+    init() {
+        // Check if modal exists
+        if (!this.modal) {
+            console.log('Promo carousel modal not found');
+            return;
+        }
+        
+        // Get slides and dots
+        this.slides = Array.from(document.querySelectorAll('.promo-slide'));
+        this.dots = Array.from(document.querySelectorAll('.promo-dot'));
+        
+        if (this.slides.length === 0) {
+            console.log('No promo slides found');
+            return;
+        }
+        
+        console.log(`Promo carousel initialized with ${this.slides.length} slides`);
+        
+        // Setup event listeners
+        this.setupEventListeners();
+        
+        // Check if should show modal
+        if (this.shouldShowModal()) {
+            this.showModal();
+        }
+    }
+    
+    shouldShowModal() {
+        // Check localStorage for last shown date
+        const lastShown = localStorage.getItem(this.storageKey);
+        
+        if (!lastShown) {
+            return true; // First time visitor
+        }
+        
+        const lastShownDate = new Date(lastShown);
+        const now = new Date();
+        
+        // Show again if last shown was on a different day
+        return lastShownDate.toDateString() !== now.toDateString();
+    }
+    
+    showModal() {
+        if (!this.modal) return;
+        
+        this.modal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+        
+        // Start autoplay
+        this.startAutoPlay();
+        
+        // Save to localStorage
+        localStorage.setItem(this.storageKey, new Date().toISOString());
+        
+        console.log('Promo carousel modal shown');
+    }
+    
+    hideModal() {
+        if (!this.modal) return;
+        
+        this.modal.classList.remove('show');
+        document.body.style.overflow = '';
+        
+        // Stop autoplay
+        this.stopAutoPlay();
+        
+        console.log('Promo carousel modal hidden');
+    }
+    
+    setupEventListeners() {
+        // Close button
+        const closeBtn = document.getElementById('closePromoModal');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => this.hideModal());
+        }
+        
+        // Click outside modal content to close
+        this.modal.addEventListener('click', (e) => {
+            if (e.target === this.modal) {
+                this.hideModal();
+            }
+        });
+        
+        // Previous button
+        const prevBtn = document.getElementById('promoPrev');
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => this.previousSlide());
+        }
+        
+        // Next button
+        const nextBtn = document.getElementById('promoNext');
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => this.nextSlide());
+        }
+        
+        // Dot indicators
+        this.dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => this.goToSlide(index));
+        });
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (!this.modal.classList.contains('show')) return;
+            
+            if (e.key === 'Escape') {
+                this.hideModal();
+            } else if (e.key === 'ArrowLeft') {
+                this.previousSlide();
+            } else if (e.key === 'ArrowRight') {
+                this.nextSlide();
+            }
+        });
+        
+        // Pause autoplay on hover
+        const carouselContainer = document.querySelector('.promo-carousel-container');
+        if (carouselContainer) {
+            carouselContainer.addEventListener('mouseenter', () => {
+                this.stopAutoPlay();
+            });
+            
+            carouselContainer.addEventListener('mouseleave', () => {
+                if (this.modal.classList.contains('show')) {
+                    this.startAutoPlay();
+                }
+            });
+        }
+    }
+    
+    goToSlide(index) {
+        // Remove active class from current slide and dot
+        this.slides[this.currentIndex].classList.remove('active');
+        this.dots[this.currentIndex].classList.remove('active');
+        
+        // Update current index
+        this.currentIndex = index;
+        
+        // Add active class to new slide and dot
+        this.slides[this.currentIndex].classList.add('active');
+        this.dots[this.currentIndex].classList.add('active');
+        
+        // Reset autoplay
+        if (this.autoPlayInterval) {
+            this.stopAutoPlay();
+            this.startAutoPlay();
+        }
+    }
+    
+    nextSlide() {
+        const nextIndex = (this.currentIndex + 1) % this.slides.length;
+        this.goToSlide(nextIndex);
+    }
+    
+    previousSlide() {
+        const prevIndex = (this.currentIndex - 1 + this.slides.length) % this.slides.length;
+        this.goToSlide(prevIndex);
+    }
+    
+    startAutoPlay() {
+        this.stopAutoPlay(); // Clear any existing interval
+        
+        this.autoPlayInterval = setInterval(() => {
+            this.nextSlide();
+        }, this.autoPlayDelay);
+    }
+    
+    stopAutoPlay() {
+        if (this.autoPlayInterval) {
+            clearInterval(this.autoPlayInterval);
+            this.autoPlayInterval = null;
+        }
+    }
+}
+
+// Initialize promo carousel after DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Wait a bit before showing carousel to ensure page is loaded
+    setTimeout(() => {
+        const promoCarousel = new PromoCarousel();
+        promoCarousel.init();
+    }, 1000); // 1 second delay after page load
+});
+
+// ===== COUNTER ANIMATION =====
+
+class CounterAnimation {
+    constructor() {
+        this.counters = document.querySelectorAll('.stat-number[data-count]');
+        this.animated = new Set();
+    }
+    
+    init() {
+        if (this.counters.length === 0) return;
+        
+        // Create intersection observer
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !this.animated.has(entry.target)) {
+                    this.animateCounter(entry.target);
+                    this.animated.add(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.5
+        });
+        
+        // Observe all counters
+        this.counters.forEach(counter => {
+            observer.observe(counter);
+        });
+    }
+    
+    animateCounter(element) {
+        const target = parseInt(element.dataset.count);
+        const duration = 2000; // 2 seconds
+        const start = performance.now();
+        const isPercentage = element.textContent.includes('%');
+        
+        const animate = (currentTime) => {
+            const elapsed = currentTime - start;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            // Easing function
+            const easeOut = 1 - Math.pow(1 - progress, 3);
+            const current = Math.floor(easeOut * target);
+            
+            if (target > 50) {
+                element.textContent = current + '+';
+            } else if (isPercentage) {
+                element.textContent = '%' + current;
+            } else {
+                element.textContent = current;
+            }
+            
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                // Final value
+                if (target > 50) {
+                    element.textContent = target + '+';
+                } else if (isPercentage) {
+                    element.textContent = '%' + target;
+                } else {
+                    element.textContent = target;
+                }
+            }
+        };
+        
+        requestAnimationFrame(animate);
+    }
+}
+
+// Initialize counter animation
+document.addEventListener('DOMContentLoaded', function() {
+    const counterAnimation = new CounterAnimation();
+    counterAnimation.init();
+}); 

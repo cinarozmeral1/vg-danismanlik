@@ -2192,5 +2192,219 @@ module.exports = {
             packagesTitle: "Exclusive Packages for Venture Global Students",
             packagesCTA: "Request Package Details"
         }
-    }
+    },
+    
+    // Promotional Carousel Content
+    promos: [
+        {
+            badge: "Hungary - Medicine",
+            title: "Medicine & Dentistry at Semmelweis University",
+            description: "Study medicine in English at one of Europe's most prestigious medical faculties. Globally recognized diploma with 250 years of excellence.",
+            highlights: [
+                "100% English instruction",
+                "EU & worldwide recognition",
+                "Modern hospitals & labs",
+                "Scholarship opportunities"
+            ],
+            icon: "fa-user-md",
+            cta: "Explore Medical Programs",
+            link: "/universities"
+        },
+        {
+            badge: "Czech Republic - Engineering",
+            title: "Czech Technical University - Europe's Best",
+            description: "Study software engineering, AI, robotics and engineering at a QS Top 300 university.",
+            highlights: [
+                "QS World Rankings Top 300",
+                "Silicon Valley connections",
+                "Affordable tuition fees",
+                "Strong alumni network"
+            ],
+            icon: "fa-laptop-code",
+            cta: "Engineering Programs",
+            link: "/universities"
+        },
+        {
+            badge: "United Kingdom - Business",
+            title: "Finance & Business Education in London",
+            description: "Study business, economics and finance in the world's financial capital. Open doors to global careers.",
+            highlights: [
+                "London education advantage",
+                "Fortune 500 internships",
+                "International business network",
+                "Prestigious MBA programs"
+            ],
+            icon: "fa-chart-line",
+            cta: "Business Programs",
+            link: "/universities"
+        },
+        {
+            badge: "Prague - Economics",
+            title: "VSE Prague - Data Science & Economics",
+            description: "Data science, economics and digital economy programs at Prague School of Economics. Modern education in the heart of Europe.",
+            highlights: [
+                "Data science focused",
+                "Low cost of living",
+                "English programs",
+                "Tech hub location"
+            ],
+            icon: "fa-database",
+            cta: "Economics Programs",
+            link: "/universities"
+        },
+        {
+            badge: "Czech Republic - Medicine Prep",
+            title: "Medicine Preparation Without YKS Exam",
+            description: "One-year intensive medical and dental preparation program in partnership with MedCzech. Training by experienced doctors.",
+            highlights: [
+                "No YKS required",
+                "Training by doctors",
+                "Mock exams & simulations",
+                "85%+ success rate"
+            ],
+            icon: "fa-stethoscope",
+            cta: "Preparation Program",
+            link: "/partners/medczech"
+        },
+        {
+            badge: "Germany - Engineering",
+            title: "TU München - QS Top 50 Engineering",
+            description: "Study automotive, mechatronics and AI at Germany's most prestigious technical university.",
+            highlights: [
+                "QS World Top 50",
+                "BMW, Siemens partnerships",
+                "Public university benefits",
+                "Strong industry connections"
+            ],
+            icon: "fa-cogs",
+            cta: "Learn More",
+            link: "/universities"
+        },
+        {
+            badge: "Austria - Arts",
+            title: "Music and Arts in Vienna",
+            description: "Study classical music, opera and performing arts at one of the world's most prestigious conservatories.",
+            highlights: [
+                "Worldwide recognition",
+                "Master instructors",
+                "Historic performance halls",
+                "Vibrant arts scene"
+            ],
+            icon: "fa-music",
+            cta: "Arts Programs",
+            link: "/universities"
+        },
+        {
+            badge: "Poland - Architecture",
+            title: "Historic & Modern Architecture in Krakow",
+            description: "Study architecture in a UNESCO world heritage city. Historic restoration and modern design combined.",
+            highlights: [
+                "UNESCO city education",
+                "Affordable tuition",
+                "Practice-oriented program",
+                "EU diploma"
+            ],
+            icon: "fa-building",
+            cta: "Architecture Program",
+            link: "/universities"
+        },
+        {
+            badge: "Italy - Fashion",
+            title: "Fashion & Design in Milano",
+            description: "Study fashion design, styling and trend analysis with industry professionals in the world's fashion capital.",
+            highlights: [
+                "Fashion capital education",
+                "Industry connections",
+                "Milan Fashion Week access",
+                "Workshop sessions"
+            ],
+            icon: "fa-tshirt",
+            cta: "Fashion Programs",
+            link: "/universities"
+        },
+        {
+            badge: "United Kingdom - Law",
+            title: "Law Education at Oxford & Cambridge",
+            description: "Study international law, human rights and commercial law at the world's most prestigious law schools.",
+            highlights: [
+                "Oxbridge prestige",
+                "World leader alumni",
+                "Global legal network",
+                "Scholarship opportunities"
+            ],
+            icon: "fa-balance-scale",
+            cta: "Law Programs",
+            link: "/universities"
+        },
+        {
+            badge: "Prague - Computer Science",
+            title: "Charles University - 600+ Years of Tradition",
+            description: "Study modern computer science, AI and cybersecurity at Central Europe's oldest university.",
+            highlights: [
+                "Established in 1348",
+                "QS Top 300",
+                "Tech hub advantage",
+                "Research-focused"
+            ],
+            icon: "fa-desktop",
+            cta: "Computer Science",
+            link: "/universities"
+        },
+        {
+            badge: "Hungary - Psychology",
+            title: "ELTE Budapest - Psychology & Neuroscience",
+            description: "Affordable, quality education at Central Europe's leading psychology faculty.",
+            highlights: [
+                "Affordable tuition",
+                "English programs",
+                "Modern research centers",
+                "Clinical experience"
+            ],
+            icon: "fa-brain",
+            cta: "Psychology Program",
+            link: "/universities"
+        },
+        {
+            badge: "Germany - Technical",
+            title: "RWTH Aachen - Germany's Largest",
+            description: "Study engineering and sciences at Germany's largest technical university with 45,000+ students.",
+            highlights: [
+                "260+ programs",
+                "Strong industry partnerships",
+                "One of Europe's largest research centers",
+                "International campus"
+            ],
+            icon: "fa-graduation-cap",
+            cta: "Explore Programs",
+            link: "/universities"
+        },
+        {
+            badge: "Austria - Medicine",
+            title: "Medical University of Vienna",
+            description: "State-of-the-art research and education opportunities at one of Europe's best medical schools.",
+            highlights: [
+                "QS Top 100 Medicine",
+                "Nobel Prize faculty",
+                "Vienna quality of life",
+                "Multilingual education"
+            ],
+            icon: "fa-heartbeat",
+            cta: "Medical Programs",
+            link: "/universities"
+        },
+        {
+            badge: "Hungary - Business",
+            title: "Budapest Business School - Finance Hub",
+            description: "Study business, international trade and finance in Central Europe. Affordable cost, high quality.",
+            highlights: [
+                "Central location",
+                "International exchange programs",
+                "Dual degree opportunities",
+                "Low cost of living"
+            ],
+            icon: "fa-briefcase",
+            cta: "Business Programs",
+            link: "/universities"
+        }
+    ]
 }; 

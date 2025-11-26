@@ -1,7 +1,70 @@
+<!-- Promotional Carousel Modal -->
+<div id="promoCarouselModal" class="promo-modal">
+    <div class="promo-modal-content">
+        <button class="promo-modal-close" id="closePromoModal" aria-label="Close">
+            <i class="fas fa-times"></i>
+        </button>
+        
+        <div class="promo-carousel-container">
+            <div class="promo-carousel-slides" id="promoCarouselSlides">
+                <% if (typeof t !== 'undefined' && t.promos && Array.isArray(t.promos)) { %>
+                    <% t.promos.forEach((promo, index) => { %>
+                        <div class="promo-slide <%= index === 0 ? 'active' : '' %>" data-index="<%= index %>">
+                            <div class="promo-slide-content">
+                                <div class="promo-slide-image">
+                                    <div class="promo-image-placeholder">
+                                        <i class="fas <%= promo.icon || 'fa-graduation-cap' %> promo-placeholder-icon"></i>
+                                    </div>
+                                </div>
+                                <div class="promo-slide-text">
+                                    <span class="promo-badge"><%= promo.badge %></span>
+                                    <h2 class="promo-title"><%= promo.title %></h2>
+                                    <p class="promo-description"><%= promo.description %></p>
+                                    <div class="promo-highlights">
+                                        <% if (promo.highlights && Array.isArray(promo.highlights)) { %>
+                                            <% promo.highlights.forEach(highlight => { %>
+                                                <div class="promo-highlight-item">
+                                                    <i class="fas fa-check-circle"></i>
+                                                    <span><%= highlight %></span>
+                                                </div>
+                                            <% }); %>
+                                        <% } %>
+                                    </div>
+                                    <a href="<%= promo.link || '/universities' %>" class="promo-cta-button">
+                                        <%= promo.cta || 'Detaylı Bilgi' %>
+                                        <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } %>
+            </div>
+            
+            <!-- Navigation Controls -->
+            <button class="promo-nav promo-nav-prev" id="promoPrev" aria-label="Previous">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="promo-nav promo-nav-next" id="promoNext" aria-label="Next">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            
+            <!-- Dot Indicators -->
+            <div class="promo-dots" id="promoDots">
+                <% if (typeof t !== 'undefined' && t.promos && Array.isArray(t.promos)) { %>
+                    <% t.promos.forEach((promo, index) => { %>
+                        <button class="promo-dot <%= index === 0 ? 'active' : '' %>" data-index="<%= index %>" aria-label="Go to slide <%= index + 1 %>"></button>
+                    <% }); %>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Hero Section -->
-<section class="hero-section text-white main-hero">
+<section class="hero-section text-white main-hero modern-hero">
     <!-- Background Images -->
-    <div class="hero-background">
+    <div class="hero-background modern-overlay">
         <img src="/images/backgrounds/campus-location-hero.jpg" class="hero-bg-img active" alt="Campus Hero">
         <img src="/images/backgrounds/campus-glasgow.jpg" class="hero-bg-img" alt="Glasgow University">
         <img src="/images/backgrounds/photo-1568792923760-d70635a89fdc.jpg" class="hero-bg-img" alt="Campus 3">
@@ -17,28 +80,28 @@
     <div class="container position-relative" style="z-index: 3;">
         <div class="row align-items-center">
             <div class="col-lg-6">
-                <div class="hero-content">
-                    <h1 class="hero-title">
+                <div class="hero-content animate-hero">
+                    <h1 class="hero-title modern-title">
                         <%= t.home.hero.title %><br>
-                        <span style="color: #ffffff;"><%= t.home.hero.subtitle %></span>
+                        <span class="hero-subtitle-text"><%= t.home.hero.subtitle %></span>
                     </h1>
-                    <p class="hero-subtitle">
+                    <p class="hero-subtitle modern-subtitle">
                         <%= t.home.hero.description %>
                     </p>
-                    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center mb-4">
                         
                     </div>
-                    <div class="hero-stats">
-                        <div class="stat-item">
-                            <h3>7</h3>
+                    <div class="hero-stats modern-stats">
+                        <div class="stat-item modern-stat-card" data-animation="scaleIn" data-delay="100">
+                            <h3 class="stat-number" data-count="7">0</h3>
                             <p><%= t.home.stats.countries %></p>
                         </div>
-                        <div class="stat-item">
-                            <h3>50+</h3>
+                        <div class="stat-item modern-stat-card" data-animation="scaleIn" data-delay="200">
+                            <h3 class="stat-number" data-count="50">0</h3>
                             <p><%= t.home.stats.universities %></p>
                         </div>
-                        <div class="stat-item">
-                            <h3>%98</h3>
+                        <div class="stat-item modern-stat-card" data-animation="scaleIn" data-delay="300">
+                            <h3 class="stat-number" data-count="98">0</h3>
                             <p><%= t.home.stats.satisfaction %></p>
                         </div>
                     </div>
@@ -56,11 +119,11 @@
 </section>
 
 <!-- Features Section -->
-<section class="section bg-light text-dark">
+<section class="section bg-light text-dark modern-features-section">
     <div class="container">
-        <div class="section-title">
-            <h2 class="text-black"><%= t.home.features.title %></h2>
-            <p><%= t.home.features.subtitle %></p>
+        <div class="section-title modern-section-title" data-animation="fadeIn">
+            <h2 class="text-black modern-heading"><%= t.home.features.title %></h2>
+            <p class="modern-subheading"><%= t.home.features.subtitle %></p>
         </div>
         <% if (Array.isArray(t.home.features.body)) { %>
             <div class="row justify-content-center mb-4 features-description">
@@ -73,39 +136,43 @@
         <% } %>
         <div class="row g-4">
             <div class="col-lg-3 col-md-6">
-                <div class="feature-card h-100 text-center">
-                    <div class="feature-icon bg-primary text-white">
+                <div class="feature-card h-100 text-center modern-feature-card glassmorphism" data-animation="fadeIn" data-delay="0">
+                    <div class="feature-icon modern-feature-icon bg-gradient-primary">
                         <i class="fas fa-globe-europe"></i>
                     </div>
-                    <h5><%= t.home.features.network.title %></h5>
-                    <p><%= t.home.features.network.description %></p>
+                    <h5 class="modern-feature-title"><%= t.home.features.network.title %></h5>
+                    <p class="modern-feature-text"><%= t.home.features.network.description %></p>
+                    <div class="feature-shine"></div>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
-                <div class="feature-card h-100 text-center">
-                    <div class="feature-icon bg-success text-white">
+                <div class="feature-card h-100 text-center modern-feature-card glassmorphism" data-animation="fadeIn" data-delay="100">
+                    <div class="feature-icon modern-feature-icon bg-gradient-success">
                         <i class="fas fa-headset"></i>
                     </div>
-                    <h5><%= t.home.features.support.title %></h5>
-                    <p><%= t.home.features.support.description %></p>
+                    <h5 class="modern-feature-title"><%= t.home.features.support.title %></h5>
+                    <p class="modern-feature-text"><%= t.home.features.support.description %></p>
+                    <div class="feature-shine"></div>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
-                <div class="feature-card h-100 text-center">
-                    <div class="feature-icon bg-info text-white">
+                <div class="feature-card h-100 text-center modern-feature-card glassmorphism" data-animation="fadeIn" data-delay="200">
+                    <div class="feature-icon modern-feature-icon bg-gradient-info">
                         <i class="fas fa-shield-alt"></i>
                     </div>
-                    <h5><%= t.home.features.security.title %></h5>
-                    <p><%= t.home.features.security.description %></p>
+                    <h5 class="modern-feature-title"><%= t.home.features.security.title %></h5>
+                    <p class="modern-feature-text"><%= t.home.features.security.description %></p>
+                    <div class="feature-shine"></div>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
-                <div class="feature-card h-100 text-center">
-                    <div class="feature-icon bg-warning text-white">
+                <div class="feature-card h-100 text-center modern-feature-card glassmorphism" data-animation="fadeIn" data-delay="300">
+                    <div class="feature-icon modern-feature-icon bg-gradient-warning">
                         <i class="fas fa-hands-helping"></i>
                     </div>
-                    <h5><%= t.home.features.integration?.title || 'Mentorluk ve Uyum' %></h5>
-                    <p><%= t.home.features.integration?.description || 'Vize, konaklama ve Avrupa yaşamına uyum sürecinde kapsamlı destek' %></p>
+                    <h5 class="modern-feature-title"><%= t.home.features.integration?.title || 'Mentorluk ve Uyum' %></h5>
+                    <p class="modern-feature-text"><%= t.home.features.integration?.description || 'Vize, konaklama ve Avrupa yaşamına uyum sürecinde kapsamlı destek' %></p>
+                    <div class="feature-shine"></div>
                 </div>
             </div>
         </div>

@@ -2220,5 +2220,219 @@ module.exports = {
             packagesTitle: "Öğrencilerimiz için özel fırsatlar",
             packagesCTA: "Paket Detaylarını İsteyin"
         }
-    }
+    },
+    
+    // Promotional Carousel Content
+    promos: [
+        {
+            badge: "Macaristan - Tıp",
+            title: "Semmelweis Üniversitesi'nde İngilizce Tıp & Dişçilik",
+            description: "Avrupa'nın en prestijli tıp fakültelerinden birinde İngilizce eğitim alın. 250 yıllık köklü geçmişi ile dünya çapında tanınan diploma.",
+            highlights: [
+                "100% İngilizce eğitim",
+                "AB ve dünya çapında tanınırlık",
+                "Modern hastane ve laboratuvarlar",
+                "Burs imkanları"
+            ],
+            icon: "fa-user-md",
+            cta: "Tıp Programlarını İncele",
+            link: "/universities"
+        },
+        {
+            badge: "Çek Cumhuriyeti - Mühendislik",
+            title: "Çek Teknik Üniversitesi - Avrupa'nın En İyisi",
+            description: "Yazılım, yapay zeka, robotik ve mühendislik alanlarında QS Top 300 üniversitede eğitim fırsatı.",
+            highlights: [
+                "QS World Rankings Top 300",
+                "Silicon Valley bağlantıları",
+                "Uygun harç ücretleri",
+                "Güçlü mezun ağı"
+            ],
+            icon: "fa-laptop-code",
+            cta: "Mühendislik Programları",
+            link: "/universities"
+        },
+        {
+            badge: "İngiltere - İşletme",
+            title: "Londra'da Finans ve İşletme Eğitimi",
+            description: "Dünyanın finans başkentinde işletme, ekonomi ve finans eğitimi. Global kariyer kapılarını aralayın.",
+            highlights: [
+                "Londra'da eğitim avantajı",
+                "Fortune 500 staj fırsatları",
+                "Uluslararası iş ağı",
+                "Prestijli MBA programları"
+            ],
+            icon: "fa-chart-line",
+            cta: "İşletme Programları",
+            link: "/universities"
+        },
+        {
+            badge: "Prag - Ekonomi",
+            title: "VSE Prague - Veri Bilimi & Ekonomi",
+            description: "Prague School of Economics'te veri bilimi, ekonomi ve dijital ekonomi programları. Avrupa'nın kalbinde modern eğitim.",
+            highlights: [
+                "Veri bilimi odaklı",
+                "Düşük yaşam maliyeti",
+                "İngilizce programlar",
+                "Tech hub konumu"
+            ],
+            icon: "fa-database",
+            cta: "Ekonomi Programları",
+            link: "/universities"
+        },
+        {
+            badge: "Çek Cumhuriyeti - Tıp Hazırlık",
+            title: "YKS Olmadan Tıp Fakültesine Hazırlık",
+            description: "MedCzech ortaklığı ile bir yıllık yoğun tıp ve dişçilik hazırlık programı. Deneyimli doktorlar eşliğinde eğitim.",
+            highlights: [
+                "YKS gerektirmez",
+                "Doktorlardan eğitim",
+                "Mock sınavlar ve simülasyonlar",
+                "%85+ başarı oranı"
+            ],
+            icon: "fa-stethoscope",
+            cta: "Hazırlık Programı",
+            link: "/partners/medczech"
+        },
+        {
+            badge: "Almanya - Mühendislik",
+            title: "TU München - QS Top 50 Mühendislik",
+            description: "Almanya'nın en prestijli teknik üniversitesinde otomotiv, mekatronik ve yapay zeka eğitimi.",
+            highlights: [
+                "QS World Top 50",
+                "BMW, Siemens ortaklıkları",
+                "Kamu üniversitesi avantajları",
+                "Güçlü sanayi bağlantıları"
+            ],
+            icon: "fa-cogs",
+            cta: "Detaylı Bilgi",
+            link: "/universities"
+        },
+        {
+            badge: "Avusturya - Sanat",
+            title: "Viyana'da Müzik ve Sanat Eğitimi",
+            description: "Dünyanın en prestijli müzik konservatuvarlarından birinde klasik müzik, opera ve sahne sanatları eğitimi.",
+            highlights: [
+                "Dünya çapında tanınırlık",
+                "Usta eğitmenler",
+                "Tarihi performans salonları",
+                "Canlı sanat ortamı"
+            ],
+            icon: "fa-music",
+            cta: "Sanat Programları",
+            link: "/universities"
+        },
+        {
+            badge: "Polonya - Mimarlık",
+            title: "Krakow'da Tarihi ve Modern Mimarlık",
+            description: "UNESCO dünya mirası şehrinde mimarlık eğitimi. Tarihi restorasyon ve modern tasarım bir arada.",
+            highlights: [
+                "UNESCO şehrinde eğitim",
+                "Uygun maliyetli eğitim",
+                "Praktik odaklı program",
+                "AB diploması"
+            ],
+            icon: "fa-building",
+            cta: "Mimarlık Programı",
+            link: "/universities"
+        },
+        {
+            badge: "İtalya - Moda",
+            title: "Milano'da Moda ve Tasarım",
+            description: "Dünyanın moda başkentinde endüstri profesyonelleri ile moda tasarımı, stil ve trend analizi eğitimi.",
+            highlights: [
+                "Moda başkentinde eğitim",
+                "Sektör bağlantıları",
+                "Milano Fashion Week erişimi",
+                "Atölye çalışmaları"
+            ],
+            icon: "fa-tshirt",
+            cta: "Moda Programları",
+            link: "/universities"
+        },
+        {
+            badge: "İngiltere - Hukuk",
+            title: "Oxford & Cambridge'de Hukuk Eğitimi",
+            description: "Dünyanın en prestijli hukuk fakültelerinde uluslararası hukuk, insan hakları ve ticaret hukuku eğitimi.",
+            highlights: [
+                "Oxbridge prestiji",
+                "Dünya liderleri mezunlar",
+                "Global hukuk ağı",
+                "Burs imkanları"
+            ],
+            icon: "fa-balance-scale",
+            cta: "Hukuk Programları",
+            link: "/universities"
+        },
+        {
+            badge: "Prag - Bilgisayar Bilimi",
+            title: "Charles University - 600+ Yıllık Gelenek",
+            description: "Orta Avrupa'nın en eski üniversitesinde modern bilgisayar bilimleri, AI ve siber güvenlik eğitimi.",
+            highlights: [
+                "1348'den beri eğitim",
+                "QS Top 300",
+                "Tech hub avantajı",
+                "Araştırma odaklı"
+            ],
+            icon: "fa-desktop",
+            cta: "Bilgisayar Bilimleri",
+            link: "/universities"
+        },
+        {
+            badge: "Macaristan - Psikoloji",
+            title: "ELTE Budapest - Psikoloji ve Nörobilim",
+            description: "Merkezi Avrupa'nın önde gelen psikoloji fakültesinde uygun maliyetli, kaliteli eğitim.",
+            highlights: [
+                "Uygun harç ücretleri",
+                "İngilizce programlar",
+                "Modern araştırma merkezleri",
+                "Klinik deneyim"
+            ],
+            icon: "fa-brain",
+            cta: "Psikoloji Programı",
+            link: "/universities"
+        },
+        {
+            badge: "Almanya - Teknik",
+            title: "RWTH Aachen - Almanya'nın En Büyüğü",
+            description: "45.000+ öğrenci ile Almanya'nın en büyük teknik üniversitesinde mühendislik ve fen bilimleri.",
+            highlights: [
+                "260+ programlar",
+                "Güçlü sanayi işbirlikleri",
+                "Avrupa'nın en büyük araştırma merkezlerinden",
+                "Uluslararası kampus"
+            ],
+            icon: "fa-graduation-cap",
+            cta: "Programları Keşfet",
+            link: "/universities"
+        },
+        {
+            badge: "Avusturya - Tıp",
+            title: "Medical University of Vienna",
+            description: "Avrupa'nın en iyi tıp fakültelerinden birinde son teknoloji araştırma ve eğitim imkanları.",
+            highlights: [
+                "QS Top 100 Tıp",
+                "Nobel ödüllü öğretim üyeleri",
+                "Viyana'da yaşam kalitesi",
+                "Çok dilli eğitim"
+            ],
+            icon: "fa-heartbeat",
+            cta: "Tıp Programları",
+            link: "/universities"
+        },
+        {
+            badge: "Macaristan - İşletme",
+            title: "Budapest Business School - Finans Merkezi",
+            description: "Merkezi Avrupa'da işletme, uluslararası ticaret ve finans eğitimi. Uygun maliyet, yüksek kalite.",
+            highlights: [
+                "Merkezi lokasyon",
+                "Uluslararası değişim programları",
+                "Çift diploma imkanı",
+                "Uygun yaşam maliyeti"
+            ],
+            icon: "fa-briefcase",
+            cta: "İşletme Programları",
+            link: "/universities"
+        }
+    ]
 }; 
