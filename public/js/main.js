@@ -919,11 +919,11 @@ class PromoCarousel {
 
 // Initialize promo carousel after DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Wait a bit before showing carousel to ensure page is loaded
+    // Wait longer before showing carousel to not interrupt user
     setTimeout(() => {
         const promoCarousel = new PromoCarousel();
         promoCarousel.init();
-    }, 1000); // 1 second delay after page load
+    }, 3000); // 3 second delay after page load - less aggressive
 });
 
 // ===== COUNTER ANIMATION =====
