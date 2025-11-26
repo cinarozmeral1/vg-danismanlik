@@ -169,8 +169,8 @@ app.use(cookieParser());
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
-// HTML minification middleware (production only)
-app.use(htmlMinifier);
+// HTML minification middleware (production only) - DISABLED for popup
+// app.use(htmlMinifier);
 
 // Favicon routes (before static files)
 app.get('/favicon.png', (req, res) => {
