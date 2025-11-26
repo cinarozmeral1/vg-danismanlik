@@ -814,24 +814,14 @@ class PromoPopup {
     }
 
     checkAndShowPopup() {
-        const lastShown = this.getCookie(this.cookieName);
-        const today = new Date().toDateString();
-
-        // TEMPORARY: Always show for testing - REMOVE LATER
-        // Show popup if not shown today
-        // if (lastShown !== today) {
-            // Small delay for better UX
-            setTimeout(() => {
-                this.showPopup();
-            }, 1000);
-        // }
+        // Always show popup on every page load
+        setTimeout(() => {
+            this.showPopup();
+        }, 1000);
     }
 
     showPopup() {
         if (!this.overlay) return;
-
-        // Set cookie
-        this.setCookie(this.cookieName, new Date().toDateString(), this.cookieDays);
 
         // Show overlay
         this.overlay.classList.add('active');
