@@ -772,18 +772,17 @@ class PromoCarousel {
     }
     
     shouldShowModal() {
-        // Check localStorage for last shown date
+        // Always show modal for now (can be changed to daily check later)
+        return true;
+        
+        // OPTIONAL: Uncomment below to show only once per day
+        /*
         const lastShown = localStorage.getItem(this.storageKey);
-        
-        if (!lastShown) {
-            return true; // First time visitor
-        }
-        
+        if (!lastShown) return true;
         const lastShownDate = new Date(lastShown);
         const now = new Date();
-        
-        // Show again if last shown was on a different day
         return lastShownDate.toDateString() !== now.toDateString();
+        */
     }
     
     showModal() {
