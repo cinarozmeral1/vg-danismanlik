@@ -1,70 +1,7 @@
-<!-- Promotional Carousel Modal -->
-<div id="promoCarouselModal" class="promo-modal">
-    <div class="promo-modal-content">
-        <button class="promo-modal-close" id="closePromoModal" aria-label="Close">
-            <i class="fas fa-times"></i>
-        </button>
-        
-        <div class="promo-carousel-container">
-            <div class="promo-carousel-slides" id="promoCarouselSlides">
-                <% if (typeof t !== 'undefined' && t.promos && Array.isArray(t.promos)) { %>
-                    <% t.promos.forEach((promo, index) => { %>
-                        <div class="promo-slide <%= index === 0 ? 'active' : '' %>" data-index="<%= index %>">
-                            <div class="promo-slide-content">
-                                <div class="promo-slide-image">
-                                    <div class="promo-image-placeholder">
-                                        <i class="fas <%= promo.icon || 'fa-graduation-cap' %> promo-placeholder-icon"></i>
-                                    </div>
-                                </div>
-                                <div class="promo-slide-text">
-                                    <span class="promo-badge"><%= promo.badge %></span>
-                                    <h2 class="promo-title"><%= promo.title %></h2>
-                                    <p class="promo-description"><%= promo.description %></p>
-                                    <div class="promo-highlights">
-                                        <% if (promo.highlights && Array.isArray(promo.highlights)) { %>
-                                            <% promo.highlights.forEach(highlight => { %>
-                                                <div class="promo-highlight-item">
-                                                    <i class="fas fa-check-circle"></i>
-                                                    <span><%= highlight %></span>
-                                                </div>
-                                            <% }); %>
-                                        <% } %>
-                                    </div>
-                                    <a href="<%= promo.link || '/universities' %>" class="promo-cta-button">
-                                        <%= promo.cta || 'Detaylı Bilgi' %>
-                                        <i class="fas fa-arrow-right"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    <% }); %>
-                <% } %>
-            </div>
-            
-            <!-- Navigation Controls -->
-            <button class="promo-nav promo-nav-prev" id="promoPrev" aria-label="Previous">
-                <i class="fas fa-chevron-left"></i>
-            </button>
-            <button class="promo-nav promo-nav-next" id="promoNext" aria-label="Next">
-                <i class="fas fa-chevron-right"></i>
-            </button>
-            
-            <!-- Dot Indicators -->
-            <div class="promo-dots" id="promoDots">
-                <% if (typeof t !== 'undefined' && t.promos && Array.isArray(t.promos)) { %>
-                    <% t.promos.forEach((promo, index) => { %>
-                        <button class="promo-dot <%= index === 0 ? 'active' : '' %>" data-index="<%= index %>" aria-label="Go to slide <%= index + 1 %>"></button>
-                    <% }); %>
-                <% } %>
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- Hero Section -->
-<section class="hero-section text-white main-hero modern-hero">
+<section class="hero-section text-white main-hero">
     <!-- Background Images -->
-    <div class="hero-background modern-overlay">
+    <div class="hero-background">
         <img src="/images/backgrounds/campus-location-hero.jpg" class="hero-bg-img active" alt="Campus Hero">
         <img src="/images/backgrounds/campus-glasgow.jpg" class="hero-bg-img" alt="Glasgow University">
         <img src="/images/backgrounds/photo-1568792923760-d70635a89fdc.jpg" class="hero-bg-img" alt="Campus 3">
@@ -80,28 +17,28 @@
     <div class="container position-relative" style="z-index: 3;">
         <div class="row align-items-center">
             <div class="col-lg-6">
-                <div class="hero-content animate-hero">
-                    <h1 class="hero-title modern-title">
+                <div class="hero-content">
+                    <h1 class="hero-title">
                         <%= t.home.hero.title %><br>
-                        <span class="hero-subtitle-text"><%= t.home.hero.subtitle %></span>
+                        <span style="color: #ffffff;"><%= t.home.hero.subtitle %></span>
                     </h1>
-                    <p class="hero-subtitle modern-subtitle">
+                    <p class="hero-subtitle">
                         <%= t.home.hero.description %>
                     </p>
-                    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center mb-4">
+                    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
                         
                     </div>
-                    <div class="hero-stats modern-stats">
-                        <div class="stat-item modern-stat-card" data-animation="scaleIn" data-delay="100">
-                            <h3 class="stat-number" data-count="7">0</h3>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <h3>7</h3>
                             <p><%= t.home.stats.countries %></p>
                         </div>
-                        <div class="stat-item modern-stat-card" data-animation="scaleIn" data-delay="200">
-                            <h3 class="stat-number" data-count="50">0</h3>
+                        <div class="stat-item">
+                            <h3>50+</h3>
                             <p><%= t.home.stats.universities %></p>
                         </div>
-                        <div class="stat-item modern-stat-card" data-animation="scaleIn" data-delay="300">
-                            <h3 class="stat-number" data-count="98">0</h3>
+                        <div class="stat-item">
+                            <h3>%98</h3>
                             <p><%= t.home.stats.satisfaction %></p>
                         </div>
                     </div>
@@ -119,11 +56,11 @@
 </section>
 
 <!-- Features Section -->
-<section class="section bg-light text-dark modern-features-section">
+<section class="section bg-light text-dark">
     <div class="container">
-        <div class="section-title modern-section-title" data-animation="fadeIn">
-            <h2 class="text-black modern-heading"><%= t.home.features.title %></h2>
-            <p class="modern-subheading"><%= t.home.features.subtitle %></p>
+        <div class="section-title">
+            <h2 class="text-black"><%= t.home.features.title %></h2>
+            <p><%= t.home.features.subtitle %></p>
         </div>
         <% if (Array.isArray(t.home.features.body)) { %>
             <div class="row justify-content-center mb-4 features-description">
@@ -136,43 +73,39 @@
         <% } %>
         <div class="row g-4">
             <div class="col-lg-3 col-md-6">
-                <div class="feature-card h-100 text-center modern-feature-card glassmorphism" data-animation="fadeIn" data-delay="0">
-                    <div class="feature-icon modern-feature-icon bg-gradient-primary">
+                <div class="feature-card h-100 text-center">
+                    <div class="feature-icon bg-primary text-white">
                         <i class="fas fa-globe-europe"></i>
                     </div>
-                    <h5 class="modern-feature-title"><%= t.home.features.network.title %></h5>
-                    <p class="modern-feature-text"><%= t.home.features.network.description %></p>
-                    <div class="feature-shine"></div>
+                    <h5><%= t.home.features.network.title %></h5>
+                    <p><%= t.home.features.network.description %></p>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
-                <div class="feature-card h-100 text-center modern-feature-card glassmorphism" data-animation="fadeIn" data-delay="100">
-                    <div class="feature-icon modern-feature-icon bg-gradient-success">
+                <div class="feature-card h-100 text-center">
+                    <div class="feature-icon bg-success text-white">
                         <i class="fas fa-headset"></i>
                     </div>
-                    <h5 class="modern-feature-title"><%= t.home.features.support.title %></h5>
-                    <p class="modern-feature-text"><%= t.home.features.support.description %></p>
-                    <div class="feature-shine"></div>
+                    <h5><%= t.home.features.support.title %></h5>
+                    <p><%= t.home.features.support.description %></p>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
-                <div class="feature-card h-100 text-center modern-feature-card glassmorphism" data-animation="fadeIn" data-delay="200">
-                    <div class="feature-icon modern-feature-icon bg-gradient-info">
+                <div class="feature-card h-100 text-center">
+                    <div class="feature-icon bg-info text-white">
                         <i class="fas fa-shield-alt"></i>
                     </div>
-                    <h5 class="modern-feature-title"><%= t.home.features.security.title %></h5>
-                    <p class="modern-feature-text"><%= t.home.features.security.description %></p>
-                    <div class="feature-shine"></div>
+                    <h5><%= t.home.features.security.title %></h5>
+                    <p><%= t.home.features.security.description %></p>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
-                <div class="feature-card h-100 text-center modern-feature-card glassmorphism" data-animation="fadeIn" data-delay="300">
-                    <div class="feature-icon modern-feature-icon bg-gradient-warning">
+                <div class="feature-card h-100 text-center">
+                    <div class="feature-icon bg-warning text-white">
                         <i class="fas fa-hands-helping"></i>
                     </div>
-                    <h5 class="modern-feature-title"><%= t.home.features.integration?.title || 'Mentorluk ve Uyum' %></h5>
-                    <p class="modern-feature-text"><%= t.home.features.integration?.description || 'Vize, konaklama ve Avrupa yaşamına uyum sürecinde kapsamlı destek' %></p>
-                    <div class="feature-shine"></div>
+                    <h5><%= t.home.features.integration?.title || 'Mentorluk ve Uyum' %></h5>
+                    <p><%= t.home.features.integration?.description || 'Vize, konaklama ve Avrupa yaşamına uyum sürecinde kapsamlı destek' %></p>
                 </div>
             </div>
         </div>
@@ -192,6 +125,235 @@
         ></iframe>
     </div>
 </section>
+
+<!-- Promo Popup Carousel -->
+<div class="promo-popup-overlay">
+    <div class="promo-popup-container">
+        <!-- Close Button -->
+        <button class="promo-popup-close" aria-label="Kapat">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <!-- Slides Container -->
+        <div class="promo-slides">
+            
+            <!-- Slide 1: Macaristan - İngilizce Tıp & Dişçilik -->
+            <div class="promo-slide active">
+                <div class="promo-slide-hero">
+                    <div class="promo-image-placeholder">
+                        <i class="fas fa-user-md promo-hero-icon"></i>
+                        <!-- Görsel buraya eklenecek: <img src="/images/promotions/hungary-medicine.jpg" alt="Macaristan Tıp Eğitimi"> -->
+                    </div>
+                </div>
+                <div class="promo-content">
+                    <span class="promo-badge">Macaristan</span>
+                    <h2 class="promo-title">Macaristan'da İngilizce Tıp Eğitimi</h2>
+                    <h3 class="promo-subtitle">Semmelweis University'de Avrupa'nın En Prestijli Tıp Eğitimi</h3>
+                    <p class="promo-text">AB standartlarında İngilizce tıp ve dişçilik eğitimi. 250 yıllık köklü geçmiş, modern kampüs, uluslararası öğrenci topluluğu. Türk öğrenciler için özel danışmanlık.</p>
+                </div>
+                <div class="promo-buttons">
+                    <a href="/programs" class="promo-btn promo-btn-primary">
+                        <i class="fas fa-info-circle"></i> Detaylı Bilgi
+                    </a>
+                    <a href="/contact" class="promo-btn promo-btn-secondary">
+                        <i class="fas fa-paper-plane"></i> Başvur
+                    </a>
+                </div>
+            </div>
+
+            <!-- Slide 2: Çekya - Teknik Üniversite Mühendislik -->
+            <div class="promo-slide">
+                <div class="promo-slide-hero">
+                    <div class="promo-image-placeholder">
+                        <i class="fas fa-laptop-code promo-hero-icon"></i>
+                        <!-- Görsel buraya eklenecek: <img src="/images/promotions/ctu-prague.jpg" alt="Çek Teknik Üniversitesi"> -->
+                    </div>
+                </div>
+                <div class="promo-content">
+                    <span class="promo-badge">Çek Cumhuriyeti</span>
+                    <h2 class="promo-title">Avrupa'nın Mühendislik Merkezi</h2>
+                    <h3 class="promo-subtitle">Çek Teknik Üniversitesi - Prague'da 300 Yıllık Bilim Geleneği</h3>
+                    <p class="promo-text">Yazılım, makine, elektrik-elektronik ve daha fazlası. Düşük öğrenim ücreti, yüksek eğitim kalitesi. Fortune 500 şirketlerinde staj fırsatları.</p>
+                </div>
+                <div class="promo-buttons">
+                    <a href="/programs" class="promo-btn promo-btn-primary">
+                        <i class="fas fa-info-circle"></i> Detaylı Bilgi
+                    </a>
+                    <a href="/contact" class="promo-btn promo-btn-secondary">
+                        <i class="fas fa-paper-plane"></i> Başvur
+                    </a>
+                </div>
+            </div>
+
+            <!-- Slide 3: İngiltere - Finans & İşletme -->
+            <div class="promo-slide">
+                <div class="promo-slide-hero">
+                    <div class="promo-image-placeholder">
+                        <i class="fas fa-chart-line promo-hero-icon"></i>
+                        <!-- Görsel buraya eklenecek: <img src="/images/promotions/london-finance.jpg" alt="Londra Finans"> -->
+                    </div>
+                </div>
+                <div class="promo-content">
+                    <span class="promo-badge">İngiltere</span>
+                    <h2 class="promo-title">Finansın Kalbinde Eğitim: Londra</h2>
+                    <h3 class="promo-subtitle">Dünya Finans Merkezinde İşletme ve Ekonomi</h3>
+                    <p class="promo-text">LSE, Imperial, King's College gibi prestijli üniversitelerde işletme ve ekonomi. Londra'nın finans ekosisteminde networking ve kariyer fırsatları.</p>
+                </div>
+                <div class="promo-buttons">
+                    <a href="/programs" class="promo-btn promo-btn-primary">
+                        <i class="fas fa-info-circle"></i> Detaylı Bilgi
+                    </a>
+                    <a href="/contact" class="promo-btn promo-btn-secondary">
+                        <i class="fas fa-paper-plane"></i> Başvur
+                    </a>
+                </div>
+            </div>
+
+            <!-- Slide 4: Çekya - VSE Veri Bilimi -->
+            <div class="promo-slide">
+                <div class="promo-slide-hero">
+                    <div class="promo-image-placeholder">
+                        <i class="fas fa-database promo-hero-icon"></i>
+                        <!-- Görsel buraya eklenecek: <img src="/images/promotions/vse-prague.jpg" alt="VSE Prague"> -->
+                    </div>
+                </div>
+                <div class="promo-content">
+                    <span class="promo-badge">Çek Cumhuriyeti</span>
+                    <h2 class="promo-title">Prague'da Veri Bilimi ve Ekonomi</h2>
+                    <h3 class="promo-subtitle">VSE: Orta Avrupa'nın Ekonomi Devine</h3>
+                    <p class="promo-text">Veri bilimi, ekonomi, işletme programlarında İngilizce eğitim. AB'nin merkezinde düşük maliyetli, yüksek kaliteli eğitim. Tech startup ekosistemi.</p>
+                </div>
+                <div class="promo-buttons">
+                    <a href="/programs" class="promo-btn promo-btn-primary">
+                        <i class="fas fa-info-circle"></i> Detaylı Bilgi
+                    </a>
+                    <a href="/contact" class="promo-btn promo-btn-secondary">
+                        <i class="fas fa-paper-plane"></i> Başvur
+                    </a>
+                </div>
+            </div>
+
+            <!-- Slide 5: Çekya - Tıp Hazırlık Programı -->
+            <div class="promo-slide">
+                <div class="promo-slide-hero">
+                    <div class="promo-image-placeholder">
+                        <i class="fas fa-stethoscope promo-hero-icon"></i>
+                        <!-- Görsel buraya eklenecek: <img src="/images/promotions/medczech-prep.jpg" alt="MedCzech"> -->
+                    </div>
+                </div>
+                <div class="promo-content">
+                    <span class="promo-badge">Tıp Hazırlık</span>
+                    <h2 class="promo-title">YKS Olmadan Tıp Fakültesine Hazırlan</h2>
+                    <h3 class="promo-subtitle">1 Yıllık Tıp ve Dişçilik Hazırlık - MedCzech Partner</h3>
+                    <p class="promo-text">Çek Cumhuriyeti'nde 1 yıllık özel hazırlık programı. Kimya, biyoloji, fizik ve İngilizce eğitimi. %90 başarı oranıyla tıp fakültelerine yerleşim.</p>
+                </div>
+                <div class="promo-buttons">
+                    <a href="/partners/medczech" class="promo-btn promo-btn-primary">
+                        <i class="fas fa-info-circle"></i> Detaylı Bilgi
+                    </a>
+                    <a href="/contact" class="promo-btn promo-btn-secondary">
+                        <i class="fas fa-paper-plane"></i> Başvur
+                    </a>
+                </div>
+            </div>
+
+            <!-- Slide 6: Almanya - TU München -->
+            <div class="promo-slide">
+                <div class="promo-slide-hero">
+                    <div class="promo-image-placeholder">
+                        <i class="fas fa-university promo-hero-icon"></i>
+                        <!-- Görsel buraya eklenecek: <img src="/images/promotions/tum-germany.jpg" alt="TU München"> -->
+                    </div>
+                </div>
+                <div class="promo-content">
+                    <span class="promo-badge">Almanya</span>
+                    <h2 class="promo-title">Dünya Sıralamasında Üst Sıralarda Eğitim</h2>
+                    <h3 class="promo-subtitle">Technical University of Munich - QS Top 50</h3>
+                    <p class="promo-text">Ücretsiz eğitim! Mühendislik, bilgisayar bilimi, matematik programlarında dünya çapında tanınan diploma. Alman ekonomisinde kariyer kapıları.</p>
+                </div>
+                <div class="promo-buttons">
+                    <a href="/programs" class="promo-btn promo-btn-primary">
+                        <i class="fas fa-info-circle"></i> Detaylı Bilgi
+                    </a>
+                    <a href="/contact" class="promo-btn promo-btn-secondary">
+                        <i class="fas fa-paper-plane"></i> Başvur
+                    </a>
+                </div>
+            </div>
+
+            <!-- Slide 7: Avusturya - Viyana Üniversitesi -->
+            <div class="promo-slide">
+                <div class="promo-slide-hero">
+                    <div class="promo-image-placeholder">
+                        <i class="fas fa-landmark promo-hero-icon"></i>
+                        <!-- Görsel buraya eklenecek: <img src="/images/promotions/vienna-university.jpg" alt="Viyana Üniversitesi"> -->
+                    </div>
+                </div>
+                <div class="promo-content">
+                    <span class="promo-badge">Avusturya</span>
+                    <h2 class="promo-title">Viyana'da 650 Yıllık Akademik Mükemmellik</h2>
+                    <h3 class="promo-subtitle">Avrupa'nın En Eski Üniversitelerinden Eğitim</h3>
+                    <p class="promo-text">Düşük harç ücretiyle hukuk, ekonomi, sosyal bilimler. Merkezi Avrupa'nın en yaşanabilir şehrinde eğitim ve kariyer.</p>
+                </div>
+                <div class="promo-buttons">
+                    <a href="/programs" class="promo-btn promo-btn-primary">
+                        <i class="fas fa-info-circle"></i> Detaylı Bilgi
+                    </a>
+                    <a href="/contact" class="promo-btn promo-btn-secondary">
+                        <i class="fas fa-paper-plane"></i> Başvur
+                    </a>
+                </div>
+            </div>
+
+            <!-- Slide 8: İtalya - Politecnico di Milano -->
+            <div class="promo-slide">
+                <div class="promo-slide-hero">
+                    <div class="promo-image-placeholder">
+                        <i class="fas fa-palette promo-hero-icon"></i>
+                        <!-- Görsel buraya eklenecek: <img src="/images/promotions/polimi-milan.jpg" alt="Politecnico di Milano"> -->
+                    </div>
+                </div>
+                <div class="promo-content">
+                    <span class="promo-badge">İtalya</span>
+                    <h2 class="promo-title">Milano'da Moda, Tasarım ve Mimarlık</h2>
+                    <h3 class="promo-subtitle">Dünyanın Tasarım Başkentinde Eğitim</h3>
+                    <p class="promo-text">İtalya'nın #1 teknik üniversitesinde mimarlık, endüstriyel tasarım, mühendislik. Moda ve tasarım dünyasının kapılarını arayla.</p>
+                </div>
+                <div class="promo-buttons">
+                    <a href="/programs" class="promo-btn promo-btn-primary">
+                        <i class="fas fa-info-circle"></i> Detaylı Bilgi
+                    </a>
+                    <a href="/contact" class="promo-btn promo-btn-secondary">
+                        <i class="fas fa-paper-plane"></i> Başvur
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Controls -->
+        <div class="promo-controls">
+            <button class="promo-arrow promo-arrow-prev" aria-label="Önceki">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            
+            <div class="promo-dots">
+                <button class="promo-dot active" aria-label="Slide 1"></button>
+                <button class="promo-dot" aria-label="Slide 2"></button>
+                <button class="promo-dot" aria-label="Slide 3"></button>
+                <button class="promo-dot" aria-label="Slide 4"></button>
+                <button class="promo-dot" aria-label="Slide 5"></button>
+                <button class="promo-dot" aria-label="Slide 6"></button>
+                <button class="promo-dot" aria-label="Slide 7"></button>
+                <button class="promo-dot" aria-label="Slide 8"></button>
+            </div>
+            
+            <button class="promo-arrow promo-arrow-next" aria-label="Sonraki">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+</div>
 
 <script>
 // Hero arka plan görsellerini döndür

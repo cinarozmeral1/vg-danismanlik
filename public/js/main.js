@@ -731,271 +731,221 @@ function validatePhone(phone) {
     return re.test(phone);
 }
 
-// ===== PROMOTIONAL CAROUSEL SYSTEM =====
+// ===== PROMO POPUP - DYNAMIC CAROUSEL =====
 
-class PromoCarousel {
+class PromoPopup {
     constructor() {
-        this.modal = document.getElementById('promoCarouselModal');
-        this.slides = [];
-        this.dots = [];
-        this.currentIndex = 0;
-        this.autoPlayInterval = null;
-        this.autoPlayDelay = 5000; // 5 seconds
-        this.storageKey = 'promoCarouselLastShown';
+        this.overlay = null;
+        this.currentSlide = 0;
+        this.totalSlides = 0;
+        this.autoAdvanceInterval = null;
+        this.autoAdvanceDelay = 10000; // 10 seconds
+        this.cookieName = 'popup_shown_date';
+        this.cookieDays = 1;
     }
-    
+
     init() {
-        // Check if modal exists
-        if (!this.modal) {
-            console.log('Promo carousel modal not found');
-            return;
+        // Wait for DOM to be ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => this.setup());
+        } else {
+            this.setup();
         }
-        
-        // Get slides and dots
-        this.slides = Array.from(document.querySelectorAll('.promo-slide'));
-        this.dots = Array.from(document.querySelectorAll('.promo-dot'));
-        
-        if (this.slides.length === 0) {
-            console.log('No promo slides found');
-            return;
-        }
-        
-        console.log(`Promo carousel initialized with ${this.slides.length} slides`);
-        
+    }
+
+    setup() {
+        this.overlay = document.querySelector('.promo-popup-overlay');
+        if (!this.overlay) return;
+
+        this.totalSlides = document.querySelectorAll('.promo-slide').length;
+        if (this.totalSlides === 0) return;
+
         // Setup event listeners
         this.setupEventListeners();
-        
-        // Check if should show modal
-        if (this.shouldShowModal()) {
-            this.showModal();
-        }
+
+        // Check if should show popup
+        this.checkAndShowPopup();
     }
-    
-    shouldShowModal() {
-        // Always show modal for now (can be changed to daily check later)
-        return true;
-        
-        // OPTIONAL: Uncomment below to show only once per day
-        /*
-        const lastShown = localStorage.getItem(this.storageKey);
-        if (!lastShown) return true;
-        const lastShownDate = new Date(lastShown);
-        const now = new Date();
-        return lastShownDate.toDateString() !== now.toDateString();
-        */
-    }
-    
-    showModal() {
-        if (!this.modal) return;
-        
-        this.modal.classList.add('show');
-        document.body.style.overflow = 'hidden';
-        
-        // Start autoplay
-        this.startAutoPlay();
-        
-        // Save to localStorage
-        localStorage.setItem(this.storageKey, new Date().toISOString());
-        
-        console.log('Promo carousel modal shown');
-    }
-    
-    hideModal() {
-        if (!this.modal) return;
-        
-        this.modal.classList.remove('show');
-        document.body.style.overflow = '';
-        
-        // Stop autoplay
-        this.stopAutoPlay();
-        
-        console.log('Promo carousel modal hidden');
-    }
-    
+
     setupEventListeners() {
         // Close button
-        const closeBtn = document.getElementById('closePromoModal');
+        const closeBtn = document.querySelector('.promo-popup-close');
         if (closeBtn) {
-            closeBtn.addEventListener('click', () => this.hideModal());
+            closeBtn.addEventListener('click', () => this.closePopup());
         }
-        
-        // Click outside modal content to close
-        this.modal.addEventListener('click', (e) => {
-            if (e.target === this.modal) {
-                this.hideModal();
+
+        // Backdrop click
+        this.overlay.addEventListener('click', (e) => {
+            if (e.target === this.overlay) {
+                this.closePopup();
             }
         });
+
+        // Arrow buttons
+        const prevBtn = document.querySelector('.promo-arrow-prev');
+        const nextBtn = document.querySelector('.promo-arrow-next');
         
-        // Previous button
-        const prevBtn = document.getElementById('promoPrev');
         if (prevBtn) {
-            prevBtn.addEventListener('click', () => this.previousSlide());
+            prevBtn.addEventListener('click', () => this.prevSlide());
         }
         
-        // Next button
-        const nextBtn = document.getElementById('promoNext');
         if (nextBtn) {
             nextBtn.addEventListener('click', () => this.nextSlide());
         }
-        
-        // Dot indicators
-        this.dots.forEach((dot, index) => {
+
+        // Dot navigation
+        const dots = document.querySelectorAll('.promo-dot');
+        dots.forEach((dot, index) => {
             dot.addEventListener('click', () => this.goToSlide(index));
         });
-        
+
         // Keyboard navigation
         document.addEventListener('keydown', (e) => {
-            if (!this.modal.classList.contains('show')) return;
+            if (!this.overlay.classList.contains('active')) return;
             
             if (e.key === 'Escape') {
-                this.hideModal();
+                this.closePopup();
             } else if (e.key === 'ArrowLeft') {
-                this.previousSlide();
+                this.prevSlide();
             } else if (e.key === 'ArrowRight') {
                 this.nextSlide();
             }
         });
-        
-        // Pause autoplay on hover
-        const carouselContainer = document.querySelector('.promo-carousel-container');
-        if (carouselContainer) {
-            carouselContainer.addEventListener('mouseenter', () => {
-                this.stopAutoPlay();
-            });
-            
-            carouselContainer.addEventListener('mouseleave', () => {
-                if (this.modal.classList.contains('show')) {
-                    this.startAutoPlay();
-                }
-            });
-        }
     }
-    
+
+    checkAndShowPopup() {
+        const lastShown = this.getCookie(this.cookieName);
+        const today = new Date().toDateString();
+
+        // TEMPORARY: Always show for testing - REMOVE LATER
+        // Show popup if not shown today
+        // if (lastShown !== today) {
+            // Small delay for better UX
+            setTimeout(() => {
+                this.showPopup();
+            }, 1000);
+        // }
+    }
+
+    showPopup() {
+        if (!this.overlay) return;
+
+        // Set cookie
+        this.setCookie(this.cookieName, new Date().toDateString(), this.cookieDays);
+
+        // Show overlay
+        this.overlay.classList.add('active');
+        document.body.classList.add('promo-popup-open');
+
+        // Show first slide
+        this.goToSlide(0);
+
+        // Start auto advance
+        this.startAutoAdvance();
+    }
+
+    closePopup() {
+        if (!this.overlay) return;
+
+        this.overlay.classList.remove('active');
+        document.body.classList.remove('promo-popup-open');
+
+        // Stop auto advance
+        this.stopAutoAdvance();
+    }
+
     goToSlide(index) {
-        // Remove active class from current slide and dot
-        this.slides[this.currentIndex].classList.remove('active');
-        this.dots[this.currentIndex].classList.remove('active');
-        
-        // Update current index
-        this.currentIndex = index;
-        
-        // Add active class to new slide and dot
-        this.slides[this.currentIndex].classList.add('active');
-        this.dots[this.currentIndex].classList.add('active');
-        
-        // Reset autoplay
-        if (this.autoPlayInterval) {
-            this.stopAutoPlay();
-            this.startAutoPlay();
+        if (index < 0 || index >= this.totalSlides) return;
+
+        const slides = document.querySelectorAll('.promo-slide');
+        const currentSlideElement = slides[this.currentSlide];
+        const nextSlideElement = slides[index];
+
+        // Add exit animation to current slide
+        if (currentSlideElement) {
+            currentSlideElement.style.animation = 'slideExit 0.4s ease-out forwards';
+            
+            setTimeout(() => {
+                currentSlideElement.classList.remove('active');
+                currentSlideElement.style.animation = '';
+            }, 400);
         }
+
+        // Add enter animation to next slide after a short delay
+        setTimeout(() => {
+            nextSlideElement.classList.add('active');
+            nextSlideElement.style.animation = 'slideEnter 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards';
+            
+            setTimeout(() => {
+                nextSlideElement.style.animation = '';
+            }, 600);
+        }, 200);
+
+        // Update dots with animation
+        const dots = document.querySelectorAll('.promo-dot');
+        dots.forEach(dot => dot.classList.remove('active'));
+        if (dots[index]) {
+            dots[index].classList.add('active');
+        }
+
+        // Update current slide
+        this.currentSlide = index;
+
+        // Reset auto advance
+        this.resetAutoAdvance();
     }
-    
+
     nextSlide() {
-        const nextIndex = (this.currentIndex + 1) % this.slides.length;
+        const nextIndex = (this.currentSlide + 1) % this.totalSlides;
         this.goToSlide(nextIndex);
     }
-    
-    previousSlide() {
-        const prevIndex = (this.currentIndex - 1 + this.slides.length) % this.slides.length;
+
+    prevSlide() {
+        const prevIndex = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
         this.goToSlide(prevIndex);
     }
-    
-    startAutoPlay() {
-        this.stopAutoPlay(); // Clear any existing interval
-        
-        this.autoPlayInterval = setInterval(() => {
+
+    startAutoAdvance() {
+        this.stopAutoAdvance(); // Clear any existing interval
+        this.autoAdvanceInterval = setInterval(() => {
             this.nextSlide();
-        }, this.autoPlayDelay);
+        }, this.autoAdvanceDelay);
     }
-    
-    stopAutoPlay() {
-        if (this.autoPlayInterval) {
-            clearInterval(this.autoPlayInterval);
-            this.autoPlayInterval = null;
+
+    stopAutoAdvance() {
+        if (this.autoAdvanceInterval) {
+            clearInterval(this.autoAdvanceInterval);
+            this.autoAdvanceInterval = null;
         }
     }
-}
 
-// Initialize promo carousel after DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    // Wait longer before showing carousel to not interrupt user
-    setTimeout(() => {
-        const promoCarousel = new PromoCarousel();
-        promoCarousel.init();
-    }, 3000); // 3 second delay after page load - less aggressive
-});
-
-// ===== COUNTER ANIMATION =====
-
-class CounterAnimation {
-    constructor() {
-        this.counters = document.querySelectorAll('.stat-number[data-count]');
-        this.animated = new Set();
+    resetAutoAdvance() {
+        if (this.overlay && this.overlay.classList.contains('active')) {
+            this.startAutoAdvance();
+        }
     }
-    
-    init() {
-        if (this.counters.length === 0) return;
-        
-        // Create intersection observer
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting && !this.animated.has(entry.target)) {
-                    this.animateCounter(entry.target);
-                    this.animated.add(entry.target);
-                }
-            });
-        }, {
-            threshold: 0.5
-        });
-        
-        // Observe all counters
-        this.counters.forEach(counter => {
-            observer.observe(counter);
-        });
+
+    setCookie(name, value, days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        const expires = 'expires=' + date.toUTCString();
+        document.cookie = name + '=' + value + ';' + expires + ';path=/';
     }
-    
-    animateCounter(element) {
-        const target = parseInt(element.dataset.count);
-        const duration = 2000; // 2 seconds
-        const start = performance.now();
-        const isPercentage = element.textContent.includes('%');
-        
-        const animate = (currentTime) => {
-            const elapsed = currentTime - start;
-            const progress = Math.min(elapsed / duration, 1);
-            
-            // Easing function
-            const easeOut = 1 - Math.pow(1 - progress, 3);
-            const current = Math.floor(easeOut * target);
-            
-            if (target > 50) {
-                element.textContent = current + '+';
-            } else if (isPercentage) {
-                element.textContent = '%' + current;
-            } else {
-                element.textContent = current;
-            }
-            
-            if (progress < 1) {
-                requestAnimationFrame(animate);
-            } else {
-                // Final value
-                if (target > 50) {
-                    element.textContent = target + '+';
-                } else if (isPercentage) {
-                    element.textContent = '%' + target;
-                } else {
-                    element.textContent = target;
-                }
-            }
-        };
-        
-        requestAnimationFrame(animate);
+
+    getCookie(name) {
+        const nameEQ = name + '=';
+        const ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
     }
 }
 
-// Initialize counter animation
-document.addEventListener('DOMContentLoaded', function() {
-    const counterAnimation = new CounterAnimation();
-    counterAnimation.init();
-}); 
+// Initialize popup when DOM is ready
+if (typeof window !== 'undefined') {
+    const promoPopup = new PromoPopup();
+    promoPopup.init();
+} 
