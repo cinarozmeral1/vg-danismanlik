@@ -4,6 +4,8 @@ module.exports = {
         home: "Home",
         studentLife: "Student Life",
         services: "Services",
+        ourServices: "Our Services",
+        media: "In the Media",
         universities: "Universities",
         aboutUs: "About Us",
         contact: "Contact",
@@ -1917,6 +1919,28 @@ module.exports = {
             subtitle: "Contact us to make your European education dream come true",
             contactUs: "Contact Us",
             freeAssessment: "Free Assessment"
+        }
+    },
+    
+    // Media Page
+    media: {
+        heroTitle: "In the Media",
+        heroSubtitle: "Follow our posts on Instagram and LinkedIn",
+        instagram: {
+            title: "Instagram Reels",
+            subtitle: "Our latest videos and student stories",
+            comingSoon: "Our Instagram reels will appear here soon!",
+            followButton: "Follow on Instagram"
+        },
+        linkedin: {
+            title: "LinkedIn",
+            subtitle: "Our professional content and success stories",
+            comingSoon: "Our LinkedIn posts will appear here soon!",
+            followButton: "Follow on LinkedIn"
+        },
+        cta: {
+            title: "Follow Us on Social Media!",
+            subtitle: "Follow our social media accounts for latest news, student stories and more."
         }
     },
     

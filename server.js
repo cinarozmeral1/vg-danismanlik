@@ -767,6 +767,16 @@ app.get('/sitemap.xml', async (req, res) => {
         <xhtml:link rel="alternate" hreflang="en" href="${baseUrl}/change-language/en"/>
     </url>
     
+    <!-- Media -->
+    <url>
+        <loc>${baseUrl}/media</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="tr" href="${baseUrl}/change-language/tr"/>
+        <xhtml:link rel="alternate" hreflang="en" href="${baseUrl}/change-language/en"/>
+    </url>
+    
     <!-- Universities -->
     <url>
         <loc>${baseUrl}/universities</loc>
@@ -916,6 +926,15 @@ app.get('/about-us', (req, res) => {
     res.locals.ogTitle = 'Venture Global (VG Danışmanlık) - Yurt Dışı Eğitim Danışmanlığı';
     res.locals.ogDescription = 'Venture Global (VG Danışmanlık) yurt dışı danışmanlık ve eğitim danışmanlığı firması. 7 ülkede profesyonel hizmet.';
     res.render('about-us', { title: res.locals.t.nav.aboutUs });
+});
+
+app.get('/media', (req, res) => {
+    res.locals.seoTitle = 'Medyada Biz - Venture Global (VG Danışmanlık) | Instagram & LinkedIn';
+    res.locals.seoDescription = 'Venture Global (VG Danışmanlık) sosyal medya paylaşımları. Instagram reels ve LinkedIn postlarımızı takip edin. Öğrenci hikayeleri, başarı hikayeleri ve daha fazlası.';
+    res.locals.seoKeywords = 'Venture Global instagram, vg danışmanlık linkedin, venture global medya, yurt dışı eğitim instagram, öğrenci hikayeleri, başarı hikayeleri';
+    res.locals.ogTitle = 'Medyada Biz - Venture Global | Sosyal Medya';
+    res.locals.ogDescription = 'Instagram ve LinkedIn\'de paylaşımlarımızı takip edin.';
+    res.render('media', { title: res.locals.t.nav.media || 'Medyada Biz' });
 });
 
 app.get('/partners/wcep', (req, res) => {

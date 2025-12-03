@@ -4,6 +4,8 @@ module.exports = {
         home: "Ana Sayfa",
         studentLife: "Öğrenci Yaşamı",
         services: "Hizmetler",
+        ourServices: "Hizmetlerimiz",
+        media: "Medyada Biz",
         universities: "Üniversiteler",
         aboutUs: "Tanışalım",
         contact: "İletişim",
@@ -1945,6 +1947,28 @@ module.exports = {
             subtitle: "Avrupa'da eğitim hayalinizi gerçekleştirmek için bizimle iletişime geçin",
             contactUs: "İletişime Geçin",
             freeAssessment: "Ücretsiz Değerlendirme"
+        }
+    },
+    
+    // Media Page
+    media: {
+        heroTitle: "Medyada Biz",
+        heroSubtitle: "Instagram ve LinkedIn'de paylaşımlarımızı takip edin",
+        instagram: {
+            title: "Instagram Reels",
+            subtitle: "Güncel videolarımız ve öğrenci hikayeleri",
+            comingSoon: "Instagram reels'lerimiz yakında burada görünecek!",
+            followButton: "Instagram'da Takip Et"
+        },
+        linkedin: {
+            title: "LinkedIn",
+            subtitle: "Profesyonel içeriklerimiz ve başarı hikayeleri",
+            comingSoon: "LinkedIn postlarımız yakında burada görünecek!",
+            followButton: "LinkedIn'de Takip Et"
+        },
+        cta: {
+            title: "Sosyal Medyada Bizi Takip Edin!",
+            subtitle: "Güncel haberler, öğrenci hikayeleri ve daha fazlası için sosyal medya hesaplarımızı takip edin."
         }
     },
     
