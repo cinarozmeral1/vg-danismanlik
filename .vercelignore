@@ -1,0 +1,64 @@
+# Development files
+.env.local
+.env.development
+.env.test
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Testing
+test/
+tests/
+*.test.js
+*.spec.js
+
+# Documentation
+README.md
+CHANGELOG.md
+docs/
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Backup files
+*.backup
+*.bak
+*_backup.*
+
+# Large image files (these should be served from public/)
+public/images/backgrounds/*.jpg
+public/images/backgrounds/*.png
+public/images/backgrounds/*.jpeg
+
+# Scripts not needed in production
+scripts/
+migrations/
+
+# Uploads directory (not needed in serverless)
+public/uploads/
+
+# Database backups
+backups/
+*.sql
+*.dump
+
+# FTP related
+ftp/
+*.ftp
+
+# Node modules are handled by package.json
+node_modules/
+
