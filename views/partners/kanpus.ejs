@@ -100,6 +100,26 @@
                     <p class="lead text-body-secondary"><%= kanpusContent.preparationSubtitle || '' %></p>
                 </div>
 
+                <!-- IELTS Program -->
+                <div class="col-lg-6">
+                    <div class="partner-card shadow-sm h-100">
+                        <div class="d-flex align-items-center mb-3">
+                            <h3 class="fw-bold text-danger mb-0"><%= programs.ieltsTitle || 'IELTS' %></h3>
+                        </div>
+                        <p class="mb-3"><%= programs.ieltsDescription || '' %></p>
+                        <ul class="list-unstyled">
+                            <% if (Array.isArray(programs.ieltsSections)) { %>
+                                <% programs.ieltsSections.forEach(function(section) { %>
+                                    <li><i class="fas fa-check-circle text-danger me-2"></i><%= section %></li>
+                                <% }) %>
+                            <% } %>
+                        </ul>
+                        <% if (programs.ieltsNote) { %>
+                            <p class="text-muted mb-0"><small><%= programs.ieltsNote %></small></p>
+                        <% } %>
+                    </div>
+                </div>
+
                 <!-- IB Diploma Program -->
                 <div class="col-lg-6">
                     <div class="partner-card shadow-sm h-100">
@@ -110,7 +130,7 @@
                         <ul class="list-unstyled">
                             <% if (Array.isArray(programs.ibSubjects)) { %>
                                 <% programs.ibSubjects.forEach(function(subject) { %>
-                                    <li><i class="fas fa-book-open text-primary me-2"></i><%= subject %></li>
+                                    <li><i class="fas fa-check-circle text-primary me-2"></i><%= subject %></li>
                                 <% }) %>
                             <% } %>
                         </ul>
@@ -127,7 +147,7 @@
                         <ul class="list-unstyled">
                             <% if (Array.isArray(programs.apSubjects)) { %>
                                 <% programs.apSubjects.forEach(function(subject) { %>
-                                    <li><i class="fas fa-book text-success me-2"></i><%= subject %></li>
+                                    <li><i class="fas fa-check-circle text-success me-2"></i><%= subject %></li>
                                 <% }) %>
                             <% } %>
                         </ul>
@@ -144,7 +164,7 @@
                         <ul class="list-unstyled">
                             <% if (Array.isArray(programs.satSections)) { %>
                                 <% programs.satSections.forEach(function(section) { %>
-                                    <li><i class="fas fa-pencil-alt text-warning me-2"></i><%= section %></li>
+                                    <li><i class="fas fa-check-circle text-warning me-2"></i><%= section %></li>
                                 <% }) %>
                             <% } %>
                         </ul>
@@ -161,30 +181,10 @@
                         <ul class="list-unstyled">
                             <% if (Array.isArray(programs.toeflSections)) { %>
                                 <% programs.toeflSections.forEach(function(section) { %>
-                                    <li><i class="fas fa-microphone text-info me-2"></i><%= section %></li>
+                                    <li><i class="fas fa-check-circle text-info me-2"></i><%= section %></li>
                                 <% }) %>
                             <% } %>
                         </ul>
-                    </div>
-                </div>
-
-                <!-- IELTS Program -->
-                <div class="col-lg-6">
-                    <div class="partner-card shadow-sm h-100">
-                        <div class="d-flex align-items-center mb-3">
-                            <h3 class="fw-bold text-danger mb-0"><%= programs.ieltsTitle || 'IELTS' %></h3>
-                        </div>
-                        <p class="mb-3"><%= programs.ieltsDescription || '' %></p>
-                        <ul class="list-unstyled">
-                            <% if (Array.isArray(programs.ieltsSections)) { %>
-                                <% programs.ieltsSections.forEach(function(section) { %>
-                                    <li><i class="fas fa-globe text-danger me-2"></i><%= section %></li>
-                                <% }) %>
-                            <% } %>
-                        </ul>
-                        <% if (programs.ieltsNote) { %>
-                            <p class="text-muted mb-0"><small><%= programs.ieltsNote %></small></p>
-                        <% } %>
                     </div>
                 </div>
             </div>
