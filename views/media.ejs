@@ -168,64 +168,50 @@
                     <p class="text-muted lead"><%= t.media.stories.subtitle %></p>
                 </div>
                 
-                <div class="row g-4">
-                    <!-- Story 1 -->
-                    <div class="col-lg-4 col-md-6">
-                        <div class="card h-100 border-0 shadow-sm">
-                            <div class="card-body p-4">
-                                <div class="text-center mb-3">
-                                    <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                                        <i class="fas fa-user fa-2x"></i>
+                <% if (stories && stories.length > 0) { %>
+                    <div class="row g-4">
+                        <% 
+                        const colors = ['success', 'primary', 'warning', 'info', 'danger'];
+                        stories.forEach((story, index) => { 
+                            const color = colors[index % colors.length];
+                        %>
+                        <div class="col-lg-4 col-md-6">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body p-4">
+                                    <div class="text-center mb-3">
+                                        <% if (story.photo) { %>
+                                            <img src="<%= story.photo %>" alt="<%= story.name %>" 
+                                                 class="rounded-circle" 
+                                                 style="width: 120px; height: 120px; object-fit: cover; border: 4px solid var(--bs-<%= color %>);">
+                                        <% } else { %>
+                                            <div class="rounded-circle bg-<%= color %> text-white d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                                <i class="fas fa-user fa-2x"></i>
+                                            </div>
+                                        <% } %>
                                     </div>
-                                </div>
-                                <h5 class="card-title text-center fw-bold mb-3"><%= t.media.stories.story1.name %></h5>
-                                <p class="text-muted text-center mb-3"><i class="fas fa-graduation-cap me-2"></i><%= t.media.stories.story1.university %></p>
-                                <p class="card-text"><%= t.media.stories.story1.content %></p>
-                                <div class="text-center mt-3">
-                                    <span class="badge bg-success"><i class="fas fa-star me-1"></i><%= t.media.stories.story1.country %></span>
+                                    <h5 class="card-title text-center fw-bold mb-2"><%= story.name %></h5>
+                                    <% if (story.university) { %>
+                                        <p class="text-muted text-center mb-2"><i class="fas fa-graduation-cap me-2"></i><%= story.university %></p>
+                                    <% } %>
+                                    <% if (story.country) { %>
+                                        <div class="text-center mb-3">
+                                            <span class="badge bg-<%= color %>"><i class="fas fa-map-marker-alt me-1"></i><%= story.country %></span>
+                                        </div>
+                                    <% } %>
+                                    <% if (story.story) { %>
+                                        <p class="card-text text-center fst-italic">"<%= story.story %>"</p>
+                                    <% } %>
                                 </div>
                             </div>
                         </div>
+                        <% }); %>
                     </div>
-
-                    <!-- Story 2 -->
-                    <div class="col-lg-4 col-md-6">
-                        <div class="card h-100 border-0 shadow-sm">
-                            <div class="card-body p-4">
-                                <div class="text-center mb-3">
-                                    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                                        <i class="fas fa-user fa-2x"></i>
-                                    </div>
-                                </div>
-                                <h5 class="card-title text-center fw-bold mb-3"><%= t.media.stories.story2.name %></h5>
-                                <p class="text-muted text-center mb-3"><i class="fas fa-graduation-cap me-2"></i><%= t.media.stories.story2.university %></p>
-                                <p class="card-text"><%= t.media.stories.story2.content %></p>
-                                <div class="text-center mt-3">
-                                    <span class="badge bg-primary"><i class="fas fa-star me-1"></i><%= t.media.stories.story2.country %></span>
-                                </div>
-                            </div>
-                        </div>
+                <% } else { %>
+                    <div class="text-center py-5">
+                        <i class="fas fa-heart fa-3x text-muted mb-3"></i>
+                        <p class="text-muted"><%= t.media.studentStories.comingSoon %></p>
                     </div>
-
-                    <!-- Story 3 -->
-                    <div class="col-lg-4 col-md-6">
-                        <div class="card h-100 border-0 shadow-sm">
-                            <div class="card-body p-4">
-                                <div class="text-center mb-3">
-                                    <div class="rounded-circle bg-warning text-white d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                                        <i class="fas fa-user fa-2x"></i>
-                                    </div>
-                                </div>
-                                <h5 class="card-title text-center fw-bold mb-3"><%= t.media.stories.story3.name %></h5>
-                                <p class="text-muted text-center mb-3"><i class="fas fa-graduation-cap me-2"></i><%= t.media.stories.story3.university %></p>
-                                <p class="card-text"><%= t.media.stories.story3.content %></p>
-                                <div class="text-center mt-3">
-                                    <span class="badge bg-warning"><i class="fas fa-star me-1"></i><%= t.media.stories.story3.country %></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <% } %>
 
                 <div class="text-center mt-5">
                     <p class="lead text-muted mb-4"><%= t.media.stories.cta %></p>

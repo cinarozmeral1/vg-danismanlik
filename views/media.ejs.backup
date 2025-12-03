@@ -1,0 +1,86 @@
+<!-- Hero Section -->
+<section class="text-white py-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <div class="mb-4">
+                    <i class="fab fa-instagram fa-3x me-3" style="color: #E1306C;"></i>
+                    <i class="fab fa-linkedin fa-3x" style="color: #0077B5;"></i>
+                </div>
+                <h1 class="display-4 fw-bold"><%= t.media.heroTitle %></h1>
+                <p class="lead"><%= t.media.heroSubtitle %></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Instagram Section -->
+<section class="py-5" style="background: linear-gradient(to bottom, #f9fafb, #ffffff);">
+    <div class="container">
+        <div class="text-center mb-5">
+            <i class="fab fa-instagram fa-3x mb-3" style="color: #E1306C;"></i>
+            <h2 class="display-5 fw-bold"><%= t.media.instagram.title %></h2>
+            <p class="lead text-muted"><%= t.media.instagram.subtitle %></p>
+        </div>
+        
+        <div class="row g-4 justify-content-center" id="instagram-feed">
+            <!-- Instagram Reels Grid -->
+            REELS_PLACEHOLDER
+        </div>
+    </div>
+</section>
+
+<!-- LinkedIn Section -->
+<section class="py-5" style="background: linear-gradient(to bottom, #ffffff, #f0f7ff);">
+    <div class="container">
+        <div class="text-center mb-5">
+            <i class="fab fa-linkedin fa-3x mb-3" style="color: #0077B5;"></i>
+            <h2 class="display-5 fw-bold"><%= t.media.linkedin.title %></h2>
+            <p class="lead text-muted"><%= t.media.linkedin.subtitle %></p>
+        </div>
+        
+        <div class="row g-4" id="linkedin-feed">
+            <!-- LinkedIn Posts Grid -->
+            <!-- Placeholder for LinkedIn embeds -->
+            <div class="col-12 text-center">
+                <div class="alert alert-info" role="alert">
+                    <i class="fab fa-linkedin fa-2x mb-3 d-block"></i>
+                    <p class="mb-3"><%= t.media.linkedin.comingSoon || 'LinkedIn postlarımız yakında burada görünecek!' %></p>
+                    <a href="https://www.linkedin.com/company/venture-global-consultancy-start-up/" target="_blank" rel="noopener" class="btn btn-primary">
+                        <i class="fab fa-linkedin me-2"></i><%= t.media.linkedin.followButton || 'LinkedIn\'de Takip Et' %>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Example LinkedIn Embed Structure (to be filled with actual posts)
+            <div class="col-lg-4 col-md-6">
+                <div class="card shadow-sm h-100" style="border: 2px solid #0077B5; border-radius: 12px; overflow: hidden;">
+                    <div class="card-body p-0">
+                        <iframe src="YOUR_LINKEDIN_EMBED_URL" height="500" width="100%" frameborder="0" allowfullscreen="" title="LinkedIn Post"></iframe>
+                    </div>
+                </div>
+            </div>
+            -->
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5 bg-primary text-white text-center">
+    <div class="container">
+        <h3 class="mb-4"><%= t.media.cta.title || 'Sosyal Medyada Bizi Takip Edin!' %></h3>
+        <p class="lead mb-4"><%= t.media.cta.subtitle || 'Güncel haberler, öğrenci hikayeleri ve daha fazlası için sosyal medya hesaplarımızı takip edin.' %></p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="https://www.instagram.com/vg.danismanlik" target="_blank" rel="noopener" class="btn btn-light btn-lg">
+                <i class="fab fa-instagram me-2"></i>Instagram
+            </a>
+            <a href="https://www.linkedin.com/company/venture-global-consultancy-start-up/" target="_blank" rel="noopener" class="btn btn-light btn-lg">
+                <i class="fab fa-linkedin me-2"></i>LinkedIn
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Instagram Embed Script -->
+<script async src="//www.instagram.com/embed.js"></script>
+
