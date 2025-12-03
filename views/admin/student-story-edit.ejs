@@ -1,212 +1,214 @@
-<%- include('layout', { 
-    title: story ? 'Hikayeyi Düzenle' : 'Yeni Hikaye Ekle',
-    content: `
-    <div class="admin-container">
-        <!-- Sidebar -->
-        <div class="admin-sidebar">
-            <div class="sidebar-header">
-                <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Yönetim Paneli</h6>
+<!-- Admin Student Story Edit Content -->
+<div class="admin-container">
+    <!-- Sidebar -->
+    <div class="admin-sidebar">
+        <div class="sidebar-header">
+            <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Yönetim Paneli</h6>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/admin/dashboard" class="nav-item">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/admin/users" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Öğrenciler</span>
+            </a>
+            <a href="/admin/applications" class="nav-item">
+                <i class="fas fa-file-alt"></i>
+                <span>Başvurular</span>
+            </a>
+            <a href="/admin/universities" class="nav-item">
+                <i class="fas fa-university"></i>
+                <span>Üniversiteler</span>
+            </a>
+            <a href="/admin/student-stories" class="nav-item active">
+                <i class="fas fa-heart"></i>
+                <span>Öğrenci Hikayeleri</span>
+            </a>
+            <a href="/admin/backups" class="nav-item">
+                <i class="fas fa-database"></i>
+                <span>Yedekleme</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="admin-main">
+        <div class="section-header">
+            <div>
+                <h2><i class="fas fa-heart me-2"></i><%= story ? 'Hikayeyi Düzenle' : 'Yeni Hikaye Ekle' %></h2>
+                <p class="text-muted">Öğrenci hikayesi bilgilerini girin</p>
             </div>
-            <nav class="sidebar-nav">
-                <a href="/admin/dashboard" class="nav-item">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="/admin/users" class="nav-item">
-                    <i class="fas fa-users"></i>
-                    <span>Öğrenciler</span>
-                </a>
-                <a href="/admin/applications" class="nav-item">
-                    <i class="fas fa-file-alt"></i>
-                    <span>Başvurular</span>
-                </a>
-                <a href="/admin/universities" class="nav-item">
-                    <i class="fas fa-university"></i>
-                    <span>Üniversiteler</span>
-                </a>
-                <a href="/admin/student-stories" class="nav-item active">
-                    <i class="fas fa-heart"></i>
-                    <span>Öğrenci Hikayeleri</span>
-                </a>
-                <a href="/admin/backups" class="nav-item">
-                    <i class="fas fa-database"></i>
-                    <span>Yedekleme</span>
-                </a>
-            </nav>
+            <a href="/admin/student-stories" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Geri Dön
+            </a>
         </div>
 
-        <!-- Main Content Area -->
-        <div class="admin-main">
-            <div class="section-header">
-                <div>
-                    <h2><i class="fas fa-heart me-2"></i>${story ? 'Hikayeyi Düzenle' : 'Yeni Hikaye Ekle'}</h2>
-                    <p class="text-muted">Öğrenci hikayesi bilgilerini girin</p>
-                </div>
-                <a href="/admin/student-stories" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left me-2"></i>Geri Dön
-                </a>
-            </div>
-
-            <!-- Form -->
-            <div class="card">
-                <div class="card-body">
-                    <form id="storyForm" enctype="multipart/form-data">
-                        <div class="row">
-                            <!-- Photo Upload -->
-                            <div class="col-md-12 mb-4">
-                                <label class="form-label fw-bold">Öğrenci Fotoğrafı</label>
-                                ${story && story.photo ? \`
-                                    <div class="mb-3">
-                                        <img src="\${story.photo}" alt="Current photo" id="currentPhoto" 
-                                             style="max-width: 200px; max-height: 200px; border-radius: 8px; object-fit: cover;">
-                                        <div class="form-check mt-2">
-                                            <input class="form-check-input" type="checkbox" id="delete_photo" name="delete_photo">
-                                            <label class="form-check-label" for="delete_photo">
-                                                Mevcut fotoğrafı sil
-                                            </label>
-                                        </div>
+        <!-- Form -->
+        <div class="card">
+            <div class="card-body">
+                <form id="storyForm" enctype="multipart/form-data">
+                    <div class="row">
+                        <!-- Photo Upload -->
+                        <div class="col-md-12 mb-4">
+                            <label class="form-label fw-bold">Öğrenci Fotoğrafı</label>
+                            <% if (story && story.photo) { %>
+                                <div class="mb-3">
+                                    <img src="<%= story.photo %>" alt="Current photo" id="currentPhoto" 
+                                         style="max-width: 200px; max-height: 200px; border-radius: 8px; object-fit: cover;">
+                                    <div class="form-check mt-2">
+                                        <input class="form-check-input" type="checkbox" id="delete_photo" name="delete_photo">
+                                        <label class="form-check-label" for="delete_photo">
+                                            Mevcut fotoğrafı sil
+                                        </label>
                                     </div>
-                                \` : ''}
-                                <input type="file" class="form-control" id="photo" name="photo" accept="image/*">
-                                <small class="text-muted">JPG, PNG veya WEBP formatında, maksimum 5MB</small>
-                            </div>
-
-                            <!-- Turkish Fields -->
-                            <div class="col-12">
-                                <h5 class="mb-3"><i class="fas fa-flag me-2"></i>Türkçe Bilgiler</h5>
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label for="name_tr" class="form-label">Öğrenci Adı (TR) *</label>
-                                <input type="text" class="form-control" id="name_tr" name="name_tr" 
-                                       value="${story ? (story.name_tr || '') : ''}" required>
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label for="university_tr" class="form-label">Üniversite (TR)</label>
-                                <input type="text" class="form-control" id="university_tr" name="university_tr" 
-                                       value="${story ? (story.university_tr || '') : ''}">
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label for="country_tr" class="form-label">Ülke (TR)</label>
-                                <input type="text" class="form-control" id="country_tr" name="country_tr" 
-                                       value="${story ? (story.country_tr || '') : ''}">
-                            </div>
-
-                            <div class="col-md-12 mb-3">
-                                <label for="story_tr" class="form-label">Hikaye (TR)</label>
-                                <textarea class="form-control" id="story_tr" name="story_tr" rows="4">${story ? (story.story_tr || '') : ''}</textarea>
-                            </div>
-
-                            <!-- English Fields -->
-                            <div class="col-12 mt-4">
-                                <h5 class="mb-3"><i class="fas fa-flag me-2"></i>English Information</h5>
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label for="name_en" class="form-label">Student Name (EN) *</label>
-                                <input type="text" class="form-control" id="name_en" name="name_en" 
-                                       value="${story ? (story.name_en || '') : ''}" required>
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label for="university_en" class="form-label">University (EN)</label>
-                                <input type="text" class="form-control" id="university_en" name="university_en" 
-                                       value="${story ? (story.university_en || '') : ''}">
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label for="country_en" class="form-label">Country (EN)</label>
-                                <input type="text" class="form-control" id="country_en" name="country_en" 
-                                       value="${story ? (story.country_en || '') : ''}">
-                            </div>
-
-                            <div class="col-md-12 mb-3">
-                                <label for="story_en" class="form-label">Story (EN)</label>
-                                <textarea class="form-control" id="story_en" name="story_en" rows="4">${story ? (story.story_en || '') : ''}</textarea>
-                            </div>
-
-                            <!-- Display Settings -->
-                            <div class="col-12 mt-4">
-                                <h5 class="mb-3"><i class="fas fa-cog me-2"></i>Görünüm Ayarları</h5>
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label for="display_order" class="form-label">Görüntüleme Sırası</label>
-                                <input type="number" class="form-control" id="display_order" name="display_order" 
-                                       value="${story ? (story.display_order || 0) : 0}" min="0">
-                                <small class="text-muted">Küçük numara önce gösterilir</small>
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label for="is_active" class="form-label">Durum</label>
-                                <select class="form-select" id="is_active" name="is_active">
-                                    <option value="true" ${story && story.is_active ? 'selected' : ''}>Aktif</option>
-                                    <option value="false" ${story && !story.is_active ? 'selected' : ''}>Pasif</option>
-                                </select>
-                            </div>
+                                </div>
+                            <% } %>
+                            <input type="file" class="form-control" id="photo" name="photo" accept="image/*">
+                            <small class="text-muted">JPG, PNG veya WEBP formatında, maksimum 5MB</small>
                         </div>
 
-                        <div class="mt-4">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-2"></i>${story ? 'Güncelle' : 'Kaydet'}
-                            </button>
-                            <a href="/admin/student-stories" class="btn btn-secondary">
-                                <i class="fas fa-times me-2"></i>İptal
-                            </a>
+                        <!-- Turkish Fields -->
+                        <div class="col-12">
+                            <h5 class="mb-3"><i class="fas fa-flag me-2"></i>Türkçe Bilgiler</h5>
                         </div>
-                    </form>
-                </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="name_tr" class="form-label">Öğrenci Adı (TR) *</label>
+                            <input type="text" class="form-control" id="name_tr" name="name_tr" 
+                                   value="<%= story ? (story.name_tr || '') : '' %>" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="university_tr" class="form-label">Üniversite (TR)</label>
+                            <input type="text" class="form-control" id="university_tr" name="university_tr" 
+                                   value="<%= story ? (story.university_tr || '') : '' %>">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="country_tr" class="form-label">Ülke (TR)</label>
+                            <input type="text" class="form-control" id="country_tr" name="country_tr" 
+                                   value="<%= story ? (story.country_tr || '') : '' %>">
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <label for="story_tr" class="form-label">Hikaye (TR)</label>
+                            <textarea class="form-control" id="story_tr" name="story_tr" rows="4"><%= story ? (story.story_tr || '') : '' %></textarea>
+                        </div>
+
+                        <!-- English Fields -->
+                        <div class="col-12 mt-4">
+                            <h5 class="mb-3"><i class="fas fa-flag me-2"></i>English Information</h5>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="name_en" class="form-label">Student Name (EN) *</label>
+                            <input type="text" class="form-control" id="name_en" name="name_en" 
+                                   value="<%= story ? (story.name_en || '') : '' %>" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="university_en" class="form-label">University (EN)</label>
+                            <input type="text" class="form-control" id="university_en" name="university_en" 
+                                   value="<%= story ? (story.university_en || '') : '' %>">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="country_en" class="form-label">Country (EN)</label>
+                            <input type="text" class="form-control" id="country_en" name="country_en" 
+                                   value="<%= story ? (story.country_en || '') : '' %>">
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <label for="story_en" class="form-label">Story (EN)</label>
+                            <textarea class="form-control" id="story_en" name="story_en" rows="4"><%= story ? (story.story_en || '') : '' %></textarea>
+                        </div>
+
+                        <!-- Display Settings -->
+                        <div class="col-12 mt-4">
+                            <h5 class="mb-3"><i class="fas fa-cog me-2"></i>Görünüm Ayarları</h5>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="display_order" class="form-label">Görüntüleme Sırası</label>
+                            <input type="number" class="form-control" id="display_order" name="display_order" 
+                                   value="<%= story ? (story.display_order || 0) : 0 %>" min="0">
+                            <small class="text-muted">Küçük numara önce gösterilir</small>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="is_active" class="form-label">Durum</label>
+                            <select class="form-select" id="is_active" name="is_active">
+                                <option value="true" <%= story && story.is_active ? 'selected' : '' %>>Aktif</option>
+                                <option value="false" <%= story && !story.is_active ? 'selected' : '' %>>Pasif</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i><%= story ? 'Güncelle' : 'Kaydet' %>
+                        </button>
+                        <a href="/admin/student-stories" class="btn btn-secondary">
+                            <i class="fas fa-times me-2"></i>İptal
+                        </a>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-    document.getElementById('storyForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
+<script>
+document.getElementById('storyForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
 
-        const formData = new FormData(this);
-        const storyId = ${story ? story.id : 'null'};
+    const formData = new FormData(this);
+    const storyId = <%= story ? story.id : 'null' %>;
 
-        try {
-            const url = storyId ? \`/api/admin/student-stories/\${storyId}\` : '/api/admin/student-stories';
-            const method = storyId ? 'PUT' : 'POST';
+    try {
+        const url = storyId ? `/api/admin/student-stories/${storyId}` : '/api/admin/student-stories';
+        const method = storyId ? 'PUT' : 'POST';
 
-            const response = await fetch(url, {
-                method: method,
-                body: formData
-            });
+        const response = await fetch(url, {
+            method: method,
+            body: formData
+        });
 
-            const data = await response.json();
+        const data = await response.json();
 
-            if (data.success) {
-                alert('Hikaye başarıyla kaydedildi!');
-                window.location.href = '/admin/student-stories';
+        if (data.success) {
+            alert('Hikaye başarıyla kaydedildi!');
+            window.location.href = '/admin/student-stories';
+        } else {
+            alert('Hata: ' + data.error);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Bir hata oluştu: ' + error.message);
+    }
+});
+
+// Preview image on select
+document.getElementById('photo').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const currentPhoto = document.getElementById('currentPhoto');
+            if (currentPhoto) {
+                currentPhoto.src = e.target.result;
             } else {
-                alert('Hata: ' + data.error);
+                // Create new preview if no existing photo
+                const preview = document.createElement('img');
+                preview.src = e.target.result;
+                preview.id = 'currentPhoto';
+                preview.style.cssText = 'max-width: 200px; max-height: 200px; border-radius: 8px; object-fit: cover; margin-bottom: 10px; display: block;';
+                document.getElementById('photo').parentNode.insertBefore(preview, document.getElementById('photo'));
             }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Bir hata oluştu: ' + error.message);
-        }
-    });
-
-    // Preview image on select
-    document.getElementById('photo').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const currentPhoto = document.getElementById('currentPhoto');
-                if (currentPhoto) {
-                    currentPhoto.src = e.target.result;
-                }
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-    </script>
-    `
-}) %>
-
+        };
+        reader.readAsDataURL(file);
+    }
+});
+</script>

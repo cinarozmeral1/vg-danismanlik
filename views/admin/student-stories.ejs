@@ -1,160 +1,155 @@
-<%- include('layout', { 
-    title: 'Öğrenci Hikayeleri Yönetimi',
-    content: `
-    <div class="admin-container">
-        <!-- Sidebar -->
-        <div class="admin-sidebar">
-            <div class="sidebar-header">
-                <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Yönetim Paneli</h6>
+<!-- Admin Student Stories Content -->
+<div class="admin-container">
+    <!-- Sidebar -->
+    <div class="admin-sidebar">
+        <div class="sidebar-header">
+            <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Yönetim Paneli</h6>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/admin/dashboard" class="nav-item">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/admin/users" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Öğrenciler</span>
+            </a>
+            <a href="/admin/applications" class="nav-item">
+                <i class="fas fa-file-alt"></i>
+                <span>Başvurular</span>
+            </a>
+            <a href="/admin/universities" class="nav-item">
+                <i class="fas fa-university"></i>
+                <span>Üniversiteler</span>
+            </a>
+            <a href="/admin/student-stories" class="nav-item active">
+                <i class="fas fa-heart"></i>
+                <span>Öğrenci Hikayeleri</span>
+            </a>
+            <a href="/admin/backups" class="nav-item">
+                <i class="fas fa-database"></i>
+                <span>Yedekleme</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="admin-main">
+        <div class="section-header">
+            <div>
+                <h2><i class="fas fa-heart me-2"></i>Öğrenci Hikayeleri</h2>
+                <p class="text-muted">Öğrenci hikayelerini yönetin</p>
             </div>
-            <nav class="sidebar-nav">
-                <a href="/admin/dashboard" class="nav-item">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="/admin/users" class="nav-item">
-                    <i class="fas fa-users"></i>
-                    <span>Öğrenciler</span>
-                </a>
-                <a href="/admin/applications" class="nav-item">
-                    <i class="fas fa-file-alt"></i>
-                    <span>Başvurular</span>
-                </a>
-                <a href="/admin/universities" class="nav-item">
-                    <i class="fas fa-university"></i>
-                    <span>Üniversiteler</span>
-                </a>
-                <a href="/admin/student-stories" class="nav-item active">
-                    <i class="fas fa-heart"></i>
-                    <span>Öğrenci Hikayeleri</span>
-                </a>
-                <a href="/admin/backups" class="nav-item">
-                    <i class="fas fa-database"></i>
-                    <span>Yedekleme</span>
-                </a>
-            </nav>
+            <a href="/admin/student-stories/new" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Yeni Hikaye Ekle
+            </a>
         </div>
 
-        <!-- Main Content Area -->
-        <div class="admin-main">
-            <div class="section-header">
-                <div>
-                    <h2><i class="fas fa-heart me-2"></i>Öğrenci Hikayeleri</h2>
-                    <p class="text-muted">Öğrenci hikayelerini yönetin</p>
-                </div>
-                <a href="/admin/student-stories/new" class="btn btn-primary">
-                    <i class="fas fa-plus me-2"></i>Yeni Hikaye Ekle
-                </a>
-            </div>
-
-            <!-- Stories List -->
-            <div class="card">
-                <div class="card-body">
-                    <% if (stories && stories.length > 0) { %>
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Fotoğraf</th>
-                                        <th>Öğrenci Adı</th>
-                                        <th>Üniversite</th>
-                                        <th>Ülke</th>
-                                        <th>Sıra</th>
-                                        <th>Durum</th>
-                                        <th>İşlemler</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% stories.forEach(story => { %>
-                                    <tr>
-                                        <td>
-                                            <% if (story.photo) { %>
-                                                <img src="<%= story.photo %>" alt="<%= story.name_tr %>" 
-                                                     style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
-                                            <% } else { %>
-                                                <div style="width: 50px; height: 50px; background: #e9ecef; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                                                    <i class="fas fa-user text-muted"></i>
-                                                </div>
-                                            <% } %>
-                                        </td>
-                                        <td>
-                                            <div>
-                                                <strong>🇹🇷 <%= story.name_tr || 'N/A' %></strong><br>
-                                                <small class="text-muted">🇬🇧 <%= story.name_en || 'N/A' %></small>
+        <!-- Stories List -->
+        <div class="card">
+            <div class="card-body">
+                <% if (stories && stories.length > 0) { %>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Fotoğraf</th>
+                                    <th>Öğrenci Adı</th>
+                                    <th>Üniversite</th>
+                                    <th>Ülke</th>
+                                    <th>Sıra</th>
+                                    <th>Durum</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% stories.forEach(story => { %>
+                                <tr>
+                                    <td>
+                                        <% if (story.photo) { %>
+                                            <img src="<%= story.photo %>" alt="<%= story.name_tr %>" 
+                                                 style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
+                                        <% } else { %>
+                                            <div style="width: 50px; height: 50px; background: #e9ecef; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                                <i class="fas fa-user text-muted"></i>
                                             </div>
-                                        </td>
-                                        <td>
-                                            <div>
-                                                <div>🇹🇷 <%= story.university_tr || 'N/A' %></div>
-                                                <small class="text-muted">🇬🇧 <%= story.university_en || 'N/A' %></small>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div>
-                                                <div>🇹🇷 <%= story.country_tr || 'N/A' %></div>
-                                                <small class="text-muted">🇬🇧 <%= story.country_en || 'N/A' %></small>
-                                            </div>
-                                        </td>
-                                        <td><%= story.display_order || 0 %></td>
-                                        <td>
-                                            <% if (story.is_active) { %>
-                                                <span class="badge bg-success">Aktif</span>
-                                            <% } else { %>
-                                                <span class="badge bg-secondary">Pasif</span>
-                                            <% } %>
-                                        </td>
-                                        <td>
-                                            <a href="/admin/student-stories/<%= story.id %>/edit" class="btn btn-sm btn-primary me-1">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <button onclick="deleteStory(<%= story.id %>)" class="btn btn-sm btn-danger">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <% }); %>
-                                </tbody>
-                            </table>
-                        </div>
-                    <% } else { %>
-                        <div class="text-center py-5">
-                            <i class="fas fa-heart fa-3x text-muted mb-3"></i>
-                            <p class="text-muted">Henüz öğrenci hikayesi eklenmemiş.</p>
-                            <a href="/admin/student-stories/new" class="btn btn-primary">
-                                <i class="fas fa-plus me-2"></i>İlk Hikayeyi Ekle
-                            </a>
-                        </div>
-                    <% } %>
-                </div>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <strong>🇹🇷 <%= story.name_tr || 'N/A' %></strong><br>
+                                            <small class="text-muted">🇬🇧 <%= story.name_en || 'N/A' %></small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <div>🇹🇷 <%= story.university_tr || 'N/A' %></div>
+                                            <small class="text-muted">🇬🇧 <%= story.university_en || 'N/A' %></small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <div>🇹🇷 <%= story.country_tr || 'N/A' %></div>
+                                            <small class="text-muted">🇬🇧 <%= story.country_en || 'N/A' %></small>
+                                        </div>
+                                    </td>
+                                    <td><%= story.display_order || 0 %></td>
+                                    <td>
+                                        <% if (story.is_active) { %>
+                                            <span class="badge bg-success">Aktif</span>
+                                        <% } else { %>
+                                            <span class="badge bg-secondary">Pasif</span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <a href="/admin/student-stories/<%= story.id %>/edit" class="btn btn-sm btn-primary me-1">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button onclick="deleteStory(<%= story.id %>)" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                <% } else { %>
+                    <div class="text-center py-5">
+                        <i class="fas fa-heart fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Henüz öğrenci hikayesi eklenmemiş.</p>
+                        <a href="/admin/student-stories/new" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>İlk Hikayeyi Ekle
+                        </a>
+                    </div>
+                <% } %>
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-    async function deleteStory(id) {
-        if (!confirm('Bu hikayeyi silmek istediğinizden emin misiniz?')) {
-            return;
-        }
-
-        try {
-            const response = await fetch(\`/api/admin/student-stories/\${id}\`, {
-                method: 'DELETE'
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                alert('Hikaye başarıyla silindi');
-                location.reload();
-            } else {
-                alert('Hata: ' + data.error);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Bir hata oluştu');
-        }
+<script>
+async function deleteStory(id) {
+    if (!confirm('Bu hikayeyi silmek istediğinizden emin misiniz?')) {
+        return;
     }
-    </script>
-    `
-}) %>
 
+    try {
+        const response = await fetch(`/api/admin/student-stories/${id}`, {
+            method: 'DELETE'
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            alert('Hikaye başarıyla silindi');
+            location.reload();
+        } else {
+            alert('Hata: ' + data.error);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Bir hata oluştu');
+    }
+}
+</script>
