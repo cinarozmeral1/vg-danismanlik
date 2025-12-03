@@ -494,7 +494,7 @@ module.exports = {
         },
         cta: {
             whatsapp: {
-                title: "Ücretsiz Danışmanlık Al",
+                title: "Danışmanlık Al",
                 subtitle: "Hemen WhatsApp üzerinden bizimle iletişime geç, uzman danışmanlarımız seni bekliyor!",
                 button: "WhatsApp'tan Yaz"
             },

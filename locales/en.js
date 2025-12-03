@@ -490,7 +490,7 @@ module.exports = {
         },
         cta: {
             whatsapp: {
-                title: "Get Free Consultation",
+                title: "Get Consultation",
                 subtitle: "Contact us now via WhatsApp, our expert consultants are waiting for you!",
                 button: "Message on WhatsApp"
             },

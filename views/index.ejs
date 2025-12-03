@@ -27,20 +27,6 @@
                     <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
                         
                     </div>
-                    <div class="hero-stats">
-                        <div class="stat-item">
-                            <h3>7</h3>
-                            <p><%= t.home.stats.countries %></p>
-                        </div>
-                        <div class="stat-item">
-                            <h3>50+</h3>
-                            <p><%= t.home.stats.universities %></p>
-                        </div>
-                        <div class="stat-item">
-                            <h3>%98</h3>
-                            <p><%= t.home.stats.satisfaction %></p>
-                        </div>
-                    </div>
                 </div>
             </div>
             <div class="col-lg-6">
@@ -70,6 +56,32 @@
                 </div>
             </div>
         <% } %>
+        <!-- Stats Counter (Animated) -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="stats-counter-container d-flex justify-content-center gap-5 flex-wrap">
+                    <div class="stat-counter text-center">
+                        <div class="stat-number" data-target="7">
+                            <span class="counter">0</span>
+                        </div>
+                        <p class="stat-label text-muted mb-0"><%= t.home.stats.countries %></p>
+                    </div>
+                    <div class="stat-counter text-center">
+                        <div class="stat-number" data-target="50">
+                            <span class="counter">0</span><span class="plus">+</span>
+                        </div>
+                        <p class="stat-label text-muted mb-0"><%= t.home.stats.universities %></p>
+                    </div>
+                    <div class="stat-counter text-center">
+                        <div class="stat-number" data-target="98">
+                            <span class="percent">%</span><span class="counter">0</span>
+                        </div>
+                        <p class="stat-label text-muted mb-0"><%= t.home.stats.satisfaction %></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- CTA Buttons -->
         <div class="row g-4 justify-content-center">
             <!-- WhatsApp CTA -->
@@ -105,14 +117,55 @@
             </div>
         </div>
 
-        <!-- Hover Effect -->
+        <!-- Stats Counter & CTA Styles -->
         <style>
+        /* Stats Counter */
+        .stats-counter-container {
+            padding: 2rem 0;
+        }
+        
+        .stat-counter {
+            padding: 1rem 2rem;
+        }
+        
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #6c757d !important;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .counter, .plus, .percent {
+            display: inline-block;
+        }
+        
+        /* CTA Cards */
         .cta-card:hover {
             transform: translateY(-10px);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2) !important;
         }
         
         @media (max-width: 768px) {
+            .stat-number {
+                font-size: 2.5rem;
+            }
+            
+            .stat-counter {
+                padding: 0.5rem 1rem;
+            }
+            
             .cta-card {
                 padding: 2rem !important;
             }
@@ -124,6 +177,48 @@
             }
         }
         </style>
+
+        <!-- Counter Animation Script -->
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const counters = document.querySelectorAll('.counter');
+            const speed = 50; // Animasyon hızı (ms)
+            
+            const animateCounter = (counter) => {
+                const target = parseInt(counter.parentElement.getAttribute('data-target'));
+                const increment = target / 100; // 100 adımda tamamla
+                let current = 0;
+                
+                const updateCounter = () => {
+                    current += increment;
+                    if (current < target) {
+                        counter.textContent = Math.ceil(current);
+                        setTimeout(updateCounter, speed);
+                    } else {
+                        counter.textContent = target;
+                    }
+                };
+                
+                updateCounter();
+            };
+            
+            // Intersection Observer ile sayfa görünürde olduğunda başlat
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const counter = entry.target.querySelector('.counter');
+                        if (counter && counter.textContent === '0') {
+                            animateCounter(counter);
+                        }
+                    }
+                });
+            }, { threshold: 0.5 });
+            
+            document.querySelectorAll('.stat-counter').forEach(stat => {
+                observer.observe(stat);
+            });
+        });
+        </script>
     </div>
 </section>
 
