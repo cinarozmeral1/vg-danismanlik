@@ -39,9 +39,23 @@ Thumbs.db
 *_backup.*
 views/media.ejs.backup
 
+# Large background images (serve from CDN or external storage)
+public/images/backgrounds/campus-location-hero.jpg
+public/images/backgrounds/campus-glasgow.jpg
+public/images/backgrounds/cambridge.jpg
+public/images/backgrounds/photo-1568792923760-d70635a89fdc.jpg
+public/images/backgrounds/photo-1618255630366-f402c45736f6.jpg
+public/images/backgrounds/photo-1524178232363-1fb2b075b655.jpg
+public/images/backgrounds/photo-1564910443496-5fd2d76b47fa.jpg
+public/images/backgrounds/photo-1583373834259-46cc92173cb7.jpg
+public/images/backgrounds/photo-1606761568499-6d2451b23c66.jpg
+public/images/backgrounds/photo-1607013407627-6ee814329547.jpg
+
 # Scripts not needed in production
-scripts/backup-to-ftp.js
-scripts/restore-from-backup.js
+scripts/
+
+# Database migrations (not needed in production)
+migrations/
 
 # Database backups
 backups/
@@ -51,6 +65,10 @@ backups/
 # FTP related
 ftp/
 *.ftp
+
+# Uploads directory (should be in external storage)
+public/uploads/logos/
+public/uploads/documents/
 
 # Node modules are handled by package.json
 node_modules/
