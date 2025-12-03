@@ -1,3 +1,298 @@
+/* Kanpus Teacher Slider */
+.kanpus-teacher-slider-wrapper {
+    position: relative;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 60px;
+}
+
+.kanpus-teacher-slider {
+    position: relative;
+    overflow: hidden;
+}
+
+.kanpus-teacher-card {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.kanpus-teacher-card.active {
+    display: block;
+    opacity: 1;
+    animation: kanpusFadeIn 0.5s ease;
+}
+
+@keyframes kanpusFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.kanpus-teacher-gradient-bg {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 24px 24px 0 0;
+    padding: 2.5rem 2rem;
+}
+
+.kanpus-teacher-top {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.kanpus-teacher-avatar-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    border: 3px solid rgba(255, 255, 255, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.kanpus-teacher-avatar-circle i {
+    font-size: 3rem;
+    color: white;
+}
+
+.kanpus-teacher-name-block h3 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: white;
+    margin: 0 0 0.5rem 0;
+}
+
+.kanpus-teacher-name-block p {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.95);
+    margin: 0;
+}
+
+.kanpus-teacher-content {
+    background: white;
+    padding: 2rem;
+}
+
+.kanpus-teacher-info-section {
+    display: flex;
+    gap: 1.25rem;
+    margin-bottom: 1.75rem;
+}
+
+.kanpus-teacher-info-section:last-child {
+    margin-bottom: 0;
+}
+
+.kanpus-info-icon-box {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #e9d5ff 0%, #ddd6fe 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.kanpus-info-icon-box i {
+    font-size: 1.5rem;
+    color: #7c3aed;
+}
+
+.kanpus-teacher-info-section h4 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0 0 0.75rem 0;
+}
+
+.kanpus-teacher-info-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.kanpus-teacher-info-section li {
+    font-size: 0.95rem;
+    color: #6b7280;
+    margin-bottom: 0.5rem;
+    padding-left: 1.25rem;
+    position: relative;
+}
+
+.kanpus-teacher-info-section li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: #7c3aed;
+    font-weight: bold;
+}
+
+.kanpus-expertise-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.kanpus-expertise-badge {
+    background: #f3e8ff;
+    color: #7c3aed;
+    padding: 0.4rem 0.9rem;
+    border-radius: 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.kanpus-teacher-footer {
+    text-align: center;
+    padding: 0 2rem 2rem 2rem;
+    background: white;
+    border-radius: 0 0 24px 24px;
+}
+
+.kanpus-register-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0.9rem 2.5rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1rem;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+}
+
+.kanpus-register-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    color: white;
+}
+
+.kanpus-slider-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: white;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    color: #7c3aed;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.kanpus-slider-arrow:hover {
+    background: #7c3aed;
+    color: white;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.kanpus-prev-arrow {
+    left: 0;
+}
+
+.kanpus-next-arrow {
+    right: 0;
+}
+
+.kanpus-slider-dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 2rem;
+}
+
+.kanpus-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #d1d5db;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+.kanpus-dot.active {
+    background: #7c3aed;
+    width: 32px;
+    border-radius: 6px;
+}
+
+.kanpus-dot:hover {
+    background: #9ca3af;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .kanpus-teacher-slider-wrapper {
+        padding: 0 40px;
+    }
+
+    .kanpus-teacher-gradient-bg {
+        padding: 2rem 1.5rem;
+    }
+
+    .kanpus-teacher-top {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .kanpus-teacher-avatar-circle {
+        width: 80px;
+        height: 80px;
+    }
+
+    .kanpus-teacher-avatar-circle i {
+        font-size: 2.5rem;
+    }
+
+    .kanpus-teacher-name-block h3 {
+        font-size: 1.5rem;
+    }
+
+    .kanpus-teacher-content {
+        padding: 1.5rem;
+    }
+
+    .kanpus-teacher-info-section {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .kanpus-teacher-info-section li {
+        padding-left: 0;
+    }
+
+    .kanpus-teacher-info-section li::before {
+        display: none;
+    }
+
+    .kanpus-slider-arrow {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+
+    .kanpus-teacher-footer {
+        padding: 0 1.5rem 1.5rem 1.5rem;
+    }
+}
+
 /* Force blue background for add service form header */
 #addServiceFormContainer .card-header {
     background: #1e40af !important;

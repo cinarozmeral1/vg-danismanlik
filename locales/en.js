@@ -2339,7 +2339,60 @@ module.exports = {
             ctaTitle: "Exclusive Offers for Venture Global Students",
             ctaBody: "Through our partnership with Kanpus, we offer special discounted packages to our students. Contact us to learn more about special opportunities and get detailed information for your IB, AP, SAT, or TOEFL preparation.",
             ctaContactButton: "Get in Touch",
-            ctaWebsiteButton: "Visit Kanpus"
+            ctaWebsiteButton: "Visit Kanpus",
+            teachersTitle: "Meet Our Expert Teachers",
+            teachersSubtitle: "Opportunity to work one-on-one with experienced and expert teachers worldwide",
+            educationLabel: "Education",
+            experienceLabel: "Experience",
+            expertiseLabel: "Areas of Expertise",
+            registerButtonLabel: "Register for Class",
+            teachers: [
+                {
+                    name: "Prof. Dr. Esra Şengelen Sevim",
+                    title: "IB Mathematics Expert (HL/SL)",
+                    education: [
+                        "PhD - Mathematics, Yildiz Technical University",
+                        "Master's - Mathematics, Marmara University",
+                        "Bachelor's - Mathematics, Istanbul University"
+                    ],
+                    experience: [
+                        "15+ years of IB Mathematics teaching",
+                        "Worked at leading IB schools in Istanbul",
+                        "500+ students placed in universities worldwide"
+                    ],
+                    expertise: ["IB Math HL", "IB Math SL", "Calculus", "Statistics"]
+                },
+                {
+                    name: "Dr. Mehmet Yılmaz",
+                    title: "AP Physics & Chemistry Expert",
+                    education: [
+                        "PhD - Physics, Bogazici University",
+                        "Master's - Physics, METU",
+                        "Bachelor's - Physics Engineering, ITU"
+                    ],
+                    experience: [
+                        "12+ years of AP Physics and Chemistry teaching",
+                        "Average 4.5+ score success in AP exams",
+                        "300+ students placed in universities like MIT, Stanford"
+                    ],
+                    expertise: ["AP Physics C", "AP Chemistry", "AP Physics 1", "AP Physics 2"]
+                },
+                {
+                    name: "Sarah Johnson",
+                    title: "SAT & TOEFL Expert",
+                    education: [
+                        "Master's - Education, Columbia University",
+                        "Bachelor's - English Literature, Yale University",
+                        "TESOL Certification"
+                    ],
+                    experience: [
+                        "10+ years of SAT and TOEFL teaching",
+                        "Students' average 200+ point increase in SAT",
+                        "100+ score guarantee in TOEFL"
+                    ],
+                    expertise: ["SAT Reading", "SAT Writing", "TOEFL iBT", "Academic Writing"]
+                }
+            ]
         }
     }
 }; 
