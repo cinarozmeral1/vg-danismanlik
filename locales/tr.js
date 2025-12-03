@@ -2364,60 +2364,7 @@ module.exports = {
             ctaTitle: "Venture Global Öğrencilerine Özel Fırsatlar",
             ctaBody: "Kanpus ile ortaklığımız sayesinde öğrencilerimize özel indirimli paketler sunuyoruz. IB, AP, SAT veya TOEFL hazırlığınız için detaylı bilgi almak ve özel fırsatlardan yararlanmak için bizimle iletişime geçin.",
             ctaContactButton: "İletişime Geç",
-            ctaWebsiteButton: "Kanpus'u Ziyaret Et",
-            teachersTitle: "Uzman Öğretmenlerimizle Tanışın",
-            teachersSubtitle: "Dünya çapında deneyimli ve uzman öğretmenlerle birebir çalışma fırsatı",
-            educationLabel: "Eğitim",
-            experienceLabel: "Deneyim",
-            expertiseLabel: "Uzmanlık Alanları",
-            registerButtonLabel: "Derse Kayıt Ol",
-            teachers: [
-                {
-                    name: "Prof. Dr. Esra Şengelen Sevim",
-                    title: "IB Matematik Uzmanı (HL/SL)",
-                    education: [
-                        "Doktora - Matematik, Yıldız Teknik Üniversitesi",
-                        "Yüksek Lisans - Matematik, Marmara Üniversitesi",
-                        "Lisans - Matematik, İstanbul Üniversitesi"
-                    ],
-                    experience: [
-                        "15+ yıl IB Matematik öğretmenliği",
-                        "İstanbul'daki önde gelen IB okullarında çalıştı",
-                        "500+ öğrenci dünya çapında üniversitelere yerleşti"
-                    ],
-                    expertise: ["IB Math HL", "IB Math SL", "Calculus", "Statistics"]
-                },
-                {
-                    name: "Dr. Mehmet Yılmaz",
-                    title: "AP Physics & Chemistry Uzmanı",
-                    education: [
-                        "Doktora - Fizik, Boğaziçi Üniversitesi",
-                        "Yüksek Lisans - Fizik, ODTÜ",
-                        "Lisans - Fizik Mühendisliği, İTÜ"
-                    ],
-                    experience: [
-                        "12+ yıl AP Physics ve Chemistry öğretmenliği",
-                        "AP sınavlarında ortalama 4.5+ puan başarısı",
-                        "300+ öğrenci MIT, Stanford gibi üniversitelere yerleşti"
-                    ],
-                    expertise: ["AP Physics C", "AP Chemistry", "AP Physics 1", "AP Physics 2"]
-                },
-                {
-                    name: "Sarah Johnson",
-                    title: "SAT & TOEFL Uzmanı",
-                    education: [
-                        "Master's - Education, Columbia University",
-                        "Bachelor's - English Literature, Yale University",
-                        "TESOL Certification"
-                    ],
-                    experience: [
-                        "10+ yıl SAT ve TOEFL öğretmenliği",
-                        "Öğrencilerin SAT'ta ortalama 200+ puan artışı",
-                        "TOEFL'de 100+ puan garantisi"
-                    ],
-                    expertise: ["SAT Reading", "SAT Writing", "TOEFL iBT", "Academic Writing"]
-                }
-            ]
+            ctaWebsiteButton: "Kanpus'u Ziyaret Et"
         }
     }
 }; 

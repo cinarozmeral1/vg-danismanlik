@@ -104,7 +104,6 @@
                 <div class="col-lg-6">
                     <div class="partner-card shadow-sm h-100">
                         <div class="d-flex align-items-center mb-3">
-                            <span class="badge bg-primary me-2" style="font-size: 1.5rem;">HL & SL</span>
                             <h3 class="fw-bold text-primary mb-0"><%= programs.ibTitle || 'IB Diploma' %></h3>
                         </div>
                         <p class="mb-3"><%= programs.ibDescription || '' %></p>
@@ -122,7 +121,6 @@
                 <div class="col-lg-6">
                     <div class="partner-card shadow-sm h-100">
                         <div class="d-flex align-items-center mb-3">
-                            <span class="badge bg-success me-2" style="font-size: 1.5rem;">College</span>
                             <h3 class="fw-bold text-success mb-0"><%= programs.apTitle || 'AP Courses' %></h3>
                         </div>
                         <p class="mb-3"><%= programs.apDescription || '' %></p>
@@ -140,7 +138,6 @@
                 <div class="col-lg-6">
                     <div class="partner-card shadow-sm h-100">
                         <div class="d-flex align-items-center mb-3">
-                            <span class="badge bg-warning text-dark me-2" style="font-size: 1.5rem;">1600</span>
                             <h3 class="fw-bold text-warning mb-0"><%= programs.satTitle || 'SAT Prep' %></h3>
                         </div>
                         <p class="mb-3"><%= programs.satDescription || '' %></p>
@@ -158,7 +155,6 @@
                 <div class="col-lg-6">
                     <div class="partner-card shadow-sm h-100">
                         <div class="d-flex align-items-center mb-3">
-                            <span class="badge bg-info me-2" style="font-size: 1.5rem;">120</span>
                             <h3 class="fw-bold text-info mb-0"><%= programs.toeflTitle || 'TOEFL iBT' %></h3>
                         </div>
                         <p class="mb-3"><%= programs.toeflDescription || '' %></p>
@@ -176,7 +172,6 @@
                 <div class="col-lg-6">
                     <div class="partner-card shadow-sm h-100">
                         <div class="d-flex align-items-center mb-3">
-                            <span class="badge bg-danger me-2" style="font-size: 1.5rem;">9.0</span>
                             <h3 class="fw-bold text-danger mb-0"><%= programs.ieltsTitle || 'IELTS' %></h3>
                         </div>
                         <p class="mb-3"><%= programs.ieltsDescription || '' %></p>
@@ -195,154 +190,6 @@
             </div>
         </div>
     </section>
-
-    <!-- Expert Teachers Slider -->
-    <section class="section py-5">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="fw-bold text-dark">
-                    <i class="fas fa-chalkboard-teacher me-2 text-primary"></i>
-                    <%= kanpusContent.teachersTitle || 'Uzman Öğretmenlerimizle Tanışın' %>
-                </h2>
-                <p class="lead text-body-secondary"><%= kanpusContent.teachersSubtitle || 'Dünya çapında deneyimli ve uzman öğretmenlerle birebir çalışma fırsatı' %></p>
-            </div>
-
-            <div class="kanpus-teacher-slider-wrapper">
-                <div class="kanpus-teacher-slider">
-                    <% 
-                    const teachers = kanpusContent.teachers || [];
-                    if (teachers.length > 0) {
-                        teachers.forEach((teacher, index) => { 
-                    %>
-                    <div class="kanpus-teacher-card <%= index === 0 ? 'active' : '' %>" data-index="<%= index %>">
-                        <div class="kanpus-teacher-gradient-bg">
-                            <div class="kanpus-teacher-top">
-                                <div class="kanpus-teacher-avatar-circle">
-                                    <i class="fas fa-user-graduate"></i>
-                                </div>
-                                <div class="kanpus-teacher-name-block">
-                                    <h3><%= teacher.name %></h3>
-                                    <p><%= teacher.title %></p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="kanpus-teacher-content">
-                            <div class="kanpus-teacher-info-section">
-                                <div class="kanpus-info-icon-box">
-                                    <i class="fas fa-graduation-cap"></i>
-                                </div>
-                                <div>
-                                    <h4><%= kanpusContent.educationLabel || 'Eğitim' %></h4>
-                                    <ul>
-                                        <% teacher.education.forEach(edu => { %>
-                                        <li><%= edu %></li>
-                                        <% }) %>
-                                    </ul>
-                                </div>
-                            </div>
-
-                            <div class="kanpus-teacher-info-section">
-                                <div class="kanpus-info-icon-box">
-                                    <i class="fas fa-briefcase"></i>
-                                </div>
-                                <div>
-                                    <h4><%= kanpusContent.experienceLabel || 'Deneyim' %></h4>
-                                    <ul>
-                                        <% teacher.experience.forEach(exp => { %>
-                                        <li><%= exp %></li>
-                                        <% }) %>
-                                    </ul>
-                                </div>
-                            </div>
-
-                            <div class="kanpus-teacher-info-section">
-                                <div class="kanpus-info-icon-box">
-                                    <i class="fas fa-award"></i>
-                                </div>
-                                <div>
-                                    <h4><%= kanpusContent.expertiseLabel || 'Uzmanlık Alanları' %></h4>
-                                    <div class="kanpus-expertise-badges">
-                                        <% teacher.expertise.forEach(skill => { %>
-                                        <span class="kanpus-expertise-badge"><%= skill %></span>
-                                        <% }) %>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="kanpus-teacher-footer">
-                            <a href="/contact" class="kanpus-register-btn">
-                                <%= kanpusContent.registerButtonLabel || 'Derse Kayıt Ol' %>
-                            </a>
-                        </div>
-                    </div>
-                    <% 
-                        })
-                    }
-                    %>
-                </div>
-
-                <% if (teachers.length > 1) { %>
-                <button class="kanpus-slider-arrow kanpus-prev-arrow" onclick="kanpusPrevSlide()">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                <button class="kanpus-slider-arrow kanpus-next-arrow" onclick="kanpusNextSlide()">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
-
-                <div class="kanpus-slider-dots">
-                    <% teachers.forEach((_, idx) => { %>
-                    <button class="kanpus-dot <%= idx === 0 ? 'active' : '' %>" onclick="kanpusGoToSlide(<%= idx %>)"></button>
-                    <% }) %>
-                </div>
-                <% } %>
-            </div>
-        </div>
-    </section>
-
-    <script>
-        let kanpusCurrentSlide = 0;
-        const kanpusSlides = document.querySelectorAll('.kanpus-teacher-card');
-        const kanpusDots = document.querySelectorAll('.kanpus-dot');
-
-        function kanpusShowSlide(n) {
-            kanpusSlides.forEach(slide => slide.classList.remove('active'));
-            kanpusDots.forEach(dot => dot.classList.remove('active'));
-            
-            if (n >= kanpusSlides.length) kanpusCurrentSlide = 0;
-            if (n < 0) kanpusCurrentSlide = kanpusSlides.length - 1;
-            
-            if (kanpusSlides[kanpusCurrentSlide]) {
-                kanpusSlides[kanpusCurrentSlide].classList.add('active');
-            }
-            if (kanpusDots[kanpusCurrentSlide]) {
-                kanpusDots[kanpusCurrentSlide].classList.add('active');
-            }
-        }
-
-        function kanpusNextSlide() {
-            kanpusCurrentSlide++;
-            kanpusShowSlide(kanpusCurrentSlide);
-        }
-
-        function kanpusPrevSlide() {
-            kanpusCurrentSlide--;
-            kanpusShowSlide(kanpusCurrentSlide);
-        }
-
-        function kanpusGoToSlide(n) {
-            kanpusCurrentSlide = n;
-            kanpusShowSlide(kanpusCurrentSlide);
-        }
-
-        // Auto-advance slider every 8 seconds
-        if (kanpusSlides.length > 1) {
-            setInterval(() => {
-                kanpusNextSlide();
-            }, 8000);
-        }
-    </script>
 
     <!-- Services Section -->
     <section class="section py-5">
