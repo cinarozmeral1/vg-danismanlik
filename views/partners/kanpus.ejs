@@ -8,7 +8,7 @@
             <div class="row align-items-center g-4">
                 <div class="col-md-4">
                     <div class="partner-logo-card p-4 bg-white shadow-sm rounded-4 text-center">
-                        <img src="/images/partners/kanpus/kanpus-logo.png" alt="Kanpus Logo" class="hero-logo img-fluid">
+                        <img src="/images/partners/kanpus/kanpus-logo.webp" alt="Kanpus Logo" class="hero-logo img-fluid">
                     </div>
                 </div>
                 <div class="col-md-8">
@@ -50,6 +50,34 @@
                         </ul>
                         <div class="highlight-box mt-4 text-dark">
                             <%= kanpusContent.highlightBody || '' %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Early Preparation Banner -->
+    <section class="section py-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="text-center text-white">
+                        <div class="mb-3">
+                            <i class="fas fa-star" style="font-size: 2.5rem; color: #fbbf24;"></i>
+                        </div>
+                        <h3 class="fw-bold mb-3"><%= kanpusContent.earlyPrepTitle || '' %></h3>
+                        <p class="lead mb-3"><%= kanpusContent.earlyPrepBody || '' %></p>
+                        <div class="d-flex flex-wrap justify-content-center gap-3 mt-4">
+                            <span class="badge" style="background: rgba(255,255,255,0.2); padding: 0.75rem 1.25rem; font-size: 0.95rem;">
+                                <i class="fas fa-check-circle me-2"></i><%= kanpusContent.earlyPrepBenefit1 || '9. Sınıf' %>
+                            </span>
+                            <span class="badge" style="background: rgba(255,255,255,0.2); padding: 0.75rem 1.25rem; font-size: 0.95rem;">
+                                <i class="fas fa-check-circle me-2"></i><%= kanpusContent.earlyPrepBenefit2 || '10. Sınıf' %>
+                            </span>
+                            <span class="badge" style="background: rgba(255,255,255,0.2); padding: 0.75rem 1.25rem; font-size: 0.95rem;">
+                                <i class="fas fa-check-circle me-2"></i><%= kanpusContent.earlyPrepBenefit3 || '11. Sınıf' %>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -138,6 +166,27 @@
                                 <% }) %>
                             <% } %>
                         </ul>
+                    </div>
+                </div>
+
+                <!-- IELTS Program -->
+                <div class="col-lg-6">
+                    <div class="partner-card shadow-sm h-100">
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="badge bg-danger me-2" style="font-size: 1.5rem;">9.0</span>
+                            <h3 class="fw-bold text-danger mb-0"><%= programs.ieltsTitle || 'IELTS' %></h3>
+                        </div>
+                        <p class="mb-3"><%= programs.ieltsDescription || '' %></p>
+                        <ul class="list-unstyled">
+                            <% if (Array.isArray(programs.ieltsSections)) { %>
+                                <% programs.ieltsSections.forEach(function(section) { %>
+                                    <li><i class="fas fa-globe text-danger me-2"></i><%= section %></li>
+                                <% }) %>
+                            <% } %>
+                        </ul>
+                        <% if (programs.ieltsNote) { %>
+                            <p class="text-muted mb-0"><small><%= programs.ieltsNote %></small></p>
+                        <% } %>
                     </div>
                 </div>
             </div>

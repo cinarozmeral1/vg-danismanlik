@@ -47,6 +47,18 @@
                                 </div>
                             </div>
                             <div class="mb-3">
+                                <label for="contactInquiryType" class="form-label" style="color: black !important;"><%= t.contact.form.inquiryType %> *</label>
+                                <select class="form-select" id="contactInquiryType" name="inquiryType" required>
+                                    <option value="" selected disabled><%= t.contact.form.selectInquiry %></option>
+                                    <option value="university"><%= t.contact.form.inquiryOptions.university %></option>
+                                    <option value="kanpus"><%= t.contact.form.inquiryOptions.kanpus %></option>
+                                    <option value="language"><%= t.contact.form.inquiryOptions.language %></option>
+                                    <option value="visa"><%= t.contact.form.inquiryOptions.visa %></option>
+                                    <option value="accommodation"><%= t.contact.form.inquiryOptions.accommodation %></option>
+                                    <option value="other"><%= t.contact.form.inquiryOptions.other %></option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
                                 <label for="contactMessage" class="form-label" style="color: black !important;"><%= t.contact.form.message %> *</label>
                                 <textarea class="form-control" id="contactMessage" name="message" rows="5" required placeholder="<%= t.contact.form.messagePlaceholder %>"></textarea>
                             </div>
@@ -83,7 +95,7 @@
                         </p>
                     </div>
                 </div>
-                <div class="card shadow">
+                <div class="card shadow mb-4">
                     <div class="card-header bg-warning text-white">
                         <h5 class="mb-0">
                             <i class="fas fa-shield-alt me-2"></i>
@@ -99,6 +111,24 @@
                             <i class="fas fa-user-shield"></i>
                             <small><strong><%= t.contact.security.privacyTitle %>:</strong> <%= t.contact.security.privacyText %></small>
                         </div>
+                    </div>
+                </div>
+                <div class="card shadow" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+                    <div class="card-body text-white">
+                        <div class="text-center mb-3">
+                            <i class="fas fa-graduation-cap" style="font-size: 2.5rem; color: #fbbf24;"></i>
+                        </div>
+                        <h5 class="fw-bold text-center mb-3"><%= t.contact.kanpus.title %></h5>
+                        <p class="small mb-3"><%= t.contact.kanpus.description %></p>
+                        <ul class="list-unstyled small mb-3">
+                            <li class="mb-2"><i class="fas fa-check-circle me-2"></i><%= t.contact.kanpus.feature1 %></li>
+                            <li class="mb-2"><i class="fas fa-check-circle me-2"></i><%= t.contact.kanpus.feature2 %></li>
+                            <li class="mb-2"><i class="fas fa-check-circle me-2"></i><%= t.contact.kanpus.feature3 %></li>
+                            <li class="mb-2"><i class="fas fa-check-circle me-2"></i><%= t.contact.kanpus.feature4 %></li>
+                        </ul>
+                        <a href="/partners/kanpus" class="btn btn-light w-100">
+                            <i class="fas fa-arrow-right me-2"></i><%= t.contact.kanpus.learnMore %>
+                        </a>
                     </div>
                 </div>
             </div>

@@ -483,6 +483,14 @@ module.exports = {
             getRecommendations: "Önerilerimi Al",
             submitting: "Gönderiliyor...",
             success: "Başarılı! Değerlendirmeniz alındı. En kısa sürede size özel önerilerimizi göndereceğiz."
+        },
+        kanpusBanner: {
+            title: "IB, AP, SAT, TOEFL & IELTS'e Erken Hazırlık",
+            subtitle: "9, 10 veya 11. sınıfta bile olsanız Kanpus ile uzman öğretmenlerden online ders alarak sınavlara şimdiden hazırlanmaya başlayabilirsiniz.",
+            benefit1: "IB & AP Programları",
+            benefit2: "SAT & TOEFL & IELTS",
+            benefit3: "Online Uzman Eğitim",
+            cta: "Detayları Keşfet"
         }
     },
     
@@ -1682,6 +1690,28 @@ module.exports = {
                 "Yeni fırsatlar"
             ]
         },
+        kanpus: {
+            title: "IB, AP, SAT, TOEFL & IELTS Hazırlık",
+            subtitle: "Kanpus ile Online Uzman Eğitim - 9. Sınıftan İtibaren Başlayın",
+            badge1: "9-11. Sınıf",
+            badge2: "Online Dersler",
+            badge3: "Uzman Öğretmenler",
+            programs: {
+                ib: "IB Diploma",
+                ibDesc: "HL & SL seviyelerinde tüm dersler",
+                ap: "AP Courses",
+                apDesc: "College hazırlık programları",
+                sat: "SAT Prep",
+                satDesc: "1600 puan hedefiyle tam hazırlık",
+                toefl: "TOEFL iBT",
+                toeflDesc: "120 puan için kapsamlı eğitim",
+                ielts: "IELTS Hazırlık",
+                ieltsDesc: "9.0 band hedefi - Academic & General Training"
+            },
+            earlyPrepTitle: "Erken Hazırlığın Avantajlarını Keşfedin",
+            earlyPrepBody: "9, 10 veya 11. sınıf öğrencileri için IB, AP, SAT, TOEFL ve IELTS'e şimdiden hazırlanma fırsatı. Uzman öğretmenlerle online birebir dersler.",
+            ctaButton: "Detaylı Bilgi"
+        },
         whyChooseUs: {
             title: "Neden Bizi Seçmelisiniz?",
             subtitle: "Avrupa'da eğitim hayalinizi gerçekleştirmek için güvenilir partneriniz",
@@ -1714,6 +1744,16 @@ module.exports = {
             lastName: "Soyad",
             email: "E-posta",
             phone: "Telefon",
+            inquiryType: "Konu",
+            selectInquiry: "Konu Seçiniz",
+            inquiryOptions: {
+                university: "Üniversite Başvurusu",
+                kanpus: "Kanpus - IB/AP/SAT/TOEFL/IELTS Hazırlık",
+                language: "Dil Okulu",
+                visa: "Vize Danışmanlığı",
+                accommodation: "Konaklama",
+                other: "Diğer"
+            },
             subject: "Konu",
             selectOption: "Seçiniz",
             general: "Genel Bilgi",
@@ -1748,6 +1788,15 @@ module.exports = {
             sslText: "Tüm verileriniz güvenle korunmaktadır",
             privacyTitle: "Gizlilik",
             privacyText: "Kişisel verileriniz GDPR uyumlu şekilde işlenir"
+        },
+        kanpus: {
+            title: "IB, AP, SAT, TOEFL & IELTS ile Hazırlanın",
+            description: "9, 10 veya 11. sınıfta bile olsanız, Kanpus'un uzman öğretmenleriyle online birebir derslerle sınavlara şimdiden hazırlanmaya başlayabilirsiniz.",
+            feature1: "IB Diploma & AP Courses",
+            feature2: "SAT & TOEFL & IELTS Hazırlık",
+            feature3: "Birebir Online Dersler",
+            feature4: "Üniversite Danışmanlığı",
+            learnMore: "Detaylı Bilgi"
         },
         faq: {
             title: "Sık Sorulan Sorular",
@@ -2277,8 +2326,22 @@ module.exports = {
                     "Listening Comprehension",
                     "Speaking Tasks",
                     "Integrated & Independent Writing"
-                ]
+                ],
+                ieltsTitle: "IELTS",
+                ieltsDescription: "9.0 band hedefi için Academic ve General Training modüllerinde kapsamlı hazırlık",
+                ieltsSections: [
+                    "Reading: Academic & General Training",
+                    "Listening Comprehension",
+                    "Speaking: Part 1, 2, 3",
+                    "Writing: Task 1 & Task 2"
+                ],
+                ieltsNote: "Academic ve General Training modülleri için ayrı hazırlık"
             },
+            earlyPrepTitle: "9, 10 veya 11. Sınıf Bile Olsanız Başlayabilirsiniz!",
+            earlyPrepBody: "Üniversite sınavlarına erken hazırlık başarının anahtarıdır. Kanpus ile IB, AP, SAT, TOEFL ve IELTS'e şimdiden hazırlanmaya başlayın ve hayalinizdeki üniversiteye güçlü bir başvuru ile girin.",
+            earlyPrepBenefit1: "9. Sınıftan İtibaren",
+            earlyPrepBenefit2: "Uzman Öğretmenler",
+            earlyPrepBenefit3: "Online Ders İmkanı",
             servicesTitle: "Hizmetlerimiz",
             oneOnOneTitle: "Birebir Dersler",
             oneOnOneBody: "Uzman öğretmenlerle özel dersler sayesinde kendi hızınızda ilerleyin ve sorularınıza anında cevap alın.",

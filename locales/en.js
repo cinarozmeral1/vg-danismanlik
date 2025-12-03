@@ -479,6 +479,14 @@ module.exports = {
             getRecommendations: "Get My Recommendations",
             submitting: "Submitting...",
             success: "Success! Your assessment has been received. We will send you personalized recommendations as soon as possible."
+        },
+        kanpusBanner: {
+            title: "Early Preparation for IB, AP, SAT, TOEFL & IELTS",
+            subtitle: "Even if you're in 9th, 10th, or 11th grade, you can start preparing for exams now with Kanpus and get online lessons from expert teachers.",
+            benefit1: "IB & AP Programs",
+            benefit2: "SAT & TOEFL & IELTS",
+            benefit3: "Expert Online Education",
+            cta: "Explore Details"
         }
     },
     
@@ -1654,6 +1662,28 @@ module.exports = {
                 "New opportunities"
             ]
         },
+        kanpus: {
+            title: "IB, AP, SAT, TOEFL & IELTS Preparation",
+            subtitle: "Expert Online Education with Kanpus - Start from 9th Grade",
+            badge1: "Grades 9-11",
+            badge2: "Online Lessons",
+            badge3: "Expert Teachers",
+            programs: {
+                ib: "IB Diploma",
+                ibDesc: "All subjects at HL & SL levels",
+                ap: "AP Courses",
+                apDesc: "College preparation programs",
+                sat: "SAT Prep",
+                satDesc: "Complete preparation for 1600 score",
+                toefl: "TOEFL iBT",
+                toeflDesc: "Comprehensive training for 120 score",
+                ielts: "IELTS Preparation",
+                ieltsDesc: "Band 9.0 target - Academic & General Training"
+            },
+            earlyPrepTitle: "Discover the Advantages of Early Preparation",
+            earlyPrepBody: "For students in grades 9, 10, or 11, get the opportunity to start preparing for IB, AP, SAT, TOEFL, and IELTS now. One-on-one online lessons with expert teachers.",
+            ctaButton: "Learn More"
+        },
         whyChooseUs: {
             title: "Why Choose Us?",
             subtitle: "We are here for you with our experienced team and comprehensive service network",
@@ -1686,6 +1716,16 @@ module.exports = {
             lastName: "Last Name",
             email: "Email",
             phone: "Phone",
+            inquiryType: "Inquiry Type",
+            selectInquiry: "Select Inquiry Type",
+            inquiryOptions: {
+                university: "University Application",
+                kanpus: "Kanpus - IB/AP/SAT/TOEFL/IELTS Preparation",
+                language: "Language School",
+                visa: "Visa Consulting",
+                accommodation: "Accommodation",
+                other: "Other"
+            },
             subject: "Subject",
             selectOption: "Select",
             general: "General Information",
@@ -1720,6 +1760,15 @@ module.exports = {
             sslText: "All your data is securely protected",
             privacyTitle: "Privacy",
             privacyText: "Your personal data is processed in GDPR compliance"
+        },
+        kanpus: {
+            title: "Prepare with IB, AP, SAT, TOEFL & IELTS",
+            description: "Even if you're in 9th, 10th, or 11th grade, you can start preparing for exams now with Kanpus's expert teachers through one-on-one online lessons.",
+            feature1: "IB Diploma & AP Courses",
+            feature2: "SAT & TOEFL & IELTS Prep",
+            feature3: "One-on-One Online Lessons",
+            feature4: "University Counseling",
+            learnMore: "Learn More"
         },
         faq: {
             title: "Frequently Asked Questions",
@@ -2249,8 +2298,22 @@ module.exports = {
                     "Listening Comprehension",
                     "Speaking Tasks",
                     "Integrated & Independent Writing"
-                ]
+                ],
+                ieltsTitle: "IELTS",
+                ieltsDescription: "Comprehensive preparation for Band 9.0 in Academic and General Training modules",
+                ieltsSections: [
+                    "Reading: Academic & General Training",
+                    "Listening Comprehension",
+                    "Speaking: Part 1, 2, 3",
+                    "Writing: Task 1 & Task 2"
+                ],
+                ieltsNote: "Separate preparation for Academic and General Training modules"
             },
+            earlyPrepTitle: "Start Even in 9th, 10th, or 11th Grade!",
+            earlyPrepBody: "Early preparation for university exams is the key to success. Start preparing for IB, AP, SAT, TOEFL, and IELTS with Kanpus now and enter your dream university with a strong application.",
+            earlyPrepBenefit1: "From 9th Grade",
+            earlyPrepBenefit2: "Expert Teachers",
+            earlyPrepBenefit3: "Online Lessons",
             servicesTitle: "Our Services",
             oneOnOneTitle: "One-on-One Lessons",
             oneOnOneBody: "Progress at your own pace with private lessons from expert teachers and get instant answers to your questions.",
