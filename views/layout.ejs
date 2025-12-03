@@ -183,6 +183,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/about-us"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.aboutUs : 'Tanışalım' %></a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/media"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.media : 'Medyada Biz' %></a>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <%= (typeof t !== 'undefined' && t.nav) ? (t.nav.partners || 'Çözüm Ortaklarımız') : 'Çözüm Ortaklarımız' %>
@@ -208,14 +211,8 @@
                             <li><a class="dropdown-item" href="/student-life/hungary"><span class="me-2">🇭🇺</span><%= (typeof t !== 'undefined' && t.countries) ? t.countries.hungary : 'Macaristan' %></a></li>
                         </ul>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <%= (typeof t !== 'undefined' && t.nav) ? t.nav.services : 'Hizmetler' %>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/services"><i class="fas fa-briefcase me-2"></i><%= (typeof t !== 'undefined' && t.nav) ? t.nav.ourServices : 'Hizmetlerimiz' %></a></li>
-                            <li><a class="dropdown-item" href="/media"><i class="fas fa-bullhorn me-2"></i><%= (typeof t !== 'undefined' && t.nav) ? t.nav.media : 'Medyada Biz' %></a></li>
-                        </ul>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/services"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.services : 'Hizmetler' %></a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/universities"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.universities : 'Üniversiteler' %></a>
@@ -363,6 +360,12 @@
                             </a>
                         </li>
                         <li>
+                            <a href="/media" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                <i class="fas fa-bullhorn" style="width: 20px; margin-right: 12px; color: #8b5cf6;"></i>
+                                <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.media : 'Medyada Biz' %></span>
+                            </a>
+                        </li>
+                        <li>
                             <a href="/universities" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
                                 <i class="fas fa-university" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
                                 <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.universities : 'Üniversiteler' %></span>
@@ -390,12 +393,6 @@
                             <a href="/services" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
                                 <i class="fas fa-briefcase" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
                                 <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.ourServices : 'Hizmetlerimiz' %></span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/media" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                <i class="fas fa-bullhorn" style="width: 20px; margin-right: 12px; color: #8b5cf6;"></i>
-                                <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.media : 'Medyada Biz' %></span>
                             </a>
                         </li>
                     </ul>

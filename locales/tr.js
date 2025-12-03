@@ -1966,6 +1966,30 @@ module.exports = {
             comingSoon: "LinkedIn postlarımız yakında burada görünecek!",
             followButton: "LinkedIn'de Takip Et"
         },
+        stories: {
+            title: "Öğrenci Hikayeleri",
+            subtitle: "Venture Global ile hayallerine ulaşan öğrencilerimizin başarı hikayeleri",
+            story1: {
+                name: "Ahmet Yılmaz",
+                university: "Ludwig-Maximilians-Universität München",
+                country: "Almanya",
+                content: "Venture Global sayesinde Münih Üniversitesi'nde İşletme okuma hayalim gerçek oldu. Başvuru sürecinden vize aşamasına kadar her adımda yanımda oldular. Şimdi Avrupa'nın en iyi üniversitelerinden birinde eğitim alıyorum!"
+            },
+            story2: {
+                name: "Zeynep Demir",
+                university: "Politechnika Warszawska",
+                country: "Polonya",
+                content: "Bilgisayar Mühendisliği okumak istiyordum ama nereden başlayacağımı bilmiyordum. Venture Global ekibi bana en uygun üniversiteyi buldu ve tüm süreci profesyonel bir şekilde yönetti. Çok memnunum!"
+            },
+            story3: {
+                name: "Can Öztürk",
+                university: "Budapest University of Technology",
+                country: "Macaristan",
+                content: "Macaristan'da mühendislik eğitimi almak harika bir deneyim. Venture Global'in danışmanlık hizmeti sayesinde hem kabul aldım hem de burs kazandım. Herkese tavsiye ederim!"
+            },
+            cta: "Siz de hayalinizdeki üniversitede okumak ister misiniz?",
+            contactButton: "Bizimle İletişime Geçin"
+        },
         cta: {
             title: "Sosyal Medyada Bizi Takip Edin!",
             subtitle: "Güncel haberler, öğrenci hikayeleri ve daha fazlası için sosyal medya hesaplarımızı takip edin."

@@ -1938,6 +1938,30 @@ module.exports = {
             comingSoon: "Our LinkedIn posts will appear here soon!",
             followButton: "Follow on LinkedIn"
         },
+        stories: {
+            title: "Student Stories",
+            subtitle: "Success stories of our students who achieved their dreams with Venture Global",
+            story1: {
+                name: "Ahmet Yılmaz",
+                university: "Ludwig-Maximilians-Universität München",
+                country: "Germany",
+                content: "Thanks to Venture Global, my dream of studying Business Administration at Munich University came true. They were with me every step of the way from application to visa. Now I'm studying at one of Europe's best universities!"
+            },
+            story2: {
+                name: "Zeynep Demir",
+                university: "Warsaw University of Technology",
+                country: "Poland",
+                content: "I wanted to study Computer Engineering but didn't know where to start. The Venture Global team found the most suitable university for me and managed the entire process professionally. Very satisfied!"
+            },
+            story3: {
+                name: "Can Öztürk",
+                university: "Budapest University of Technology",
+                country: "Hungary",
+                content: "Studying engineering in Hungary is a great experience. Thanks to Venture Global's consultancy service, I was both accepted and won a scholarship. I recommend them to everyone!"
+            },
+            cta: "Would you like to study at your dream university too?",
+            contactButton: "Contact Us"
+        },
         cta: {
             title: "Follow Us on Social Media!",
             subtitle: "Follow our social media accounts for latest news, student stories and more."

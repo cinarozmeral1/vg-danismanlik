@@ -10,132 +10,227 @@
     </div>
 </section>
 
-<!-- Instagram Section -->
+<!-- Tabs Section -->
 <section class="py-5">
     <div class="container">
-        <div class="text-center mb-5">
-            <i class="fab fa-instagram fa-3x mb-3" style="color: #E1306C;"></i>
-            <h2 class="fw-bold"><%= t.media.instagram.title %></h2>
-            <p class="text-muted"><%= t.media.instagram.subtitle %></p>
-        </div>
-        
-        <div class="row g-4 justify-content-center" id="instagram-feed">
-            <!-- Post 1 -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DRSZOC8jae7/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
+        <!-- Nav Tabs -->
+        <ul class="nav nav-pills nav-fill mb-5" id="mediaTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="instagram-tab" data-bs-toggle="pill" data-bs-target="#instagram" type="button" role="tab" aria-controls="instagram" aria-selected="true">
+                    <i class="fab fa-instagram fa-2x mb-2 d-block" style="color: #E1306C;"></i>
+                    <h5 class="mb-0"><%= t.media.instagram.title %></h5>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="linkedin-tab" data-bs-toggle="pill" data-bs-target="#linkedin" type="button" role="tab" aria-controls="linkedin" aria-selected="false">
+                    <i class="fab fa-linkedin fa-2x mb-2 d-block" style="color: #0077B5;"></i>
+                    <h5 class="mb-0"><%= t.media.linkedin.title %></h5>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="stories-tab" data-bs-toggle="pill" data-bs-target="#stories" type="button" role="tab" aria-controls="stories" aria-selected="false">
+                    <i class="fas fa-graduation-cap fa-2x mb-2 d-block" style="color: #28a745;"></i>
+                    <h5 class="mb-0"><%= t.media.stories.title %></h5>
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="mediaTabContent">
+            <!-- Instagram Tab -->
+            <div class="tab-pane fade show active" id="instagram" role="tabpanel" aria-labelledby="instagram-tab">
+                <div class="text-center mb-4">
+                    <p class="text-muted lead"><%= t.media.instagram.subtitle %></p>
+                </div>
+                
+                <div class="row g-4 justify-content-center" id="instagram-feed">
+                    <!-- Post 1 -->
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DRSZOC8jae7/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
+                    </div>
+
+                    <!-- Post 2 -->
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DRNDv0Wjd_c/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
+                    </div>
+
+                    <!-- Post 3 -->
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DRpUoXDDW8g/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
+                    </div>
+
+                    <!-- Post 4 -->
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DRIAsAbDeHc/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
+                    </div>
+
+                    <!-- Post 5 -->
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DRAXDiRjY7b/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
+                    </div>
+
+                    <!-- Post 6 -->
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DQtt_ocDfPB/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
+                    </div>
+
+                    <!-- Post 7 -->
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DQttVOIDVS3/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
+                    </div>
+
+                    <!-- Post 8 -->
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DQtspGojeyL/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
+                    </div>
+
+                    <!-- Post 9 -->
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DQtsKKlDW0Z/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
+                    </div>
+
+                    <!-- Post 10 -->
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DQtrthTjXdE/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
+                    </div>
+
+                    <!-- Post 11 -->
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DQtrU_njcz1/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
+                    </div>
+
+                    <!-- Post 12 -->
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DN5-9uGjcRl/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
+                    </div>
+
+                    <!-- Post 13 -->
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DNgKNKqoJBe/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
+                    </div>
+
+                    <!-- Post 14 -->
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DNi3eZAI438/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
+                    </div>
+
+                    <!-- Post 15 -->
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DORFIDMDREZ/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
+                    </div>
+
+                    <!-- Post 16 -->
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DQ5APpEDabd/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
+                    </div>
+
+                    <!-- Post 17 -->
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DQ4_nsZDQO-/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
+                    </div>
+
+                    <!-- Post 18 -->
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DQ4-XGpjV7u/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
+                    </div>
+
+                </div>
+                
+                <div class="text-center mt-5">
+                    <a href="https://www.instagram.com/ventureglobal" target="_blank" rel="noopener" class="btn btn-lg" style="background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); color: white; border: none;">
+                        <i class="fab fa-instagram me-2"></i><%= t.media.instagram.followButton %>
+                    </a>
+                </div>
             </div>
 
-            <!-- Post 2 -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DRNDv0Wjd_c/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
+            <!-- LinkedIn Tab -->
+            <div class="tab-pane fade" id="linkedin" role="tabpanel" aria-labelledby="linkedin-tab">
+                <div class="text-center mb-4">
+                    <p class="text-muted lead"><%= t.media.linkedin.subtitle %></p>
+                </div>
+                
+                <div class="row g-4" id="linkedin-feed">
+                    <div class="col-12 text-center">
+                        <div class="alert alert-info" role="alert" style="max-width: 600px; margin: 0 auto;">
+                            <i class="fab fa-linkedin fa-3x mb-3 d-block"></i>
+                            <p class="mb-3 lead"><%= t.media.linkedin.comingSoon %></p>
+                            <a href="https://www.linkedin.com/company/venture-global-consultancy-start-up/" target="_blank" rel="noopener" class="btn btn-primary btn-lg">
+                                <i class="fab fa-linkedin me-2"></i><%= t.media.linkedin.followButton %>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Post 3 -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DRpUoXDDW8g/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-            </div>
+            <!-- Student Stories Tab -->
+            <div class="tab-pane fade" id="stories" role="tabpanel" aria-labelledby="stories-tab">
+                <div class="text-center mb-5">
+                    <p class="text-muted lead"><%= t.media.stories.subtitle %></p>
+                </div>
+                
+                <div class="row g-4">
+                    <!-- Story 1 -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body p-4">
+                                <div class="text-center mb-3">
+                                    <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                        <i class="fas fa-user fa-2x"></i>
+                                    </div>
+                                </div>
+                                <h5 class="card-title text-center fw-bold mb-3"><%= t.media.stories.story1.name %></h5>
+                                <p class="text-muted text-center mb-3"><i class="fas fa-graduation-cap me-2"></i><%= t.media.stories.story1.university %></p>
+                                <p class="card-text"><%= t.media.stories.story1.content %></p>
+                                <div class="text-center mt-3">
+                                    <span class="badge bg-success"><i class="fas fa-star me-1"></i><%= t.media.stories.story1.country %></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-            <!-- Post 4 -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DRIAsAbDeHc/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-            </div>
+                    <!-- Story 2 -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body p-4">
+                                <div class="text-center mb-3">
+                                    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                        <i class="fas fa-user fa-2x"></i>
+                                    </div>
+                                </div>
+                                <h5 class="card-title text-center fw-bold mb-3"><%= t.media.stories.story2.name %></h5>
+                                <p class="text-muted text-center mb-3"><i class="fas fa-graduation-cap me-2"></i><%= t.media.stories.story2.university %></p>
+                                <p class="card-text"><%= t.media.stories.story2.content %></p>
+                                <div class="text-center mt-3">
+                                    <span class="badge bg-primary"><i class="fas fa-star me-1"></i><%= t.media.stories.story2.country %></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-            <!-- Post 5 -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DRAXDiRjY7b/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-            </div>
+                    <!-- Story 3 -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body p-4">
+                                <div class="text-center mb-3">
+                                    <div class="rounded-circle bg-warning text-white d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                        <i class="fas fa-user fa-2x"></i>
+                                    </div>
+                                </div>
+                                <h5 class="card-title text-center fw-bold mb-3"><%= t.media.stories.story3.name %></h5>
+                                <p class="text-muted text-center mb-3"><i class="fas fa-graduation-cap me-2"></i><%= t.media.stories.story3.university %></p>
+                                <p class="card-text"><%= t.media.stories.story3.content %></p>
+                                <div class="text-center mt-3">
+                                    <span class="badge bg-warning"><i class="fas fa-star me-1"></i><%= t.media.stories.story3.country %></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- Post 6 -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DQtt_ocDfPB/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-            </div>
-
-            <!-- Post 7 -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DQttVOIDVS3/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-            </div>
-
-            <!-- Post 8 -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DQtspGojeyL/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-            </div>
-
-            <!-- Post 9 -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DQtsKKlDW0Z/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-            </div>
-
-            <!-- Post 10 -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DQtrthTjXdE/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-            </div>
-
-            <!-- Post 11 -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DQtrU_njcz1/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-            </div>
-
-            <!-- Post 12 -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DN5-9uGjcRl/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-            </div>
-
-            <!-- Post 13 -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DNgKNKqoJBe/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-            </div>
-
-            <!-- Post 14 -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DNi3eZAI438/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-            </div>
-
-            <!-- Post 15 -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DORFIDMDREZ/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-            </div>
-
-            <!-- Post 16 -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DQ5APpEDabd/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-            </div>
-
-            <!-- Post 17 -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DQ4_nsZDQO-/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-            </div>
-
-            <!-- Post 18 -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DQ4-XGpjV7u/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-            </div>
-
-        </div>
-        
-        <div class="text-center mt-4">
-            <a href="https://www.instagram.com/ventureglobal" target="_blank" rel="noopener" class="btn btn-lg" style="background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); color: white; border: none;">
-                <i class="fab fa-instagram me-2"></i><%= t.media.instagram.followButton %>
-            </a>
-        </div>
-    </div>
-</section>
-
-<!-- LinkedIn Section -->
-<section class="py-5 bg-light">
-    <div class="container">
-        <div class="text-center mb-5">
-            <i class="fab fa-linkedin fa-3x mb-3" style="color: #0077B5;"></i>
-            <h2 class="fw-bold"><%= t.media.linkedin.title %></h2>
-            <p class="text-muted"><%= t.media.linkedin.subtitle %></p>
-        </div>
-        
-        <div class="row g-4" id="linkedin-feed">
-            <div class="col-12 text-center">
-                <div class="alert alert-info" role="alert">
-                    <i class="fab fa-linkedin fa-2x mb-3 d-block"></i>
-                    <p class="mb-3"><%= t.media.linkedin.comingSoon %></p>
-                    <a href="https://www.linkedin.com/company/venture-global-consultancy-start-up/" target="_blank" rel="noopener" class="btn btn-primary">
-                        <i class="fab fa-linkedin me-2"></i><%= t.media.linkedin.followButton %>
+                <div class="text-center mt-5">
+                    <p class="lead text-muted mb-4"><%= t.media.stories.cta %></p>
+                    <a href="/contact" class="btn btn-success btn-lg">
+                        <i class="fas fa-envelope me-2"></i><%= t.media.stories.contactButton %>
                     </a>
                 </div>
             </div>
@@ -143,21 +238,45 @@
     </div>
 </section>
 
-<!-- Call to Action -->
-<section class="py-5 bg-primary text-white text-center">
-    <div class="container">
-        <h3 class="mb-4"><%= t.media.cta.title %></h3>
-        <p class="lead mb-4"><%= t.media.cta.subtitle %></p>
-        <div class="d-flex justify-content-center gap-3">
-            <a href="https://www.instagram.com/vg.danismanlik" target="_blank" rel="noopener" class="btn btn-light btn-lg">
-                <i class="fab fa-instagram me-2"></i>Instagram
-            </a>
-            <a href="https://www.linkedin.com/company/venture-global-consultancy-start-up/" target="_blank" rel="noopener" class="btn btn-light btn-lg">
-                <i class="fab fa-linkedin me-2"></i>LinkedIn
-            </a>
-        </div>
-    </div>
-</section>
+<!-- Custom Tab Styles -->
+<style>
+.nav-pills .nav-link {
+    border-radius: 15px;
+    padding: 1.5rem 2rem;
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
+    color: #6c757d;
+    border: 2px solid transparent;
+}
+
+.nav-pills .nav-link:hover {
+    background-color: #e9ecef;
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.nav-pills .nav-link.active {
+    background-color: white;
+    color: #0d6efd;
+    border-color: #0d6efd;
+    box-shadow: 0 10px 25px rgba(13,110,253,0.2);
+}
+
+@media (max-width: 768px) {
+    .nav-pills .nav-link {
+        padding: 1rem 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .nav-pills .nav-link i {
+        font-size: 1.5rem !important;
+    }
+    
+    .nav-pills .nav-link h5 {
+        font-size: 0.9rem;
+    }
+}
+</style>
 
 <!-- Instagram Embed Script -->
 <script async src="//www.instagram.com/embed.js"></script>
