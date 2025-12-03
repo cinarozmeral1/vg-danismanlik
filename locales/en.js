@@ -424,10 +424,7 @@ module.exports = {
         features: {
             title: "Why Venture Global®?",
             subtitle: "Venture Global is an education consultancy company dedicated to guiding students from Turkey to Europe’s most prestigious universities. Our mission is to help each student find the right university that matches their academic and personal goals while providing full support throughout the entire process.",
-            body: [
-                "Our services include placements in bachelor’s and master’s programs, preparatory courses, language training, and academic guidance. For students whose English proficiency needs improvement, we offer strong foundation programs at partner universities across Europe. With a wide network of institutions in fields such as law, engineering, business, medicine, and social sciences, we provide students with diverse academic opportunities.",
-                "At Venture Global, our role goes beyond securing admission. We assist with visa procedures, accommodation, and integration into European life, ensuring that students begin their journey with confidence. Professional and personal guidance is at the heart of what we do."
-            ],
+            body: [],
             network: {
                 title: "Wide Network",
                 description: "Collaboration with 50+ universities"
@@ -2245,7 +2242,7 @@ module.exports = {
             packagesCTA: "Request Package Details"
         },
         kanpus: {
-            heroTitle: "Kanpus – Your Path to IB and AP Success",
+            heroTitle: "Kanpus Your Path to IB and AP Success",
             heroSubtitle: "Expert one-on-one tutoring for IB Diploma and AP programs, SAT and TOEFL preparation, plus university counseling",
             officialLink: "Visit Kanpus Official Website",
             aboutTitle: "About Kanpus",

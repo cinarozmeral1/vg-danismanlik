@@ -428,10 +428,7 @@ module.exports = {
         features: {
             title: "Neden Venture Global®?",
             subtitle: "Venture Global, Türkiye’deki öğrencileri Avrupa’nın en seçkin üniversitelerine yönlendiren bir eğitim danışmanlık şirketidir. Amacımız, her öğrencinin akademik ve kişisel hedeflerine uygun en doğru üniversiteyi bulmasına yardımcı olmak ve bu süreçte tüm adımlarda yanında olmaktır.",
-            body: [
-                "Öğrencilerimize sunduğumuz hizmetler arasında lisans ve yüksek lisans programlarına yerleştirme, hazırlık programları, dil eğitimi ve akademik danışmanlık bulunmaktadır. İngilizce seviyesi yeterli olmayan öğrenciler için Avrupa’daki hazırlık sınıflarıyla güçlü bir temel oluşturuyoruz. Ayrıca hukuk, mühendislik, işletme, tıp ve sosyal bilimler gibi farklı alanlarda geniş üniversite ağıyla öğrencilerimize çeşitli seçenekler sunuyoruz.",
-                "Venture Global yalnızca kabul süreciyle sınırlı kalmaz; aynı zamanda vize işlemleri, konaklama ve Avrupa’ya uyum sürecinde de destek verir. Öğrencilerimizin güvenle yeni hayatlarına başlaması için profesyonel ve kişisel rehberlik sağlamayı önceliğimiz olarak görüyoruz."
-            ],
+            body: [],
             network: {
                 title: "Geniş Ağ",
                 description: "50+ üniversite ile işbirliği"
@@ -2273,7 +2270,7 @@ module.exports = {
             packagesCTA: "Paket Detaylarını İsteyin"
         },
         kanpus: {
-            heroTitle: "Kanpus – IB ve AP'de Başarının Anahtarı",
+            heroTitle: "Kanpus IB ve AP'de Başarının Anahtarı",
             heroSubtitle: "IB Diploma ve AP programları için uzman öğretmenlerle birebir dersler, SAT ve TOEFL hazırlık ile üniversite danışmanlığı",
             officialLink: "Kanpus Resmi Sitesini Ziyaret Et",
             aboutTitle: "Kanpus Hakkında",
