@@ -487,6 +487,18 @@ module.exports = {
             benefit3: "Expert Online Education",
             cta: "Explore Details",
             exclusiveOffer: "Kanpus students get exclusive discounts at Venture Global, and Venture Global clients get exclusive discounts at Kanpus!"
+        },
+        cta: {
+            whatsapp: {
+                title: "Get Free Consultation",
+                subtitle: "Contact us now via WhatsApp, our expert consultants are waiting for you!",
+                button: "Message on WhatsApp"
+            },
+            instagram: {
+                title: "Send a Message on Instagram",
+                subtitle: "Ask your questions via Instagram DM, we'll get back to you quickly!",
+                button: "Send Message"
+            }
         }
     },
     

@@ -180,11 +180,14 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.home : 'Ana Sayfa' %></a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/about-us"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.aboutUs : 'Tanışalım' %></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/media"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.media : 'Medyada Biz' %></a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <%= (typeof t !== 'undefined' && t.nav) ? t.nav.aboutUs : 'Tanışalım' %>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/about-us"><i class="fas fa-info-circle me-2"></i><%= (typeof t !== 'undefined' && t.nav) ? t.nav.aboutUs : 'Tanışalım' %></a></li>
+                            <li><a class="dropdown-item" href="/media"><i class="fas fa-bullhorn me-2"></i><%= (typeof t !== 'undefined' && t.nav) ? t.nav.media : 'Medyada Biz' %></a></li>
+                        </ul>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -354,18 +357,6 @@
                             </a>
                         </li>
                         <li>
-                            <a href="/about-us" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                <i class="fas fa-info-circle" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
-                                <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.aboutUs : 'Tanışalım' %></span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/media" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                <i class="fas fa-bullhorn" style="width: 20px; margin-right: 12px; color: #8b5cf6;"></i>
-                                <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.media : 'Medyada Biz' %></span>
-                            </a>
-                        </li>
-                        <li>
                             <a href="/universities" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
                                 <i class="fas fa-university" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
                                 <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.universities : 'Üniversiteler' %></span>
@@ -380,6 +371,29 @@
                         </li>
                                 </ul>
                             </div>
+
+                <!-- About Us Section -->
+                <div style="border-bottom: 1px solid var(--gray-200);">
+                    <div style="background: var(--gray-50); padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--gray-200);">
+                        <small style="color: var(--gray-600); font-weight: 600; text-transform: uppercase; font-size: 0.75rem;">
+                            <i class="fas fa-info-circle" style="margin-right: 6px;"></i><%= (typeof t !== 'undefined' && t.nav) ? t.nav.aboutUs : 'Tanışalım' %>
+                        </small>
+                    </div>
+                    <ul style="list-style: none; margin: 0; padding: 0;">
+                        <li>
+                            <a href="/about-us" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                <i class="fas fa-info-circle" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.aboutUs : 'Tanışalım' %></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/media" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                <i class="fas fa-bullhorn" style="width: 20px; margin-right: 12px; color: #8b5cf6;"></i>
+                                <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.media : 'Medyada Biz' %></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
 
                 <!-- Services Section -->
                 <div style="border-bottom: 1px solid var(--gray-200);">

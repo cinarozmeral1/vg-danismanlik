@@ -491,6 +491,18 @@ module.exports = {
             benefit3: "Online Uzman Eğitim",
             cta: "Detayları Keşfet",
             exclusiveOffer: "Kanpus'tan ders alanlar Venture Global'de, Venture Global'den danışmanlık alanlar Kanpus'ta ayrıcalıklı indirimlerden yararlanır!"
+        },
+        cta: {
+            whatsapp: {
+                title: "Ücretsiz Danışmanlık Al",
+                subtitle: "Hemen WhatsApp üzerinden bizimle iletişime geç, uzman danışmanlarımız seni bekliyor!",
+                button: "WhatsApp'tan Yaz"
+            },
+            instagram: {
+                title: "Instagram'dan Mesaj Gönder",
+                subtitle: "Sorularını Instagram DM üzerinden sor, hızlıca geri dönüş yapalım!",
+                button: "Mesaj Gönder"
+            }
         }
     },
     

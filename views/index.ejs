@@ -70,44 +70,60 @@
                 </div>
             </div>
         <% } %>
-        <div class="row g-4">
-            <div class="col-lg-3 col-md-6">
-                <div class="feature-card h-100 text-center">
-                    <div class="feature-icon bg-primary text-white">
-                        <i class="fas fa-globe-europe"></i>
+        <!-- CTA Buttons -->
+        <div class="row g-4 justify-content-center">
+            <!-- WhatsApp CTA -->
+            <div class="col-lg-5 col-md-6">
+                <a href="https://wa.me/message/O2KRAFDJAMX7F1" target="_blank" rel="noopener" class="text-decoration-none">
+                    <div class="cta-card h-100 text-center p-5" style="background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); border-radius: 20px; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(37, 211, 102, 0.3);">
+                        <div class="mb-4">
+                            <i class="fab fa-whatsapp" style="font-size: 4rem; color: white;"></i>
+                        </div>
+                        <h3 class="text-white fw-bold mb-3"><%= t.home.cta.whatsapp.title %></h3>
+                        <p class="text-white mb-4 lead"><%= t.home.cta.whatsapp.subtitle %></p>
+                        <div class="btn btn-light btn-lg px-5 py-3 rounded-pill fw-bold">
+                            <i class="fab fa-whatsapp me-2"></i><%= t.home.cta.whatsapp.button %>
+                        </div>
                     </div>
-                    <h5><%= t.home.features.network.title %></h5>
-                    <p><%= t.home.features.network.description %></p>
-                </div>
+                </a>
             </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="feature-card h-100 text-center">
-                    <div class="feature-icon bg-success text-white">
-                        <i class="fas fa-headset"></i>
+
+            <!-- Instagram DM CTA -->
+            <div class="col-lg-5 col-md-6">
+                <a href="https://ig.me/m/ventureglobal" target="_blank" rel="noopener" class="text-decoration-none">
+                    <div class="cta-card h-100 text-center p-5" style="background: linear-gradient(135deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); border-radius: 20px; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(225, 48, 108, 0.3);">
+                        <div class="mb-4">
+                            <i class="fab fa-instagram" style="font-size: 4rem; color: white;"></i>
+                        </div>
+                        <h3 class="text-white fw-bold mb-3"><%= t.home.cta.instagram.title %></h3>
+                        <p class="text-white mb-4 lead"><%= t.home.cta.instagram.subtitle %></p>
+                        <div class="btn btn-light btn-lg px-5 py-3 rounded-pill fw-bold">
+                            <i class="fab fa-instagram me-2"></i><%= t.home.cta.instagram.button %>
+                        </div>
                     </div>
-                    <h5><%= t.home.features.support.title %></h5>
-                    <p><%= t.home.features.support.description %></p>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="feature-card h-100 text-center">
-                    <div class="feature-icon bg-info text-white">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h5><%= t.home.features.security.title %></h5>
-                    <p><%= t.home.features.security.description %></p>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6">
-                <div class="feature-card h-100 text-center">
-                    <div class="feature-icon bg-warning text-white">
-                        <i class="fas fa-hands-helping"></i>
-                    </div>
-                    <h5><%= t.home.features.integration?.title || 'Mentorluk ve Uyum' %></h5>
-                    <p><%= t.home.features.integration?.description || 'Vize, konaklama ve Avrupa yaşamına uyum sürecinde kapsamlı destek' %></p>
-                </div>
+                </a>
             </div>
         </div>
+
+        <!-- Hover Effect -->
+        <style>
+        .cta-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2) !important;
+        }
+        
+        @media (max-width: 768px) {
+            .cta-card {
+                padding: 2rem !important;
+            }
+            .cta-card i {
+                font-size: 3rem !important;
+            }
+            .cta-card h3 {
+                font-size: 1.5rem;
+            }
+        }
+        </style>
     </div>
 </section>
 
