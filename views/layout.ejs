@@ -135,13 +135,13 @@
                             <%= (typeof t !== 'undefined' && t.nav) ? t.nav.studentLife : 'Öğrenci Hayatı' %>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/student-life/germany"><i class="fas fa-flag me-2"></i><%= (typeof t !== 'undefined' && t.countries) ? t.countries.germany : 'Almanya' %></a></li>
-                            <li><a class="dropdown-item" href="/student-life/czech"><i class="fas fa-flag me-2"></i><%= (typeof t !== 'undefined' && t.countries) ? t.countries.czech : 'Çek Cumhuriyeti' %></a></li>
-                            <li><a class="dropdown-item" href="/student-life/italy"><i class="fas fa-flag me-2"></i><%= (typeof t !== 'undefined' && t.countries) ? t.countries.italy : 'İtalya' %></a></li>
-                            <li><a class="dropdown-item" href="/student-life/austria"><i class="fas fa-flag me-2"></i><%= (typeof t !== 'undefined' && t.countries) ? t.countries.austria : 'Avusturya' %></a></li>
-                            <li><a class="dropdown-item" href="/student-life/uk"><i class="fas fa-flag me-2"></i><%= (typeof t !== 'undefined' && t.countries) ? t.countries.uk : 'İngiltere' %></a></li>
-                            <li><a class="dropdown-item" href="/student-life/poland"><i class="fas fa-flag me-2"></i><%= (typeof t !== 'undefined' && t.countries) ? t.countries.poland : 'Polonya' %></a></li>
-                            <li><a class="dropdown-item" href="/student-life/hungary"><i class="fas fa-flag me-2"></i><%= (typeof t !== 'undefined' && t.countries) ? t.countries.hungary : 'Macaristan' %></a></li>
+                            <li><a class="dropdown-item" href="/student-life/germany"><span class="me-2">🇩🇪</span><%= (typeof t !== 'undefined' && t.countries) ? t.countries.germany : 'Almanya' %></a></li>
+                            <li><a class="dropdown-item" href="/student-life/czech"><span class="me-2">🇨🇿</span><%= (typeof t !== 'undefined' && t.countries) ? t.countries.czech : 'Çek Cumhuriyeti' %></a></li>
+                            <li><a class="dropdown-item" href="/student-life/italy"><span class="me-2">🇮🇹</span><%= (typeof t !== 'undefined' && t.countries) ? t.countries.italy : 'İtalya' %></a></li>
+                            <li><a class="dropdown-item" href="/student-life/austria"><span class="me-2">🇦🇹</span><%= (typeof t !== 'undefined' && t.countries) ? t.countries.austria : 'Avusturya' %></a></li>
+                            <li><a class="dropdown-item" href="/student-life/uk"><span class="me-2">🇬🇧</span><%= (typeof t !== 'undefined' && t.countries) ? t.countries.uk : 'İngiltere' %></a></li>
+                            <li><a class="dropdown-item" href="/student-life/poland"><span class="me-2">🇵🇱</span><%= (typeof t !== 'undefined' && t.countries) ? t.countries.poland : 'Polonya' %></a></li>
+                            <li><a class="dropdown-item" href="/student-life/hungary"><span class="me-2">🇭🇺</span><%= (typeof t !== 'undefined' && t.countries) ? t.countries.hungary : 'Macaristan' %></a></li>
                         </ul>
                     </li>
                     <li class="nav-item">
@@ -324,43 +324,43 @@
                     <ul style="list-style: none; margin: 0; padding: 0;">
                         <li>
                             <a href="/student-life/germany" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                <i class="fas fa-flag" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="width: 20px; margin-right: 12px; font-size: 1.2rem;">🇩🇪</span>
                                 <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.countries) ? t.countries.germany : 'Almanya' %></span>
                             </a>
                         </li>
                         <li>
                             <a href="/student-life/czech" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                <i class="fas fa-flag" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="width: 20px; margin-right: 12px; font-size: 1.2rem;">🇨🇿</span>
                                 <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.countries) ? t.countries.czech : 'Çek Cumhuriyeti' %></span>
                             </a>
                         </li>
                         <li>
                             <a href="/student-life/italy" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                <i class="fas fa-flag" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="width: 20px; margin-right: 12px; font-size: 1.2rem;">🇮🇹</span>
                                 <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.countries) ? t.countries.italy : 'İtalya' %></span>
                             </a>
                         </li>
                         <li>
                             <a href="/student-life/austria" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                <i class="fas fa-flag" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="width: 20px; margin-right: 12px; font-size: 1.2rem;">🇦🇹</span>
                                 <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.countries) ? t.countries.austria : 'Avusturya' %></span>
                             </a>
                         </li>
                         <li>
                             <a href="/student-life/uk" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                <i class="fas fa-flag" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="width: 20px; margin-right: 12px; font-size: 1.2rem;">🇬🇧</span>
                                 <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.countries) ? t.countries.uk : 'İngiltere' %></span>
                             </a>
                         </li>
                         <li>
                             <a href="/student-life/poland" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                <i class="fas fa-flag" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="width: 20px; margin-right: 12px; font-size: 1.2rem;">🇵🇱</span>
                                 <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.countries) ? t.countries.poland : 'Polonya' %></span>
                             </a>
                         </li>
                         <li>
                             <a href="/student-life/hungary" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                <i class="fas fa-flag" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="width: 20px; margin-right: 12px; font-size: 1.2rem;">🇭🇺</span>
                                 <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.countries) ? t.countries.hungary : 'Macaristan' %></span>
                             </a>
                         </li>
