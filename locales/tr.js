@@ -1955,9 +1955,9 @@ module.exports = {
         heroTitle: "Medyada Biz",
         heroSubtitle: "Instagram ve LinkedIn'de paylaşımlarımızı takip edin",
         instagram: {
-            title: "Instagram Reels",
-            subtitle: "Güncel videolarımız ve öğrenci hikayeleri",
-            comingSoon: "Instagram reels'lerimiz yakında burada görünecek!",
+            title: "Instagram Postları",
+            subtitle: "Güncel paylaşımlarımız ve öğrenci hikayeleri",
+            comingSoon: "Instagram postlarımız yakında burada görünecek!",
             followButton: "Instagram'da Takip Et"
         },
         linkedin: {

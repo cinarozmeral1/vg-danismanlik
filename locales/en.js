@@ -1927,9 +1927,9 @@ module.exports = {
         heroTitle: "In the Media",
         heroSubtitle: "Follow our posts on Instagram and LinkedIn",
         instagram: {
-            title: "Instagram Reels",
-            subtitle: "Our latest videos and student stories",
-            comingSoon: "Our Instagram reels will appear here soon!",
+            title: "Instagram Posts",
+            subtitle: "Our latest posts and student stories",
+            comingSoon: "Our Instagram posts will appear here soon!",
             followButton: "Follow on Instagram"
         },
         linkedin: {
