@@ -2243,7 +2243,7 @@ module.exports = {
             packagesCTA: "Paket Detaylarını İsteyin"
         },
         wcep: {
-            heroTitle: "WCEP – Venture Global Çözüm Ortaklığı",
+            heroTitle: "WCEP Venture Global Çözüm Ortaklığı",
             heroSubtitle: "Öğrencilerimizi küresel vizyona taşıyan WCEP programı ile tanışın",
             whoTitle: "WCEP kimdir?",
             whoBody: "WCEP, lise öğrencilerini Amerika ve Kanada başta olmak üzere dünyanın farklı ülkelerindeki devlet okullarına yerleştiren köklü bir kuruluştur. Öğrenciler gönüllü ailelerin yanında kalarak, sadece akademik değil aynı zamanda kültürel bir dönüşüm yaşarlar. Program süresince aldıkları eğitim, Türkiye'de Milli Eğitim Bakanlığı tarafından denkliği onaylanmış transkriptlerle desteklenir, böylece öğrenciler eğitimlerine Türkiye'de kaldıkları yerden devam edebilir.",

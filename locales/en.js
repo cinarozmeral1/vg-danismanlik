@@ -2215,7 +2215,7 @@ module.exports = {
             packagesCTA: "Request Package Details"
         },
         wcep: {
-            heroTitle: "WCEP – Venture Global Partnership",
+            heroTitle: "WCEP Venture Global Partnership",
             heroSubtitle: "Discover WCEP, our trusted partner for global high school experiences",
             whoTitle: "Who is WCEP?",
             whoBody: "WCEP is a well-established organization that places high school students in public schools across the United States and Canada. Students live with volunteer host families, gaining not only academic growth but also cultural transformation. The education they receive is backed by official transcripts, fully recognized by the Turkish Ministry of Education, ensuring a smooth continuation of studies back home.",
