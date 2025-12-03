@@ -150,15 +150,88 @@
                 </div>
                 
                 <div class="row g-4" id="linkedin-feed">
-                    <div class="col-12 text-center">
-                        <div class="alert alert-info" role="alert" style="max-width: 600px; margin: 0 auto;">
-                            <i class="fab fa-linkedin fa-3x mb-3 d-block"></i>
-                            <p class="mb-3 lead"><%= t.media.linkedin.comingSoon %></p>
-                            <a href="https://www.linkedin.com/company/venture-global-consultancy-start-up/" target="_blank" rel="noopener" class="btn btn-primary btn-lg">
-                                <i class="fab fa-linkedin me-2"></i><%= t.media.linkedin.followButton %>
-                            </a>
+                    <!-- LinkedIn Post 1 -->
+                    <div class="col-lg-6 col-md-6 mb-4">
+                        <div class="linkedin-post-card">
+                            <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:activity:7385337874440855552" height="600" width="100%" frameborder="0" allowfullscreen="" title="LinkedIn Post"></iframe>
                         </div>
                     </div>
+
+                    <!-- LinkedIn Post 2 -->
+                    <div class="col-lg-6 col-md-6 mb-4">
+                        <div class="linkedin-post-card">
+                            <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:activity:7371216059351154688" height="600" width="100%" frameborder="0" allowfullscreen="" title="LinkedIn Post"></iframe>
+                        </div>
+                    </div>
+
+                    <!-- LinkedIn Post 3 -->
+                    <div class="col-lg-6 col-md-6 mb-4">
+                        <div class="linkedin-post-card">
+                            <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:activity:7370125918977220608" height="600" width="100%" frameborder="0" allowfullscreen="" title="LinkedIn Post"></iframe>
+                        </div>
+                    </div>
+
+                    <!-- LinkedIn Post 4 -->
+                    <div class="col-lg-6 col-md-6 mb-4">
+                        <div class="linkedin-post-card">
+                            <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:activity:7365809672303316992" height="600" width="100%" frameborder="0" allowfullscreen="" title="LinkedIn Post"></iframe>
+                        </div>
+                    </div>
+
+                    <!-- LinkedIn Post 5 -->
+                    <div class="col-lg-6 col-md-6 mb-4">
+                        <div class="linkedin-post-card">
+                            <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:activity:7365122942835339264" height="600" width="100%" frameborder="0" allowfullscreen="" title="LinkedIn Post"></iframe>
+                        </div>
+                    </div>
+
+                    <!-- LinkedIn Post 6 -->
+                    <div class="col-lg-6 col-md-6 mb-4">
+                        <div class="linkedin-post-card">
+                            <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:activity:7364715633646743552" height="600" width="100%" frameborder="0" allowfullscreen="" title="LinkedIn Post"></iframe>
+                        </div>
+                    </div>
+
+                    <!-- LinkedIn Post 7 -->
+                    <div class="col-lg-6 col-md-6 mb-4">
+                        <div class="linkedin-post-card">
+                            <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:activity:7361789034114834432" height="600" width="100%" frameborder="0" allowfullscreen="" title="LinkedIn Post"></iframe>
+                        </div>
+                    </div>
+
+                    <!-- LinkedIn Post 8 -->
+                    <div class="col-lg-6 col-md-6 mb-4">
+                        <div class="linkedin-post-card">
+                            <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:activity:7360339710667296768" height="600" width="100%" frameborder="0" allowfullscreen="" title="LinkedIn Post"></iframe>
+                        </div>
+                    </div>
+
+                    <!-- LinkedIn Post 9 -->
+                    <div class="col-lg-6 col-md-6 mb-4">
+                        <div class="linkedin-post-card">
+                            <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:activity:7360339220973895681" height="600" width="100%" frameborder="0" allowfullscreen="" title="LinkedIn Post"></iframe>
+                        </div>
+                    </div>
+
+                    <!-- LinkedIn Post 10 -->
+                    <div class="col-lg-6 col-md-6 mb-4">
+                        <div class="linkedin-post-card">
+                            <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:activity:7358981234846294016" height="600" width="100%" frameborder="0" allowfullscreen="" title="LinkedIn Post"></iframe>
+                        </div>
+                    </div>
+
+                    <!-- LinkedIn Post 11 -->
+                    <div class="col-lg-6 col-md-6 mb-4">
+                        <div class="linkedin-post-card">
+                            <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:activity:7354487531062681600" height="600" width="100%" frameborder="0" allowfullscreen="" title="LinkedIn Post"></iframe>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-5">
+                    <a href="https://www.linkedin.com/company/venture-global-consultancy-start-up/" target="_blank" rel="noopener" class="btn btn-primary btn-lg">
+                        <i class="fab fa-linkedin me-2"></i><%= t.media.linkedin.followButton %>
+                    </a>
                 </div>
             </div>
 
@@ -168,50 +241,64 @@
                     <p class="text-muted lead"><%= t.media.stories.subtitle %></p>
                 </div>
                 
-                <% if (stories && stories.length > 0) { %>
-                    <div class="row g-4">
-                        <% 
-                        const colors = ['success', 'primary', 'warning', 'info', 'danger'];
-                        stories.forEach((story, index) => { 
-                            const color = colors[index % colors.length];
-                        %>
-                        <div class="col-lg-4 col-md-6">
-                            <div class="card h-100 border-0 shadow-sm">
-                                <div class="card-body p-4">
-                                    <div class="text-center mb-3">
-                                        <% if (story.photo) { %>
-                                            <img src="<%= story.photo %>" alt="<%= story.name %>" 
-                                                 class="rounded-circle" 
-                                                 style="width: 120px; height: 120px; object-fit: cover; border: 4px solid var(--bs-<%= color %>);">
-                                        <% } else { %>
-                                            <div class="rounded-circle bg-<%= color %> text-white d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                                                <i class="fas fa-user fa-2x"></i>
-                                            </div>
-                                        <% } %>
+                <div class="row g-4">
+                    <!-- Story 1 -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body p-4">
+                                <div class="text-center mb-3">
+                                    <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                        <i class="fas fa-user fa-2x"></i>
                                     </div>
-                                    <h5 class="card-title text-center fw-bold mb-2"><%= story.name %></h5>
-                                    <% if (story.university) { %>
-                                        <p class="text-muted text-center mb-2"><i class="fas fa-graduation-cap me-2"></i><%= story.university %></p>
-                                    <% } %>
-                                    <% if (story.country) { %>
-                                        <div class="text-center mb-3">
-                                            <span class="badge bg-<%= color %>"><i class="fas fa-map-marker-alt me-1"></i><%= story.country %></span>
-                                        </div>
-                                    <% } %>
-                                    <% if (story.story) { %>
-                                        <p class="card-text text-center fst-italic">"<%= story.story %>"</p>
-                                    <% } %>
+                                </div>
+                                <h5 class="card-title text-center fw-bold mb-3"><%= t.media.stories.story1.name %></h5>
+                                <p class="text-muted text-center mb-3"><i class="fas fa-graduation-cap me-2"></i><%= t.media.stories.story1.university %></p>
+                                <p class="card-text"><%= t.media.stories.story1.content %></p>
+                                <div class="text-center mt-3">
+                                    <span class="badge bg-success"><i class="fas fa-star me-1"></i><%= t.media.stories.story1.country %></span>
                                 </div>
                             </div>
                         </div>
-                        <% }); %>
                     </div>
-                <% } else { %>
-                    <div class="text-center py-5">
-                        <i class="fas fa-heart fa-3x text-muted mb-3"></i>
-                        <p class="text-muted"><%= t.media.studentStories.comingSoon %></p>
+
+                    <!-- Story 2 -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body p-4">
+                                <div class="text-center mb-3">
+                                    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                        <i class="fas fa-user fa-2x"></i>
+                                    </div>
+                                </div>
+                                <h5 class="card-title text-center fw-bold mb-3"><%= t.media.stories.story2.name %></h5>
+                                <p class="text-muted text-center mb-3"><i class="fas fa-graduation-cap me-2"></i><%= t.media.stories.story2.university %></p>
+                                <p class="card-text"><%= t.media.stories.story2.content %></p>
+                                <div class="text-center mt-3">
+                                    <span class="badge bg-primary"><i class="fas fa-star me-1"></i><%= t.media.stories.story2.country %></span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                <% } %>
+
+                    <!-- Story 3 -->
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <div class="card-body p-4">
+                                <div class="text-center mb-3">
+                                    <div class="rounded-circle bg-warning text-white d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                                        <i class="fas fa-user fa-2x"></i>
+                                    </div>
+                                </div>
+                                <h5 class="card-title text-center fw-bold mb-3"><%= t.media.stories.story3.name %></h5>
+                                <p class="text-muted text-center mb-3"><i class="fas fa-graduation-cap me-2"></i><%= t.media.stories.story3.university %></p>
+                                <p class="card-text"><%= t.media.stories.story3.content %></p>
+                                <div class="text-center mt-3">
+                                    <span class="badge bg-warning"><i class="fas fa-star me-1"></i><%= t.media.stories.story3.country %></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="text-center mt-5">
                     <p class="lead text-muted mb-4"><%= t.media.stories.cta %></p>
@@ -248,6 +335,24 @@
     box-shadow: 0 10px 25px rgba(13,110,253,0.2);
 }
 
+.linkedin-post-card {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 119, 181, 0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: white;
+}
+
+.linkedin-post-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 119, 181, 0.25);
+}
+
+.linkedin-post-card iframe {
+    display: block;
+    border-radius: 12px;
+}
+
 @media (max-width: 768px) {
     .nav-pills .nav-link {
         padding: 1rem 1.5rem;
@@ -260,6 +365,10 @@
     
     .nav-pills .nav-link h5 {
         font-size: 0.9rem;
+    }
+    
+    .linkedin-post-card iframe {
+        height: 500px !important;
     }
 }
 </style>
