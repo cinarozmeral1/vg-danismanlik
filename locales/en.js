@@ -2250,6 +2250,8 @@ module.exports = {
             aboutBody2: "The platform makes a real difference in IB, AP, and SAT programs through one-on-one lessons, group study sessions, and academic counseling. With world-class educational programs, Kanpus helps students prepare for their dream universities.",
             approachTitle: "Educational Approach",
             approachBody: "Kanpus's personalized learning plans analyze each student's strengths and areas for improvement, creating a unique roadmap. Expert teachers help students progress rapidly toward their academic goals.",
+            ieltsApproach: "We offer comprehensive preparation for the IELTS exam in both Academic and General Training modules. Develop your Reading, Listening, Speaking, and Writing skills with expert teachers to achieve your 9.0 band target.",
+            toeflApproach: "Get professional training in the Reading, Listening, Speaking, and Writing sections for the TOEFL iBT exam. Improve your academic English skills to reach your 120-point goal and gain admission to universities worldwide.",
             whyTitle: "Why Choose Kanpus?",
             benefitList: [
                 "Expert teachers in IB and AP subjects",

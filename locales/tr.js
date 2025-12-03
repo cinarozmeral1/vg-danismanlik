@@ -2278,6 +2278,8 @@ module.exports = {
             aboutBody2: "Platform, birebir dersler, grup çalışmaları ve akademik danışmanlık ile IB, AP ve SAT programlarında fark yaratır. Dünya standartlarında eğitim programlarıyla öğrencilerin hayallerindeki üniversitelere hazırlanmalarına yardımcı olur.",
             approachTitle: "Eğitim Yaklaşımı",
             approachBody: "Kanpus'un kişiselleştirilmiş öğrenme planları, her öğrencinin güçlü ve geliştirilmesi gereken yönlerini analiz ederek özel bir yol haritası çizer. Uzman öğretmenler, öğrencilerin akademik hedeflerine hızla ilerlemelerini sağlar.",
+            ieltsApproach: "IELTS sınavında başarılı olmak için Academic ve General Training modüllerinde kapsamlı hazırlık sunuyoruz. Reading, Listening, Speaking ve Writing becerilerinizi uzman öğretmenlerle geliştirerek 9.0 band hedefine ulaşın.",
+            toeflApproach: "TOEFL iBT sınavı için Reading, Listening, Speaking ve Writing bölümlerinde profesyonel eğitim alın. Akademik İngilizce becerilerinizi geliştirerek 120 puan hedefine ulaşın ve dünya çapındaki üniversitelere kabul alın.",
             whyTitle: "Neden Kanpus?",
             benefitList: [
                 "IB ve AP derslerinde uzman öğretmenler",
