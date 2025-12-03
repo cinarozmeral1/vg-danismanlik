@@ -1,0 +1,250 @@
+<div class="partners-page">
+    <% const kanpusContent = (t && t.partners && t.partners.kanpus) || {}; %>
+    <% const benefits = Array.isArray(kanpusContent.benefitList) ? kanpusContent.benefitList : []; %>
+    <% const programs = kanpusContent.programs || {}; %>
+    
+    <section class="partner-hero kanpus-hero py-5">
+        <div class="container">
+            <div class="row align-items-center g-4">
+                <div class="col-md-4">
+                    <div class="partner-logo-card p-4 bg-white shadow-sm rounded-4 text-center">
+                        <img src="/images/partners/kanpus/kanpus-logo.png" alt="Kanpus Logo" class="hero-logo img-fluid">
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="partner-hero-text">
+                        <span class="partner-badge text-primary bg-light">KANPUS</span>
+                        <h1 class="display-5 fw-bold mt-3 text-dark"><%= kanpusContent.heroTitle || 'Kanpus – Venture Global Partnership' %></h1>
+                        <p class="lead text-body-secondary mb-3"><%= kanpusContent.heroSubtitle || '' %></p>
+                        <a href="https://www.kanpus.com" target="_blank" rel="noopener" class="partner-hero-link">
+                            <i class="fas fa-external-link-alt me-2"></i>
+                            <%= kanpusContent.officialLink || 'Visit Kanpus Official Website' %>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section py-5">
+        <div class="container">
+            <div class="row g-4 align-items-stretch">
+                <div class="col-lg-7">
+                    <article class="partner-card h-100">
+                        <h2 class="fw-bold text-dark mb-3"><%= kanpusContent.aboutTitle || '' %></h2>
+                        <p><%= kanpusContent.aboutBody1 || '' %></p>
+                        <p><%= kanpusContent.aboutBody2 || '' %></p>
+                        <h3 class="fw-semibold text-dark mt-4 mb-3"><%= kanpusContent.approachTitle || '' %></h3>
+                        <p><%= kanpusContent.approachBody || '' %></p>
+                    </article>
+                </div>
+                <div class="col-lg-5">
+                    <div class="partner-card h-100 gradient-card">
+                        <h3 class="fw-semibold text-dark mb-3"><i class="fas fa-star me-2 text-primary"></i>
+                            <%= kanpusContent.whyTitle || '' %>
+                        </h3>
+                        <ul class="feature-list">
+                            <% benefits.forEach(function(item) { %>
+                                <li><i class="fas fa-check"></i> <%= item %></li>
+                            <% }) %>
+                        </ul>
+                        <div class="highlight-box mt-4 text-dark">
+                            <%= kanpusContent.highlightBody || '' %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hazırlık (Preparation) Programs Section -->
+    <section class="section py-5 bg-light">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-12 text-center mb-4">
+                    <h2 class="fw-bold text-dark">
+                        <i class="fas fa-graduation-cap me-2 text-primary"></i>
+                        <%= kanpusContent.preparationTitle || 'Hazırlık Programları' %>
+                    </h2>
+                    <p class="lead text-body-secondary"><%= kanpusContent.preparationSubtitle || '' %></p>
+                </div>
+
+                <!-- IB Diploma Program -->
+                <div class="col-lg-6">
+                    <div class="partner-card shadow-sm h-100">
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="badge bg-primary me-2" style="font-size: 1.5rem;">HL & SL</span>
+                            <h3 class="fw-bold text-primary mb-0"><%= programs.ibTitle || 'IB Diploma' %></h3>
+                        </div>
+                        <p class="mb-3"><%= programs.ibDescription || '' %></p>
+                        <ul class="list-unstyled">
+                            <% if (Array.isArray(programs.ibSubjects)) { %>
+                                <% programs.ibSubjects.forEach(function(subject) { %>
+                                    <li><i class="fas fa-book-open text-primary me-2"></i><%= subject %></li>
+                                <% }) %>
+                            <% } %>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- AP Courses Program -->
+                <div class="col-lg-6">
+                    <div class="partner-card shadow-sm h-100">
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="badge bg-success me-2" style="font-size: 1.5rem;">College</span>
+                            <h3 class="fw-bold text-success mb-0"><%= programs.apTitle || 'AP Courses' %></h3>
+                        </div>
+                        <p class="mb-3"><%= programs.apDescription || '' %></p>
+                        <ul class="list-unstyled">
+                            <% if (Array.isArray(programs.apSubjects)) { %>
+                                <% programs.apSubjects.forEach(function(subject) { %>
+                                    <li><i class="fas fa-book text-success me-2"></i><%= subject %></li>
+                                <% }) %>
+                            <% } %>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- SAT Prep Program -->
+                <div class="col-lg-6">
+                    <div class="partner-card shadow-sm h-100">
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="badge bg-warning text-dark me-2" style="font-size: 1.5rem;">1600</span>
+                            <h3 class="fw-bold text-warning mb-0"><%= programs.satTitle || 'SAT Prep' %></h3>
+                        </div>
+                        <p class="mb-3"><%= programs.satDescription || '' %></p>
+                        <ul class="list-unstyled">
+                            <% if (Array.isArray(programs.satSections)) { %>
+                                <% programs.satSections.forEach(function(section) { %>
+                                    <li><i class="fas fa-pencil-alt text-warning me-2"></i><%= section %></li>
+                                <% }) %>
+                            <% } %>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- TOEFL iBT Program -->
+                <div class="col-lg-6">
+                    <div class="partner-card shadow-sm h-100">
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="badge bg-info me-2" style="font-size: 1.5rem;">120</span>
+                            <h3 class="fw-bold text-info mb-0"><%= programs.toeflTitle || 'TOEFL iBT' %></h3>
+                        </div>
+                        <p class="mb-3"><%= programs.toeflDescription || '' %></p>
+                        <ul class="list-unstyled">
+                            <% if (Array.isArray(programs.toeflSections)) { %>
+                                <% programs.toeflSections.forEach(function(section) { %>
+                                    <li><i class="fas fa-microphone text-info me-2"></i><%= section %></li>
+                                <% }) %>
+                            <% } %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="section py-5">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-12 text-center mb-4">
+                    <h2 class="fw-bold text-dark">
+                        <i class="fas fa-hands-helping me-2 text-primary"></i>
+                        <%= kanpusContent.servicesTitle || 'Hizmetlerimiz' %>
+                    </h2>
+                </div>
+
+                <!-- One-on-One Lessons -->
+                <div class="col-lg-4">
+                    <div class="partner-card text-center h-100">
+                        <div class="mb-3">
+                            <i class="fas fa-user-graduate text-primary" style="font-size: 3rem;"></i>
+                        </div>
+                        <h4 class="fw-bold text-dark mb-3"><%= kanpusContent.oneOnOneTitle || '' %></h4>
+                        <p class="text-body-secondary"><%= kanpusContent.oneOnOneBody || '' %></p>
+                    </div>
+                </div>
+
+                <!-- Group Study -->
+                <div class="col-lg-4">
+                    <div class="partner-card text-center h-100">
+                        <div class="mb-3">
+                            <i class="fas fa-users text-success" style="font-size: 3rem;"></i>
+                        </div>
+                        <h4 class="fw-bold text-dark mb-3"><%= kanpusContent.groupStudyTitle || '' %></h4>
+                        <p class="text-body-secondary"><%= kanpusContent.groupStudyBody || '' %></p>
+                    </div>
+                </div>
+
+                <!-- Academic Counseling -->
+                <div class="col-lg-4">
+                    <div class="partner-card text-center h-100">
+                        <div class="mb-3">
+                            <i class="fas fa-compass text-info" style="font-size: 3rem;"></i>
+                        </div>
+                        <h4 class="fw-bold text-dark mb-3"><%= kanpusContent.counselingTitle || '' %></h4>
+                        <p class="text-body-secondary"><%= kanpusContent.counselingBody || '' %></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- University Consulting -->
+            <div class="row g-4 mt-4">
+                <div class="col-12">
+                    <div class="partner-card gradient-card">
+                        <div class="row align-items-center">
+                            <div class="col-lg-8">
+                                <h3 class="fw-bold text-dark mb-3">
+                                    <i class="fas fa-university me-2 text-primary"></i>
+                                    <%= kanpusContent.universityConsultingTitle || '' %>
+                                </h3>
+                                <p class="mb-3"><%= kanpusContent.universityConsultingBody || '' %></p>
+                                <ul class="list-unstyled">
+                                    <% if (Array.isArray(kanpusContent.consultingServices)) { %>
+                                        <% kanpusContent.consultingServices.forEach(function(service) { %>
+                                            <li class="mb-2"><i class="fas fa-check-circle text-primary me-2"></i><%= service %></li>
+                                        <% }) %>
+                                    <% } %>
+                                </ul>
+                            </div>
+                            <div class="col-lg-4 text-center">
+                                <div class="bg-white p-4 rounded-4 shadow-sm">
+                                    <div class="display-4 fw-bold text-primary mb-2">
+                                        <%= kanpusContent.successRate || '90%' %>
+                                    </div>
+                                    <p class="text-muted mb-0"><%= kanpusContent.successLabel || '' %></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="section py-5 bg-light">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="partner-cta text-center">
+                        <h2 class="fw-bold text-dark mb-3"><%= kanpusContent.ctaTitle || '' %></h2>
+                        <p class="lead text-body-secondary mb-4"><%= kanpusContent.ctaBody || '' %></p>
+                        <div class="d-flex gap-3 justify-content-center flex-wrap">
+                            <a href="/contact" class="btn btn-primary btn-lg">
+                                <i class="fas fa-envelope me-2"></i>
+                                <%= kanpusContent.ctaContactButton || 'İletişime Geç' %>
+                            </a>
+                            <a href="https://www.kanpus.com" target="_blank" rel="noopener" class="btn btn-outline-primary btn-lg">
+                                <i class="fas fa-external-link-alt me-2"></i>
+                                <%= kanpusContent.ctaWebsiteButton || 'Kanpus\'u Ziyaret Et' %>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+

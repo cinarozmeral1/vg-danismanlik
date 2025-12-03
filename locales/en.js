@@ -2191,6 +2191,88 @@ module.exports = {
             whyTitle: "Why BestSchool.cz?",
             packagesTitle: "Exclusive Packages for Venture Global Students",
             packagesCTA: "Request Package Details"
+        },
+        kanpus: {
+            heroTitle: "Kanpus – Your Path to IB and AP Success",
+            heroSubtitle: "Expert one-on-one tutoring for IB Diploma and AP programs, SAT and TOEFL preparation, plus university counseling",
+            officialLink: "Visit Kanpus Official Website",
+            aboutTitle: "About Kanpus",
+            aboutBody1: "Kanpus is a specialized educational platform offering personalized learning experiences for students in IB Diploma and AP programs. With expert teachers who master the IB and AP curriculum, Kanpus ensures academic success through customized plans tailored to each student's needs.",
+            aboutBody2: "The platform makes a real difference in IB, AP, and SAT programs through one-on-one lessons, group study sessions, and academic counseling. With world-class educational programs, Kanpus helps students prepare for their dream universities.",
+            approachTitle: "Educational Approach",
+            approachBody: "Kanpus's personalized learning plans analyze each student's strengths and areas for improvement, creating a unique roadmap. Expert teachers help students progress rapidly toward their academic goals.",
+            whyTitle: "Why Choose Kanpus?",
+            benefitList: [
+                "Expert teachers in IB and AP subjects",
+                "Comprehensive preparation for IB Diploma and AP exams",
+                "SAT and TOEFL preparation programs",
+                "University application counseling",
+                "One-on-one and group lesson options",
+                "Personalized learning plans"
+            ],
+            highlightBody: "As Venture Global, we partner with Kanpus to ensure our students receive the best education in IB and AP programs. Through this partnership, our students can succeed in globally recognized exams and gain admission to prestigious universities.",
+            preparationTitle: "Preparation Programs",
+            preparationSubtitle: "Outstanding educational programs for IB, AP, SAT, and TOEFL",
+            programs: {
+                ibTitle: "IB Diploma",
+                ibDescription: "Higher Level (HL) and Standard Level (SL) preparation for IB Diploma program in Mathematics, Physics, Chemistry, Biology, and more",
+                ibSubjects: [
+                    "Mathematics (Analysis & Approaches, Applications & Interpretation)",
+                    "Physics",
+                    "Chemistry",
+                    "Biology",
+                    "English Language and Literature",
+                    "Other Group subjects"
+                ],
+                apTitle: "AP Courses",
+                apDescription: "Comprehensive preparation program for Advanced Placement exams",
+                apSubjects: [
+                    "AP Calculus AB/BC",
+                    "AP Physics 1, 2, C",
+                    "AP Chemistry",
+                    "AP Biology",
+                    "AP Statistics",
+                    "Other AP courses"
+                ],
+                satTitle: "SAT Prep",
+                satDescription: "Comprehensive preparation for a 1600 score in Reading, Writing, and Math sections",
+                satSections: [
+                    "Reading: Evidence-Based Reading",
+                    "Writing and Language",
+                    "Math: No Calculator & Calculator",
+                    "Essay (Optional)"
+                ],
+                toeflTitle: "TOEFL iBT",
+                toeflDescription: "Complete preparation for a 120 score in Reading, Listening, Speaking, and Writing sections",
+                toeflSections: [
+                    "Reading Comprehension",
+                    "Listening Comprehension",
+                    "Speaking Tasks",
+                    "Integrated & Independent Writing"
+                ]
+            },
+            servicesTitle: "Our Services",
+            oneOnOneTitle: "One-on-One Lessons",
+            oneOnOneBody: "Progress at your own pace with private lessons from expert teachers and get instant answers to your questions.",
+            groupStudyTitle: "Group Study Sessions",
+            groupStudyBody: "Boost your motivation by studying with other students and gain different perspectives.",
+            counselingTitle: "Academic Counseling",
+            counselingBody: "Plan your course schedule with experienced academic counselors and achieve your goals.",
+            universityConsultingTitle: "University Application Counseling",
+            universityConsultingBody: "Get professional support throughout the application process to your dream university. We're with you every step of the way, from preparing personal statements to interview preparation.",
+            consultingServices: [
+                "University selection and program counseling",
+                "Personal statement and essay writing",
+                "Application document preparation",
+                "Interview preparation",
+                "Scholarship applications"
+            ],
+            successRate: "90%+",
+            successLabel: "Success Rate",
+            ctaTitle: "Exclusive Offers for Venture Global Students",
+            ctaBody: "Through our partnership with Kanpus, we offer special discounted packages to our students. Contact us to learn more about special opportunities and get detailed information for your IB, AP, SAT, or TOEFL preparation.",
+            ctaContactButton: "Get in Touch",
+            ctaWebsiteButton: "Visit Kanpus"
         }
     }
 }; 

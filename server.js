@@ -850,6 +850,12 @@ app.get('/sitemap.xml', async (req, res) => {
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>
+    <url>
+        <loc>${baseUrl}/partners/kanpus</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
     
     <!-- University Detail Pages -->
     ${universities.map(uni => {
@@ -924,6 +930,10 @@ app.get('/partners/bestschool', (req, res) => {
     res.render('partners/bestschool', { title: 'BestSchool.cz - Venture Global' });
 });
 
+app.get('/partners/kanpus', (req, res) => {
+    res.render('partners/kanpus', { title: 'Kanpus - Venture Global' });
+});
+
 
 // Universities page route - Optimized
 app.get('/universities', async (req, res) => {
@@ -968,21 +978,51 @@ app.get('/universities', async (req, res) => {
     }
 });
 
-// University detail page route
+// University detail page route - Supports both numeric ID and slug (name-based lookup)
 app.get('/university/:id', async (req, res) => {
     try {
-        const universityId = req.params.id;
+        const universityParam = req.params.id;
+        let universityResult;
 
-        // Get university details
-        console.log('Fetching university with ID:', universityId);
+        // Check if the parameter is a numeric ID or a slug
+        const isNumericId = /^\d+$/.test(universityParam);
         
-        const universityResult = await pool.query(`
-            SELECT 
-                u.*,
-                0 as actual_program_count
-            FROM universities u
-            WHERE u.id = $1
-        `, [universityId]);
+        console.log('Fetching university with param:', universityParam, 'isNumeric:', isNumericId);
+        
+        if (isNumericId) {
+            // Query by numeric ID
+            universityResult = await pool.query(`
+                SELECT 
+                    u.*,
+                    0 as actual_program_count
+                FROM universities u
+                WHERE u.id = $1
+            `, [universityParam]);
+        } else {
+            // Query by slug - search in name (case-insensitive, partial match)
+            const slugMap = {
+                'semmelweis': 'Semmelweis',
+                'ctu': 'Czech Technical',
+                'vse': 'VSE',
+                'tum': 'Technical University of Munich',
+                'univie': 'Vienna',
+                'polimi': 'Politecnico di Milano',
+                'charles': 'Charles University',
+                'masaryk': 'Masaryk',
+                'palacky': 'Palacky'
+            };
+            
+            const searchTerm = slugMap[universityParam.toLowerCase()] || universityParam;
+            
+            universityResult = await pool.query(`
+                SELECT 
+                    u.*,
+                    0 as actual_program_count
+                FROM universities u
+                WHERE LOWER(u.name) LIKE LOWER($1)
+                LIMIT 1
+            `, [`%${searchTerm}%`]);
+        }
         
         console.log('University query result:', universityResult.rows);
 
@@ -995,13 +1035,13 @@ app.get('/university/:id', async (req, res) => {
 
         const university = universityResult.rows[0];
 
-        // Get university departments
+        // Get university departments (use university.id from the found university)
         const departmentsResult = await pool.query(`
             SELECT id, name_tr, name_en, price, currency
             FROM university_departments 
             WHERE university_id = $1 AND is_active = true
             ORDER BY name_tr ASC
-        `, [universityId]);
+        `, [university.id]);
 
         // Get university programs (empty for now)
         const programsResult = { rows: [] };

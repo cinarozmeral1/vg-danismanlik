@@ -2219,6 +2219,88 @@ module.exports = {
             whyTitle: "Neden BestSchool.cz?",
             packagesTitle: "Öğrencilerimiz için özel fırsatlar",
             packagesCTA: "Paket Detaylarını İsteyin"
+        },
+        kanpus: {
+            heroTitle: "Kanpus – IB ve AP'de Başarının Anahtarı",
+            heroSubtitle: "IB Diploma ve AP programları için uzman öğretmenlerle birebir dersler, SAT ve TOEFL hazırlık ile üniversite danışmanlığı",
+            officialLink: "Kanpus Resmi Sitesini Ziyaret Et",
+            aboutTitle: "Kanpus Hakkında",
+            aboutBody1: "Kanpus, IB Diploma ve AP programlarında uzmanlaşmış, öğrencilere kişiselleştirilmiş öğrenme deneyimi sunan bir eğitim platformudur. IB ve AP müfredatına tam hakim uzman öğretmenler eşliğinde, her öğrencinin ihtiyacına özel planlarla akademik başarıya ulaşmanızı sağlar.",
+            aboutBody2: "Platform, birebir dersler, grup çalışmaları ve akademik danışmanlık ile IB, AP ve SAT programlarında fark yaratır. Dünya standartlarında eğitim programlarıyla öğrencilerin hayallerindeki üniversitelere hazırlanmalarına yardımcı olur.",
+            approachTitle: "Eğitim Yaklaşımı",
+            approachBody: "Kanpus'un kişiselleştirilmiş öğrenme planları, her öğrencinin güçlü ve geliştirilmesi gereken yönlerini analiz ederek özel bir yol haritası çizer. Uzman öğretmenler, öğrencilerin akademik hedeflerine hızla ilerlemelerini sağlar.",
+            whyTitle: "Neden Kanpus?",
+            benefitList: [
+                "IB ve AP derslerinde uzman öğretmenler",
+                "IB Diploma ve AP sınavlarına kapsamlı hazırlık",
+                "SAT ve TOEFL hazırlık programları",
+                "Üniversite başvuru danışmanlığı",
+                "Birebir ve grup ders seçenekleri",
+                "Kişiselleştirilmiş öğrenme planları"
+            ],
+            highlightBody: "Venture Global olarak, öğrencilerimizin IB ve AP programlarında en iyi eğitimi almalarını sağlamak için Kanpus ile iş birliği yapıyoruz. Bu ortaklık sayesinde öğrencilerimiz, dünya çapında tanınan sınavlarda başarılı olarak prestijli üniversitelere yerleşebilirler.",
+            preparationTitle: "Hazırlık Programları",
+            preparationSubtitle: "IB, AP, SAT ve TOEFL'de fark yaratan eğitim programları",
+            programs: {
+                ibTitle: "IB Diploma",
+                ibDescription: "IB Diploma programı için Matematik, Fizik, Kimya, Biyoloji ve daha fazla derste Higher Level (HL) ve Standard Level (SL) hazırlık",
+                ibSubjects: [
+                    "Matematik (Analysis & Approaches, Applications & Interpretation)",
+                    "Fizik",
+                    "Kimya",
+                    "Biyoloji",
+                    "İngiliz Dili ve Edebiyatı",
+                    "Diğer Group dersler"
+                ],
+                apTitle: "AP Courses",
+                apDescription: "Advanced Placement sınavları için kapsamlı hazırlık programı",
+                apSubjects: [
+                    "AP Calculus AB/BC",
+                    "AP Physics 1, 2, C",
+                    "AP Chemistry",
+                    "AP Biology",
+                    "AP Statistics",
+                    "Diğer AP dersleri"
+                ],
+                satTitle: "SAT Hazırlık",
+                satDescription: "1600 puan hedefi için Reading, Writing ve Math bölümlerinde kapsamlı hazırlık",
+                satSections: [
+                    "Reading: Evidence-Based Reading",
+                    "Writing and Language",
+                    "Math: No Calculator & Calculator",
+                    "Essay (İsteğe Bağlı)"
+                ],
+                toeflTitle: "TOEFL iBT",
+                toeflDescription: "120 puan hedefi için Reading, Listening, Speaking ve Writing bölümlerinde tam hazırlık",
+                toeflSections: [
+                    "Reading Comprehension",
+                    "Listening Comprehension",
+                    "Speaking Tasks",
+                    "Integrated & Independent Writing"
+                ]
+            },
+            servicesTitle: "Hizmetlerimiz",
+            oneOnOneTitle: "Birebir Dersler",
+            oneOnOneBody: "Uzman öğretmenlerle özel dersler sayesinde kendi hızınızda ilerleyin ve sorularınıza anında cevap alın.",
+            groupStudyTitle: "Grup Çalışmaları",
+            groupStudyBody: "Diğer öğrencilerle birlikte çalışarak motivasyonunuzu artırın ve farklı bakış açıları edinin.",
+            counselingTitle: "Akademik Danışmanlık",
+            counselingBody: "Deneyimli akademik danışmanlarla ders programınızı planlayın ve hedeflerinize ulaşın.",
+            universityConsultingTitle: "Üniversite Başvuru Danışmanlığı",
+            universityConsultingBody: "Hayalinizdeki üniversiteye başvuru sürecinde profesyonel destek alın. Personal statement hazırlamadan mülakat hazırlığına kadar tüm süreçte yanınızdayız.",
+            consultingServices: [
+                "Üniversite seçimi ve program danışmanlığı",
+                "Personal statement ve essay yazımı",
+                "Başvuru belgelerinin hazırlanması",
+                "Mülakat hazırlığı",
+                "Burs başvuruları"
+            ],
+            successRate: "90%+",
+            successLabel: "Başarı Oranı",
+            ctaTitle: "Venture Global Öğrencilerine Özel Fırsatlar",
+            ctaBody: "Kanpus ile ortaklığımız sayesinde öğrencilerimize özel indirimli paketler sunuyoruz. IB, AP, SAT veya TOEFL hazırlığınız için detaylı bilgi almak ve özel fırsatlardan yararlanmak için bizimle iletişime geçin.",
+            ctaContactButton: "İletişime Geç",
+            ctaWebsiteButton: "Kanpus'u Ziyaret Et"
         }
     }
 }; 
