@@ -37,18 +37,11 @@ Thumbs.db
 *.backup
 *.bak
 *_backup.*
-
-# Large image files (these should be served from public/)
-public/images/backgrounds/*.jpg
-public/images/backgrounds/*.png
-public/images/backgrounds/*.jpeg
+views/media.ejs.backup
 
 # Scripts not needed in production
-scripts/
-migrations/
-
-# Uploads directory (not needed in serverless)
-public/uploads/
+scripts/backup-to-ftp.js
+scripts/restore-from-backup.js
 
 # Database backups
 backups/
