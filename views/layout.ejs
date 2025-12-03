@@ -194,10 +194,22 @@
                             <%= (typeof t !== 'undefined' && t.nav) ? (t.nav.partners || 'Çözüm Ortaklarımız') : 'Çözüm Ortaklarımız' %>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/partners/kanpus"><i class="fas fa-graduation-cap me-2"></i>Kanpus</a></li>
-                            <li><a class="dropdown-item" href="/partners/wcep"><i class="fas fa-handshake me-2"></i>WCEP</a></li>
-                            <li><a class="dropdown-item" href="/partners/medczech"><i class="fas fa-heartbeat me-2"></i>MedCzech</a></li>
-                            <li><a class="dropdown-item" href="/partners/bestschool"><i class="fas fa-school me-2"></i>BestSchool.cz</a></li>
+                            <li><a class="dropdown-item d-flex align-items-center" href="/partners/kanpus">
+                                <img src="/images/partners/kanpus/kanpus-logo.webp" alt="Kanpus" style="height: 20px; width: auto; margin-right: 10px;">
+                                Kanpus
+                            </a></li>
+                            <li><a class="dropdown-item d-flex align-items-center" href="/partners/wcep">
+                                <img src="/images/partners/wcep/wcep-logo.png" alt="WCEP" style="height: 20px; width: auto; margin-right: 10px;">
+                                WCEP
+                            </a></li>
+                            <li><a class="dropdown-item d-flex align-items-center" href="/partners/medczech">
+                                <img src="/images/partners/medczech/medczech-logo.png" alt="MedCzech" style="height: 20px; width: auto; margin-right: 10px;">
+                                MedCzech
+                            </a></li>
+                            <li><a class="dropdown-item d-flex align-items-center" href="/partners/bestschool">
+                                <i class="fas fa-school me-2" style="color: #0d6efd;"></i>
+                                BestSchool.cz
+                            </a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
@@ -475,19 +487,19 @@
                     <ul style="list-style: none; margin: 0; padding: 0;">
                         <li>
                             <a href="/partners/kanpus" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                <i class="fas fa-graduation-cap" style="width: 20px; margin-right: 12px; color: #8b5cf6;"></i>
+                                <img src="/images/partners/kanpus/kanpus-logo.webp" alt="Kanpus" style="height: 20px; width: auto; margin-right: 12px; object-fit: contain;">
                                 <span style="font-size: 0.9rem; font-weight: 500;">Kanpus</span>
                             </a>
                         </li>
                         <li>
                             <a href="/partners/wcep" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                <i class="fas fa-handshake" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <img src="/images/partners/wcep/wcep-logo.png" alt="WCEP" style="height: 20px; width: auto; margin-right: 12px; object-fit: contain;">
                                 <span style="font-size: 0.9rem; font-weight: 500;">WCEP</span>
                             </a>
                         </li>
                         <li>
                             <a href="/partners/medczech" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                <i class="fas fa-heartbeat" style="width: 20px; margin-right: 12px; color: #dc2626;"></i>
+                                <img src="/images/partners/medczech/medczech-logo.png" alt="MedCzech" style="height: 20px; width: auto; margin-right: 12px; object-fit: contain;">
                                 <span style="font-size: 0.9rem; font-weight: 500;">MedCzech</span>
                             </a>
                         </li>
@@ -815,6 +827,21 @@
                 newMobileNav.addEventListener('hidden.bs.offcanvas', function() {
                     // Clean up
                     this.classList.remove('show');
+                    
+                    // Force remove ALL backdrops
+                    setTimeout(() => {
+                        const allBackdrops = document.querySelectorAll('.mobile-menu-backdrop, .offcanvas-backdrop, .modal-backdrop, [class*="backdrop"]');
+                        allBackdrops.forEach(backdrop => {
+                            if (backdrop && backdrop.parentNode) {
+                                backdrop.remove();
+                            }
+                        });
+                        
+                        // Clean up body classes and styles
+                        document.body.classList.remove('modal-open', 'offcanvas-open');
+                        document.body.style.overflow = '';
+                        document.body.style.paddingRight = '';
+                    }, 50);
                 });
             }
             
