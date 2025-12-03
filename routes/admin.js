@@ -3987,7 +3987,8 @@ router.get('/student-stories', async (req, res) => {
             title: 'Öğrenci Hikayeleri Yönetimi',
             stories: result.rows,
             user: req.session.user,
-            currentLanguage: req.session.language || 'tr'
+            currentLanguage: req.session.language || 'tr',
+            layout: 'admin/layout'
         });
     } catch (err) {
         console.error('Error loading student stories:', err);
@@ -4006,7 +4007,8 @@ router.get('/student-stories/new', async (req, res) => {
             title: 'Yeni Öğrenci Hikayesi',
             story: null,
             user: req.session.user,
-            currentLanguage: req.session.language || 'tr'
+            currentLanguage: req.session.language || 'tr',
+            layout: 'admin/layout'
         });
     } catch (err) {
         console.error('Error:', err);
@@ -4034,7 +4036,8 @@ router.get('/student-stories/:id/edit', async (req, res) => {
             title: 'Hikayeyi Düzenle',
             story: result.rows[0],
             user: req.session.user,
-            currentLanguage: req.session.language || 'tr'
+            currentLanguage: req.session.language || 'tr',
+            layout: 'admin/layout'
         });
     } catch (err) {
         console.error('Error:', err);
