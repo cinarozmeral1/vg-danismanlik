@@ -1,5 +1,5 @@
 # robots.txt for Venture Global Website
-# https://ventureglobal.com/robots.txt
+# https://vgdanismanlik.com/robots.txt
 
 User-agent: *
 Allow: /
@@ -22,7 +22,7 @@ Allow: /student-life/
 Allow: /partners/
 
 # Sitemap
-Sitemap: https://ventureglobal.com/sitemap.xml
+Sitemap: https://vgdanismanlik.com/sitemap.xml
 
 # Crawl-delay
 Crawl-delay: 1

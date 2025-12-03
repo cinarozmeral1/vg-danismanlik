@@ -9,7 +9,7 @@ const getBaseUrl = (req) => {
     }
     
     const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'https';
-    const host = req.headers['host'] || req.get('host') || 'ventureglobal.com';
+    const host = req.headers['host'] || req.get('host') || 'vgdanismanlik.com';
     
     return `${protocol}://${host}`;
 };

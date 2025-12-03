@@ -410,9 +410,9 @@ module.exports = {
     // Home Page
     home: {
         hero: {
-            title: "Education in Europe",
-            subtitle: "Realize Your Dream",
-            description: "As Venture Global, we provide personalized consulting services for you to study at Europe's most prestigious universities.",
+            title: "Venture Global | VG Danışmanlık",
+            subtitle: "Make Your Dream of Studying in Europe Come True",
+            description: "As Venture Global (VG Danışmanlık), we provide personalized consulting services for you to study at Europe's most prestigious universities. Your trusted partner for international education consulting.",
             freeAssessment: "Free Assessment",
             ourServices: "Our Services"
         },

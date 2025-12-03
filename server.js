@@ -718,7 +718,7 @@ app.get('/robots.txt', (req, res) => {
 
 app.get('/sitemap.xml', async (req, res) => {
     try {
-        const baseUrl = res.locals.baseUrl || 'https://ventureglobal.com';
+        const baseUrl = res.locals.baseUrl || 'https://vgdanismanlik.com';
         
         // Get all universities from database
         let universities = [];
@@ -901,20 +901,20 @@ app.get('/', async (req, res) => {
     }
 });
 app.get('/services', (req, res) => {
-    res.locals.seoTitle = 'Hizmetlerimiz - Yurt Dışı Danışmanlık ve Eğitim Danışmanlığı | Venture Global';
-    res.locals.seoDescription = 'Venture Global yurt dışı danışmanlık hizmetleri: Üniversite başvuru danışmanlığı, yurt dışı eğitim danışmanlığı, yurt dışı dil okulu danışmanlığı, vize işlemleri, konaklama desteği ve Avrupa eğitim danışmanlığı. Profesyonel eğitim danışmanlığı hizmetlerimiz hakkında bilgi alın.';
-    res.locals.seoKeywords = 'yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı, yurt dışı dil okulu danışmanlığı, Avrupa eğitim danışmanlığı, üniversite başvuru danışmanlığı, vize işlemleri, dil okulu, konaklama, eğitim danışmanlığı hizmetleri, yurtdışı eğitim danışmanlığı, üniversite danışmanlığı';
-    res.locals.ogTitle = 'Yurt Dışı Danışmanlık Hizmetleri - Venture Global';
-    res.locals.ogDescription = 'Yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı ve yurt dışı dil okulu danışmanlığı hizmetlerimiz. Profesyonel Avrupa eğitim danışmanlığı.';
+    res.locals.seoTitle = 'Hizmetlerimiz - Yurt Dışı Danışmanlık ve Eğitim Danışmanlığı | Venture Global (VG Danışmanlık)';
+    res.locals.seoDescription = 'Venture Global (VG Danışmanlık) yurt dışı danışmanlık hizmetleri: Üniversite başvuru danışmanlığı, yurt dışı eğitim danışmanlığı, yurt dışı dil okulu danışmanlığı, vize işlemleri, konaklama desteği ve Avrupa eğitim danışmanlığı. Profesyonel eğitim danışmanlığı hizmetlerimiz hakkında bilgi alın.';
+    res.locals.seoKeywords = 'venture global, vg danışmanlık, yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı, yurt dışı dil okulu danışmanlığı, Avrupa eğitim danışmanlığı, üniversite başvuru danışmanlığı, vize işlemleri, dil okulu, konaklama, eğitim danışmanlığı hizmetleri, yurtdışı eğitim danışmanlığı, üniversite danışmanlığı';
+    res.locals.ogTitle = 'Yurt Dışı Danışmanlık Hizmetleri - Venture Global (VG Danışmanlık)';
+    res.locals.ogDescription = 'Venture Global (VG Danışmanlık) yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı ve yurt dışı dil okulu danışmanlığı hizmetlerimiz. Profesyonel Avrupa eğitim danışmanlığı.';
     res.render('services', { title: res.locals.t.nav.services });
 });
 
 app.get('/about-us', (req, res) => {
-    res.locals.seoTitle = 'Venture Global Hakkında - Yurt Dışı Eğitim Danışmanlığı | Profesyonel Eğitim Danışmanlığı';
-    res.locals.seoDescription = 'Venture Global yurt dışı eğitim danışmanlığı firması. Yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı, yurt dışı dil okulu danışmanlığı ve Avrupa eğitim danışmanlığı alanında 7 ülkede, 50+ üniversite seçeneği ile profesyonel danışmanlık hizmeti sunuyoruz.';
-    res.locals.seoKeywords = 'Venture Global, venture global, yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı, yurt dışı dil okulu danışmanlığı, Avrupa eğitim danışmanlığı, eğitim danışmanlığı, yurtdışı eğitim, avrupa üniversite, eğitim danışmanlığı firması, venture global eğitim';
-    res.locals.ogTitle = 'Venture Global - Yurt Dışı Eğitim Danışmanlığı';
-    res.locals.ogDescription = 'Venture Global yurt dışı danışmanlık ve eğitim danışmanlığı firması. 7 ülkede profesyonel hizmet.';
+    res.locals.seoTitle = 'Venture Global (VG Danışmanlık) Hakkında - Yurt Dışı Eğitim Danışmanlığı | Profesyonel Eğitim Danışmanlığı';
+    res.locals.seoDescription = 'Venture Global (VG Danışmanlık) yurt dışı eğitim danışmanlığı firması. Yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı, yurt dışı dil okulu danışmanlığı ve Avrupa eğitim danışmanlığı alanında 7 ülkede, 50+ üniversite seçeneği ile profesyonel danışmanlık hizmeti sunuyoruz.';
+    res.locals.seoKeywords = 'Venture Global, vg danışmanlık, venture global danışmanlık, yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı, yurt dışı dil okulu danışmanlığı, Avrupa eğitim danışmanlığı, eğitim danışmanlığı, yurtdışı eğitim, avrupa üniversite, eğitim danışmanlığı firması, venture global eğitim';
+    res.locals.ogTitle = 'Venture Global (VG Danışmanlık) - Yurt Dışı Eğitim Danışmanlığı';
+    res.locals.ogDescription = 'Venture Global (VG Danışmanlık) yurt dışı danışmanlık ve eğitim danışmanlığı firması. 7 ülkede profesyonel hizmet.';
     res.render('about-us', { title: res.locals.t.nav.aboutUs });
 });
 
