@@ -486,7 +486,8 @@ module.exports = {
             benefit1: "IB & AP Programs",
             benefit2: "SAT & TOEFL & IELTS",
             benefit3: "Expert Online Education",
-            cta: "Explore Details"
+            cta: "Explore Details",
+            exclusiveOffer: "Kanpus students get exclusive discounts at Venture Global, and Venture Global clients get exclusive discounts at Kanpus!"
         }
     },
     
@@ -1682,7 +1683,8 @@ module.exports = {
             },
             earlyPrepTitle: "Discover the Advantages of Early Preparation",
             earlyPrepBody: "For students in grades 9, 10, or 11, get the opportunity to start preparing for IB, AP, SAT, TOEFL, and IELTS now. One-on-one online lessons with expert teachers.",
-            ctaButton: "Learn More"
+            ctaButton: "Learn More",
+            exclusiveOffer: "Kanpus students get exclusive discounts at Venture Global, and Venture Global clients get exclusive discounts at Kanpus!"
         },
         whyChooseUs: {
             title: "Why Choose Us?",
@@ -1768,7 +1770,8 @@ module.exports = {
             feature2: "SAT & TOEFL & IELTS Prep",
             feature3: "One-on-One Online Lessons",
             feature4: "University Counseling",
-            learnMore: "Learn More"
+            learnMore: "Learn More",
+            exclusiveOffer: "Kanpus students get exclusive discounts at Venture Global, and Venture Global clients get exclusive discounts at Kanpus!"
         },
         faq: {
             title: "Frequently Asked Questions",
@@ -2260,6 +2263,7 @@ module.exports = {
                 "Personalized learning plans"
             ],
             highlightBody: "As Venture Global, we partner with Kanpus to ensure our students receive the best education in IB and AP programs. Through this partnership, our students can succeed in globally recognized exams and gain admission to prestigious universities.",
+            exclusiveOffer: "Kanpus students get exclusive discounts at Venture Global, and Venture Global clients get exclusive discounts at Kanpus!",
             preparationTitle: "Preparation Programs",
             preparationSubtitle: "Outstanding educational programs for IB, AP, SAT, and TOEFL",
             programs: {

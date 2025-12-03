@@ -490,7 +490,8 @@ module.exports = {
             benefit1: "IB & AP Programları",
             benefit2: "SAT & TOEFL & IELTS",
             benefit3: "Online Uzman Eğitim",
-            cta: "Detayları Keşfet"
+            cta: "Detayları Keşfet",
+            exclusiveOffer: "Kanpus'tan ders alanlar Venture Global'de, Venture Global'den danışmanlık alanlar Kanpus'ta ayrıcalıklı indirimlerden yararlanır!"
         }
     },
     
@@ -1710,7 +1711,8 @@ module.exports = {
             },
             earlyPrepTitle: "Erken Hazırlığın Avantajlarını Keşfedin",
             earlyPrepBody: "9, 10 veya 11. sınıf öğrencileri için IB, AP, SAT, TOEFL ve IELTS'e şimdiden hazırlanma fırsatı. Uzman öğretmenlerle online birebir dersler.",
-            ctaButton: "Detaylı Bilgi"
+            ctaButton: "Detaylı Bilgi",
+            exclusiveOffer: "Kanpus'tan ders alanlar Venture Global'de, Venture Global'den danışmanlık alanlar Kanpus'ta ayrıcalıklı indirimlerden yararlanır!"
         },
         whyChooseUs: {
             title: "Neden Bizi Seçmelisiniz?",
@@ -1796,7 +1798,8 @@ module.exports = {
             feature2: "SAT & TOEFL & IELTS Hazırlık",
             feature3: "Birebir Online Dersler",
             feature4: "Üniversite Danışmanlığı",
-            learnMore: "Detaylı Bilgi"
+            learnMore: "Detaylı Bilgi",
+            exclusiveOffer: "Kanpus'tan ders alanlar Venture Global'de, Venture Global'den danışmanlık alanlar Kanpus'ta ayrıcalıklı indirimlerden yararlanır!"
         },
         faq: {
             title: "Sık Sorulan Sorular",
@@ -2288,6 +2291,7 @@ module.exports = {
                 "Kişiselleştirilmiş öğrenme planları"
             ],
             highlightBody: "Venture Global olarak, öğrencilerimizin IB ve AP programlarında en iyi eğitimi almalarını sağlamak için Kanpus ile iş birliği yapıyoruz. Bu ortaklık sayesinde öğrencilerimiz, dünya çapında tanınan sınavlarda başarılı olarak prestijli üniversitelere yerleşebilirler.",
+            exclusiveOffer: "Kanpus'tan ders alanlar Venture Global'de, Venture Global'den danışmanlık alanlar Kanpus'ta ayrıcalıklı indirimlerden yararlanır!",
             preparationTitle: "Hazırlık Programları",
             preparationSubtitle: "IB, AP, SAT ve TOEFL'de fark yaratan eğitim programları",
             programs: {
