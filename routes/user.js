@@ -1000,10 +1000,10 @@ router.get('/payment-config', authenticateUser, async (req, res) => {
     }
 });
 
-// Get user's services (for payment)
-router.get('/services', authenticateUser, async (req, res) => {
+// Get user's services (for payment) - NEW ENDPOINT
+router.get('/services-list', authenticateUser, async (req, res) => {
     try {
-        console.log('📋 API CALLED - User ID:', req.user.id);
+        console.log('🎯🎯🎯 NEW API CALLED - User ID:', req.user.id);
         
         // TEST: Return fake data without touching database
         const testServices = [
@@ -1021,13 +1021,13 @@ router.get('/services', authenticateUser, async (req, res) => {
             }
         ];
         
-        console.log('✅ Returning test data');
+        console.log('✅ Returning test data from NEW endpoint');
         
         res.json({
             success: true,
             services: testServices,
             test: true,
-            message: 'TEST MODE - Database sorgusu atılmadı'
+            message: 'TEST MODE - Yeni endpoint çalışıyor!'
         });
     } catch (error) {
         console.error('❌ Error:', error);
