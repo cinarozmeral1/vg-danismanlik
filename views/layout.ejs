@@ -858,11 +858,53 @@
                 });
             }
             
+            // MANUAL DROPDOWN HANDLER - Bypass Bootstrap's buggy implementation
+            function setupManualDropdowns() {
+                document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+                    const parent = toggle.closest('.dropdown');
+                    const menu = parent ? parent.querySelector('.dropdown-menu') : null;
+                    
+                    if (!menu) return;
+                    
+                    // Remove any existing listeners
+                    const newToggle = toggle.cloneNode(true);
+                    toggle.parentNode.replaceChild(newToggle, toggle);
+                    
+                    // Add click handler
+                    newToggle.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        // Close all other dropdowns
+                        document.querySelectorAll('.dropdown-menu.show').forEach(otherMenu => {
+                            if (otherMenu !== menu) {
+                                otherMenu.classList.remove('show');
+                            }
+                        });
+                        
+                        // Toggle this dropdown
+                        menu.classList.toggle('show');
+                    });
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!e.target.closest('.dropdown')) {
+                        document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                            menu.classList.remove('show');
+                        });
+                    }
+                });
+                
+                console.log('✅ Manual dropdowns initialized');
+            }
+            
             // Initialize on DOM ready
             document.addEventListener('DOMContentLoaded', function() {
-                // Initialize all dropdowns immediately
-                console.log('🎯 Initializing all dropdowns on page load');
-                initializeDropdowns();
+                console.log('🎯 Page loaded - setting up manual dropdowns');
+                
+                // Use manual dropdown implementation
+                setupManualDropdowns();
                 
                 // Use requestAnimationFrame for better performance
                 requestAnimationFrame(initializeMobileMenu);
