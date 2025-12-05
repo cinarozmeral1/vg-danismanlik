@@ -129,6 +129,7 @@ const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
 const userRoutes = require('./routes/user');
 const guardianRoutes = require('./routes/guardians');
+const stripeWebhookRoutes = require('./routes/stripe-webhook');
 
 // Import authentication middleware
 const { authenticateAdmin } = require('./middleware/auth');
@@ -166,6 +167,10 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 app.use(cookieParser());
+
+// Stripe webhook route MUST come before bodyParser.json() because it needs raw body
+app.use('/webhook', stripeWebhookRoutes);
+
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
@@ -928,40 +933,13 @@ app.get('/about-us', (req, res) => {
     res.render('about-us', { title: res.locals.t.nav.aboutUs });
 });
 
-app.get('/media', async (req, res) => {
-    try {
-        const lang = req.session.language || 'tr';
-        
-        // Fetch active student stories
-        const storiesResult = await pool.query(
-            `SELECT id, 
-                    name_${lang} as name, 
-                    university_${lang} as university, 
-                    country_${lang} as country, 
-                    story_${lang} as story, 
-                    photo 
-             FROM student_stories 
-             WHERE is_active = true 
-             ORDER BY display_order ASC, created_at DESC`
-        );
-        
-        res.locals.seoTitle = 'Medyada Biz - Venture Global (VG Danışmanlık) | Instagram & LinkedIn';
-        res.locals.seoDescription = 'Venture Global (VG Danışmanlık) sosyal medya paylaşımları. Instagram reels ve LinkedIn postlarımızı takip edin. Öğrenci hikayeleri, başarı hikayeleri ve daha fazlası.';
-        res.locals.seoKeywords = 'Venture Global instagram, vg danışmanlık linkedin, venture global medya, yurt dışı eğitim instagram, öğrenci hikayeleri, başarı hikayeleri';
-        res.locals.ogTitle = 'Medyada Biz - Venture Global | Sosyal Medya';
-        res.locals.ogDescription = 'Instagram ve LinkedIn\'de paylaşımlarımızı takip edin.';
-        
-        res.render('media', { 
-            title: res.locals.t.nav.media || 'Medyada Biz',
-            stories: storiesResult.rows
-        });
-    } catch (err) {
-        console.error('Error loading media page:', err);
-        res.render('media', { 
-            title: res.locals.t.nav.media || 'Medyada Biz',
-            stories: []
-        });
-    }
+app.get('/media', (req, res) => {
+    res.locals.seoTitle = 'Medyada Biz - Venture Global (VG Danışmanlık) | Instagram & LinkedIn';
+    res.locals.seoDescription = 'Venture Global (VG Danışmanlık) sosyal medya paylaşımları. Instagram reels ve LinkedIn postlarımızı takip edin. Öğrenci hikayeleri, başarı hikayeleri ve daha fazlası.';
+    res.locals.seoKeywords = 'Venture Global instagram, vg danışmanlık linkedin, venture global medya, yurt dışı eğitim instagram, öğrenci hikayeleri, başarı hikayeleri';
+    res.locals.ogTitle = 'Medyada Biz - Venture Global | Sosyal Medya';
+    res.locals.ogDescription = 'Instagram ve LinkedIn\'de paylaşımlarımızı takip edin.';
+    res.render('media', { title: res.locals.t.nav.media || 'Medyada Biz' });
 });
 
 app.get('/partners/wcep', (req, res) => {

@@ -3941,229 +3941,192 @@ router.post('/backups/trigger', async (req, res) => {
     }
 });
 
-// ========================================
-// STUDENT STORIES MANAGEMENT
-// ========================================
+// =====================================================
+// PAYMENT & WISE TRANSFER ENDPOINTS
+// =====================================================
 
-// Multer configuration for student story photos
-const storyPhotoUpload = multer({
-    storage: multer.diskStorage({
-        destination: function (req, file, cb) {
-            const uploadDir = 'public/images/student-stories';
-            if (!fs.existsSync(uploadDir)) {
-                fs.mkdirSync(uploadDir, { recursive: true });
-            }
-            cb(null, uploadDir);
-        },
-        filename: function (req, file, cb) {
-            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-            cb(null, 'story-' + uniqueSuffix + path.extname(file.originalname));
-        }
-    }),
-    fileFilter: function (req, file, cb) {
-        const filetypes = /jpeg|jpg|png|webp/;
-        const mimetype = filetypes.test(file.mimetype);
-        const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-        if (mimetype && extname) {
-            return cb(null, true);
-        }
-        cb(new Error('Sadece resim dosyaları yüklenebilir (jpeg, jpg, png, webp)'));
-    },
-    limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
-});
-
-// Student Stories List Page
-router.get('/student-stories', async (req, res) => {
+// Get all payments pending Wise transfer
+router.get('/payments/pending-wise-transfer', async (req, res) => {
     try {
-        if (!res.locals.isLoggedIn || !res.locals.isAdmin) {
-            return res.redirect('/login');
-        }
+        const result = await pool.query(`
+            SELECT 
+                s.*,
+                u.first_name,
+                u.last_name,
+                u.email
+            FROM services s
+            JOIN users u ON s.user_id = u.id
+            WHERE s.is_paid = true 
+              AND s.wise_transferred = false
+            ORDER BY s.payment_date DESC
+        `);
 
-        const result = await pool.query(
-            'SELECT * FROM student_stories ORDER BY display_order ASC, created_at DESC'
-        );
+        // Calculate total amount
+        const totalAmount = result.rows.reduce((sum, service) => {
+            return sum + parseFloat(service.paid_amount || service.amount || 0);
+        }, 0);
 
-        res.render('admin/student-stories', {
-            title: 'Öğrenci Hikayeleri Yönetimi',
-            stories: result.rows,
-            user: req.session.user,
-            currentLanguage: req.session.language || 'tr',
-            layout: 'admin/layout'
+        res.json({
+            success: true,
+            payments: result.rows,
+            totalAmount: totalAmount,
+            count: result.rows.length
         });
-    } catch (err) {
-        console.error('Error loading student stories:', err);
-        res.status(500).send('Sunucu hatası');
+    } catch (error) {
+        console.error('Get pending Wise transfers error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server error'
+        });
     }
 });
 
-// New Story Page
-router.get('/student-stories/new', async (req, res) => {
+// Mark service as transferred to Wise
+router.post('/payments/:id/mark-transferred', async (req, res) => {
     try {
-        if (!res.locals.isLoggedIn || !res.locals.isAdmin) {
-            return res.redirect('/login');
-        }
-
-        res.render('admin/student-story-edit', {
-            title: 'Yeni Öğrenci Hikayesi',
-            story: null,
-            user: req.session.user,
-            currentLanguage: req.session.language || 'tr',
-            layout: 'admin/layout'
-        });
-    } catch (err) {
-        console.error('Error:', err);
-        res.status(500).send('Sunucu hatası');
-    }
-});
-
-// Edit Story Page
-router.get('/student-stories/:id/edit', async (req, res) => {
-    try {
-        if (!res.locals.isLoggedIn || !res.locals.isAdmin) {
-            return res.redirect('/login');
-        }
+        const { id } = req.params;
+        const { notes } = req.body;
 
         const result = await pool.query(
-            'SELECT * FROM student_stories WHERE id = $1',
-            [req.params.id]
+            `UPDATE services 
+             SET wise_transferred = true,
+                 wise_transfer_date = CURRENT_DATE,
+                 wise_transfer_notes = $1,
+                 updated_at = CURRENT_TIMESTAMP
+             WHERE id = $2
+             RETURNING *`,
+            [notes || null, id]
         );
 
         if (result.rows.length === 0) {
-            return res.status(404).send('Hikaye bulunamadı');
+            return res.status(404).json({
+                success: false,
+                message: 'Service not found'
+            });
         }
 
-        res.render('admin/student-story-edit', {
-            title: 'Hikayeyi Düzenle',
-            story: result.rows[0],
-            user: req.session.user,
-            currentLanguage: req.session.language || 'tr',
-            layout: 'admin/layout'
+        console.log(`✅ Service ${id} marked as transferred to Wise`);
+
+        res.json({
+            success: true,
+            message: 'Wise transferi başarıyla işaretlendi',
+            service: result.rows[0]
         });
-    } catch (err) {
-        console.error('Error:', err);
-        res.status(500).send('Sunucu hatası');
+    } catch (error) {
+        console.error('Mark Wise transferred error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server error'
+        });
     }
 });
 
-// CREATE Story
-router.post('/student-stories', storyPhotoUpload.single('photo'), async (req, res) => {
+// Bulk mark services as transferred to Wise
+router.post('/payments/bulk-mark-transferred', async (req, res) => {
     try {
-        if (!res.locals.isLoggedIn || !res.locals.isAdmin) {
-            return res.status(403).json({ success: false, error: 'Yetkiniz yok' });
+        const { serviceIds, notes } = req.body;
+
+        if (!serviceIds || !Array.isArray(serviceIds) || serviceIds.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Service IDs are required'
+            });
         }
-
-        const {
-            name_tr, name_en,
-            university_tr, university_en,
-            country_tr, country_en,
-            story_tr, story_en,
-            display_order, is_active
-        } = req.body;
-
-        const photo = req.file ? '/images/student-stories/' + req.file.filename : null;
 
         const result = await pool.query(
-            `INSERT INTO student_stories 
-            (name_tr, name_en, university_tr, university_en, country_tr, country_en, story_tr, story_en, photo, display_order, is_active) 
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) 
-            RETURNING *`,
-            [name_tr, name_en, university_tr, university_en, country_tr, country_en, story_tr, story_en, photo, display_order || 0, is_active !== 'false']
+            `UPDATE services 
+             SET wise_transferred = true,
+                 wise_transfer_date = CURRENT_DATE,
+                 wise_transfer_notes = $1,
+                 updated_at = CURRENT_TIMESTAMP
+             WHERE id = ANY($2::int[])
+             RETURNING id`,
+            [notes || null, serviceIds]
         );
 
-        res.json({ success: true, story: result.rows[0] });
-    } catch (err) {
-        console.error('Error creating story:', err);
-        if (req.file) {
-            fs.unlinkSync(req.file.path);
-        }
-        res.status(500).json({ success: false, error: 'Hikaye oluşturulurken hata: ' + err.message });
+        console.log(`✅ ${result.rowCount} services marked as transferred to Wise`);
+
+        res.json({
+            success: true,
+            message: `${result.rowCount} hizmet Wise transferi olarak işaretlendi`,
+            count: result.rowCount
+        });
+    } catch (error) {
+        console.error('Bulk mark Wise transferred error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server error'
+        });
     }
 });
 
-// UPDATE Story
-router.put('/student-stories/:id', storyPhotoUpload.single('photo'), async (req, res) => {
+// Get payment statistics
+router.get('/payments/statistics', async (req, res) => {
     try {
-        if (!res.locals.isLoggedIn || !res.locals.isAdmin) {
-            return res.status(403).json({ success: false, error: 'Yetkiniz yok' });
-        }
+        // Total unpaid services
+        const unpaidResult = await pool.query(`
+            SELECT 
+                COUNT(*) as count,
+                COALESCE(SUM(amount), 0) as total
+            FROM services
+            WHERE is_paid = false
+        `);
 
-        const {
-            name_tr, name_en,
-            university_tr, university_en,
-            country_tr, country_en,
-            story_tr, story_en,
-            display_order, is_active,
-            delete_photo
-        } = req.body;
+        // Total paid but not transferred
+        const pendingTransferResult = await pool.query(`
+            SELECT 
+                COUNT(*) as count,
+                COALESCE(SUM(COALESCE(paid_amount, amount)), 0) as total
+            FROM services
+            WHERE is_paid = true AND wise_transferred = false
+        `);
 
-        // Get existing story
-        const existing = await pool.query('SELECT photo FROM student_stories WHERE id = $1', [req.params.id]);
-        if (existing.rows.length === 0) {
-            return res.status(404).json({ success: false, error: 'Hikaye bulunamadı' });
-        }
+        // Total transferred to Wise
+        const transferredResult = await pool.query(`
+            SELECT 
+                COUNT(*) as count,
+                COALESCE(SUM(COALESCE(paid_amount, amount)), 0) as total
+            FROM services
+            WHERE is_paid = true AND wise_transferred = true
+        `);
 
-        let photo = existing.rows[0].photo;
+        // Recent payments (last 30 days)
+        const recentPaymentsResult = await pool.query(`
+            SELECT 
+                COUNT(*) as count,
+                COALESCE(SUM(COALESCE(paid_amount, amount)), 0) as total
+            FROM services
+            WHERE is_paid = true 
+              AND payment_date >= CURRENT_DATE - INTERVAL '30 days'
+        `);
 
-        // Handle photo deletion
-        if (delete_photo === 'true' && photo) {
-            const photoPath = path.join(__dirname, '../public', photo);
-            if (fs.existsSync(photoPath)) {
-                fs.unlinkSync(photoPath);
-            }
-            photo = null;
-        }
-
-        // Handle new photo upload
-        if (req.file) {
-            if (photo) {
-                const oldPhotoPath = path.join(__dirname, '../public', photo);
-                if (fs.existsSync(oldPhotoPath)) {
-                    fs.unlinkSync(oldPhotoPath);
+        res.json({
+            success: true,
+            statistics: {
+                unpaid: {
+                    count: parseInt(unpaidResult.rows[0].count),
+                    total: parseFloat(unpaidResult.rows[0].total)
+                },
+                pendingTransfer: {
+                    count: parseInt(pendingTransferResult.rows[0].count),
+                    total: parseFloat(pendingTransferResult.rows[0].total)
+                },
+                transferred: {
+                    count: parseInt(transferredResult.rows[0].count),
+                    total: parseFloat(transferredResult.rows[0].total)
+                },
+                recentPayments: {
+                    count: parseInt(recentPaymentsResult.rows[0].count),
+                    total: parseFloat(recentPaymentsResult.rows[0].total)
                 }
             }
-            photo = '/images/student-stories/' + req.file.filename;
-        }
-
-        const result = await pool.query(
-            `UPDATE student_stories 
-            SET name_tr = $1, name_en = $2, university_tr = $3, university_en = $4, 
-                country_tr = $5, country_en = $6, story_tr = $7, story_en = $8, 
-                photo = $9, display_order = $10, is_active = $11
-            WHERE id = $12
-            RETURNING *`,
-            [name_tr, name_en, university_tr, university_en, country_tr, country_en, 
-             story_tr, story_en, photo, display_order || 0, is_active !== 'false', req.params.id]
-        );
-
-        res.json({ success: true, story: result.rows[0] });
-    } catch (err) {
-        console.error('Error updating story:', err);
-        res.status(500).json({ success: false, error: 'Hikaye güncellenirken hata: ' + err.message });
-    }
-});
-
-// DELETE Story
-router.delete('/student-stories/:id', async (req, res) => {
-    try {
-        if (!res.locals.isLoggedIn || !res.locals.isAdmin) {
-            return res.status(403).json({ success: false, error: 'Yetkiniz yok' });
-        }
-
-        // Get story to delete photo
-        const story = await pool.query('SELECT photo FROM student_stories WHERE id = $1', [req.params.id]);
-        
-        if (story.rows.length > 0 && story.rows[0].photo) {
-            const photoPath = path.join(__dirname, '../public', story.rows[0].photo);
-            if (fs.existsSync(photoPath)) {
-                fs.unlinkSync(photoPath);
-            }
-        }
-
-        await pool.query('DELETE FROM student_stories WHERE id = $1', [req.params.id]);
-        res.json({ success: true, message: 'Hikaye silindi' });
-    } catch (err) {
-        console.error('Error deleting story:', err);
-        res.status(500).json({ success: false, error: 'Hikaye silinirken hata: ' + err.message });
+        });
+    } catch (error) {
+        console.error('Get payment statistics error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server error'
+        });
     }
 });
 

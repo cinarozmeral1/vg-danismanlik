@@ -37,7 +37,7 @@ async function getAllTables() {
         console.error('❌ Tablo listesi alınamadı:', error.message);
         // Fallback: Bilinen tablolar
         return ['users', 'applications', 'documents', 'admins', 'services', 
-                'installments', 'notes', 'checklist_items', 'user_documents', 'student_stories'];
+                'installments', 'notes', 'checklist_items', 'user_documents'];
     }
 }
 

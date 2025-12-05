@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const pool = require('../config/database');
 const { authenticateUser } = require('../middleware/auth');
+const stripeConfig = require('../config/stripe');
 
 const router = express.Router();
 
@@ -113,6 +114,28 @@ router.get('/files', async (req, res) => {
         });
     } catch (error) {
         console.error('Files page error:', error);
+        res.redirect('/login');
+    }
+});
+
+// Render user services page
+router.get('/services', async (req, res) => {
+    try {
+        // Check if user is logged in
+        if (!res.locals.isLoggedIn) {
+            return res.redirect('/login');
+        }
+
+        res.render('user/services', { 
+            title: 'Hizmetler & Ödemeler',
+            currentLanguage: res.locals.currentLanguage || 'tr',
+            isLoggedIn: res.locals.isLoggedIn,
+            currentUser: res.locals.currentUser,
+            user: res.locals.currentUser,
+            t: res.locals.t
+        });
+    } catch (error) {
+        console.error('Services page error:', error);
         res.redirect('/login');
     }
 });
@@ -950,6 +973,360 @@ router.delete('/api/files/:id', authenticateUser, async (req, res) => {
     } catch (error) {
         console.error('Delete file error:', error);
         res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// =====================================================
+// PAYMENT & SERVICES API ENDPOINTS
+// =====================================================
+
+// Get Stripe configuration (publishable key)
+router.get('/stripe-config', authenticateUser, async (req, res) => {
+    try {
+        res.json({
+            success: true,
+            publishableKey: stripeConfig.stripePublishableKey
+        });
+    } catch (error) {
+        console.error('Get Stripe config error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Yapılandırma alınamadı'
+        });
+    }
+});
+
+// Get user's services (for payment)
+router.get('/api/services', authenticateUser, async (req, res) => {
+    try {
+        // Get services with installments
+        const servicesResult = await pool.query(`
+            SELECT 
+                s.*,
+                CASE 
+                    WHEN s.is_paid = true THEN 'paid'
+                    WHEN s.stripe_payment_status = 'succeeded' THEN 'paid'
+                    WHEN s.stripe_payment_status = 'processing' THEN 'processing'
+                    WHEN s.stripe_payment_status = 'requires_action' THEN 'requires_action'
+                    ELSE 'pending'
+                END as payment_status
+            FROM services s
+            WHERE s.user_id = $1
+            ORDER BY 
+                CASE WHEN s.is_paid = false THEN 0 ELSE 1 END,
+                s.due_date ASC NULLS LAST,
+                s.created_at DESC
+        `, [req.user.id]);
+
+        // Get installments for each service
+        const services = [];
+        for (let service of servicesResult.rows) {
+            const installmentsResult = await pool.query(`
+                SELECT *
+                FROM installments
+                WHERE service_id = $1
+                ORDER BY installment_number
+            `, [service.id]);
+
+            services.push({
+                ...service,
+                installments: installmentsResult.rows,
+                has_installments: installmentsResult.rows.length > 0
+            });
+        }
+
+        res.json({
+            success: true,
+            services: services
+        });
+    } catch (error) {
+        console.error('Get services error:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Hizmetler yüklenirken bir hata oluştu' 
+        });
+    }
+});
+
+// Create payment intent for a service
+router.post('/api/services/:id/create-payment-intent', authenticateUser, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { currency } = req.body;
+
+        // Verify service belongs to user and is not paid
+        const serviceResult = await pool.query(
+            'SELECT * FROM services WHERE id = $1 AND user_id = $2',
+            [id, req.user.id]
+        );
+
+        if (serviceResult.rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Hizmet bulunamadı'
+            });
+        }
+
+        const service = serviceResult.rows[0];
+
+        if (service.is_paid) {
+            return res.status(400).json({
+                success: false,
+                message: 'Bu hizmet zaten ödenmiş'
+            });
+        }
+
+        // Use provided currency or service's currency
+        const paymentCurrency = currency || service.currency || 'EUR';
+
+        // Validate currency
+        if (!stripeConfig.supportedCurrencies.includes(paymentCurrency.toUpperCase())) {
+            return res.status(400).json({
+                success: false,
+                message: 'Geçersiz para birimi'
+            });
+        }
+
+        // Create payment intent
+        const paymentIntent = await stripeConfig.createPaymentIntent(
+            service.amount,
+            paymentCurrency,
+            {
+                service_id: service.id,
+                user_id: req.user.id,
+                service_name: service.service_name
+            }
+        );
+
+        // Update service with payment intent ID
+        await pool.query(
+            `UPDATE services 
+             SET stripe_payment_intent_id = $1, 
+                 stripe_payment_status = $2,
+                 updated_at = CURRENT_TIMESTAMP
+             WHERE id = $3`,
+            [paymentIntent.id, paymentIntent.status, service.id]
+        );
+
+        // Log payment attempt
+        await pool.query(
+            `INSERT INTO payment_logs 
+             (service_id, user_id, stripe_event_type, status, amount, currency, metadata)
+             VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+            [
+                service.id,
+                req.user.id,
+                'payment_intent.created',
+                paymentIntent.status,
+                service.amount,
+                paymentCurrency,
+                JSON.stringify({ payment_intent_id: paymentIntent.id })
+            ]
+        );
+
+        res.json({
+            success: true,
+            clientSecret: paymentIntent.client_secret,
+            paymentIntentId: paymentIntent.id,
+            amount: service.amount,
+            currency: paymentCurrency
+        });
+    } catch (error) {
+        console.error('Create payment intent error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Ödeme işlemi başlatılırken bir hata oluştu: ' + error.message
+        });
+    }
+});
+
+// Check payment status for a service
+router.get('/api/services/:id/payment-status', authenticateUser, async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const serviceResult = await pool.query(
+            'SELECT * FROM services WHERE id = $1 AND user_id = $2',
+            [id, req.user.id]
+        );
+
+        if (serviceResult.rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Hizmet bulunamadı'
+            });
+        }
+
+        const service = serviceResult.rows[0];
+
+        let paymentIntent = null;
+        if (service.stripe_payment_intent_id) {
+            try {
+                paymentIntent = await stripeConfig.retrievePaymentIntent(
+                    service.stripe_payment_intent_id
+                );
+            } catch (error) {
+                console.error('Error retrieving payment intent:', error);
+            }
+        }
+
+        res.json({
+            success: true,
+            service: {
+                id: service.id,
+                service_name: service.service_name,
+                amount: service.amount,
+                currency: service.currency,
+                is_paid: service.is_paid,
+                payment_date: service.payment_date,
+                stripe_payment_status: service.stripe_payment_status,
+                stripe_payment_intent_id: service.stripe_payment_intent_id
+            },
+            paymentIntent: paymentIntent ? {
+                id: paymentIntent.id,
+                status: paymentIntent.status,
+                amount: paymentIntent.amount / 100,
+                currency: paymentIntent.currency
+            } : null
+        });
+    } catch (error) {
+        console.error('Get payment status error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Ödeme durumu sorgulanırken bir hata oluştu'
+        });
+    }
+});
+
+// Get installments for a service
+router.get('/api/services/:id/installments', authenticateUser, async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Verify service belongs to user
+        const serviceResult = await pool.query(
+            'SELECT * FROM services WHERE id = $1 AND user_id = $2',
+            [id, req.user.id]
+        );
+
+        if (serviceResult.rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Hizmet bulunamadı'
+            });
+        }
+
+        const installmentsResult = await pool.query(
+            'SELECT * FROM installments WHERE service_id = $1 ORDER BY installment_number',
+            [id]
+        );
+
+        res.json({
+            success: true,
+            installments: installmentsResult.rows
+        });
+    } catch (error) {
+        console.error('Get installments error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Taksitler yüklenirken bir hata oluştu'
+        });
+    }
+});
+
+// Create payment intent for an installment
+router.post('/api/installments/:id/create-payment-intent', authenticateUser, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { currency } = req.body;
+
+        // Get installment and verify ownership
+        const installmentResult = await pool.query(`
+            SELECT i.*, s.user_id, s.currency as service_currency
+            FROM installments i
+            JOIN services s ON i.service_id = s.id
+            WHERE i.id = $1
+        `, [id]);
+
+        if (installmentResult.rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Taksit bulunamadı'
+            });
+        }
+
+        const installment = installmentResult.rows[0];
+
+        if (installment.user_id !== req.user.id) {
+            return res.status(403).json({
+                success: false,
+                message: 'Bu taksit size ait değil'
+            });
+        }
+
+        if (installment.is_paid) {
+            return res.status(400).json({
+                success: false,
+                message: 'Bu taksit zaten ödenmiş'
+            });
+        }
+
+        // Use provided currency or service's currency
+        const paymentCurrency = currency || installment.service_currency || 'EUR';
+
+        // Create payment intent
+        const paymentIntent = await stripeConfig.createPaymentIntent(
+            installment.amount,
+            paymentCurrency,
+            {
+                installment_id: installment.id,
+                service_id: installment.service_id,
+                user_id: req.user.id,
+                installment_number: installment.installment_number
+            }
+        );
+
+        // Update installment with payment intent ID
+        await pool.query(
+            `UPDATE installments 
+             SET updated_at = CURRENT_TIMESTAMP
+             WHERE id = $1`,
+            [installment.id]
+        );
+
+        // Log payment attempt
+        await pool.query(
+            `INSERT INTO payment_logs 
+             (service_id, user_id, stripe_event_type, status, amount, currency, metadata)
+             VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+            [
+                installment.service_id,
+                req.user.id,
+                'installment_payment_intent.created',
+                paymentIntent.status,
+                installment.amount,
+                paymentCurrency,
+                JSON.stringify({ 
+                    payment_intent_id: paymentIntent.id,
+                    installment_id: installment.id,
+                    installment_number: installment.installment_number
+                })
+            ]
+        );
+
+        res.json({
+            success: true,
+            clientSecret: paymentIntent.client_secret,
+            paymentIntentId: paymentIntent.id,
+            amount: installment.amount,
+            currency: paymentCurrency
+        });
+    } catch (error) {
+        console.error('Create installment payment intent error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Taksit ödemesi başlatılırken bir hata oluştu: ' + error.message
+        });
     }
 });
 

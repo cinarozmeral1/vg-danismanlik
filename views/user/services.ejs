@@ -1,0 +1,497 @@
+<!-- Main Content -->
+<section class="section bg-light text-dark" style="min-height: 80vh;">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 mb-4 d-none d-lg-block" id="studentSidebarContainer">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-user me-2"></i>Öğrenci Menüsü</h5>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <a href="/user/dashboard" class="list-group-item list-group-item-action">
+                            <i class="fas fa-user me-2"></i>Profil Bilgileri
+                        </a>
+                        <a href="/user/applications" class="list-group-item list-group-item-action">
+                            <i class="fas fa-file-alt me-2"></i>Başvurularım
+                        </a>
+                        <a href="/user/services" class="list-group-item list-group-item-action active">
+                            <i class="fas fa-credit-card me-2"></i>Hizmetler & Ödemeler
+                        </a>
+                        <a href="/user/files" class="list-group-item list-group-item-action">
+                            <i class="fas fa-folder-open me-2"></i>Dosyalarım
+                        </a>
+                        <a href="/user/settings" class="list-group-item list-group-item-action">
+                            <i class="fas fa-cog me-2"></i>Ayarlar
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action text-danger" data-action="logout">
+                            <i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-9" id="studentMainContent">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0"><i class="fas fa-credit-card me-2"></i>Hizmetler & Ödemeler</h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="alertContainer"></div>
+
+                        <!-- Services List -->
+                        <div id="servicesContainer">
+                            <div class="text-center py-5">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Yükleniyor...</span>
+                                </div>
+                                <p class="mt-3">Hizmetleriniz yükleniyor...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Payment Modal -->
+<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="paymentModalLabel">
+                    <i class="fas fa-credit-card me-2"></i>Ödeme Yap
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Service Info -->
+                <div id="serviceInfo" class="alert alert-info mb-4">
+                    <h6 class="mb-2"><strong id="paymentServiceName"></strong></h6>
+                    <p class="mb-1">Tutar: <strong id="paymentAmount"></strong> <span id="paymentCurrency"></span></p>
+                </div>
+
+                <!-- Currency Selector (if needed) -->
+                <div class="mb-4" id="currencySelectorContainer" style="display: none;">
+                    <label class="form-label">Para Birimi Seçin</label>
+                    <div class="btn-group w-100" role="group">
+                        <input type="radio" class="btn-check" name="currency" id="currencyTRY" value="TRY">
+                        <label class="btn btn-outline-primary" for="currencyTRY">TRY (₺)</label>
+
+                        <input type="radio" class="btn-check" name="currency" id="currencyEUR" value="EUR" checked>
+                        <label class="btn btn-outline-primary" for="currencyEUR">EUR (€)</label>
+
+                        <input type="radio" class="btn-check" name="currency" id="currencyUSD" value="USD">
+                        <label class="btn btn-outline-primary" for="currencyUSD">USD ($)</label>
+                    </div>
+                </div>
+
+                <!-- Stripe Card Element -->
+                <div class="mb-4">
+                    <label class="form-label">Kart Bilgileri</label>
+                    <div id="card-element" class="form-control" style="height: 40px; padding: 10px;"></div>
+                    <div id="card-errors" class="text-danger mt-2" role="alert"></div>
+                </div>
+
+                <!-- Security Info -->
+                <div class="alert alert-light border">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-lock text-success me-3" style="font-size: 24px;"></i>
+                        <div>
+                            <strong>Güvenli Ödeme</strong>
+                            <p class="mb-0 small text-muted">Ödemeniz SSL sertifikası ile şifrelenmiş ve Stripe tarafından güvenli bir şekilde işlenir. Kart bilgileriniz asla sunucularımızda saklanmaz.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-primary" id="submitPaymentBtn">
+                    <i class="fas fa-lock me-2"></i>Ödemeyi Tamamla
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include Stripe.js -->
+<script src="https://js.stripe.com/v3/"></script>
+
+<script>
+    // Initialize Stripe (publishable key will be loaded dynamically)
+    let stripe = null;
+    let elements = null;
+    let cardElement = null;
+    let currentService = null;
+    let currentInstallment = null;
+
+    // Initialize Stripe when page loads
+    async function initializeStripe() {
+        try {
+            const response = await fetch('/api/user/stripe-config');
+            const config = await response.json();
+            
+            if (config.success && config.publishableKey) {
+                stripe = Stripe(config.publishableKey);
+                elements = stripe.elements();
+                
+                // Create card element
+                cardElement = elements.create('card', {
+                    style: {
+                        base: {
+                            fontSize: '16px',
+                            color: '#32325d',
+                            fontFamily: '"Inter", sans-serif',
+                            '::placeholder': {
+                                color: '#aab7c4'
+                            }
+                        },
+                        invalid: {
+                            color: '#dc3545'
+                        }
+                    }
+                });
+                
+                cardElement.mount('#card-element');
+                
+                // Handle real-time validation errors
+                cardElement.on('change', function(event) {
+                    const displayError = document.getElementById('card-errors');
+                    if (event.error) {
+                        displayError.textContent = event.error.message;
+                    } else {
+                        displayError.textContent = '';
+                    }
+                });
+            } else {
+                console.error('Stripe configuration not available');
+                showAlert('Ödeme sistemi yapılandırılamadı. Lütfen yönetici ile iletişime geçin.', 'danger');
+            }
+        } catch (error) {
+            console.error('Error initializing Stripe:', error);
+            showAlert('Ödeme sistemi başlatılamadı: ' + error.message, 'danger');
+        }
+    }
+
+    // Load services
+    async function loadServices() {
+        try {
+            const response = await fetch('/api/user/services', {
+                credentials: 'include'
+            });
+            const data = await response.json();
+            
+            if (data.success) {
+                displayServices(data.services);
+            } else {
+                showAlert('Hizmetler yüklenemedi: ' + data.message, 'danger');
+            }
+        } catch (error) {
+            console.error('Error loading services:', error);
+            showAlert('Hizmetler yüklenirken bir hata oluştu', 'danger');
+        }
+    }
+
+    // Display services
+    function displayServices(services) {
+        const container = document.getElementById('servicesContainer');
+        
+        if (services.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-5">
+                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Henüz size atanmış bir hizmet bulunmamaktadır.</p>
+                </div>
+            `;
+            return;
+        }
+        
+        // Separate unpaid and paid services
+        const unpaidServices = services.filter(s => !s.is_paid);
+        const paidServices = services.filter(s => s.is_paid);
+        
+        let html = '';
+        
+        // Unpaid services
+        if (unpaidServices.length > 0) {
+            html += '<h5 class="mb-3"><i class="fas fa-exclamation-circle text-warning me-2"></i>Ödenmemiş Hizmetler</h5>';
+            html += '<div class="row mb-4">';
+            
+            unpaidServices.forEach(service => {
+                html += createServiceCard(service);
+            });
+            
+            html += '</div>';
+        }
+        
+        // Paid services
+        if (paidServices.length > 0) {
+            html += '<h5 class="mb-3 mt-4"><i class="fas fa-check-circle text-success me-2"></i>Ödenmiş Hizmetler</h5>';
+            html += '<div class="row">';
+            
+            paidServices.forEach(service => {
+                html += createServiceCard(service);
+            });
+            
+            html += '</div>';
+        }
+        
+        container.innerHTML = html;
+    }
+
+    // Create service card HTML
+    function createServiceCard(service) {
+        const isPaid = service.is_paid;
+        const hasInstallments = service.has_installments && service.installments && service.installments.length > 0;
+        const statusBadge = isPaid 
+            ? '<span class="badge bg-success">Ödendi</span>' 
+            : '<span class="badge bg-warning text-dark">Ödenmedi</span>';
+        
+        const dueDate = service.due_date 
+            ? new Date(service.due_date).toLocaleDateString('tr-TR') 
+            : 'Belirtilmemiş';
+        
+        let cardHtml = `
+            <div class="col-md-6 mb-3">
+                <div class="card h-100 ${isPaid ? 'border-success' : 'border-warning'}">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h6 class="card-title mb-0">${service.service_name}</h6>
+                            ${statusBadge}
+                        </div>
+                        <p class="mb-2"><strong>Tutar:</strong> ${service.amount} ${service.currency}</p>
+                        <p class="mb-2"><strong>Vade Tarihi:</strong> ${dueDate}</p>
+        `;
+        
+        if (isPaid && service.payment_date) {
+            const paymentDate = new Date(service.payment_date).toLocaleDateString('tr-TR');
+            cardHtml += `<p class="mb-2 text-success"><strong>Ödeme Tarihi:</strong> ${paymentDate}</p>`;
+        }
+        
+        if (hasInstallments) {
+            cardHtml += `
+                <hr>
+                <p class="mb-2"><strong>Taksitler:</strong></p>
+                <div class="list-group list-group-flush">
+            `;
+            
+            service.installments.forEach(installment => {
+                const installmentPaid = installment.is_paid;
+                const installmentDueDate = installment.due_date 
+                    ? new Date(installment.due_date).toLocaleDateString('tr-TR') 
+                    : '';
+                
+                cardHtml += `
+                    <div class="list-group-item px-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="badge bg-secondary">${installment.installment_number}. Taksit</span>
+                                <span class="ms-2">${installment.amount} ${service.currency}</span>
+                                ${installmentDueDate ? `<small class="text-muted ms-2">(${installmentDueDate})</small>` : ''}
+                            </div>
+                            ${installmentPaid 
+                                ? '<span class="badge bg-success">Ödendi</span>' 
+                                : `<button class="btn btn-sm btn-primary" onclick="openPaymentModal(null, ${installment.id})">
+                                     <i class="fas fa-credit-card me-1"></i>Öde
+                                   </button>`
+                            }
+                        </div>
+                    </div>
+                `;
+            });
+            
+            cardHtml += '</div>';
+        }
+        
+        if (!isPaid && !hasInstallments) {
+            cardHtml += `
+                <button class="btn btn-primary w-100 mt-3" onclick="openPaymentModal(${service.id}, null)">
+                    <i class="fas fa-credit-card me-2"></i>Ödeme Yap
+                </button>
+            `;
+        }
+        
+        cardHtml += `
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        return cardHtml;
+    }
+
+    // Open payment modal
+    async function openPaymentModal(serviceId, installmentId) {
+        currentService = serviceId;
+        currentInstallment = installmentId;
+        
+        try {
+            // Get service details
+            let serviceName, amount, currency;
+            
+            if (installmentId) {
+                // Get installment details
+                const response = await fetch(`/api/user/installments/${installmentId}/details`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                if (data.success) {
+                    serviceName = data.installment.service_name + ' - ' + data.installment.installment_number + '. Taksit';
+                    amount = data.installment.amount;
+                    currency = data.installment.currency;
+                }
+            } else {
+                // Get service details
+                const response = await fetch(`/api/user/services`, {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                if (data.success) {
+                    const service = data.services.find(s => s.id === serviceId);
+                    if (service) {
+                        serviceName = service.service_name;
+                        amount = service.amount;
+                        currency = service.currency;
+                    }
+                }
+            }
+            
+            // Update modal
+            document.getElementById('paymentServiceName').textContent = serviceName;
+            document.getElementById('paymentAmount').textContent = amount;
+            document.getElementById('paymentCurrency').textContent = currency;
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('paymentModal'));
+            modal.show();
+            
+        } catch (error) {
+            console.error('Error opening payment modal:', error);
+            showAlert('Ödeme formu açılırken bir hata oluştu', 'danger');
+        }
+    }
+
+    // Submit payment
+    document.getElementById('submitPaymentBtn')?.addEventListener('click', async function() {
+        if (!stripe || !cardElement) {
+            showAlert('Ödeme sistemi hazır değil', 'danger');
+            return;
+        }
+        
+        const btn = this;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>İşleniyor...';
+        
+        try {
+            // Get selected currency
+            const currency = document.querySelector('input[name="currency"]:checked')?.value || 'EUR';
+            
+            // Create payment intent
+            const endpoint = currentInstallment 
+                ? `/api/user/installments/${currentInstallment}/create-payment-intent`
+                : `/api/user/services/${currentService}/create-payment-intent`;
+            
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify({ currency })
+            });
+            
+            const data = await response.json();
+            
+            if (!data.success) {
+                throw new Error(data.message || 'Payment intent creation failed');
+            }
+            
+            // Confirm payment with Stripe
+            const { error, paymentIntent } = await stripe.confirmCardPayment(data.clientSecret, {
+                payment_method: {
+                    card: cardElement
+                }
+            });
+            
+            if (error) {
+                throw new Error(error.message);
+            }
+            
+            if (paymentIntent.status === 'succeeded') {
+                showAlert('Ödeme başarıyla tamamlandı!', 'success');
+                
+                // Close modal
+                bootstrap.Modal.getInstance(document.getElementById('paymentModal')).hide();
+                
+                // Reload services
+                setTimeout(() => {
+                    loadServices();
+                }, 1000);
+            } else {
+                throw new Error('Ödeme beklenmeyen bir durumda: ' + paymentIntent.status);
+            }
+            
+        } catch (error) {
+            console.error('Payment error:', error);
+            showAlert('Ödeme işlemi başarısız: ' + error.message, 'danger');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-lock me-2"></i>Ödemeyi Tamamla';
+        }
+    });
+
+    // Logout function
+    function logout() {
+        fetch('/api/auth/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = '/';
+            } else {
+                console.error('Logout failed:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error during logout:', error);
+            window.location.href = '/';
+        });
+    }
+
+    // Alert function
+    function showAlert(message, type) {
+        const alertContainer = document.getElementById('alertContainer');
+        const alert = document.createElement('div');
+        alert.className = `alert alert-${type} alert-dismissible fade show`;
+        alert.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        alertContainer.appendChild(alert);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            alert.remove();
+        }, 5000);
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeStripe();
+        loadServices();
+        
+        // Setup logout handler
+        document.querySelectorAll('[data-action="logout"]').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                logout();
+            });
+        });
+    });
+</script>
+
