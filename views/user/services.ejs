@@ -131,6 +131,12 @@
             const response = await fetch('/api/user/stripe-config', {
                 credentials: 'include'
             });
+            
+            if (!response.ok) {
+                console.warn('Stripe config could not be loaded, payment will not work yet');
+                return; // Don't block page loading
+            }
+            
             const config = await response.json();
             
             if (config.success && config.publishableKey) {
@@ -165,19 +171,22 @@
                         displayError.textContent = '';
                     }
                 });
+                
+                console.log('✅ Stripe initialized successfully');
             } else {
-                console.error('Stripe configuration not available');
-                showAlert('Ödeme sistemi yapılandırılamadı. Lütfen yönetici ile iletişime geçin.', 'danger');
+                console.warn('Stripe publishable key not available - payments disabled');
             }
         } catch (error) {
-            console.error('Error initializing Stripe:', error);
-            showAlert('Ödeme sistemi başlatılamadı: ' + error.message, 'danger');
+            console.warn('Stripe initialization failed:', error);
+            // Don't show error to user, just log it
         }
     }
 
     // Load services
     async function loadServices() {
         try {
+            console.log('🔄 Loading services...');
+            
             const response = await fetch('/api/user/services', {
                 method: 'GET',
                 credentials: 'include',
@@ -186,20 +195,27 @@
                 }
             });
             
+            console.log('📡 Response status:', response.status);
+            
             if (!response.ok) {
+                const errorText = await response.text();
+                console.error('API Error:', errorText);
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
             
             const data = await response.json();
+            console.log('📦 Response data:', data);
             
             if (data.success) {
+                console.log('✅ Services loaded:', data.services.length);
                 displayServices(data.services);
             } else {
+                console.error('API returned error:', data.message);
                 showAlert('Hizmetler yüklenemedi: ' + data.message, 'danger');
             }
         } catch (error) {
-            console.error('Error loading services:', error);
-            showAlert('Hizmetler yüklenirken bir hata oluştu', 'danger');
+            console.error('❌ Error loading services:', error);
+            showAlert('Hizmetler yüklenirken bir hata oluştu: ' + error.message, 'danger');
         }
     }
 
@@ -319,6 +335,7 @@
                 <button class="btn btn-primary w-100 mt-3" onclick="openPaymentModal(${service.id}, null)">
                     <i class="fas fa-credit-card me-2"></i>Ödeme Yap
                 </button>
+                ${!stripe ? '<small class="text-muted d-block mt-2 text-center">Ödeme sistemi yakında aktif olacak</small>' : ''}
             `;
         }
         
@@ -385,7 +402,7 @@
     // Submit payment
     document.getElementById('submitPaymentBtn')?.addEventListener('click', async function() {
         if (!stripe || !cardElement) {
-            showAlert('Ödeme sistemi hazır değil', 'danger');
+            showAlert('Ödeme sistemi henüz aktif değil. Stripe entegrasyonu tamamlanmalı.', 'warning');
             return;
         }
         
