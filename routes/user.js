@@ -1020,24 +1020,20 @@ router.get('/stripe-config', authenticateUser, async (req, res) => {
 // Get user's services (for payment)
 router.get('/api/services', authenticateUser, async (req, res) => {
     try {
-        // Get services with installments
+        console.log('📋 Fetching services for user:', req.user.id);
+        
+        // Get services - simple query first
         const servicesResult = await pool.query(`
-            SELECT 
-                s.*,
-                CASE 
-                    WHEN s.is_paid = true THEN 'paid'
-                    WHEN s.stripe_payment_status = 'succeeded' THEN 'paid'
-                    WHEN s.stripe_payment_status = 'processing' THEN 'processing'
-                    WHEN s.stripe_payment_status = 'requires_action' THEN 'requires_action'
-                    ELSE 'pending'
-                END as payment_status
-            FROM services s
-            WHERE s.user_id = $1
+            SELECT *
+            FROM services
+            WHERE user_id = $1
             ORDER BY 
-                CASE WHEN s.is_paid = false THEN 0 ELSE 1 END,
-                s.due_date ASC NULLS LAST,
-                s.created_at DESC
+                is_paid ASC,
+                due_date ASC NULLS LAST,
+                created_at DESC
         `, [req.user.id]);
+        
+        console.log('✅ Found', servicesResult.rows.length, 'services');
 
         // Get installments for each service
         const services = [];
