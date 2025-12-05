@@ -1022,45 +1022,48 @@ router.get('/api/services', authenticateUser, async (req, res) => {
     try {
         console.log('📋 Fetching services for user:', req.user.id);
         
-        // Get services - simple query first
-        const servicesResult = await pool.query(`
-            SELECT *
-            FROM services
-            WHERE user_id = $1
-            ORDER BY 
-                is_paid ASC,
-                due_date ASC NULLS LAST,
-                created_at DESC
-        `, [req.user.id]);
+        // Get services - SIMPLEST query possible
+        const servicesResult = await pool.query(
+            'SELECT * FROM services WHERE user_id = $1',
+            [req.user.id]
+        );
         
         console.log('✅ Found', servicesResult.rows.length, 'services');
 
         // Get installments for each service
         const services = [];
         for (let service of servicesResult.rows) {
-            const installmentsResult = await pool.query(`
-                SELECT *
-                FROM installments
-                WHERE service_id = $1
-                ORDER BY installment_number
-            `, [service.id]);
+            let installments = [];
+            
+            try {
+                const installmentsResult = await pool.query(
+                    'SELECT * FROM installments WHERE service_id = $1',
+                    [service.id]
+                );
+                installments = installmentsResult.rows;
+            } catch (instError) {
+                console.log('⚠️ Installments query failed (table may not exist):', instError.message);
+                // Continue without installments
+            }
 
             services.push({
                 ...service,
-                installments: installmentsResult.rows,
-                has_installments: installmentsResult.rows.length > 0
+                installments: installments,
+                has_installments: installments.length > 0
             });
         }
 
+        console.log('✅ Returning', services.length, 'services');
+        
         res.json({
             success: true,
             services: services
         });
     } catch (error) {
-        console.error('Get services error:', error);
+        console.error('❌ Get services error:', error);
         res.status(500).json({ 
             success: false, 
-            message: 'Hizmetler yüklenirken bir hata oluştu' 
+            message: error.message || 'Hizmetler yüklenirken bir hata oluştu' 
         });
     }
 });
