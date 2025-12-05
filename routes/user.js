@@ -1003,29 +1003,37 @@ router.get('/payment-config', authenticateUser, async (req, res) => {
 // Get user's services (for payment)
 router.get('/api/services', authenticateUser, async (req, res) => {
     try {
-        console.log('📋 Fetching services for user ID:', req.user.id);
+        console.log('📋 API CALLED - User ID:', req.user.id);
         
-        // ABSOLUTE SIMPLEST QUERY - No special columns, no ORDER BY
-        const query = 'SELECT id, user_id, service_name, amount, currency, due_date, payment_date, is_paid, notes, created_at FROM services WHERE user_id = $1';
-        const values = [req.user.id];
+        // TEST: Return fake data without touching database
+        const testServices = [
+            {
+                id: 999,
+                user_id: req.user.id,
+                service_name: 'Danismanlik Ucreti',
+                amount: '5.00',
+                currency: 'EUR',
+                due_date: new Date().toISOString(),
+                payment_date: null,
+                is_paid: false,
+                notes: 'Test hizmet',
+                created_at: new Date().toISOString()
+            }
+        ];
         
-        console.log('Running query:', query);
-        console.log('With values:', values);
+        console.log('✅ Returning test data');
         
-        const servicesResult = await pool.query(query, values);
-        
-        console.log('✅ Query executed. Found', servicesResult.rows.length, 'services');
-
-        // Return services as-is
         res.json({
             success: true,
-            services: servicesResult.rows
+            services: testServices,
+            test: true,
+            message: 'TEST MODE - Database sorgusu atılmadı'
         });
     } catch (error) {
-        console.error('❌ Get services error:', error);
+        console.error('❌ Error:', error);
         res.status(500).json({ 
             success: false, 
-            message: error.message || 'Hizmetler yüklenirken bir hata oluştu'
+            message: error.message
         });
     }
 });
