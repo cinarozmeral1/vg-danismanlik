@@ -910,13 +910,22 @@
             
             // Initialize on DOM ready
             document.addEventListener('DOMContentLoaded', function() {
-                console.log('🎯 Page loaded - setting up manual dropdowns');
+                console.log('🎯 DOMContentLoaded - setting up manual dropdowns');
                 
                 // Use manual dropdown implementation
                 window.setupManualDropdowns();
                 
                 // Use requestAnimationFrame for better performance
                 requestAnimationFrame(initializeMobileMenu);
+            });
+            
+            // ALSO initialize after everything is fully loaded
+            window.addEventListener('load', function() {
+                console.log('🎯 Window loaded - re-initializing dropdowns');
+                setTimeout(function() {
+                    window.setupManualDropdowns();
+                }, 200);
+            });
                 
                 // Disable Bootstrap's automatic offcanvas initialization
                 const mobileNav = document.getElementById('mobileNav');
