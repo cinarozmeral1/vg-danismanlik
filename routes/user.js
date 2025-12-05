@@ -1002,14 +1002,12 @@ router.get('/api/services', authenticateUser, async (req, res) => {
     try {
         console.log('📋 Fetching services for user ID:', req.user.id);
         
-        // Get services - Select only specific columns to avoid constraint issues
+        // Get services - Only OLD columns first (new columns might not exist yet)
         const servicesResult = await pool.query(`
             SELECT 
                 id, user_id, service_name, amount, currency, 
                 due_date, payment_date, is_paid, has_installments,
-                notes, created_at, updated_at,
-                stripe_payment_intent_id, paid_amount, paid_currency,
-                wise_transferred, wise_transfer_date
+                notes, created_at, updated_at
             FROM services 
             WHERE user_id = $1
         `, [req.user.id]);
