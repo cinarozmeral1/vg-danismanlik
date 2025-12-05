@@ -433,6 +433,14 @@
                     logout();
                 });
             }
+            
+            // Handle all logout links (including dropdown)
+            document.querySelectorAll('[data-action="logout"]').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    logout();
+                });
+            });
 
             // Load applications on page load
             loadApplications();

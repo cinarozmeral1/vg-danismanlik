@@ -310,5 +310,13 @@
                     window.initializeGlobalDropdowns();
                 }, 1000);
             }
+            
+            // Handle all logout links (including dropdown)
+            document.querySelectorAll('[data-action="logout"]').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    logout();
+                });
+            });
         });
     </script>
