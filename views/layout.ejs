@@ -264,9 +264,15 @@
                     <!-- User Profile / Auth -->
                     <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn === true) { %>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" id="studentDropdownTrigger">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" id="userDropdownToggle">
                                 <i class="fas fa-user-circle me-1"></i>
-                                <%= (currentUser && (currentUser.first_name || currentUser.name)) ? (currentUser.first_name || currentUser.name) : t.nav.profile %>
+                                <% if (currentUser && currentUser.first_name) { %>
+                                    <%= currentUser.first_name %><% if (currentUser.last_name) { %> <%= currentUser.last_name %><% } %>
+                                <% } else if (currentUser && currentUser.name) { %>
+                                    <%= currentUser.name %>
+                                <% } else { %>
+                                    <%= t.nav.profile %>
+                                <% } %>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" id="studentDropdownMenu">
                                 <% if (currentUser && currentUser.is_admin) { %>

@@ -299,17 +299,9 @@
             }, 5000);
         }
 
-        // Initialize dropdowns when page loads
+        // Initialize when page loads
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Files page loaded, initializing dropdowns...');
-            
-            // Re-initialize dropdowns for user pages
-            if (typeof bootstrap !== 'undefined' && window.initializeGlobalDropdowns) {
-                setTimeout(function() {
-                    console.log('Re-initializing dropdowns from files page...');
-                    window.initializeGlobalDropdowns();
-                }, 1000);
-            }
+            console.log('Files page loaded');
             
             // Handle all logout links (including dropdown)
             document.querySelectorAll('[data-action="logout"]').forEach(btn => {

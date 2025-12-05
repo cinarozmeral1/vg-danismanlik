@@ -223,7 +223,6 @@
                 }
             } catch (error) {
                 console.error('Profil verisi alınırken hata:', error);
-                updateUserDropdown({ first_name: '<%= profile ? profile.first_name : "" %>', last_name: '<%= profile ? profile.last_name : "" %>', email: '<%= profile ? profile.email : currentUser.email %>' });
             }
         }
 
@@ -247,8 +246,6 @@
 
             const emailField = document.getElementById('email');
             if (emailField) emailField.value = user.email;
-
-            updateUserDropdown(user);
         }
 
         function formatDate(value) {
@@ -263,16 +260,8 @@
 
         let dropdownInstance = null;
 
-        function updateUserDropdown(user) {
-            const trigger = document.querySelector('#studentDropdownTrigger');
-            if (trigger) {
-                const displayName = `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.email || 'Profil';
-                trigger.innerHTML = `<i class="fas fa-user-circle me-1"></i>${displayName}`;
-                if (typeof window.initializeGlobalDropdowns === 'function') {
-                    window.initializeGlobalDropdowns();
-                }
-            }
-        }
+        // User dropdown is now rendered server-side in layout.ejs
+        // No need to update it with JavaScript
 
         // Alert function
         function showAlert(message, type) {
@@ -313,15 +302,7 @@
 
         // Language options event listeners
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Dashboard page loaded, initializing...');
-            
-            // Re-initialize dropdowns for user pages
-            if (typeof bootstrap !== 'undefined' && window.initializeGlobalDropdowns) {
-                setTimeout(function() {
-                    console.log('Re-initializing dropdowns from dashboard page...');
-                    window.initializeGlobalDropdowns();
-                }, 1000);
-            }
+            console.log('Dashboard page loaded');
             
             const languageOptions = document.querySelectorAll('.language-option');
             
