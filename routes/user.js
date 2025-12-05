@@ -1020,15 +1020,22 @@ router.get('/stripe-config', authenticateUser, async (req, res) => {
 // Get user's services (for payment)
 router.get('/api/services', authenticateUser, async (req, res) => {
     try {
-        console.log('📋 Fetching services for user:', req.user.id);
+        console.log('📋 Fetching services for user ID:', req.user.id, 'Type:', typeof req.user.id);
         
-        // Get services - SIMPLEST query possible
+        // Convert to integer to be safe
+        const userId = parseInt(req.user.id);
+        
+        if (isNaN(userId)) {
+            throw new Error('Invalid user ID');
+        }
+        
+        // Get services - SIMPLEST query possible with explicit type casting
         const servicesResult = await pool.query(
-            'SELECT * FROM services WHERE user_id = $1',
-            [req.user.id]
+            'SELECT * FROM services WHERE user_id = $1::integer',
+            [userId]
         );
         
-        console.log('✅ Found', servicesResult.rows.length, 'services');
+        console.log('✅ Query executed. Found', servicesResult.rows.length, 'services');
 
         // Get installments for each service
         const services = [];
@@ -1037,12 +1044,12 @@ router.get('/api/services', authenticateUser, async (req, res) => {
             
             try {
                 const installmentsResult = await pool.query(
-                    'SELECT * FROM installments WHERE service_id = $1',
+                    'SELECT * FROM installments WHERE service_id = $1::integer',
                     [service.id]
                 );
                 installments = installmentsResult.rows;
             } catch (instError) {
-                console.log('⚠️ Installments query failed (table may not exist):', instError.message);
+                console.log('⚠️ Installments query failed:', instError.message);
                 // Continue without installments
             }
 
@@ -1053,7 +1060,7 @@ router.get('/api/services', authenticateUser, async (req, res) => {
             });
         }
 
-        console.log('✅ Returning', services.length, 'services');
+        console.log('✅ Returning', services.length, 'services to client');
         
         res.json({
             success: true,
@@ -1061,9 +1068,17 @@ router.get('/api/services', authenticateUser, async (req, res) => {
         });
     } catch (error) {
         console.error('❌ Get services error:', error);
+        console.error('❌ Error details:', {
+            message: error.message,
+            code: error.code,
+            detail: error.detail,
+            hint: error.hint,
+            stack: error.stack
+        });
         res.status(500).json({ 
             success: false, 
-            message: error.message || 'Hizmetler yüklenirken bir hata oluştu' 
+            message: error.message || 'Hizmetler yüklenirken bir hata oluştu',
+            error: error.detail || error.hint || error.code || 'Unknown error'
         });
     }
 });
