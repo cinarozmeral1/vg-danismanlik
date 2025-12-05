@@ -140,6 +140,27 @@ router.get('/services', async (req, res) => {
     }
 });
 
+// Debug test page
+router.get('/services-test', async (req, res) => {
+    try {
+        if (!res.locals.isLoggedIn) {
+            return res.redirect('/login');
+        }
+
+        res.render('user/services-test', { 
+            title: 'Services Test',
+            currentLanguage: res.locals.currentLanguage || 'tr',
+            isLoggedIn: res.locals.isLoggedIn,
+            currentUser: res.locals.currentUser,
+            user: res.locals.currentUser,
+            t: res.locals.t
+        });
+    } catch (error) {
+        console.error('Services test page error:', error);
+        res.redirect('/login');
+    }
+});
+
 // Render user settings page
 router.get('/settings', async (req, res) => {
     try {
