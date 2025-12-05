@@ -1000,40 +1000,31 @@ router.get('/payment-config', authenticateUser, async (req, res) => {
     }
 });
 
-// Get user's services (for payment) - NEW ENDPOINT
+// Get user's services (for payment) - REAL DATABASE QUERY
 router.get('/services-list', authenticateUser, async (req, res) => {
     try {
-        console.log('🎯🎯🎯 NEW API CALLED - User ID:', req.user.id);
+        console.log('📋 Fetching services for user ID:', req.user.id);
         
-        // TEST: Return fake data without touching database
-        const testServices = [
-            {
-                id: 999,
-                user_id: req.user.id,
-                service_name: 'Danismanlik Ucreti',
-                amount: '5.00',
-                currency: 'EUR',
-                due_date: new Date().toISOString(),
-                payment_date: null,
-                is_paid: false,
-                notes: 'Test hizmet',
-                created_at: new Date().toISOString()
-            }
-        ];
+        // Get REAL services from database for THIS USER ONLY
+        const query = 'SELECT id, user_id, service_name, amount, currency, due_date, payment_date, is_paid, notes, created_at FROM services WHERE user_id = $1 ORDER BY created_at DESC';
+        const values = [req.user.id];
         
-        console.log('✅ Returning test data from NEW endpoint');
+        console.log('Running query for user:', req.user.id);
         
+        const servicesResult = await pool.query(query, values);
+        
+        console.log('✅ Found', servicesResult.rows.length, 'services for user', req.user.id);
+        
+        // Return REAL services from database
         res.json({
             success: true,
-            services: testServices,
-            test: true,
-            message: 'TEST MODE - Yeni endpoint çalışıyor!'
+            services: servicesResult.rows
         });
     } catch (error) {
-        console.error('❌ Error:', error);
+        console.error('❌ Error fetching services:', error);
         res.status(500).json({ 
             success: false, 
-            message: error.message
+            message: error.message || 'Hizmetler yüklenirken bir hata oluştu'
         });
     }
 });
