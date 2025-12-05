@@ -1005,45 +1005,27 @@ router.get('/api/services', authenticateUser, async (req, res) => {
     try {
         console.log('📋 Fetching services for user ID:', req.user.id);
         
-        // Get services - ONLY columns that existed BEFORE payment features
-        const servicesResult = await pool.query(`
-            SELECT 
-                id, user_id, service_name, amount, currency, 
-                due_date, payment_date, is_paid, has_installments,
-                notes, created_at, updated_at
-            FROM services 
-            WHERE user_id = $1
-            ORDER BY is_paid ASC, created_at DESC
-        `, [req.user.id]);
+        // ABSOLUTE SIMPLEST QUERY - No special columns, no ORDER BY
+        const query = 'SELECT id, user_id, service_name, amount, currency, due_date, payment_date, is_paid, notes, created_at FROM services WHERE user_id = $1';
+        const values = [req.user.id];
+        
+        console.log('Running query:', query);
+        console.log('With values:', values);
+        
+        const servicesResult = await pool.query(query, values);
         
         console.log('✅ Query executed. Found', servicesResult.rows.length, 'services');
 
-        // Simply return services without checking installments (for now)
-        const services = servicesResult.rows.map(service => ({
-            ...service,
-            installments: [],
-            has_installments: false
-        }));
-
-        console.log('✅ Returning', services.length, 'services to client');
-        
+        // Return services as-is
         res.json({
             success: true,
-            services: services
+            services: servicesResult.rows
         });
     } catch (error) {
         console.error('❌ Get services error:', error);
-        console.error('❌ Error details:', {
-            message: error.message,
-            code: error.code,
-            detail: error.detail,
-            hint: error.hint,
-            stack: error.stack
-        });
         res.status(500).json({ 
             success: false, 
-            message: error.message || 'Hizmetler yüklenirken bir hata oluştu',
-            error: error.detail || error.hint || error.code || 'Unknown error'
+            message: error.message || 'Hizmetler yüklenirken bir hata oluştu'
         });
     }
 });
