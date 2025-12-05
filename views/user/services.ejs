@@ -474,17 +474,75 @@
         }, 5000);
     }
 
+    // AGGRESSIVE DROPDOWN FIX FOR SERVICES PAGE
+    function forceDropdownsToWork() {
+        console.log('🔧 FORCING dropdowns to work on services page');
+        
+        const userDropdown = document.getElementById('userDropdownToggle');
+        if (userDropdown) {
+            const parent = userDropdown.closest('.dropdown');
+            const menu = parent ? parent.querySelector('.dropdown-menu') : null;
+            
+            if (menu) {
+                // Remove ALL existing event listeners by cloning
+                const newDropdown = userDropdown.cloneNode(true);
+                userDropdown.parentNode.replaceChild(newDropdown, userDropdown);
+                
+                // Add direct click handler
+                newDropdown.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    
+                    console.log('🎯 USER DROPDOWN CLICKED!');
+                    
+                    // Close all other dropdowns
+                    document.querySelectorAll('.dropdown-menu.show').forEach(m => {
+                        if (m !== menu) m.classList.remove('show');
+                    });
+                    
+                    // Toggle this one
+                    menu.classList.toggle('show');
+                    console.log('Menu is now:', menu.classList.contains('show') ? 'OPEN ✅' : 'CLOSED ❌');
+                });
+                
+                console.log('✅ User dropdown handler attached!');
+            }
+        }
+        
+        // Also handle language dropdown
+        document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
+            if (toggle.id === 'userDropdownToggle') return; // Already handled
+            
+            const parent = toggle.closest('.dropdown');
+            const menu = parent ? parent.querySelector('.dropdown-menu') : null;
+            if (!menu) return;
+            
+            const newToggle = toggle.cloneNode(true);
+            toggle.parentNode.replaceChild(newToggle, toggle);
+            
+            newToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                document.querySelectorAll('.dropdown-menu.show').forEach(m => {
+                    if (m !== menu) m.classList.remove('show');
+                });
+                
+                menu.classList.toggle('show');
+            });
+        });
+    }
+    
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('Services page loading...');
+        console.log('🎯 Services page loading...');
         
-        // Make sure dropdowns are working on this page
-        setTimeout(function() {
-            if (typeof window.setupManualDropdowns === 'function') {
-                console.log('Re-initializing dropdowns on services page');
-                window.setupManualDropdowns();
-            }
-        }, 100);
+        // Force dropdowns MULTIPLE TIMES to make sure they work
+        setTimeout(forceDropdownsToWork, 100);
+        setTimeout(forceDropdownsToWork, 500);
+        setTimeout(forceDropdownsToWork, 1000);
+        setTimeout(forceDropdownsToWork, 2000);
         
         initializePaymentSystem();
         loadServices();
