@@ -354,7 +354,7 @@
                 }
             } else {
                 // Get service details
-                const response = await fetch(`/api/user/services`, {
+                const response = await fetch(`/api/user/services-list`, {
                     credentials: 'include'
                 });
                 const data = await response.json();
