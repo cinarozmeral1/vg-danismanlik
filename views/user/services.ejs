@@ -476,6 +476,16 @@
 
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
+        console.log('Services page loading...');
+        
+        // Make sure dropdowns are working on this page
+        setTimeout(function() {
+            if (typeof window.setupManualDropdowns === 'function') {
+                console.log('Re-initializing dropdowns on services page');
+                window.setupManualDropdowns();
+            }
+        }, 100);
+        
         initializePaymentSystem();
         loadServices();
         

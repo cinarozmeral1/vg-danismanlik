@@ -859,7 +859,9 @@
             }
             
             // MANUAL DROPDOWN HANDLER - Bypass Bootstrap's buggy implementation
-            function setupManualDropdowns() {
+            window.setupManualDropdowns = function() {
+                console.log('🔧 Setting up manual dropdowns...');
+                
                 document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
                     const parent = toggle.closest('.dropdown');
                     const menu = parent ? parent.querySelector('.dropdown-menu') : null;
@@ -875,6 +877,8 @@
                         e.preventDefault();
                         e.stopPropagation();
                         
+                        console.log('Dropdown clicked!');
+                        
                         // Close all other dropdowns
                         document.querySelectorAll('.dropdown-menu.show').forEach(otherMenu => {
                             if (otherMenu !== menu) {
@@ -884,10 +888,16 @@
                         
                         // Toggle this dropdown
                         menu.classList.toggle('show');
+                        console.log('Menu toggled, now:', menu.classList.contains('show') ? 'OPEN' : 'CLOSED');
                     });
                 });
                 
-                // Close dropdown when clicking outside
+                console.log('✅ Manual dropdowns initialized');
+            }
+            
+            // Close dropdown when clicking outside (only setup once)
+            let outsideClickSetup = false;
+            if (!outsideClickSetup) {
                 document.addEventListener('click', function(e) {
                     if (!e.target.closest('.dropdown')) {
                         document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
@@ -895,8 +905,7 @@
                         });
                     }
                 });
-                
-                console.log('✅ Manual dropdowns initialized');
+                outsideClickSetup = true;
             }
             
             // Initialize on DOM ready
@@ -904,7 +913,7 @@
                 console.log('🎯 Page loaded - setting up manual dropdowns');
                 
                 // Use manual dropdown implementation
-                setupManualDropdowns();
+                window.setupManualDropdowns();
                 
                 // Use requestAnimationFrame for better performance
                 requestAnimationFrame(initializeMobileMenu);
