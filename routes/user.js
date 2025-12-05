@@ -140,26 +140,6 @@ router.get('/services', async (req, res) => {
     }
 });
 
-// Debug test page
-router.get('/services-test', async (req, res) => {
-    try {
-        if (!res.locals.isLoggedIn) {
-            return res.redirect('/login');
-        }
-
-        res.render('user/services-test', { 
-            title: 'Services Test',
-            currentLanguage: res.locals.currentLanguage || 'tr',
-            isLoggedIn: res.locals.isLoggedIn,
-            currentUser: res.locals.currentUser,
-            user: res.locals.currentUser,
-            t: res.locals.t
-        });
-    } catch (error) {
-        console.error('Services test page error:', error);
-        res.redirect('/login');
-    }
-});
 
 // Render user settings page
 router.get('/settings', async (req, res) => {
@@ -1020,20 +1000,19 @@ router.get('/stripe-config', authenticateUser, async (req, res) => {
 // Get user's services (for payment)
 router.get('/api/services', authenticateUser, async (req, res) => {
     try {
-        console.log('📋 Fetching services for user ID:', req.user.id, 'Type:', typeof req.user.id);
+        console.log('📋 Fetching services for user ID:', req.user.id);
         
-        // Convert to integer to be safe
-        const userId = parseInt(req.user.id);
-        
-        if (isNaN(userId)) {
-            throw new Error('Invalid user ID');
-        }
-        
-        // Get services - SIMPLEST query possible with explicit type casting
-        const servicesResult = await pool.query(
-            'SELECT * FROM services WHERE user_id = $1::integer',
-            [userId]
-        );
+        // Get services - Select only specific columns to avoid constraint issues
+        const servicesResult = await pool.query(`
+            SELECT 
+                id, user_id, service_name, amount, currency, 
+                due_date, payment_date, is_paid, has_installments,
+                notes, created_at, updated_at,
+                stripe_payment_intent_id, paid_amount, paid_currency,
+                wise_transferred, wise_transfer_date
+            FROM services 
+            WHERE user_id = $1
+        `, [req.user.id]);
         
         console.log('✅ Query executed. Found', servicesResult.rows.length, 'services');
 
