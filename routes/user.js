@@ -1005,42 +1005,25 @@ router.get('/api/services', authenticateUser, async (req, res) => {
     try {
         console.log('📋 Fetching services for user ID:', req.user.id);
         
-        // Get services - Only essential columns (no Wise transfer columns)
+        // Get services - ONLY columns that existed BEFORE payment features
         const servicesResult = await pool.query(`
             SELECT 
                 id, user_id, service_name, amount, currency, 
                 due_date, payment_date, is_paid, has_installments,
-                notes, created_at, updated_at,
-                gopay_payment_id, gopay_payment_status, payment_method,
-                transaction_id, paid_amount, paid_currency
+                notes, created_at, updated_at
             FROM services 
             WHERE user_id = $1
+            ORDER BY is_paid ASC, created_at DESC
         `, [req.user.id]);
         
         console.log('✅ Query executed. Found', servicesResult.rows.length, 'services');
 
-        // Get installments for each service
-        const services = [];
-        for (let service of servicesResult.rows) {
-            let installments = [];
-            
-            try {
-                const installmentsResult = await pool.query(
-                    'SELECT * FROM installments WHERE service_id = $1::integer',
-                    [service.id]
-                );
-                installments = installmentsResult.rows;
-            } catch (instError) {
-                console.log('⚠️ Installments query failed:', instError.message);
-                // Continue without installments
-            }
-
-            services.push({
-                ...service,
-                installments: installments,
-                has_installments: installments.length > 0
-            });
-        }
+        // Simply return services without checking installments (for now)
+        const services = servicesResult.rows.map(service => ({
+            ...service,
+            installments: [],
+            has_installments: false
+        }));
 
         console.log('✅ Returning', services.length, 'services to client');
         
