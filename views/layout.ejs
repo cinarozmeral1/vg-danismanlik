@@ -854,6 +854,10 @@
             
             // Initialize on DOM ready
             document.addEventListener('DOMContentLoaded', function() {
+                // Initialize all dropdowns immediately
+                console.log('🎯 Initializing all dropdowns on page load');
+                initializeDropdowns();
+                
                 // Use requestAnimationFrame for better performance
                 requestAnimationFrame(initializeMobileMenu);
                 
