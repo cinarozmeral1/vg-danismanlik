@@ -1234,6 +1234,56 @@ router.get('/api/services/:id/installments', authenticateUser, async (req, res) 
     }
 });
 
+// Get installment details
+router.get('/api/installments/:id/details', authenticateUser, async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const result = await pool.query(`
+            SELECT i.*, s.service_name, s.currency, s.user_id
+            FROM installments i
+            JOIN services s ON i.service_id = s.id
+            WHERE i.id = $1
+        `, [id]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Taksit bulunamadı'
+            });
+        }
+
+        const installment = result.rows[0];
+
+        // Verify ownership
+        if (installment.user_id !== req.user.id) {
+            return res.status(403).json({
+                success: false,
+                message: 'Bu taksit size ait değil'
+            });
+        }
+
+        res.json({
+            success: true,
+            installment: {
+                id: installment.id,
+                service_name: installment.service_name,
+                installment_number: installment.installment_number,
+                amount: installment.amount,
+                currency: installment.currency,
+                due_date: installment.due_date,
+                is_paid: installment.is_paid
+            }
+        });
+    } catch (error) {
+        console.error('Get installment details error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Taksit bilgileri alınamadı'
+        });
+    }
+});
+
 // Create payment intent for an installment
 router.post('/api/installments/:id/create-payment-intent', authenticateUser, async (req, res) => {
     try {

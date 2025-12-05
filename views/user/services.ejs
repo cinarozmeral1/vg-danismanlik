@@ -128,7 +128,9 @@
     // Initialize Stripe when page loads
     async function initializeStripe() {
         try {
-            const response = await fetch('/api/user/stripe-config');
+            const response = await fetch('/api/user/stripe-config', {
+                credentials: 'include'
+            });
             const config = await response.json();
             
             if (config.success && config.publishableKey) {
@@ -177,8 +179,17 @@
     async function loadServices() {
         try {
             const response = await fetch('/api/user/services', {
-                credentials: 'include'
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            
             const data = await response.json();
             
             if (data.success) {
