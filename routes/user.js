@@ -981,7 +981,7 @@ router.delete('/api/files/:id', authenticateUser, async (req, res) => {
 // PAYMENT & SERVICES API ENDPOINTS
 // =====================================================
 
-// Get GoPay configuration
+// Get GoPay configuration (fix endpoint path)
 router.get('/payment-config', authenticateUser, async (req, res) => {
     try {
         res.json({
@@ -1001,7 +1001,7 @@ router.get('/payment-config', authenticateUser, async (req, res) => {
 });
 
 // Get user's services (for payment)
-router.get('/api/services', authenticateUser, async (req, res) => {
+router.get('/services', authenticateUser, async (req, res) => {
     try {
         console.log('📋 API CALLED - User ID:', req.user.id);
         
