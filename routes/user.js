@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const pool = require('../config/database');
 const { authenticateUser } = require('../middleware/auth');
-const stripeConfig = require('../config/stripe');
+const { gopayConfig, goPayService } = require('../config/gopay');
 
 const router = express.Router();
 
@@ -981,15 +981,18 @@ router.delete('/api/files/:id', authenticateUser, async (req, res) => {
 // PAYMENT & SERVICES API ENDPOINTS
 // =====================================================
 
-// Get Stripe configuration (publishable key)
-router.get('/stripe-config', authenticateUser, async (req, res) => {
+// Get GoPay configuration
+router.get('/payment-config', authenticateUser, async (req, res) => {
     try {
         res.json({
             success: true,
-            publishableKey: stripeConfig.stripePublishableKey
+            isConfigured: gopayConfig.isConfigured(),
+            supportedCurrencies: gopayConfig.supportedCurrencies,
+            defaultCurrency: gopayConfig.defaultCurrency,
+            provider: 'GoPay'
         });
     } catch (error) {
-        console.error('Get Stripe config error:', error);
+        console.error('Get payment config error:', error);
         res.status(500).json({
             success: false,
             message: 'Yapılandırma alınamadı'
@@ -1002,12 +1005,14 @@ router.get('/api/services', authenticateUser, async (req, res) => {
     try {
         console.log('📋 Fetching services for user ID:', req.user.id);
         
-        // Get services - Only OLD columns first (new columns might not exist yet)
+        // Get services - Only essential columns (no Wise transfer columns)
         const servicesResult = await pool.query(`
             SELECT 
                 id, user_id, service_name, amount, currency, 
                 due_date, payment_date, is_paid, has_installments,
-                notes, created_at, updated_at
+                notes, created_at, updated_at,
+                gopay_payment_id, gopay_payment_status, payment_method,
+                transaction_id, paid_amount, paid_currency
             FROM services 
             WHERE user_id = $1
         `, [req.user.id]);

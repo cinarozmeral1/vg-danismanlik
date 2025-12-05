@@ -86,12 +86,28 @@
                     </div>
                 </div>
 
-                <!-- Stripe Card Element -->
-                <div class="mb-4">
-                    <label class="form-label">Kart Bilgileri</label>
-                    <div id="card-element" class="form-control" style="height: 40px; padding: 10px;"></div>
-                    <div id="card-errors" class="text-danger mt-2" role="alert"></div>
-                </div>
+<!-- Payment Card Form -->
+<div class="mb-4">
+    <label class="form-label">Kart Bilgileri</label>
+    <div class="alert alert-warning">
+        <i class="fas fa-info-circle me-2"></i>
+        <strong>Ödeme sistemi yakında aktif olacak!</strong>
+        <p class="mb-0 mt-2 small">Şirket kurulumu tamamlandığında GoPay ile güvenli ödeme yapabileceksiniz.</p>
+    </div>
+    <div id="card-form" style="opacity: 0.5; pointer-events: none;">
+        <div class="mb-3">
+            <input type="text" class="form-control" placeholder="Kart Numarası" disabled>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <input type="text" class="form-control" placeholder="MM/YY" disabled>
+            </div>
+            <div class="col-6">
+                <input type="text" class="form-control" placeholder="CVV" disabled>
+            </div>
+        </div>
+    </div>
+</div>
 
                 <!-- Security Info -->
                 <div class="alert alert-light border">
@@ -115,70 +131,38 @@
 </div>
 
 <!-- Include Stripe.js -->
-<script src="https://js.stripe.com/v3/"></script>
-
 <script>
-    // Initialize Stripe (publishable key will be loaded dynamically)
-    let stripe = null;
-    let elements = null;
-    let cardElement = null;
+    // Payment system variables
+    let paymentConfig = null;
     let currentService = null;
     let currentInstallment = null;
 
-    // Initialize Stripe when page loads
-    async function initializeStripe() {
+    // Initialize payment system when page loads
+    async function initializePaymentSystem() {
         try {
-            const response = await fetch('/api/user/stripe-config', {
+            const response = await fetch('/api/user/payment-config', {
                 credentials: 'include'
             });
             
             if (!response.ok) {
-                console.warn('Stripe config could not be loaded, payment will not work yet');
-                return; // Don't block page loading
+                console.warn('Payment config could not be loaded');
+                return;
             }
             
             const config = await response.json();
             
-            if (config.success && config.publishableKey) {
-                stripe = Stripe(config.publishableKey);
-                elements = stripe.elements();
+            if (config.success) {
+                paymentConfig = config;
+                console.log('✅ Payment system:', config.provider, '| Configured:', config.isConfigured);
                 
-                // Create card element
-                cardElement = elements.create('card', {
-                    style: {
-                        base: {
-                            fontSize: '16px',
-                            color: '#32325d',
-                            fontFamily: '"Inter", sans-serif',
-                            '::placeholder': {
-                                color: '#aab7c4'
-                            }
-                        },
-                        invalid: {
-                            color: '#dc3545'
-                        }
-                    }
-                });
-                
-                cardElement.mount('#card-element');
-                
-                // Handle real-time validation errors
-                cardElement.on('change', function(event) {
-                    const displayError = document.getElementById('card-errors');
-                    if (event.error) {
-                        displayError.textContent = event.error.message;
-                    } else {
-                        displayError.textContent = '';
-                    }
-                });
-                
-                console.log('✅ Stripe initialized successfully');
+                if (!config.isConfigured) {
+                    console.log('⚠️ Payment gateway not configured yet - payments will be disabled');
+                }
             } else {
-                console.warn('Stripe publishable key not available - payments disabled');
+                console.warn('Payment configuration not available');
             }
         } catch (error) {
-            console.warn('Stripe initialization failed:', error);
-            // Don't show error to user, just log it
+            console.warn('Payment system initialization failed:', error);
         }
     }
 
@@ -401,8 +385,9 @@
 
     // Submit payment
     document.getElementById('submitPaymentBtn')?.addEventListener('click', async function() {
-        if (!stripe || !cardElement) {
-            showAlert('Ödeme sistemi henüz aktif değil. Stripe entegrasyonu tamamlanmalı.', 'warning');
+        // Check if payment system is configured
+        if (!paymentConfig || !paymentConfig.isConfigured) {
+            showAlert('Ödeme sistemi henüz aktif değil. Şirket kurulumu tamamlandığında ödeme yapabileceksiniz.', 'warning');
             return;
         }
         
@@ -434,18 +419,11 @@
                 throw new Error(data.message || 'Payment intent creation failed');
             }
             
-            // Confirm payment with Stripe
-            const { error, paymentIntent } = await stripe.confirmCardPayment(data.clientSecret, {
-                payment_method: {
-                    card: cardElement
-                }
-            });
-            
-            if (error) {
-                throw new Error(error.message);
-            }
-            
-            if (paymentIntent.status === 'succeeded') {
+            // For GoPay, redirect to payment gateway
+            if (data.paymentUrl) {
+                // Redirect user to GoPay payment page
+                window.location.href = data.paymentUrl;
+            } else if (data.success) {
                 showAlert('Ödeme başarıyla tamamlandı!', 'success');
                 
                 // Close modal
@@ -510,7 +488,7 @@
 
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
-        initializeStripe();
+        initializePaymentSystem();
         loadServices();
         
         // Setup logout handler

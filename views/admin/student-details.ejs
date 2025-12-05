@@ -2029,16 +2029,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 stripeStatusBadge = `<span class="badge bg-${statusInfo.class} text-white">${statusInfo.text}</span>`;
             }
             
-            // Wise transfer status
-            const wiseTransferBadge = service.wise_transferred ?
-                `<span class="badge bg-success"><i class="fas fa-check me-1"></i>Wise'a Transfer Edildi</span>` :
-                (service.is_paid ? 
-                    `<span class="badge bg-warning text-dark"><i class="fas fa-clock me-1"></i>Transfer Bekliyor</span>` : 
-                    '');
+            // Payment status badge (removed Wise transfer)
 
             html += `
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <div class="card h-100 ${service.wise_transferred ? 'border-success' : (service.is_paid ? 'border-warning' : '')}">
+                    <div class="card h-100 ${service.is_paid ? 'border-success' : ''}">
                     <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start mb-3">
                                 <h6 class="card-title mb-0">${service.service_name}</h6>
@@ -2078,16 +2073,6 @@ document.addEventListener('DOMContentLoaded', function() {
                                     ${stripeStatusBadge}
                                 </div>
                                 ` : ''}
-                                ${wiseTransferBadge ? `
-                                <div class="mb-2">
-                                    ${wiseTransferBadge}
-                                </div>
-                                ` : ''}
-                                ${service.wise_transfer_date ? `
-                                <div class="small text-muted">
-                                    Transfer Tarihi: ${new Date(service.wise_transfer_date).toLocaleDateString('tr-TR')}
-                                </div>
-                                ` : ''}
                             </div>
                             
                             ${service.notes ? `
@@ -2097,22 +2082,10 @@ document.addEventListener('DOMContentLoaded', function() {
                                 </div>
                             ` : ''}
                             
-                            ${service.wise_transfer_notes ? `
-                                <div class="mb-3">
-                                    <small class="text-muted">Transfer Notları:</small>
-                                    <p class="small mb-0">${service.wise_transfer_notes}</p>
-                                </div>
-                            ` : ''}
-                            
                             <div class="d-flex gap-2 flex-wrap">
                                 <button class="btn btn-sm btn-outline-primary flex-fill" onclick="editService(${service.id})" title="Düzenle">
                                     <i class="fas fa-edit me-1"></i>Düzenle
                                 </button>
-                                ${service.is_paid && !service.wise_transferred ? `
-                                <button class="btn btn-sm btn-success flex-fill" onclick="markWiseTransferred(${service.id})" title="Wise'a transfer edildi olarak işaretle">
-                                    <i class="fas fa-check me-1"></i>Wise'a Transferi
-                                </button>
-                                ` : ''}
                             </div>
                         </div>
                     </div>
@@ -2124,36 +2097,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Mark service as transferred to Wise
-    window.markWiseTransferred = async function(serviceId) {
-        if (!confirm('Bu hizmetin Wise\'a transfer edildiğini onaylıyor musunuz?')) {
-            return;
-        }
-        
-        const notes = prompt('Transfer notları (isteğe bağlı):');
-        
-        try {
-            const response = await fetch(`/api/admin/payments/${serviceId}/mark-transferred`, {
-                method: 'POST',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ notes })
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                showAlert('success', 'Hizmet Wise transferi olarak işaretlendi');
-                loadServices();
-            } else {
-                throw new Error(result.message);
-            }
-        } catch (error) {
-            console.error('Error marking Wise transferred:', error);
-            showAlert('danger', 'Hata: ' + error.message);
-        }
-    };
+    // Wise transfer function removed - no longer needed
 
     // Toggle add service form
     window.toggleAddServiceForm = function() {
