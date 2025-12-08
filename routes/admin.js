@@ -972,6 +972,39 @@ router.delete('/applications/:id', async (req, res) => {
     }
 });
 
+// Update application fee status
+router.put('/applications/:id/fee-status', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { application_fee_paid } = req.body;
+
+        console.log(`📝 Updating application ${id} fee status to:`, application_fee_paid);
+
+        const payment_date = application_fee_paid ? new Date().toISOString() : null;
+
+        const result = await pool.query(
+            'UPDATE applications SET application_fee_paid = $1, application_fee_payment_date = $2, updated_at = CURRENT_TIMESTAMP WHERE id = $3 RETURNING *',
+            [application_fee_paid, payment_date, id]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Application not found' });
+        }
+
+        res.json({ 
+            success: true, 
+            message: application_fee_paid ? 'Başvuru ücreti ödendi olarak işaretlendi' : 'Başvuru ücreti ödenmedi olarak işaretlendi',
+            application: result.rows[0]
+        });
+    } catch (error) {
+        console.error('Update application fee status error:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Server error: ' + error.message 
+        });
+    }
+});
+
 // Update application status
 router.put('/applications/:id/status', async (req, res) => {
     try {

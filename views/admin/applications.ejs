@@ -57,6 +57,7 @@
                                     <th>Üniversite</th>
                                     <th>Program</th>
                                     <th>Durum</th>
+                                    <th>Başvuru Ücreti</th>
                                     <th>Tarih</th>
                                     <th>İşlemler</th>
                                 </tr>
@@ -86,6 +87,22 @@
                                         <% } else if (app.status === 'rejected') { %>
                                             <span class="badge bg-danger">Reddedildi</span>
                                         <% } %>
+                                    </td>
+                                    <td>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input js-fee-toggle" 
+                                                   type="checkbox" 
+                                                   id="feeToggle<%= app.id %>"
+                                                   data-application-id="<%= app.id %>"
+                                                   <%= app.application_fee_paid ? 'checked' : '' %>>
+                                            <label class="form-check-label" for="feeToggle<%= app.id %>">
+                                                <% if (app.application_fee_paid) { %>
+                                                    <span class="text-success"><i class="fas fa-check-circle"></i> Ödendi</span>
+                                                <% } else { %>
+                                                    <span class="text-danger"><i class="fas fa-times-circle"></i> Ödenmedi</span>
+                                                <% } %>
+                                            </label>
+                                        </div>
                                     </td>
                                     <td><%= new Date(app.created_at).toLocaleDateString('tr-TR') %></td>
                                     <td>
@@ -268,6 +285,15 @@
                 const applicationId = selectUserBtn.getAttribute('data-application-id');
                 selectUser(userId, firstName, lastName, email, applicationStatus, applicationId);
                 return;
+            }
+        });
+
+        // Fee toggle event listener
+        document.addEventListener('change', function(e) {
+            if (e.target.classList.contains('js-fee-toggle')) {
+                const appId = e.target.getAttribute('data-application-id');
+                const isPaid = e.target.checked;
+                toggleApplicationFee(appId, isPaid);
             }
         });
     });
@@ -565,6 +591,49 @@
                 alert('Bir hata oluştu!');
             });
         }
+    }
+
+    function toggleApplicationFee(appId, isPaid) {
+        console.log(`Toggling fee for application ${appId} to:`, isPaid);
+        
+        fetch(`/api/admin/applications/${appId}/fee-status`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                application_fee_paid: isPaid
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('✅ Fee status updated successfully');
+                // Update the label text
+                const label = document.querySelector(`label[for="feeToggle${appId}"] span`);
+                if (label) {
+                    if (isPaid) {
+                        label.innerHTML = '<i class="fas fa-check-circle"></i> Ödendi';
+                        label.className = 'text-success';
+                    } else {
+                        label.innerHTML = '<i class="fas fa-times-circle"></i> Ödenmedi';
+                        label.className = 'text-danger';
+                    }
+                }
+            } else {
+                alert('Hata: ' + data.message);
+                // Revert the toggle
+                const toggle = document.getElementById(`feeToggle${appId}`);
+                if (toggle) toggle.checked = !isPaid;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Bir hata oluştu!');
+            // Revert the toggle
+            const toggle = document.getElementById(`feeToggle${appId}`);
+            if (toggle) toggle.checked = !isPaid;
+        });
     }
 
 </script>
