@@ -468,27 +468,25 @@
 
         // Logout functionality
         function logout() {
-            if (confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
-                fetch('/logout', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    credentials: 'same-origin'
-                })
-                .then(response => {
-                    if (response.ok) {
-                        window.location.href = '/login';
-                    } else {
-                        console.error('Logout failed:', response.statusText);
-                        alert('Çıkış yapılırken bir hata oluştu.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Logout error:', error);
-                    alert('Çıkış yapılırken bir hata oluştu.');
-                });
-            }
+            fetch('/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'same-origin'
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = '/login';
+                } else {
+                    console.error('Logout failed:', response.statusText);
+                    window.location.href = '/login'; // Redirect anyway
+                }
+            })
+            .catch(error => {
+                console.error('Logout error:', error);
+                window.location.href = '/login'; // Redirect anyway
+            });
         }
 
         // Setup logout button handler
