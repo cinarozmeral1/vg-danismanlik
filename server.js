@@ -667,9 +667,9 @@ app.post('/universities/create', async (req, res) => {
     }
 });
 
-// Logout route
-app.post('/logout', (req, res) => {
-    // Clear both user and admin tokens with proper options
+// Logout routes (both GET and POST for compatibility)
+app.get('/admin/logout', (req, res) => {
+    console.log('Admin logout GET endpoint called');
     res.clearCookie('userToken', {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
@@ -682,10 +682,23 @@ app.post('/logout', (req, res) => {
         sameSite: 'strict',
         path: '/'
     });
-    
-    console.log('Logout endpoint called - cookies cleared'); // Debug log
-    
-    // Redirect to login page instead of returning JSON
+    res.redirect('/login');
+});
+
+app.post('/logout', (req, res) => {
+    console.log('Logout POST endpoint called');
+    res.clearCookie('userToken', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        path: '/'
+    });
+    res.clearCookie('adminToken', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        path: '/'
+    });
     res.redirect('/login');
 });
 
