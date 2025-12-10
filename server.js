@@ -685,10 +685,8 @@ app.post('/logout', (req, res) => {
     
     console.log('Logout endpoint called - cookies cleared'); // Debug log
     
-    res.json({
-        success: true,
-        message: 'Logout successful'
-    });
+    // Redirect to login page instead of returning JSON
+    res.redirect('/login');
 });
 
 // Dil değiştirme route'u
