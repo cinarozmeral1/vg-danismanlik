@@ -383,18 +383,15 @@
                         <li><a class="dropdown-item" href="/admin/dashboard"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
                         <li><a class="dropdown-item" href="/"><i class="fas fa-home me-2"></i>Ana Sayfa</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <form id="logoutForm" action="/logout" method="POST" style="display: inline;">
-                                <button type="submit" class="dropdown-item text-danger" style="border: none; background: none; width: 100%; text-align: left; cursor: pointer;">
-                                    <i class="fas fa-sign-out-alt me-2"></i>Çıkış
-                                </button>
-                            </form>
-                        </li>
+                        <li><a class="dropdown-item text-danger" href="#" id="logoutButton"><i class="fas fa-sign-out-alt me-2"></i>Çıkış</a></li>
                     </ul>
                 </div>
             </div>
         </div>
     </nav>
+
+    <!-- Hidden logout form -->
+    <form id="logoutForm" action="/logout" method="POST" style="display: none;"></form>
 
     <!-- Admin Container -->
     <div class="admin-container">
@@ -471,6 +468,21 @@
             toggleBtn.onclick = toggleSidebar;
             navbar.appendChild(toggleBtn);
         }
+
+        // Logout functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoutButton = document.getElementById('logoutButton');
+            const logoutForm = document.getElementById('logoutForm');
+            
+            if (logoutButton && logoutForm) {
+                logoutButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Logout button clicked!');
+                    logoutForm.submit();
+                });
+            }
+        });
 
 
     </script>
