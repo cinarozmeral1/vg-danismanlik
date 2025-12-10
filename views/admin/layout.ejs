@@ -383,7 +383,13 @@
                         <li><a class="dropdown-item" href="/admin/dashboard"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
                         <li><a class="dropdown-item" href="/"><i class="fas fa-home me-2"></i>Ana Sayfa</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="#" onclick="logout(); return false;"><i class="fas fa-sign-out-alt me-2"></i>Çıkış</a></li>
+                        <li>
+                            <form id="logoutForm" action="/logout" method="POST" style="display: inline;">
+                                <button type="submit" class="dropdown-item text-danger" style="border: none; background: none; width: 100%; text-align: left; cursor: pointer;">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Çıkış
+                                </button>
+                            </form>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -466,28 +472,6 @@
             navbar.appendChild(toggleBtn);
         }
 
-        // Logout functionality
-        function logout() {
-            fetch('/logout', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'same-origin'
-            })
-            .then(response => {
-                if (response.ok) {
-                    window.location.href = '/login';
-                } else {
-                    console.error('Logout failed:', response.statusText);
-                    window.location.href = '/login'; // Redirect anyway
-                }
-            })
-            .catch(error => {
-                console.error('Logout error:', error);
-                window.location.href = '/login'; // Redirect anyway
-            });
-        }
 
     </script>
 </body>
