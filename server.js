@@ -908,12 +908,12 @@ app.get('/sitemap.xml', async (req, res) => {
 // Temel route'lar
 app.get('/', async (req, res) => {
     try {
-        // Set SEO metadata with competitive keywords
-        res.locals.seoTitle = 'Venture Global | Yurt Dışı Danışmanlık - Yurt Dışı Eğitim Danışmanlığı | Avrupa Eğitim Danışmanlığı';
-        res.locals.seoDescription = 'Venture Global: Yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı, yurt dışı dil okulu danışmanlığı ve Avrupa eğitim danışmanlığı hizmetleri. Almanya, Çekya, İtalya, Avusturya, İngiltere, Polonya ve Macaristan\'da üniversite başvuru süreçlerinizde profesyonel danışmanlık. 50+ üniversite seçeneği ile hayallerinizi gerçeğe dönüştürün.';
-        res.locals.seoKeywords = 'Venture Global, yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı, yurt dışı dil okulu danışmanlığı, Avrupa eğitim danışmanlığı, üniversite danışmanlığı, yurtdışı üniversite başvurusu, Avrupa üniversite danışmanlığı, yurtdışı eğitim danışmanlığı, eğitim danışmanlığı, üniversite başvuru danışmanlığı, vize danışmanlığı, almanya üniversite, çekya üniversite, italya üniversite, avusturya üniversite, ingiltere üniversite, polonya üniversite, macaristan üniversite';
-        res.locals.ogTitle = 'Venture Global - Yurt Dışı Danışmanlık ve Eğitim Danışmanlığı';
-        res.locals.ogDescription = 'Yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı, yurt dışı dil okulu danışmanlığı ve Avrupa eğitim danışmanlığı hizmetleri. Profesyonel üniversite başvuru danışmanlığı.';
+        // Set SEO metadata with competitive keywords - Focus on "VG Danışmanlık", "Venture Global", and "Eğitim Danışmanlığı"
+        res.locals.seoTitle = 'VG Danışmanlık | Venture Global - Yurt Dışı Eğitim Danışmanlığı & Üniversite Danışmanlık';
+        res.locals.seoDescription = 'VG Danışmanlık (Venture Global) - Türkiye\'nin güvenilir eğitim danışmanlığı. Yurt dışı danışmanlık, yurt dışı üniversite danışmanlık, üniversite başvuru ve eğitim danışmanlığı hizmetleri. Almanya, Çekya, İtalya, Avusturya, İngiltere, Polonya, Macaristan\'da 50+ üniversite ile profesyonel yurt dışı eğitim danışmanlığı.';
+        res.locals.seoKeywords = 'vg danışmanlık, venture global, vg danışmanlık yurt dışı, eğitim danışmanlığı, yurt dışı eğitim danışmanlığı, yurt dışı danışmanlık, üniversite danışmanlık, yurt dışı üniversite danışmanlık, venture global danışmanlık, yurtdışı eğitim, yurtdışı üniversite, avrupa eğitim danışmanlığı, üniversite başvurusu, yurt dışı üniversite başvuru, vize danışmanlığı, almanya üniversite, çekya üniversite, italya üniversite, avusturya üniversite, ingiltere üniversite';
+        res.locals.ogTitle = 'VG Danışmanlık | Venture Global - Yurt Dışı Eğitim Danışmanlığı';
+        res.locals.ogDescription = 'VG Danışmanlık (Venture Global) ile yurt dışı eğitim danışmanlığı. Üniversite danışmanlık, yurt dışı üniversite başvuru süreçlerinde profesyonel destek. 7 ülkede 50+ üniversite.';
         res.locals.ogType = 'website';
         
         res.render('index', {
