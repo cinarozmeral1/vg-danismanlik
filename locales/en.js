@@ -499,6 +499,14 @@ module.exports = {
                 subtitle: "Ask your questions via Instagram DM, we'll get back to you quickly!",
                 button: "Send Message"
             }
+        },
+        seoContent: {
+            mainTitle: "Venture Global - What is VG Danışmanlık?",
+            mainSubtitle: "Turkey's trusted brand in international education consulting",
+            card1Title: "Who is Venture Global?",
+            card1Content: "Venture Global (VG Danışmanlık) is a professional education consultancy company that guides students from Turkey to Europe's most prestigious universities. By collaborating with 50+ universities in 7 countries, we provide our students with the best educational opportunities.",
+            card2Title: "VG Danışmanlık Services",
+            card2Content: "As VG Danışmanlık, we provide comprehensive support in university applications, visa procedures, accommodation, and adaptation to Europe. Make your dream of studying abroad a reality with Venture Global."
         }
     },
     
