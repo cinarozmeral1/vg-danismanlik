@@ -945,11 +945,11 @@ app.get('/about-us', (req, res) => {
 });
 
 app.get('/media', (req, res) => {
-    res.locals.seoTitle = 'Medyada Biz - Venture Global (VG Danışmanlık) | Instagram & LinkedIn';
-    res.locals.seoDescription = 'Venture Global (VG Danışmanlık) sosyal medya paylaşımları. Instagram reels ve LinkedIn postlarımızı takip edin. Öğrenci hikayeleri, başarı hikayeleri ve daha fazlası.';
-    res.locals.seoKeywords = 'Venture Global instagram, vg danışmanlık linkedin, venture global medya, yurt dışı eğitim instagram, öğrenci hikayeleri, başarı hikayeleri';
-    res.locals.ogTitle = 'Medyada Biz - Venture Global | Sosyal Medya';
-    res.locals.ogDescription = 'Instagram ve LinkedIn\'de paylaşımlarımızı takip edin.';
+    res.locals.seoTitle = 'Medyada Biz - VG Danışmanlık | Instagram, LinkedIn & YouTube';
+    res.locals.seoDescription = 'VG Danışmanlık (Venture Global) sosyal medya paylaşımları. Instagram reels, LinkedIn postları ve YouTube Shorts videolarımızı takip edin. Öğrenci hikayeleri, başarı hikayeleri ve daha fazlası.';
+    res.locals.seoKeywords = 'vg danışmanlık instagram, vg danışmanlık linkedin, vg danışmanlık youtube, venture global medya, yurt dışı eğitim instagram, yurt dışı eğitim youtube, öğrenci hikayeleri, başarı hikayeleri';
+    res.locals.ogTitle = 'Medyada Biz - VG Danışmanlık | Instagram, LinkedIn & YouTube';
+    res.locals.ogDescription = 'Instagram, LinkedIn ve YouTube\'da paylaşımlarımızı takip edin.';
     res.render('media', { title: res.locals.t.nav.media || 'Medyada Biz' });
 });
 

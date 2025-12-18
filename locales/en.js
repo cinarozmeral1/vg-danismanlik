@@ -1945,7 +1945,7 @@ module.exports = {
     // Media Page
     media: {
         heroTitle: "In the Media",
-        heroSubtitle: "Follow our posts on Instagram and LinkedIn",
+        heroSubtitle: "Follow our posts on Instagram, LinkedIn and YouTube",
         instagram: {
             title: "Instagram Posts",
             subtitle: "Our latest posts and student stories",
@@ -1957,6 +1957,12 @@ module.exports = {
             subtitle: "Our professional content and success stories",
             comingSoon: "Our LinkedIn posts will appear here soon!",
             followButton: "Follow on LinkedIn"
+        },
+        youtube: {
+            title: "YouTube Shorts",
+            subtitle: "Short videos about studying abroad",
+            comingSoon: "Our YouTube Shorts videos will appear here soon!",
+            subscribeButton: "Subscribe on YouTube"
         },
         stories: {
             title: "Student Stories",
