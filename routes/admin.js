@@ -4512,11 +4512,10 @@ router.get('/users/:id/partner', async (req, res) => {
             } : null,
             earning: row.earning_id ? {
                 id: row.earning_id,
-                earning_type: row.earning_type,
                 amount: row.earning_amount,
                 currency: row.currency,
+                earning_date: row.earning_date,
                 is_paid: row.is_paid,
-                payment_date: row.payment_date,
                 notes: row.earning_notes
             } : null
         });
@@ -4534,12 +4533,12 @@ router.get('/users/:id/partner', async (req, res) => {
 // Add earning for a student-partner
 router.post('/partner-earnings', async (req, res) => {
     try {
-        const { partner_id, user_id, earning_type, amount, percentage_value, currency, notes } = req.body;
+        const { partner_id, user_id, amount, currency, earning_date, is_paid, notes } = req.body;
         
-        if (!partner_id || !user_id || !earning_type || !amount) {
+        if (!partner_id || !user_id || !amount) {
             return res.status(400).json({
                 success: false,
-                message: 'Partner, öğrenci, kazanç türü ve tutar gerekli'
+                message: 'Partner, öğrenci ve tutar gerekli'
             });
         }
         
@@ -4555,25 +4554,12 @@ router.post('/partner-earnings', async (req, res) => {
             return res.status(404).json({ success: false, message: 'Öğrenci bulunamadı' });
         }
         
-        // Check if earning already exists for this partner-user combination
-        const existingEarning = await pool.query(
-            'SELECT id FROM partner_earnings WHERE partner_id = $1 AND user_id = $2',
-            [partner_id, user_id]
-        );
-        
-        if (existingEarning.rows.length > 0) {
-            return res.status(400).json({
-                success: false,
-                message: 'Bu öğrenci için zaten bir kazanç kaydı var. Lütfen mevcut kaydı güncelleyin.'
-            });
-        }
-        
         // Insert earning
         const result = await pool.query(`
-            INSERT INTO partner_earnings (partner_id, user_id, earning_type, amount, percentage_value, currency, notes)
+            INSERT INTO partner_earnings (partner_id, user_id, amount, currency, earning_date, is_paid, notes)
             VALUES ($1, $2, $3, $4, $5, $6, $7)
             RETURNING *
-        `, [partner_id, user_id, earning_type, amount, percentage_value || null, currency || 'EUR', notes || null]);
+        `, [partner_id, user_id, amount, currency || 'EUR', earning_date || new Date().toISOString().split('T')[0], is_paid || false, notes || null]);
         
         // Also update user's partner_id if not set
         if (!userCheck.rows[0].partner_id) {
@@ -4596,21 +4582,20 @@ router.post('/partner-earnings', async (req, res) => {
 router.put('/partner-earnings/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const { earning_type, amount, percentage_value, currency, is_paid, payment_date, notes } = req.body;
+        const { amount, currency, earning_date, is_paid, payment_date, notes } = req.body;
         
         const result = await pool.query(`
             UPDATE partner_earnings 
-            SET earning_type = COALESCE($1, earning_type),
-                amount = COALESCE($2, amount),
-                percentage_value = $3,
-                currency = COALESCE($4, currency),
-                is_paid = COALESCE($5, is_paid),
-                payment_date = $6,
-                notes = $7,
+            SET amount = COALESCE($1, amount),
+                currency = COALESCE($2, currency),
+                earning_date = COALESCE($3, earning_date),
+                is_paid = COALESCE($4, is_paid),
+                payment_date = $5,
+                notes = $6,
                 updated_at = CURRENT_TIMESTAMP
-            WHERE id = $8
+            WHERE id = $7
             RETURNING *
-        `, [earning_type, amount, percentage_value, currency, is_paid, payment_date || null, notes, id]);
+        `, [amount, currency, earning_date, is_paid, payment_date || null, notes, id]);
         
         if (result.rows.length === 0) {
             return res.status(404).json({
