@@ -556,22 +556,15 @@ const sendApplicationStatusEmail = async (email, firstName, lastName, university
 
 // Send partner verification email
 const sendPartnerVerificationEmail = async (email, name, verificationToken, language = 'tr') => {
-    // Get correct URL for verification
-    let baseUrl;
-    if (process.env.BASE_URL) {
-        baseUrl = process.env.BASE_URL;
-    } else if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
-        baseUrl = `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
-    } else if (process.env.VERCEL_URL) {
-        baseUrl = `https://${process.env.VERCEL_URL}`;
-    } else {
-        baseUrl = process.env.NODE_ENV === 'production'
-            ? 'https://vgdanismanlik.com'
-            : 'http://localhost:4000';
+    // Get correct URL for verification - always use production URL for partner emails
+    // since partners need a stable URL that won't change between deployments
+    let baseUrl = 'https://vgdanismanlik.com';
+    
+    // For development/testing, use localhost
+    if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+        baseUrl = 'http://localhost:3000';
     }
-    if (!baseUrl.includes('http')) {
-        baseUrl = `https://${baseUrl}`;
-    }
+    
     const verificationUrl = `${baseUrl}/api/auth/verify-partner-email?token=${verificationToken}`;
     
     console.log('📧 Email Service - Partner Verification Email Details:');
