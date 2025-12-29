@@ -4342,7 +4342,7 @@ router.delete('/partners/:id', async (req, res) => {
         
         // Delete partner
         const result = await pool.query(
-            'DELETE FROM partners WHERE id = $1 RETURNING name',
+            'DELETE FROM partners WHERE id = $1 RETURNING first_name, last_name',
             [id]
         );
         
@@ -4355,7 +4355,7 @@ router.delete('/partners/:id', async (req, res) => {
         
         res.json({
             success: true,
-            message: `${result.rows[0].name} başarıyla silindi`
+            message: `${result.rows[0].first_name} ${result.rows[0].last_name} başarıyla silindi`
         });
         
     } catch (error) {
@@ -4371,7 +4371,7 @@ router.post('/partners/:id/resend-verification', async (req, res) => {
         const { language = 'tr' } = req.body;
         
         const partnerResult = await pool.query(
-            'SELECT id, name, email, email_verified FROM partners WHERE id = $1',
+            'SELECT id, first_name, last_name, email, email_verified FROM partners WHERE id = $1',
             [id]
         );
         
@@ -4400,7 +4400,7 @@ router.post('/partners/:id/resend-verification', async (req, res) => {
         );
         
         // Send verification email
-        await sendPartnerVerificationEmail(partner.email, partner.name, newToken, language);
+        await sendPartnerVerificationEmail(partner.email, partner.first_name, newToken, language);
         
         res.json({
             success: true,
@@ -4426,7 +4426,7 @@ router.put('/users/:id/partner', async (req, res) => {
         // Validate partner exists (if partner_id is provided)
         if (partner_id) {
             const partnerCheck = await pool.query(
-                'SELECT id, name FROM partners WHERE id = $1',
+                'SELECT id, first_name, last_name FROM partners WHERE id = $1',
                 [partner_id]
             );
             
@@ -4475,15 +4475,14 @@ router.get('/users/:id/partner', async (req, res) => {
         const result = await pool.query(`
             SELECT 
                 u.partner_id,
-                p.name as partner_name,
+                CONCAT(p.first_name, ' ', p.last_name) as partner_name,
                 p.email as partner_email,
                 p.company_name as partner_company,
                 pe.id as earning_id,
-                pe.earning_type,
                 pe.amount as earning_amount,
                 pe.currency,
                 pe.is_paid,
-                pe.payment_date,
+                pe.earning_date,
                 pe.notes as earning_notes
             FROM users u
             LEFT JOIN partners p ON u.partner_id = p.id
@@ -4666,7 +4665,7 @@ router.get('/api/partner-earnings', async (req, res) => {
         const result = await pool.query(`
             SELECT 
                 pe.*,
-                p.name as partner_name,
+                CONCAT(p.first_name, ' ', p.last_name) as partner_name,
                 p.company_name as partner_company,
                 u.first_name,
                 u.last_name

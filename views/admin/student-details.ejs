@@ -391,14 +391,24 @@
                                     </div>
                                     
                                     <div class="mt-4">
-                                        <label for="partnerSelect" class="form-label">Partner Seçin</label>
+                                        <label for="partnerSelect" class="form-label fw-bold">Partner Seçin</label>
                                         <div class="input-group mb-3">
-                                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                            <span class="input-group-text bg-primary text-white"><i class="fas fa-search"></i></span>
                                             <input type="text" class="form-control" id="partnerSearchInput" placeholder="Partner ara...">
                                         </div>
-                                        <select class="form-select" id="partnerSelect" size="5">
+                                        <select class="form-select partner-select" id="partnerSelect" size="5" style="border: 2px solid #0d6efd; background-color: #f8f9ff;">
                                             <option value="">Partner yükleniyor...</option>
                                         </select>
+                                        <style>
+                                            .partner-select option:checked,
+                                            .partner-select option:hover {
+                                                background: linear-gradient(#0d6efd, #0d6efd) !important;
+                                                color: white !important;
+                                            }
+                                            .partner-select option {
+                                                padding: 8px 12px;
+                                            }
+                                        </style>
                                         <div class="mt-3">
                                             <button class="btn btn-primary" onclick="assignPartner()">
                                                 <i class="fas fa-check me-2"></i>Partner Ata
@@ -3664,7 +3674,8 @@ function displayPartnersList(partners) {
     partners.forEach(partner => {
         const option = document.createElement('option');
         option.value = partner.id;
-        option.textContent = `${partner.name}${partner.company_name ? ' (' + partner.company_name + ')' : ''} - ${partner.email}`;
+        const fullName = `${partner.first_name} ${partner.last_name}`;
+        option.textContent = `${fullName}${partner.company_name ? ' (' + partner.company_name + ')' : ''} - ${partner.email}`;
         
         // Highlight if this is the current partner
         if (currentPartnerInfo?.partner?.id === partner.id) {
@@ -3678,11 +3689,12 @@ function displayPartnersList(partners) {
 
 // Filter partners by search
 function filterPartners(searchTerm) {
-    const filtered = allPartners.filter(p => 
-        p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (p.company_name && p.company_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        p.email.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filtered = allPartners.filter(p => {
+        const fullName = `${p.first_name} ${p.last_name}`.toLowerCase();
+        return fullName.includes(searchTerm.toLowerCase()) ||
+            (p.company_name && p.company_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            p.email.toLowerCase().includes(searchTerm.toLowerCase());
+    });
     displayPartnersList(filtered);
 }
 
