@@ -1,40 +1,7 @@
+<%- include('layout', { title: title, activePage: 'partners' }) %>
+
 <!-- Admin Partners Content -->
 <div class="admin-container">
-    <!-- Sidebar -->
-    <div class="admin-sidebar">
-        <div class="sidebar-header">
-            <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Yönetim Paneli</h6>
-        </div>
-        <nav class="sidebar-nav">
-            <a href="/admin/dashboard" class="nav-item">
-                <i class="fas fa-tachometer-alt"></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="/admin/users" class="nav-item">
-                <i class="fas fa-users"></i>
-                <span>Öğrenciler</span>
-                <span class="badge bg-primary ms-auto"><%= userCount %></span>
-            </a>
-            <a href="/admin/applications" class="nav-item">
-                <i class="fas fa-file-alt"></i>
-                <span>Başvurular</span>
-                <span class="badge bg-success ms-auto"><%= applicationCount %></span>
-            </a>
-            <a href="/admin/partners" class="nav-item active">
-                <i class="fas fa-handshake"></i>
-                <span>Partnerler</span>
-            </a>
-            <a href="/admin/universities" class="nav-item">
-                <i class="fas fa-university"></i>
-                <span>Üniversiteler</span>
-            </a>
-            <a href="/admin/backups" class="nav-item">
-                <i class="fas fa-database"></i>
-                <span>Yedekleme</span>
-            </a>
-        </nav>
-    </div>
-
     <!-- Main Content Area -->
     <div class="admin-main">
         <div class="section-header">
@@ -108,7 +75,7 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>İsim</th>
+                                <th>İsim Soyisim</th>
                                 <th>Şirket</th>
                                 <th>E-posta</th>
                                 <th>Telefon</th>
@@ -122,7 +89,7 @@
                             <% partners.forEach(partner => { %>
                             <tr data-partner-id="<%= partner.id %>">
                                 <td><%= partner.id %></td>
-                                <td><strong><%= partner.name %></strong></td>
+                                <td><strong><%= partner.first_name %> <%= partner.last_name %></strong></td>
                                 <td><%= partner.company_name || '-' %></td>
                                 <td><%= partner.email %></td>
                                 <td><%= partner.phone || '-' %></td>
@@ -147,7 +114,7 @@
                                             <i class="fas fa-envelope"></i>
                                         </button>
                                         <% } %>
-                                        <button class="btn btn-sm btn-outline-danger" onclick="deletePartner(<%= partner.id %>, '<%= partner.name %>')" title="Sil">
+                                        <button class="btn btn-sm btn-outline-danger" onclick="deletePartner(<%= partner.id %>, '<%= partner.first_name %> <%= partner.last_name %>')" title="Sil">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </div>
@@ -180,9 +147,15 @@
             </div>
             <div class="modal-body">
                 <form id="addPartnerForm">
-                    <div class="mb-3">
-                        <label for="partnerName" class="form-label">İsim *</label>
-                        <input type="text" class="form-control" id="partnerName" required placeholder="Partner adı">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="partnerFirstName" class="form-label">Ad *</label>
+                            <input type="text" class="form-control" id="partnerFirstName" required placeholder="Ad">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="partnerLastName" class="form-label">Soyad *</label>
+                            <input type="text" class="form-control" id="partnerLastName" required placeholder="Soyad">
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label for="partnerEmail" class="form-label">E-posta *</label>
@@ -220,9 +193,15 @@
             <div class="modal-body">
                 <form id="editPartnerForm">
                     <input type="hidden" id="editPartnerId">
-                    <div class="mb-3">
-                        <label for="editPartnerName" class="form-label">İsim *</label>
-                        <input type="text" class="form-control" id="editPartnerName" required>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="editPartnerFirstName" class="form-label">Ad *</label>
+                            <input type="text" class="form-control" id="editPartnerFirstName" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="editPartnerLastName" class="form-label">Soyad *</label>
+                            <input type="text" class="form-control" id="editPartnerLastName" required>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label for="editPartnerEmail" class="form-label">E-posta</label>
@@ -276,13 +255,14 @@
 
     // Add partner
     async function addPartner() {
-        const name = document.getElementById('partnerName').value;
+        const first_name = document.getElementById('partnerFirstName').value;
+        const last_name = document.getElementById('partnerLastName').value;
         const email = document.getElementById('partnerEmail').value;
         const company_name = document.getElementById('partnerCompany').value;
         const phone = document.getElementById('partnerPhone').value;
         
-        if (!name || !email) {
-            alert('İsim ve e-posta adresi gerekli!');
+        if (!first_name || !last_name || !email) {
+            alert('Ad, soyad ve e-posta adresi gerekli!');
             return;
         }
         
@@ -291,7 +271,7 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
-                body: JSON.stringify({ name, email, company_name, phone })
+                body: JSON.stringify({ first_name, last_name, email, company_name, phone })
             });
             
             const data = await response.json();
@@ -321,7 +301,8 @@
                 const partner = data.partners.find(p => p.id === id);
                 if (partner) {
                     document.getElementById('editPartnerId').value = partner.id;
-                    document.getElementById('editPartnerName').value = partner.name;
+                    document.getElementById('editPartnerFirstName').value = partner.first_name;
+                    document.getElementById('editPartnerLastName').value = partner.last_name;
                     document.getElementById('editPartnerEmail').value = partner.email;
                     document.getElementById('editPartnerCompany').value = partner.company_name || '';
                     document.getElementById('editPartnerPhone').value = partner.phone || '';
@@ -340,7 +321,8 @@
     // Update partner
     async function updatePartner() {
         const id = document.getElementById('editPartnerId').value;
-        const name = document.getElementById('editPartnerName').value;
+        const first_name = document.getElementById('editPartnerFirstName').value;
+        const last_name = document.getElementById('editPartnerLastName').value;
         const company_name = document.getElementById('editPartnerCompany').value;
         const phone = document.getElementById('editPartnerPhone').value;
         const is_active = document.getElementById('editPartnerActive').checked;
@@ -350,7 +332,7 @@
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
-                body: JSON.stringify({ name, company_name, phone, is_active })
+                body: JSON.stringify({ first_name, last_name, company_name, phone, is_active })
             });
             
             const data = await response.json();
@@ -417,4 +399,3 @@
         }
     }
 </script>
-

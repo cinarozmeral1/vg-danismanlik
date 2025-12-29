@@ -304,6 +304,7 @@ const getAdminSidebarCounts = async () => {
         const usersResult = await pool.query('SELECT COUNT(*) as count FROM users');
         let applicationCount = 0;
         let universityCount = 0;
+        let partnerCount = 0;
         
         let approvedApplicationCount = 0;
         try {
@@ -323,16 +324,24 @@ const getAdminSidebarCounts = async () => {
             console.log('ℹ️ Universities table not found, using 0');
         }
         
+        try {
+            const partnersResult = await pool.query('SELECT COUNT(*) as count FROM partners');
+            partnerCount = parseInt(partnersResult.rows[0].count);
+        } catch (error) {
+            console.log('ℹ️ Partners table not found, using 0');
+        }
+        
         return {
             userCount: parseInt(usersResult.rows[0].count),
             applicationCount: applicationCount,
             pendingApplicationCount: applicationCount, // Pending applications count
             approvedApplicationCount: approvedApplicationCount, // Approved applications count
-            universityCount: universityCount
+            universityCount: universityCount,
+            partnerCount: partnerCount
         };
     } catch (error) {
         console.error('Error getting admin sidebar counts:', error);
-        return { userCount: 0, applicationCount: 0, universityCount: 0 };
+        return { userCount: 0, applicationCount: 0, universityCount: 0, partnerCount: 0 };
     }
 };
 
@@ -4203,7 +4212,8 @@ router.get('/api/partners', async (req, res) => {
         const result = await pool.query(`
             SELECT 
                 p.id,
-                p.name,
+                p.first_name,
+                p.last_name,
                 p.email,
                 p.company_name,
                 p.phone,
@@ -4233,12 +4243,12 @@ router.get('/api/partners', async (req, res) => {
 // Add new partner
 router.post('/partners', async (req, res) => {
     try {
-        const { name, email, company_name, phone, language = 'tr' } = req.body;
+        const { first_name, last_name, email, company_name, phone, language = 'tr' } = req.body;
         
-        if (!name || !email) {
+        if (!first_name || !last_name || !email) {
             return res.status(400).json({
                 success: false,
-                message: 'İsim ve e-posta adresi gerekli'
+                message: 'Ad, soyad ve e-posta adresi gerekli'
             });
         }
         
@@ -4260,15 +4270,15 @@ router.post('/partners', async (req, res) => {
         
         // Insert partner
         const result = await pool.query(`
-            INSERT INTO partners (name, email, company_name, phone, verification_token, email_verified, is_active)
-            VALUES ($1, $2, $3, $4, $5, false, true)
-            RETURNING id, name, email, company_name, phone
-        `, [name, email, company_name || null, phone || null, verificationToken]);
+            INSERT INTO partners (first_name, last_name, email, company_name, phone, verification_token, email_verified, is_active)
+            VALUES ($1, $2, $3, $4, $5, $6, false, true)
+            RETURNING id, first_name, last_name, email, company_name, phone
+        `, [first_name, last_name, email, company_name || null, phone || null, verificationToken]);
         
         const partner = result.rows[0];
         
         // Send verification email
-        await sendPartnerVerificationEmail(email, name, verificationToken, language);
+        await sendPartnerVerificationEmail(email, first_name, verificationToken, language);
         
         res.status(201).json({
             success: true,
@@ -4286,18 +4296,19 @@ router.post('/partners', async (req, res) => {
 router.put('/partners/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, company_name, phone, is_active } = req.body;
+        const { first_name, last_name, company_name, phone, is_active } = req.body;
         
         const result = await pool.query(`
             UPDATE partners 
-            SET name = COALESCE($1, name),
-                company_name = COALESCE($2, company_name),
-                phone = COALESCE($3, phone),
-                is_active = COALESCE($4, is_active),
+            SET first_name = COALESCE($1, first_name),
+                last_name = COALESCE($2, last_name),
+                company_name = COALESCE($3, company_name),
+                phone = COALESCE($4, phone),
+                is_active = COALESCE($5, is_active),
                 updated_at = CURRENT_TIMESTAMP
-            WHERE id = $5
+            WHERE id = $6
             RETURNING *
-        `, [name, company_name, phone, is_active, id]);
+        `, [first_name, last_name, company_name, phone, is_active, id]);
         
         if (result.rows.length === 0) {
             return res.status(404).json({
