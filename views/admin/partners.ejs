@@ -1,7 +1,41 @@
-<%- include('layout', { title: title, activePage: 'partners' }) %>
-
 <!-- Admin Partners Content -->
 <div class="admin-container">
+    <!-- Sidebar -->
+    <div class="admin-sidebar">
+        <div class="sidebar-header">
+            <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Yönetim Paneli</h6>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/admin/dashboard" class="nav-item">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/admin/users" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Öğrenciler</span>
+                <span class="badge bg-primary ms-auto"><%= userCount %></span>
+            </a>
+            <a href="/admin/applications" class="nav-item">
+                <i class="fas fa-file-alt"></i>
+                <span>Başvurular</span>
+                <span class="badge bg-success ms-auto"><%= applicationCount %></span>
+            </a>
+            <a href="/admin/partners" class="nav-item active">
+                <i class="fas fa-handshake"></i>
+                <span>Partnerler</span>
+                <span class="badge bg-info ms-auto"><%= partners.length %></span>
+            </a>
+            <a href="/admin/universities" class="nav-item">
+                <i class="fas fa-university"></i>
+                <span>Üniversiteler</span>
+            </a>
+            <a href="/admin/backups" class="nav-item">
+                <i class="fas fa-database"></i>
+                <span>Yedekleme</span>
+            </a>
+        </nav>
+    </div>
+
     <!-- Main Content Area -->
     <div class="admin-main">
         <div class="section-header">
@@ -23,7 +57,7 @@
                     <i class="fas fa-handshake"></i>
                 </div>
                 <div class="stat-content">
-                    <h3 id="totalPartners"><%= partners.length %></h3>
+                    <h3><%= partners.length %></h3>
                     <p>Toplam Partner</p>
                 </div>
             </div>
@@ -32,7 +66,7 @@
                     <i class="fas fa-check-circle"></i>
                 </div>
                 <div class="stat-content">
-                    <h3 id="activePartners"><%= partners.filter(p => p.is_active && p.email_verified).length %></h3>
+                    <h3><%= partners.filter(p => p.is_active && p.email_verified).length %></h3>
                     <p>Aktif Partner</p>
                 </div>
             </div>
@@ -41,7 +75,7 @@
                     <i class="fas fa-clock"></i>
                 </div>
                 <div class="stat-content">
-                    <h3 id="pendingPartners"><%= partners.filter(p => !p.email_verified).length %></h3>
+                    <h3><%= partners.filter(p => !p.email_verified).length %></h3>
                     <p>Doğrulama Bekleyen</p>
                 </div>
             </div>
@@ -50,7 +84,7 @@
                     <i class="fas fa-users"></i>
                 </div>
                 <div class="stat-content">
-                    <h3 id="totalStudents"><%= partners.reduce((sum, p) => sum + parseInt(p.student_count || 0), 0) %></h3>
+                    <h3><%= partners.reduce((sum, p) => sum + parseInt(p.student_count || 0), 0) %></h3>
                     <p>Partner Öğrencileri</p>
                 </div>
             </div>
@@ -59,7 +93,7 @@
         <!-- Partners Table -->
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Partner Listesi</h5>
+                <h5 class="mb-0">Partner Listesi (<%= partners.length %>)</h5>
                 <div class="search-box">
                     <div class="input-group" style="width: 300px;">
                         <span class="input-group-text">
