@@ -575,7 +575,7 @@ router.post('/partner-login', async (req, res) => {
 
         // Find partner
         const result = await pool.query(
-            'SELECT id, name, email, password_hash, email_verified, is_active, company_name FROM partners WHERE email = $1',
+            'SELECT id, first_name, last_name, email, password_hash, email_verified, is_active, company_name FROM partners WHERE email = $1',
             [email]
         );
 
@@ -636,7 +636,7 @@ router.post('/partner-login', async (req, res) => {
             message: language === 'tr' ? 'Giriş başarılı' : 'Login successful',
             partner: {
                 id: partner.id,
-                name: partner.name,
+                name: `${partner.first_name} ${partner.last_name}`,
                 email: partner.email,
                 company_name: partner.company_name
             },

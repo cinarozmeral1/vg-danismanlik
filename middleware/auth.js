@@ -116,7 +116,7 @@ const authenticatePartner = async (req, res, next) => {
         
         // Check if partner exists and is verified
         const result = await pool.query(
-            'SELECT id, name, email, company_name, phone, email_verified, is_active FROM partners WHERE id = $1',
+            'SELECT id, first_name, last_name, email, company_name, phone, email_verified, is_active FROM partners WHERE id = $1',
             [decoded.partnerId]
         );
         
@@ -127,7 +127,11 @@ const authenticatePartner = async (req, res, next) => {
             });
         }
         
-        const partner = result.rows[0];
+        const partnerData = result.rows[0];
+        const partner = {
+            ...partnerData,
+            name: `${partnerData.first_name} ${partnerData.last_name}`
+        };
         
         // Check if partner is active
         if (!partner.is_active) {

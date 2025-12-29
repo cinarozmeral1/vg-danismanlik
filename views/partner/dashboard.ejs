@@ -599,7 +599,7 @@
                             <tr>
                                 <th>Öğrenci</th>
                                 <th>Tutar</th>
-                                <th>Tür</th>
+                                <th>Kazanç Tarihi</th>
                                 <th>Durum</th>
                                 <th>Ödeme Tarihi</th>
                                 <th>Not</th>
@@ -616,13 +616,15 @@
                 const paymentDate = earning.payment_date 
                     ? new Date(earning.payment_date).toLocaleDateString('tr-TR') 
                     : '-';
-                const earningType = earning.earning_type === 'fixed' ? 'Sabit' : 'Yüzdelik';
+                const earningDate = earning.earning_date 
+                    ? new Date(earning.earning_date).toLocaleDateString('tr-TR') 
+                    : '-';
                 
                 html += `
                     <tr>
                         <td><strong>${earning.first_name} ${earning.last_name}</strong></td>
                         <td>${parseFloat(earning.amount).toFixed(2)} ${earning.currency}</td>
-                        <td><span class="badge bg-secondary">${earningType}</span></td>
+                        <td>${earningDate}</td>
                         <td>${statusBadge}</td>
                         <td>${paymentDate}</td>
                         <td>${earning.notes || '-'}</td>

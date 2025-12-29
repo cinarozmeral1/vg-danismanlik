@@ -30,7 +30,7 @@ router.get('/dashboard', async (req, res) => {
         }
 
         const partnerResult = await pool.query(
-            'SELECT id, name, email, company_name, phone, email_verified, is_active FROM partners WHERE id = $1',
+            'SELECT id, first_name, last_name, email, company_name, phone, email_verified, is_active FROM partners WHERE id = $1',
             [decoded.partnerId]
         );
 
@@ -38,7 +38,11 @@ router.get('/dashboard', async (req, res) => {
             return res.redirect('/partner-login');
         }
 
-        const partner = partnerResult.rows[0];
+        const partnerData = partnerResult.rows[0];
+        const partner = {
+            ...partnerData,
+            name: `${partnerData.first_name} ${partnerData.last_name}`
+        };
 
         // Get partner's students count
         const studentsResult = await pool.query(
@@ -93,7 +97,7 @@ router.get('/api/students', authenticatePartner, async (req, res) => {
                 u.created_at as registered_at,
                 pe.amount as earning_amount,
                 pe.currency,
-                pe.earning_type,
+                pe.earning_date,
                 pe.is_paid,
                 pe.payment_date,
                 pe.notes as earning_notes
@@ -125,9 +129,9 @@ router.get('/api/earnings', authenticatePartner, async (req, res) => {
             SELECT 
                 pe.id,
                 pe.user_id,
-                pe.earning_type,
                 pe.amount,
                 pe.currency,
+                pe.earning_date,
                 pe.is_paid,
                 pe.payment_date,
                 pe.notes,
@@ -137,7 +141,7 @@ router.get('/api/earnings', authenticatePartner, async (req, res) => {
             FROM partner_earnings pe
             JOIN users u ON pe.user_id = u.id
             WHERE pe.partner_id = $1
-            ORDER BY pe.created_at DESC
+            ORDER BY pe.earning_date DESC
         `, [req.partner.id]);
 
         // Calculate totals
@@ -171,7 +175,7 @@ router.get('/api/earnings', authenticatePartner, async (req, res) => {
 router.get('/api/profile', authenticatePartner, async (req, res) => {
     try {
         const result = await pool.query(
-            'SELECT id, name, email, company_name, phone, created_at FROM partners WHERE id = $1',
+            'SELECT id, first_name, last_name, email, company_name, phone, created_at FROM partners WHERE id = $1',
             [req.partner.id]
         );
 
@@ -182,9 +186,13 @@ router.get('/api/profile', authenticatePartner, async (req, res) => {
             });
         }
 
+        const partner = result.rows[0];
         res.json({
             success: true,
-            partner: result.rows[0]
+            partner: {
+                ...partner,
+                name: `${partner.first_name} ${partner.last_name}`
+            }
         });
 
     } catch (error) {

@@ -427,6 +427,10 @@
                         <span class="badge bg-info ms-auto"><%= universityCount %></span>
                     <% } %>
                 </a>
+                <a href="/admin/backups" class="nav-item <%= typeof activePage !== 'undefined' && activePage === 'backups' ? 'active' : '' %>">
+                    <i class="fas fa-database"></i>
+                    <span>Yedekleme</span>
+                </a>
             </nav>
         </div>
 
