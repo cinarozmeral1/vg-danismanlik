@@ -1,0 +1,420 @@
+<!-- Admin Partners Content -->
+<div class="admin-container">
+    <!-- Sidebar -->
+    <div class="admin-sidebar">
+        <div class="sidebar-header">
+            <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Yönetim Paneli</h6>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/admin/dashboard" class="nav-item">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/admin/users" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Öğrenciler</span>
+                <span class="badge bg-primary ms-auto"><%= userCount %></span>
+            </a>
+            <a href="/admin/applications" class="nav-item">
+                <i class="fas fa-file-alt"></i>
+                <span>Başvurular</span>
+                <span class="badge bg-success ms-auto"><%= applicationCount %></span>
+            </a>
+            <a href="/admin/partners" class="nav-item active">
+                <i class="fas fa-handshake"></i>
+                <span>Partnerler</span>
+            </a>
+            <a href="/admin/universities" class="nav-item">
+                <i class="fas fa-university"></i>
+                <span>Üniversiteler</span>
+            </a>
+            <a href="/admin/backups" class="nav-item">
+                <i class="fas fa-database"></i>
+                <span>Yedekleme</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="admin-main">
+        <div class="section-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2><i class="fas fa-handshake me-2"></i>Partnerler</h2>
+                    <p class="text-muted mb-0">Partner yönetimi ve kazanç takibi</p>
+                </div>
+                <button class="btn btn-primary" onclick="showAddPartnerModal()">
+                    <i class="fas fa-plus me-2"></i>Yeni Partner Ekle
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card primary">
+                <div class="stat-icon">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 id="totalPartners"><%= partners.length %></h3>
+                    <p>Toplam Partner</p>
+                </div>
+            </div>
+            <div class="stat-card success">
+                <div class="stat-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 id="activePartners"><%= partners.filter(p => p.is_active && p.email_verified).length %></h3>
+                    <p>Aktif Partner</p>
+                </div>
+            </div>
+            <div class="stat-card warning">
+                <div class="stat-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 id="pendingPartners"><%= partners.filter(p => !p.email_verified).length %></h3>
+                    <p>Doğrulama Bekleyen</p>
+                </div>
+            </div>
+            <div class="stat-card info">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 id="totalStudents"><%= partners.reduce((sum, p) => sum + parseInt(p.student_count || 0), 0) %></h3>
+                    <p>Partner Öğrencileri</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Partners Table -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Partner Listesi</h5>
+                <div class="search-box">
+                    <div class="input-group" style="width: 300px;">
+                        <span class="input-group-text">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input type="text" class="form-control" id="partnerSearchInput" placeholder="Partner ara...">
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="partnersTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>İsim</th>
+                                <th>Şirket</th>
+                                <th>E-posta</th>
+                                <th>Telefon</th>
+                                <th>Öğrenci</th>
+                                <th>Kazanç</th>
+                                <th>Durum</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% partners.forEach(partner => { %>
+                            <tr data-partner-id="<%= partner.id %>">
+                                <td><%= partner.id %></td>
+                                <td><strong><%= partner.name %></strong></td>
+                                <td><%= partner.company_name || '-' %></td>
+                                <td><%= partner.email %></td>
+                                <td><%= partner.phone || '-' %></td>
+                                <td><span class="badge bg-info"><%= partner.student_count || 0 %></span></td>
+                                <td><%= parseFloat(partner.total_earnings || 0).toFixed(2) %> €</td>
+                                <td>
+                                    <% if (partner.email_verified && partner.is_active) { %>
+                                        <span class="badge bg-success">Aktif</span>
+                                    <% } else if (!partner.email_verified) { %>
+                                        <span class="badge bg-warning text-dark">Doğrulama Bekliyor</span>
+                                    <% } else { %>
+                                        <span class="badge bg-secondary">Pasif</span>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <button class="btn btn-sm btn-outline-primary" onclick="editPartner(<%= partner.id %>)" title="Düzenle">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <% if (!partner.email_verified) { %>
+                                        <button class="btn btn-sm btn-outline-info" onclick="resendVerification(<%= partner.id %>)" title="Doğrulama Maili Gönder">
+                                            <i class="fas fa-envelope"></i>
+                                        </button>
+                                        <% } %>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="deletePartner(<%= partner.id %>, '<%= partner.name %>')" title="Sil">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                    
+                    <% if (partners.length === 0) { %>
+                    <div class="text-center py-5">
+                        <i class="fas fa-handshake fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">Henüz partner bulunmuyor</h5>
+                        <p class="text-muted">Yeni partner eklemek için yukarıdaki butonu kullanın.</p>
+                    </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Partner Modal -->
+<div class="modal fade" id="addPartnerModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="fas fa-user-plus me-2"></i>Yeni Partner Ekle</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addPartnerForm">
+                    <div class="mb-3">
+                        <label for="partnerName" class="form-label">İsim *</label>
+                        <input type="text" class="form-control" id="partnerName" required placeholder="Partner adı">
+                    </div>
+                    <div class="mb-3">
+                        <label for="partnerEmail" class="form-label">E-posta *</label>
+                        <input type="email" class="form-control" id="partnerEmail" required placeholder="partner@email.com">
+                        <small class="text-muted">Bu adrese doğrulama e-postası gönderilecek</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="partnerCompany" class="form-label">Şirket Adı</label>
+                        <input type="text" class="form-control" id="partnerCompany" placeholder="Şirket adı (opsiyonel)">
+                    </div>
+                    <div class="mb-3">
+                        <label for="partnerPhone" class="form-label">Telefon</label>
+                        <input type="tel" class="form-control" id="partnerPhone" placeholder="+90 xxx xxx xx xx">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-primary" onclick="addPartner()">
+                    <i class="fas fa-plus me-2"></i>Partner Ekle
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Partner Modal -->
+<div class="modal fade" id="editPartnerModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title"><i class="fas fa-edit me-2"></i>Partner Düzenle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editPartnerForm">
+                    <input type="hidden" id="editPartnerId">
+                    <div class="mb-3">
+                        <label for="editPartnerName" class="form-label">İsim *</label>
+                        <input type="text" class="form-control" id="editPartnerName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editPartnerEmail" class="form-label">E-posta</label>
+                        <input type="email" class="form-control" id="editPartnerEmail" readonly disabled>
+                        <small class="text-muted">E-posta adresi değiştirilemez</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editPartnerCompany" class="form-label">Şirket Adı</label>
+                        <input type="text" class="form-control" id="editPartnerCompany">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editPartnerPhone" class="form-label">Telefon</label>
+                        <input type="tel" class="form-control" id="editPartnerPhone">
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="editPartnerActive">
+                            <label class="form-check-label" for="editPartnerActive">Aktif</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-warning" onclick="updatePartner()">
+                    <i class="fas fa-save me-2"></i>Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Search functionality
+    document.getElementById('partnerSearchInput').addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#partnersTable tbody tr');
+        
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+    });
+
+    // Show add partner modal
+    function showAddPartnerModal() {
+        document.getElementById('addPartnerForm').reset();
+        const modal = new bootstrap.Modal(document.getElementById('addPartnerModal'));
+        modal.show();
+    }
+
+    // Add partner
+    async function addPartner() {
+        const name = document.getElementById('partnerName').value;
+        const email = document.getElementById('partnerEmail').value;
+        const company_name = document.getElementById('partnerCompany').value;
+        const phone = document.getElementById('partnerPhone').value;
+        
+        if (!name || !email) {
+            alert('İsim ve e-posta adresi gerekli!');
+            return;
+        }
+        
+        try {
+            const response = await fetch('/admin/partners', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ name, email, company_name, phone })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                alert(data.message);
+                bootstrap.Modal.getInstance(document.getElementById('addPartnerModal')).hide();
+                window.location.reload();
+            } else {
+                alert(data.message || 'Partner eklenemedi!');
+            }
+        } catch (error) {
+            console.error('Add partner error:', error);
+            alert('Partner eklenirken bir hata oluştu!');
+        }
+    }
+
+    // Edit partner
+    async function editPartner(id) {
+        try {
+            const response = await fetch('/admin/api/partners', {
+                credentials: 'include'
+            });
+            const data = await response.json();
+            
+            if (data.success) {
+                const partner = data.partners.find(p => p.id === id);
+                if (partner) {
+                    document.getElementById('editPartnerId').value = partner.id;
+                    document.getElementById('editPartnerName').value = partner.name;
+                    document.getElementById('editPartnerEmail').value = partner.email;
+                    document.getElementById('editPartnerCompany').value = partner.company_name || '';
+                    document.getElementById('editPartnerPhone').value = partner.phone || '';
+                    document.getElementById('editPartnerActive').checked = partner.is_active;
+                    
+                    const modal = new bootstrap.Modal(document.getElementById('editPartnerModal'));
+                    modal.show();
+                }
+            }
+        } catch (error) {
+            console.error('Edit partner error:', error);
+            alert('Partner bilgileri yüklenemedi!');
+        }
+    }
+
+    // Update partner
+    async function updatePartner() {
+        const id = document.getElementById('editPartnerId').value;
+        const name = document.getElementById('editPartnerName').value;
+        const company_name = document.getElementById('editPartnerCompany').value;
+        const phone = document.getElementById('editPartnerPhone').value;
+        const is_active = document.getElementById('editPartnerActive').checked;
+        
+        try {
+            const response = await fetch(`/admin/partners/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ name, company_name, phone, is_active })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                alert('Partner başarıyla güncellendi!');
+                bootstrap.Modal.getInstance(document.getElementById('editPartnerModal')).hide();
+                window.location.reload();
+            } else {
+                alert(data.message || 'Partner güncellenemedi!');
+            }
+        } catch (error) {
+            console.error('Update partner error:', error);
+            alert('Partner güncellenirken bir hata oluştu!');
+        }
+    }
+
+    // Delete partner
+    async function deletePartner(id, name) {
+        if (!confirm(`"${name}" adlı partneri silmek istediğinizden emin misiniz?\n\nBu işlem geri alınamaz ve partner ile ilişkili tüm kazanç kayıtları silinecektir.`)) {
+            return;
+        }
+        
+        try {
+            const response = await fetch(`/admin/partners/${id}`, {
+                method: 'DELETE',
+                credentials: 'include'
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                alert(data.message);
+                const row = document.querySelector(`tr[data-partner-id="${id}"]`);
+                if (row) row.remove();
+            } else {
+                alert(data.message || 'Partner silinemedi!');
+            }
+        } catch (error) {
+            console.error('Delete partner error:', error);
+            alert('Partner silinirken bir hata oluştu!');
+        }
+    }
+
+    // Resend verification email
+    async function resendVerification(id) {
+        try {
+            const response = await fetch(`/admin/partners/${id}/resend-verification`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include'
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                alert(data.message);
+            } else {
+                alert(data.message || 'E-posta gönderilemedi!');
+            }
+        } catch (error) {
+            console.error('Resend verification error:', error);
+            alert('E-posta gönderilirken bir hata oluştu!');
+        }
+    }
+</script>
+

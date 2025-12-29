@@ -416,6 +416,10 @@
                         <span class="badge bg-success ms-auto"><%= applicationCount %></span>
                     <% } %>
                 </a>
+                <a href="/admin/partners" class="nav-item <%= typeof activePage !== 'undefined' && activePage === 'partners' ? 'active' : '' %>">
+                    <i class="fas fa-handshake"></i>
+                    <span>Partnerler</span>
+                </a>
                 <a href="/admin/universities" class="nav-item <%= typeof activePage !== 'undefined' && activePage === 'universities' ? 'active' : '' %>">
                     <i class="fas fa-university"></i>
                     <span>Üniversiteler</span>

@@ -128,6 +128,7 @@ const logoUpload = multer({
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
 const userRoutes = require('./routes/user');
+const partnerRoutes = require('./routes/partner');
 const guardianRoutes = require('./routes/guardians');
 const stripeWebhookRoutes = require('./routes/stripe-webhook');
 
@@ -453,6 +454,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/user', userRoutes);
 app.use('/admin', adminRoutes);
 app.use('/user', userRoutes);
+app.use('/partner', partnerRoutes);
 
 // Scheduled cleanup for unverified users older than 72h since last login
 app.post('/api/maintenance/delete-unverified', async (req, res) => {
@@ -1166,6 +1168,14 @@ app.get('/register', (req, res) => {
 
 app.get('/forgot-password', (req, res) => {
     res.render('forgot-password', { title: res.locals.t.auth.forgotPassword.title });
+});
+
+// Partner authentication pages
+app.get('/partner-login', (req, res) => {
+    res.render('partner-login', { 
+        title: 'Partner Girişi - Venture Global',
+        layout: false
+    });
 });
 
 // User dashboard route

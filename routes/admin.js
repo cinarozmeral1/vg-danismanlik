@@ -5,7 +5,7 @@ const pool = require('../config/database');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const { sendApplicationCreationEmail, sendApplicationStatusEmail } = require('../services/emailService');
+const { sendApplicationCreationEmail, sendApplicationStatusEmail, sendPartnerVerificationEmail, generateVerificationToken } = require('../services/emailService');
 const { DateTime } = require('luxon');
 
 // File upload middleware for university logos
@@ -4160,6 +4160,519 @@ router.get('/payments/statistics', async (req, res) => {
             success: false,
             message: 'Server error'
         });
+    }
+});
+
+// =====================================================
+// PARTNER MANAGEMENT ROUTES
+// =====================================================
+
+// Get partners list page
+router.get('/partners', async (req, res) => {
+    try {
+        const sidebarCounts = await getAdminSidebarCounts();
+        
+        // Get all partners
+        const partnersResult = await pool.query(`
+            SELECT 
+                p.*,
+                COUNT(u.id) as student_count,
+                COALESCE(SUM(pe.amount), 0) as total_earnings
+            FROM partners p
+            LEFT JOIN users u ON u.partner_id = p.id
+            LEFT JOIN partner_earnings pe ON pe.partner_id = p.id
+            GROUP BY p.id
+            ORDER BY p.created_at DESC
+        `);
+        
+        res.render('admin/partners', {
+            title: 'Partnerler - Admin Panel',
+            activePage: 'partners',
+            partners: partnersResult.rows,
+            ...sidebarCounts
+        });
+    } catch (error) {
+        console.error('Get partners error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// Get partners list API
+router.get('/api/partners', async (req, res) => {
+    try {
+        const result = await pool.query(`
+            SELECT 
+                p.id,
+                p.name,
+                p.email,
+                p.company_name,
+                p.phone,
+                p.email_verified,
+                p.is_active,
+                p.created_at,
+                COUNT(u.id) as student_count,
+                COALESCE(SUM(CASE WHEN pe.is_paid = true THEN pe.amount ELSE 0 END), 0) as paid_earnings,
+                COALESCE(SUM(CASE WHEN pe.is_paid = false THEN pe.amount ELSE 0 END), 0) as pending_earnings
+            FROM partners p
+            LEFT JOIN users u ON u.partner_id = p.id
+            LEFT JOIN partner_earnings pe ON pe.partner_id = p.id
+            GROUP BY p.id
+            ORDER BY p.created_at DESC
+        `);
+        
+        res.json({
+            success: true,
+            partners: result.rows
+        });
+    } catch (error) {
+        console.error('Get partners API error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// Add new partner
+router.post('/partners', async (req, res) => {
+    try {
+        const { name, email, company_name, phone, language = 'tr' } = req.body;
+        
+        if (!name || !email) {
+            return res.status(400).json({
+                success: false,
+                message: 'İsim ve e-posta adresi gerekli'
+            });
+        }
+        
+        // Check if partner already exists
+        const existingPartner = await pool.query(
+            'SELECT id FROM partners WHERE email = $1',
+            [email]
+        );
+        
+        if (existingPartner.rows.length > 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Bu e-posta adresi ile kayıtlı bir partner zaten var'
+            });
+        }
+        
+        // Generate verification token
+        const verificationToken = generateVerificationToken();
+        
+        // Insert partner
+        const result = await pool.query(`
+            INSERT INTO partners (name, email, company_name, phone, verification_token, email_verified, is_active)
+            VALUES ($1, $2, $3, $4, $5, false, true)
+            RETURNING id, name, email, company_name, phone
+        `, [name, email, company_name || null, phone || null, verificationToken]);
+        
+        const partner = result.rows[0];
+        
+        // Send verification email
+        await sendPartnerVerificationEmail(email, name, verificationToken, language);
+        
+        res.status(201).json({
+            success: true,
+            message: 'Partner başarıyla eklendi. Doğrulama e-postası gönderildi.',
+            partner
+        });
+        
+    } catch (error) {
+        console.error('Add partner error:', error);
+        res.status(500).json({ success: false, message: 'Partner eklenirken hata oluştu: ' + error.message });
+    }
+});
+
+// Update partner
+router.put('/partners/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, company_name, phone, is_active } = req.body;
+        
+        const result = await pool.query(`
+            UPDATE partners 
+            SET name = COALESCE($1, name),
+                company_name = COALESCE($2, company_name),
+                phone = COALESCE($3, phone),
+                is_active = COALESCE($4, is_active),
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = $5
+            RETURNING *
+        `, [name, company_name, phone, is_active, id]);
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Partner bulunamadı'
+            });
+        }
+        
+        res.json({
+            success: true,
+            message: 'Partner başarıyla güncellendi',
+            partner: result.rows[0]
+        });
+        
+    } catch (error) {
+        console.error('Update partner error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// Delete partner
+router.delete('/partners/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        // First, remove partner_id from associated users
+        await pool.query('UPDATE users SET partner_id = NULL WHERE partner_id = $1', [id]);
+        
+        // Delete partner earnings
+        await pool.query('DELETE FROM partner_earnings WHERE partner_id = $1', [id]);
+        
+        // Delete partner
+        const result = await pool.query(
+            'DELETE FROM partners WHERE id = $1 RETURNING name',
+            [id]
+        );
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Partner bulunamadı'
+            });
+        }
+        
+        res.json({
+            success: true,
+            message: `${result.rows[0].name} başarıyla silindi`
+        });
+        
+    } catch (error) {
+        console.error('Delete partner error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// Resend partner verification email
+router.post('/partners/:id/resend-verification', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { language = 'tr' } = req.body;
+        
+        const partnerResult = await pool.query(
+            'SELECT id, name, email, email_verified FROM partners WHERE id = $1',
+            [id]
+        );
+        
+        if (partnerResult.rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Partner bulunamadı'
+            });
+        }
+        
+        const partner = partnerResult.rows[0];
+        
+        if (partner.email_verified) {
+            return res.status(400).json({
+                success: false,
+                message: 'Bu partner zaten doğrulanmış'
+            });
+        }
+        
+        // Generate new verification token
+        const newToken = generateVerificationToken();
+        
+        await pool.query(
+            'UPDATE partners SET verification_token = $1 WHERE id = $2',
+            [newToken, id]
+        );
+        
+        // Send verification email
+        await sendPartnerVerificationEmail(partner.email, partner.name, newToken, language);
+        
+        res.json({
+            success: true,
+            message: 'Doğrulama e-postası tekrar gönderildi'
+        });
+        
+    } catch (error) {
+        console.error('Resend partner verification error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// =====================================================
+// STUDENT-PARTNER ASSIGNMENT ROUTES
+// =====================================================
+
+// Assign partner to student
+router.put('/users/:id/partner', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { partner_id } = req.body;
+        
+        // Validate partner exists (if partner_id is provided)
+        if (partner_id) {
+            const partnerCheck = await pool.query(
+                'SELECT id, name FROM partners WHERE id = $1',
+                [partner_id]
+            );
+            
+            if (partnerCheck.rows.length === 0) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Partner bulunamadı'
+                });
+            }
+        }
+        
+        // Update user's partner_id
+        const result = await pool.query(
+            'UPDATE users SET partner_id = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING first_name, last_name, partner_id',
+            [partner_id || null, id]
+        );
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Öğrenci bulunamadı'
+            });
+        }
+        
+        const message = partner_id 
+            ? 'Partner başarıyla atandı' 
+            : 'Partner ataması kaldırıldı';
+        
+        res.json({
+            success: true,
+            message,
+            user: result.rows[0]
+        });
+        
+    } catch (error) {
+        console.error('Assign partner error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// Get student's partner info
+router.get('/users/:id/partner', async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        const result = await pool.query(`
+            SELECT 
+                u.partner_id,
+                p.name as partner_name,
+                p.email as partner_email,
+                p.company_name as partner_company,
+                pe.id as earning_id,
+                pe.earning_type,
+                pe.amount as earning_amount,
+                pe.currency,
+                pe.is_paid,
+                pe.payment_date,
+                pe.notes as earning_notes
+            FROM users u
+            LEFT JOIN partners p ON u.partner_id = p.id
+            LEFT JOIN partner_earnings pe ON pe.user_id = u.id AND pe.partner_id = p.id
+            WHERE u.id = $1
+        `, [id]);
+        
+        if (result.rows.length === 0) {
+            return res.json({
+                success: true,
+                has_partner: false,
+                partner: null,
+                earning: null
+            });
+        }
+        
+        const row = result.rows[0];
+        
+        res.json({
+            success: true,
+            has_partner: !!row.partner_id,
+            partner: row.partner_id ? {
+                id: row.partner_id,
+                name: row.partner_name,
+                email: row.partner_email,
+                company_name: row.partner_company
+            } : null,
+            earning: row.earning_id ? {
+                id: row.earning_id,
+                earning_type: row.earning_type,
+                amount: row.earning_amount,
+                currency: row.currency,
+                is_paid: row.is_paid,
+                payment_date: row.payment_date,
+                notes: row.earning_notes
+            } : null
+        });
+        
+    } catch (error) {
+        console.error('Get student partner error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// =====================================================
+// PARTNER EARNINGS ROUTES
+// =====================================================
+
+// Add earning for a student-partner
+router.post('/partner-earnings', async (req, res) => {
+    try {
+        const { partner_id, user_id, earning_type, amount, percentage_value, currency, notes } = req.body;
+        
+        if (!partner_id || !user_id || !earning_type || !amount) {
+            return res.status(400).json({
+                success: false,
+                message: 'Partner, öğrenci, kazanç türü ve tutar gerekli'
+            });
+        }
+        
+        // Verify partner and user exist
+        const partnerCheck = await pool.query('SELECT id FROM partners WHERE id = $1', [partner_id]);
+        const userCheck = await pool.query('SELECT id, partner_id FROM users WHERE id = $1', [user_id]);
+        
+        if (partnerCheck.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Partner bulunamadı' });
+        }
+        
+        if (userCheck.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Öğrenci bulunamadı' });
+        }
+        
+        // Check if earning already exists for this partner-user combination
+        const existingEarning = await pool.query(
+            'SELECT id FROM partner_earnings WHERE partner_id = $1 AND user_id = $2',
+            [partner_id, user_id]
+        );
+        
+        if (existingEarning.rows.length > 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Bu öğrenci için zaten bir kazanç kaydı var. Lütfen mevcut kaydı güncelleyin.'
+            });
+        }
+        
+        // Insert earning
+        const result = await pool.query(`
+            INSERT INTO partner_earnings (partner_id, user_id, earning_type, amount, percentage_value, currency, notes)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            RETURNING *
+        `, [partner_id, user_id, earning_type, amount, percentage_value || null, currency || 'EUR', notes || null]);
+        
+        // Also update user's partner_id if not set
+        if (!userCheck.rows[0].partner_id) {
+            await pool.query('UPDATE users SET partner_id = $1 WHERE id = $2', [partner_id, user_id]);
+        }
+        
+        res.status(201).json({
+            success: true,
+            message: 'Kazanç kaydı başarıyla oluşturuldu',
+            earning: result.rows[0]
+        });
+        
+    } catch (error) {
+        console.error('Add partner earning error:', error);
+        res.status(500).json({ success: false, message: 'Server error: ' + error.message });
+    }
+});
+
+// Update partner earning
+router.put('/partner-earnings/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { earning_type, amount, percentage_value, currency, is_paid, payment_date, notes } = req.body;
+        
+        const result = await pool.query(`
+            UPDATE partner_earnings 
+            SET earning_type = COALESCE($1, earning_type),
+                amount = COALESCE($2, amount),
+                percentage_value = $3,
+                currency = COALESCE($4, currency),
+                is_paid = COALESCE($5, is_paid),
+                payment_date = $6,
+                notes = $7,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = $8
+            RETURNING *
+        `, [earning_type, amount, percentage_value, currency, is_paid, payment_date || null, notes, id]);
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Kazanç kaydı bulunamadı'
+            });
+        }
+        
+        res.json({
+            success: true,
+            message: 'Kazanç kaydı başarıyla güncellendi',
+            earning: result.rows[0]
+        });
+        
+    } catch (error) {
+        console.error('Update partner earning error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// Delete partner earning
+router.delete('/partner-earnings/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        const result = await pool.query(
+            'DELETE FROM partner_earnings WHERE id = $1 RETURNING id',
+            [id]
+        );
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Kazanç kaydı bulunamadı'
+            });
+        }
+        
+        res.json({
+            success: true,
+            message: 'Kazanç kaydı başarıyla silindi'
+        });
+        
+    } catch (error) {
+        console.error('Delete partner earning error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// Get all partner earnings (for admin dashboard)
+router.get('/api/partner-earnings', async (req, res) => {
+    try {
+        const result = await pool.query(`
+            SELECT 
+                pe.*,
+                p.name as partner_name,
+                p.company_name as partner_company,
+                u.first_name,
+                u.last_name
+            FROM partner_earnings pe
+            JOIN partners p ON pe.partner_id = p.id
+            JOIN users u ON pe.user_id = u.id
+            ORDER BY pe.created_at DESC
+        `);
+        
+        res.json({
+            success: true,
+            earnings: result.rows
+        });
+        
+    } catch (error) {
+        console.error('Get all partner earnings error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 });
 

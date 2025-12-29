@@ -554,12 +554,151 @@ const sendApplicationStatusEmail = async (email, firstName, lastName, university
     }
 };
 
+// Send partner verification email
+const sendPartnerVerificationEmail = async (email, name, verificationToken, language = 'tr') => {
+    // Get correct URL for verification
+    let baseUrl;
+    if (process.env.BASE_URL) {
+        baseUrl = process.env.BASE_URL;
+    } else if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+        baseUrl = `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+    } else if (process.env.VERCEL_URL) {
+        baseUrl = `https://${process.env.VERCEL_URL}`;
+    } else {
+        baseUrl = process.env.NODE_ENV === 'production'
+            ? 'https://vgdanismanlik.com'
+            : 'http://localhost:4000';
+    }
+    if (!baseUrl.includes('http')) {
+        baseUrl = `https://${baseUrl}`;
+    }
+    const verificationUrl = `${baseUrl}/api/auth/verify-partner-email?token=${verificationToken}`;
+    
+    console.log('📧 Email Service - Partner Verification Email Details:');
+    console.log('   To:', email);
+    console.log('   Name:', name);
+    console.log('   Token:', verificationToken);
+    console.log('   Verification URL:', verificationUrl);
+    
+    const emailContent = {
+        tr: {
+            subject: 'Venture Global - Partner Hesabı Doğrulama',
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                    <div style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+                        <h1 style="margin: 0; font-size: 28px;">Venture Global</h1>
+                        <p style="margin: 10px 0 0 0; opacity: 0.9;">Partner Hesabı Aktivasyonu</p>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
+                        <h2 style="color: #333; margin-bottom: 20px;">Merhaba ${name},</h2>
+                        
+                        <p style="color: #666; line-height: 1.6; margin-bottom: 25px;">
+                            Venture Global partner programına davet edildiniz. Hesabınızı aktifleştirmek ve şifrenizi belirlemek için aşağıdaki butona tıklayın:
+                        </p>
+                        
+                        <div style="text-align: center; margin: 30px 0;">
+                            <a href="${verificationUrl}" style="background: #2c3e50; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
+                                Hesabımı Aktifleştir
+                            </a>
+                        </div>
+                        
+                        <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #2c3e50;">
+                            <h3 style="color: #333; margin-top: 0; font-size: 16px;">Partner Olarak Neler Yapabilirsiniz?</h3>
+                            <ul style="color: #666; line-height: 1.8; padding-left: 20px;">
+                                <li>Getirdiğiniz öğrencileri takip edin</li>
+                                <li>Kazançlarınızı görüntüleyin</li>
+                                <li>Ödeme durumlarını kontrol edin</li>
+                            </ul>
+                        </div>
+                        
+                        <p style="color: #666; font-size: 14px; margin-top: 25px;">
+                            Bu e-postayı siz talep etmediyseniz, lütfen dikkate almayın.
+                        </p>
+                        
+                        <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+                        
+                        <p style="color: #999; font-size: 12px; text-align: center;">
+                            Venture Global - Avrupa Üniversite ve Dil Okulu Danışmanlığı
+                        </p>
+                    </div>
+                </div>
+            `
+        },
+        en: {
+            subject: 'Venture Global - Partner Account Verification',
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                    <div style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+                        <h1 style="margin: 0; font-size: 28px;">Venture Global</h1>
+                        <p style="margin: 10px 0 0 0; opacity: 0.9;">Partner Account Activation</p>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
+                        <h2 style="color: #333; margin-bottom: 20px;">Hello ${name},</h2>
+                        
+                        <p style="color: #666; line-height: 1.6; margin-bottom: 25px;">
+                            You have been invited to join the Venture Global partner program. Click the button below to activate your account and set your password:
+                        </p>
+                        
+                        <div style="text-align: center; margin: 30px 0;">
+                            <a href="${verificationUrl}" style="background: #2c3e50; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
+                                Activate My Account
+                            </a>
+                        </div>
+                        
+                        <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #2c3e50;">
+                            <h3 style="color: #333; margin-top: 0; font-size: 16px;">What Can You Do As A Partner?</h3>
+                            <ul style="color: #666; line-height: 1.8; padding-left: 20px;">
+                                <li>Track your referred students</li>
+                                <li>View your earnings</li>
+                                <li>Check payment statuses</li>
+                            </ul>
+                        </div>
+                        
+                        <p style="color: #666; font-size: 14px; margin-top: 25px;">
+                            If you didn't request this email, please ignore it.
+                        </p>
+                        
+                        <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+                        
+                        <p style="color: #999; font-size: 12px; text-align: center;">
+                            Venture Global - European University and Language School Consultancy
+                        </p>
+                    </div>
+                </div>
+            `
+        }
+    };
+    
+    const content = emailContent[language] || emailContent.tr;
+    
+    const mailOptions = {
+        from: process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com',
+        to: email,
+        subject: content.subject,
+        html: content.html
+    };
+    
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log(`✅ Partner verification email sent to ${email}`);
+        return true;
+    } catch (error) {
+        console.error('❌ Partner verification email sending failed:', error);
+        console.error('   Error code:', error.code);
+        console.error('   Error message:', error.message);
+        return false;
+    }
+};
+
 module.exports = {
     transporter,
     sendVerificationEmail,
     sendPasswordResetEmail,
     sendApplicationCreationEmail,
     sendApplicationStatusEmail,
+    sendPartnerVerificationEmail,
     generateVerificationToken,
     generateResetToken
 }; 

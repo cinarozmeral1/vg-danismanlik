@@ -99,10 +99,76 @@ const generateAdminToken = (adminId) => {
     return jwt.sign({ adminId }, JWT_SECRET, { expiresIn: '24h' });
 };
 
+// Partner authentication middleware
+const authenticatePartner = async (req, res, next) => {
+    try {
+        const token = req.cookies.partnerToken || req.headers.authorization?.replace('Bearer ', '');
+        
+        if (!token) {
+            console.log('❌ No partner token provided');
+            return res.status(401).json({ 
+                success: false, 
+                message: 'Partner authentication required' 
+            });
+        }
+        
+        const decoded = jwt.verify(token, JWT_SECRET);
+        
+        // Check if partner exists and is verified
+        const result = await pool.query(
+            'SELECT id, name, email, company_name, phone, email_verified, is_active FROM partners WHERE id = $1',
+            [decoded.partnerId]
+        );
+        
+        if (result.rows.length === 0) {
+            return res.status(401).json({ 
+                success: false, 
+                message: 'Partner not found' 
+            });
+        }
+        
+        const partner = result.rows[0];
+        
+        // Check if partner is active
+        if (!partner.is_active) {
+            return res.status(401).json({ 
+                success: false, 
+                message: 'Partner account is deactivated' 
+            });
+        }
+        
+        // Check if email is verified
+        if (!partner.email_verified) {
+            console.log('⚠️ Partner email not verified:', partner.email);
+            return res.status(401).json({ 
+                success: false, 
+                message: 'Please verify your email address first' 
+            });
+        }
+        
+        req.partner = partner;
+        next();
+        
+    } catch (error) {
+        console.error('Partner authentication error:', error);
+        return res.status(401).json({ 
+            success: false, 
+            message: 'Invalid partner token' 
+        });
+    }
+};
+
+// Generate JWT token for partner
+const generatePartnerToken = (partnerId) => {
+    return jwt.sign({ partnerId }, JWT_SECRET, { expiresIn: '7d' });
+};
+
 module.exports = {
     authenticateUser,
     authenticateAdmin,
+    authenticatePartner,
     generateUserToken,
     generateAdminToken,
+    generatePartnerToken,
     JWT_SECRET
 }; 

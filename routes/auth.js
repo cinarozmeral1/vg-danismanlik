@@ -1,8 +1,8 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const pool = require('../config/database');
-const { generateUserToken } = require('../middleware/auth');
-const { sendVerificationEmail, sendPasswordResetEmail, generateVerificationToken, generateResetToken } = require('../services/emailService');
+const { generateUserToken, generatePartnerToken } = require('../middleware/auth');
+const { sendVerificationEmail, sendPasswordResetEmail, sendPartnerVerificationEmail, generateVerificationToken, generateResetToken } = require('../services/emailService');
 
 const router = express.Router();
 
@@ -529,7 +529,7 @@ router.post('/reset-password', async (req, res) => {
 
 // Logout
 router.post('/logout', (req, res) => {
-    // Clear both user and admin tokens with proper options
+    // Clear both user, admin and partner tokens with proper options
     res.clearCookie('userToken', {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
@@ -542,6 +542,12 @@ router.post('/logout', (req, res) => {
         sameSite: 'strict',
         path: '/'
     });
+    res.clearCookie('partnerToken', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        path: '/'
+    });
     
     console.log('Logout endpoint called - cookies cleared'); // Debug log
     
@@ -549,6 +555,223 @@ router.post('/logout', (req, res) => {
         success: true,
         message: 'Logout successful'
     });
+});
+
+// =====================================================
+// PARTNER AUTHENTICATION ENDPOINTS
+// =====================================================
+
+// Partner Login
+router.post('/partner-login', async (req, res) => {
+    try {
+        const { email, password, language = 'tr' } = req.body;
+
+        if (!email || !password) {
+            return res.status(400).json({
+                success: false,
+                message: language === 'tr' ? 'E-posta ve şifre gerekli' : 'Email and password required'
+            });
+        }
+
+        // Find partner
+        const result = await pool.query(
+            'SELECT id, name, email, password_hash, email_verified, is_active, company_name FROM partners WHERE email = $1',
+            [email]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(401).json({
+                success: false,
+                message: language === 'tr' ? 'Geçersiz e-posta veya şifre' : 'Invalid email or password'
+            });
+        }
+
+        const partner = result.rows[0];
+
+        // Check if partner is active
+        if (!partner.is_active) {
+            return res.status(401).json({
+                success: false,
+                message: language === 'tr' ? 'Hesabınız devre dışı bırakılmış' : 'Your account has been deactivated'
+            });
+        }
+
+        // Check if email is verified
+        if (!partner.email_verified) {
+            return res.status(401).json({
+                success: false,
+                message: language === 'tr' ? 'Lütfen önce e-posta adresinizi doğrulayın' : 'Please verify your email address first'
+            });
+        }
+
+        // Check if password is set
+        if (!partner.password_hash) {
+            return res.status(401).json({
+                success: false,
+                message: language === 'tr' ? 'Lütfen önce şifrenizi belirleyin' : 'Please set your password first'
+            });
+        }
+
+        // Check password
+        const passwordMatch = await bcrypt.compare(password, partner.password_hash);
+        if (!passwordMatch) {
+            return res.status(401).json({
+                success: false,
+                message: language === 'tr' ? 'Geçersiz e-posta veya şifre' : 'Invalid email or password'
+            });
+        }
+
+        // Generate token
+        const token = generatePartnerToken(partner.id);
+
+        // Set cookie
+        res.cookie('partnerToken', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        });
+
+        res.json({
+            success: true,
+            message: language === 'tr' ? 'Giriş başarılı' : 'Login successful',
+            partner: {
+                id: partner.id,
+                name: partner.name,
+                email: partner.email,
+                company_name: partner.company_name
+            },
+            token,
+            redirect: '/partner/dashboard'
+        });
+
+    } catch (error) {
+        console.error('Partner login error:', error);
+        res.status(500).json({
+            success: false,
+            message: language === 'tr' ? 'Giriş sırasında bir hata oluştu' : 'An error occurred during login'
+        });
+    }
+});
+
+// Partner Email Verification and Password Setup
+router.get('/verify-partner-email', async (req, res) => {
+    try {
+        const { token } = req.query;
+        const language = req.query.lang || 'tr';
+
+        if (!token) {
+            return res.status(400).render('verification-error', { 
+                title: 'Doğrulama Hatası',
+                message: language === 'tr' ? 'Geçersiz doğrulama tokeni' : 'Invalid verification token',
+                language 
+            });
+        }
+
+        // Find partner with this token
+        const result = await pool.query(
+            'SELECT id, name, email FROM partners WHERE verification_token = $1 AND email_verified = false',
+            [token]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(400).render('verification-error', { 
+                title: 'Doğrulama Hatası',
+                message: language === 'tr' ? 'Geçersiz veya kullanılmış doğrulama tokeni' : 'Invalid or used verification token',
+                language 
+            });
+        }
+
+        const partner = result.rows[0];
+
+        // Render password setup page for partner
+        res.render('partner-setup-password', { 
+            title: 'Şifre Belirleme',
+            partner: {
+                id: partner.id,
+                name: partner.name,
+                email: partner.email
+            },
+            token,
+            language 
+        });
+
+    } catch (error) {
+        console.error('Partner email verification error:', error);
+        res.status(500).render('verification-error', { 
+            title: 'Doğrulama Hatası',
+            message: language === 'tr' ? 'Doğrulama sırasında bir hata oluştu' : 'An error occurred during verification',
+            language 
+        });
+    }
+});
+
+// Partner Password Setup (after email verification)
+router.post('/partner-setup-password', async (req, res) => {
+    try {
+        const { token, password, language = 'tr' } = req.body;
+
+        if (!token || !password) {
+            return res.status(400).json({
+                success: false,
+                message: language === 'tr' ? 'Token ve şifre gerekli' : 'Token and password required'
+            });
+        }
+
+        if (password.length < 6) {
+            return res.status(400).json({
+                success: false,
+                message: language === 'tr' ? 'Şifre en az 6 karakter olmalıdır' : 'Password must be at least 6 characters'
+            });
+        }
+
+        // Find partner with this token
+        const result = await pool.query(
+            'SELECT id, name, email FROM partners WHERE verification_token = $1',
+            [token]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: language === 'tr' ? 'Geçersiz token' : 'Invalid token'
+            });
+        }
+
+        const partner = result.rows[0];
+
+        // Hash password
+        const saltRounds = 10;
+        const passwordHash = await bcrypt.hash(password, saltRounds);
+
+        // Update partner: set password, verify email, clear token
+        await pool.query(
+            'UPDATE partners SET password_hash = $1, email_verified = true, verification_token = NULL WHERE id = $2',
+            [passwordHash, partner.id]
+        );
+
+        // Generate login token
+        const loginToken = generatePartnerToken(partner.id);
+
+        // Set cookie
+        res.cookie('partnerToken', loginToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        });
+
+        res.json({
+            success: true,
+            message: language === 'tr' ? 'Şifreniz başarıyla belirlendi' : 'Password set successfully',
+            redirect: '/partner/dashboard'
+        });
+
+    } catch (error) {
+        console.error('Partner password setup error:', error);
+        res.status(500).json({
+            success: false,
+            message: language === 'tr' ? 'Şifre belirlenirken bir hata oluştu' : 'An error occurred while setting password'
+        });
+    }
 });
 
 // Temporary admin creation endpoint (for development only)
