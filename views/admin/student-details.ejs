@@ -20,6 +20,13 @@
                 <span>Başvurular</span>
                 <span class="badge bg-success ms-auto"><%= applicationCount %></span>
             </a>
+            <a href="/admin/partners" class="nav-item">
+                <i class="fas fa-handshake"></i>
+                <span>Partnerler</span>
+                <% if (typeof partnerCount !== 'undefined' && partnerCount > 0) { %>
+                    <span class="badge bg-info ms-auto"><%= partnerCount %></span>
+                <% } %>
+            </a>
             <a href="/admin/universities" class="nav-item">
                 <i class="fas fa-university"></i>
                 <span>Üniversiteler</span>
@@ -424,17 +431,18 @@
                             <!-- Partner Earning Card -->
                             <div class="card" id="earningCard" style="display: none;">
                                 <div class="card-header text-white" style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%);">
-                                    <h6 class="mb-0"><i class="fas fa-money-bill-wave me-2"></i>Partner Kazancı</h6>
+                                    <h6 class="mb-0"><i class="fas fa-money-bill-wave me-2"></i>Partner Kazançları</h6>
                                 </div>
                                 <div class="card-body">
-                                    <div id="earningInfo">
-                                        <!-- Earning info will be loaded here -->
+                                    <!-- Existing Earnings Table -->
+                                    <div id="earningsTableContainer" class="mb-4">
+                                        <!-- Earnings table will be loaded here -->
                                     </div>
                                     
                                     <hr>
                                     
+                                    <h6 class="mb-3"><i class="fas fa-plus-circle me-2"></i>Yeni Kazanç Ekle</h6>
                                     <form id="earningForm">
-                                        <input type="hidden" id="earningId">
                                         <div class="row g-3">
                                             <div class="col-md-6">
                                                 <label for="earningAmount" class="form-label">Tutar *</label>
@@ -453,7 +461,7 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="earningPaid" class="form-label">Ödeme Durumu</label>
-                                                <select class="form-select" id="earningPaid">
+                                                <select class="form-select" id="earningPaid" onchange="togglePaymentDate()">
                                                     <option value="false">Ödenmedi</option>
                                                     <option value="true">Ödendi</option>
                                                 </select>
@@ -469,7 +477,7 @@
                                         </div>
                                         <div class="mt-3">
                                             <button type="button" class="btn btn-primary" onclick="saveEarning()">
-                                                <i class="fas fa-save me-2"></i>Kazancı Kaydet
+                                                <i class="fas fa-plus me-2"></i>Kazanç Ekle
                                             </button>
                                         </div>
                                     </form>
@@ -3572,18 +3580,23 @@ async function loadPartnerData() {
         if (data.success) {
             currentPartnerInfo = data;
             displayPartnerInfo(data);
+            displayEarningsTable(data.earnings || []);
             
+            // Always show earning card if has partner
             if (data.has_partner) {
                 document.getElementById('earningCard').style.display = 'block';
-                displayEarningInfo(data.earning);
             } else {
                 document.getElementById('earningCard').style.display = 'none';
             }
+        } else {
+            document.getElementById('partnerInfo').innerHTML = `
+                <div class="alert alert-warning">Partner bilgisi bulunamadı</div>
+            `;
         }
     } catch (error) {
         console.error('Load partner data error:', error);
         document.getElementById('partnerInfo').innerHTML = `
-            <div class="alert alert-danger">Partner bilgileri yüklenirken hata oluştu</div>
+            <div class="alert alert-warning">Partner bilgisi henüz yok</div>
         `;
     }
 }
@@ -3615,28 +3628,73 @@ function displayPartnerInfo(data) {
     }
 }
 
-// Display earning info
-function displayEarningInfo(earning) {
-    if (earning) {
-        document.getElementById('earningId').value = earning.id;
-        document.getElementById('earningType').value = earning.earning_type || 'fixed';
-        document.getElementById('earningAmount').value = earning.amount || '';
-        document.getElementById('earningCurrency').value = earning.currency || 'EUR';
-        document.getElementById('percentageValue').value = earning.percentage_value || '';
-        document.getElementById('earningPaid').value = earning.is_paid ? 'true' : 'false';
-        document.getElementById('paymentDate').value = earning.payment_date ? earning.payment_date.split('T')[0] : '';
-        document.getElementById('earningNotes').value = earning.notes || '';
-        
-        // Show/hide relevant fields
-        document.getElementById('percentageContainer').style.display = 
-            earning.earning_type === 'percentage' ? 'block' : 'none';
-        document.getElementById('paymentDateContainer').style.display = 
-            earning.is_paid ? 'block' : 'none';
-    } else {
-        // Reset form
-        document.getElementById('earningForm').reset();
-        document.getElementById('earningId').value = '';
+// Display earnings table
+function displayEarningsTable(earnings) {
+    const container = document.getElementById('earningsTableContainer');
+    
+    if (!earnings || earnings.length === 0) {
+        container.innerHTML = `
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                Bu öğrenci için henüz kazanç kaydı yok.
+            </div>
+        `;
+        return;
     }
+    
+    let totalAmount = 0;
+    let tableRows = '';
+    
+    earnings.forEach(earning => {
+        totalAmount += parseFloat(earning.amount);
+        const earningDate = earning.earning_date ? new Date(earning.earning_date).toLocaleDateString('tr-TR') : '-';
+        const paymentDate = earning.payment_date ? new Date(earning.payment_date).toLocaleDateString('tr-TR') : '-';
+        
+        tableRows += `
+            <tr>
+                <td><strong>${parseFloat(earning.amount).toFixed(2)} ${earning.currency}</strong></td>
+                <td>${earningDate}</td>
+                <td>${paymentDate}</td>
+                <td>
+                    ${earning.is_paid 
+                        ? '<span class="badge bg-success"><i class="fas fa-check me-1"></i>Ödendi</span>' 
+                        : '<span class="badge bg-warning text-dark"><i class="fas fa-clock me-1"></i>Beklemede</span>'}
+                </td>
+                <td>${earning.notes || '-'}</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteEarning(${earning.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    });
+    
+    container.innerHTML = `
+        <div class="table-responsive">
+            <table class="table table-sm table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Tutar</th>
+                        <th>Kazanç Tarihi</th>
+                        <th>Ödeme Tarihi</th>
+                        <th>Durum</th>
+                        <th>Not</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${tableRows}
+                </tbody>
+                <tfoot class="table-light">
+                    <tr>
+                        <th colspan="5">Toplam: <strong>${totalAmount.toFixed(2)} EUR</strong></th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    `;
 }
 
 // Load partners list
@@ -3747,9 +3805,14 @@ async function removePartner() {
     }
 }
 
-// Save earning
+// Toggle payment date visibility
+function togglePaymentDate() {
+    const isPaid = document.getElementById('earningPaid').value === 'true';
+    document.getElementById('paymentDateContainer').style.display = isPaid ? 'block' : 'none';
+}
+
+// Save earning (always creates new)
 async function saveEarning() {
-    const earningId = document.getElementById('earningId').value;
     const partnerId = currentPartnerInfo?.partner?.id;
     
     if (!partnerId) {
@@ -3777,37 +3840,54 @@ async function saveEarning() {
     };
     
     try {
-        let response;
-        
-        if (earningId) {
-            // Update existing earning
-            response = await fetch(`/admin/partner-earnings/${earningId}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify(earningData)
-            });
-        } else {
-            // Create new earning
-            response = await fetch('/admin/partner-earnings', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify(earningData)
-            });
-        }
+        const response = await fetch('/admin/partner-earnings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(earningData)
+        });
         
         const data = await response.json();
         
         if (data.success) {
-            alert(data.message || 'Kazanç kaydı başarıyla kaydedildi!');
+            alert(data.message || 'Kazanç başarıyla eklendi!');
+            // Reset form
+            document.getElementById('earningForm').reset();
+            document.getElementById('paymentDateContainer').style.display = 'none';
+            // Reload data
             loadPartnerData();
         } else {
-            alert(data.message || 'Kazanç kaydedilemedi!');
+            alert(data.message || 'Kazanç eklenemedi!');
         }
     } catch (error) {
         console.error('Save earning error:', error);
-        alert('Kazanç kaydedilirken bir hata oluştu!');
+        alert('Kazanç eklenirken bir hata oluştu!');
+    }
+}
+
+// Delete earning
+async function deleteEarning(earningId) {
+    if (!confirm('Bu kazanç kaydını silmek istediğinizden emin misiniz?')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/admin/partner-earnings/${earningId}`, {
+            method: 'DELETE',
+            credentials: 'include'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert('Kazanç kaydı silindi!');
+            loadPartnerData();
+        } else {
+            alert(data.message || 'Kazanç silinemedi!');
+        }
+    } catch (error) {
+        console.error('Delete earning error:', error);
+        alert('Kazanç silinirken bir hata oluştu!');
     }
 }
 

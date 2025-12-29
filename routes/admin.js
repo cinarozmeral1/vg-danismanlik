@@ -4181,16 +4181,13 @@ router.get('/partners', async (req, res) => {
     try {
         const sidebarCounts = await getAdminSidebarCounts();
         
-        // Get all partners
+        // Get all partners with correct counts using subqueries
         const partnersResult = await pool.query(`
             SELECT 
                 p.*,
-                COUNT(u.id) as student_count,
-                COALESCE(SUM(pe.amount), 0) as total_earnings
+                (SELECT COUNT(*) FROM users WHERE partner_id = p.id) as student_count,
+                (SELECT COALESCE(SUM(amount), 0) FROM partner_earnings WHERE partner_id = p.id) as total_earnings
             FROM partners p
-            LEFT JOIN users u ON u.partner_id = p.id
-            LEFT JOIN partner_earnings pe ON pe.partner_id = p.id
-            GROUP BY p.id
             ORDER BY p.created_at DESC
         `);
         
@@ -4220,13 +4217,10 @@ router.get('/api/partners', async (req, res) => {
                 p.email_verified,
                 p.is_active,
                 p.created_at,
-                COUNT(u.id) as student_count,
-                COALESCE(SUM(CASE WHEN pe.is_paid = true THEN pe.amount ELSE 0 END), 0) as paid_earnings,
-                COALESCE(SUM(CASE WHEN pe.is_paid = false THEN pe.amount ELSE 0 END), 0) as pending_earnings
+                (SELECT COUNT(*) FROM users WHERE partner_id = p.id) as student_count,
+                (SELECT COALESCE(SUM(CASE WHEN is_paid = true THEN amount ELSE 0 END), 0) FROM partner_earnings WHERE partner_id = p.id) as paid_earnings,
+                (SELECT COALESCE(SUM(CASE WHEN is_paid = false THEN amount ELSE 0 END), 0) FROM partner_earnings WHERE partner_id = p.id) as pending_earnings
             FROM partners p
-            LEFT JOIN users u ON u.partner_id = p.id
-            LEFT JOIN partner_earnings pe ON pe.partner_id = p.id
-            GROUP BY p.id
             ORDER BY p.created_at DESC
         `);
         
@@ -4472,52 +4466,55 @@ router.get('/users/:id/partner', async (req, res) => {
     try {
         const { id } = req.params;
         
-        const result = await pool.query(`
+        // Get user's partner info
+        const userResult = await pool.query(`
             SELECT 
                 u.partner_id,
-                CONCAT(p.first_name, ' ', p.last_name) as partner_name,
+                p.first_name as partner_first_name,
+                p.last_name as partner_last_name,
                 p.email as partner_email,
-                p.company_name as partner_company,
-                pe.id as earning_id,
-                pe.amount as earning_amount,
-                pe.currency,
-                pe.is_paid,
-                pe.earning_date,
-                pe.notes as earning_notes
+                p.company_name as partner_company
             FROM users u
             LEFT JOIN partners p ON u.partner_id = p.id
-            LEFT JOIN partner_earnings pe ON pe.user_id = u.id AND pe.partner_id = p.id
             WHERE u.id = $1
         `, [id]);
         
-        if (result.rows.length === 0) {
-            return res.json({
-                success: true,
-                has_partner: false,
-                partner: null,
-                earning: null
+        if (userResult.rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Öğrenci bulunamadı'
             });
         }
         
-        const row = result.rows[0];
+        const user = userResult.rows[0];
+        
+        // Get all earnings for this student
+        const earningsResult = await pool.query(`
+            SELECT 
+                pe.id,
+                pe.amount,
+                pe.currency,
+                pe.earning_date,
+                pe.is_paid,
+                pe.payment_date,
+                pe.notes,
+                CONCAT(p.first_name, ' ', p.last_name) as partner_name
+            FROM partner_earnings pe
+            JOIN partners p ON pe.partner_id = p.id
+            WHERE pe.user_id = $1
+            ORDER BY pe.earning_date DESC
+        `, [id]);
         
         res.json({
             success: true,
-            has_partner: !!row.partner_id,
-            partner: row.partner_id ? {
-                id: row.partner_id,
-                name: row.partner_name,
-                email: row.partner_email,
-                company_name: row.partner_company
+            has_partner: !!user.partner_id,
+            partner: user.partner_id ? {
+                id: user.partner_id,
+                name: `${user.partner_first_name} ${user.partner_last_name}`,
+                email: user.partner_email,
+                company_name: user.partner_company
             } : null,
-            earning: row.earning_id ? {
-                id: row.earning_id,
-                amount: row.earning_amount,
-                currency: row.currency,
-                earning_date: row.earning_date,
-                is_paid: row.is_paid,
-                notes: row.earning_notes
-            } : null
+            earnings: earningsResult.rows
         });
         
     } catch (error) {
