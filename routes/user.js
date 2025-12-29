@@ -686,26 +686,40 @@ router.post('/change-password', authenticateUser, async (req, res) => {
     try {
         const { currentPassword, newPassword } = req.body;
 
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({
+                success: false,
+                message: 'Mevcut şifre ve yeni şifre gerekli'
+            });
+        }
+
+        if (newPassword.length < 6) {
+            return res.status(400).json({
+                success: false,
+                message: 'Yeni şifre en az 6 karakter olmalıdır'
+            });
+        }
+
         // Verify current password
         const userResult = await pool.query(
-            'SELECT password FROM kullanicilar WHERE id = $1',
+            'SELECT password_hash FROM users WHERE id = $1',
             [req.user.id]
         );
 
         if (userResult.rows.length === 0) {
             return res.status(404).json({
                 success: false,
-                message: 'User not found'
+                message: 'Kullanıcı bulunamadı'
             });
         }
 
         const bcrypt = require('bcryptjs');
-        const isValidPassword = await bcrypt.compare(currentPassword, userResult.rows[0].password);
+        const isValidPassword = await bcrypt.compare(currentPassword, userResult.rows[0].password_hash);
 
         if (!isValidPassword) {
             return res.status(400).json({
                 success: false,
-                message: 'Current password is incorrect'
+                message: 'Mevcut şifre yanlış'
             });
         }
 
@@ -714,20 +728,20 @@ router.post('/change-password', authenticateUser, async (req, res) => {
 
         // Update password
         await pool.query(
-            'UPDATE users SET password = $1 WHERE id = $2',
+            'UPDATE users SET password_hash = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2',
             [hashedPassword, req.user.id]
         );
 
         res.json({
             success: true,
-            message: 'Password changed successfully'
+            message: 'Şifreniz başarıyla değiştirildi'
         });
 
     } catch (error) {
         console.error('Change password error:', error);
         res.status(500).json({
             success: false,
-            message: 'An error occurred while changing password'
+            message: 'Şifre değiştirilirken bir hata oluştu'
         });
     }
 });

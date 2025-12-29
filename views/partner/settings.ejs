@@ -1,0 +1,198 @@
+<!-- Main Content -->
+<section class="section bg-light text-dark" style="min-height: 80vh;">
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-3 mb-4 d-none d-lg-block">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-handshake me-2"></i>Partner Menüsü</h5>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <a href="/partner/dashboard" class="list-group-item list-group-item-action">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </a>
+                        <a href="/partner/settings" class="list-group-item list-group-item-action active">
+                            <i class="fas fa-cog me-2"></i>Ayarlar
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action text-danger" onclick="logout()">
+                            <i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Partner Info Card -->
+                <div class="card shadow-sm mt-3">
+                    <div class="card-header bg-secondary text-white">
+                        <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Partner Bilgileri</h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-1"><strong><%= partner.first_name %> <%= partner.last_name %></strong></p>
+                        <p class="mb-1 text-muted small"><%= partner.email %></p>
+                        <% if (partner.company_name) { %>
+                            <p class="mb-0 text-muted small"><i class="fas fa-building me-1"></i><%= partner.company_name %></p>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-9">
+                <div id="alertContainer"></div>
+                
+                <!-- Password Change Card -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0"><i class="fas fa-key me-2"></i>Şifre Değiştir</h4>
+                    </div>
+                    <div class="card-body">
+                        <form id="passwordForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="currentPassword" class="form-label">Mevcut Şifre *</label>
+                                    <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="newPassword" class="form-label">Yeni Şifre *</label>
+                                    <input type="password" class="form-control" id="newPassword" name="newPassword" required minlength="6">
+                                    <small class="text-muted">En az 6 karakter</small>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="confirmPassword" class="form-label">Yeni Şifre Tekrar *</label>
+                                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required minlength="6">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                                        <i class="fas fa-save me-2"></i>Şifreyi Değiştir
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Account Info Card -->
+                <div class="card shadow-sm">
+                    <div class="card-header bg-secondary text-white">
+                        <h4 class="mb-0"><i class="fas fa-user me-2"></i>Hesap Bilgileri</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted">Ad Soyad</label>
+                                <p class="form-control-plaintext"><strong><%= partner.first_name %> <%= partner.last_name %></strong></p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted">E-posta</label>
+                                <p class="form-control-plaintext"><%= partner.email %></p>
+                            </div>
+                            <% if (partner.company_name) { %>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted">Şirket</label>
+                                <p class="form-control-plaintext"><%= partner.company_name %></p>
+                            </div>
+                            <% } %>
+                            <% if (partner.phone) { %>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted">Telefon</label>
+                                <p class="form-control-plaintext"><%= partner.phone %></p>
+                            </div>
+                            <% } %>
+                        </div>
+                        <div class="alert alert-info mt-3">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Hesap bilgilerinizi güncellemek için lütfen yönetici ile iletişime geçin.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    function logout() {
+        fetch('/api/auth/partner-logout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        })
+        .then(response => response.json())
+        .then(data => {
+            window.location.href = '/login';
+        })
+        .catch(error => {
+            console.error('Logout error:', error);
+            document.cookie = 'partnerToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            window.location.href = '/login';
+        });
+    }
+
+    function showAlert(message, type) {
+        const alertContainer = document.getElementById('alertContainer');
+        const alert = document.createElement('div');
+        alert.className = `alert alert-${type} alert-dismissible fade show`;
+        alert.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        alertContainer.appendChild(alert);
+        
+        setTimeout(() => {
+            alert.remove();
+        }, 5000);
+    }
+
+    document.getElementById('passwordForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const currentPassword = document.getElementById('currentPassword').value;
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        
+        // Validation
+        if (newPassword !== confirmPassword) {
+            showAlert('Yeni şifreler eşleşmiyor!', 'danger');
+            return;
+        }
+        
+        if (newPassword.length < 6) {
+            showAlert('Şifre en az 6 karakter olmalıdır!', 'danger');
+            return;
+        }
+        
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>İşleniyor...';
+        
+        try {
+            const response = await fetch('/partner/api/change-password', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ currentPassword, newPassword })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                showAlert('Şifreniz başarıyla değiştirildi!', 'success');
+                this.reset();
+            } else {
+                showAlert(data.message || 'Şifre değiştirilirken bir hata oluştu!', 'danger');
+            }
+        } catch (error) {
+            console.error('Password change error:', error);
+            showAlert('Şifre değiştirilirken bir hata oluştu!', 'danger');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-save me-2"></i>Şifreyi Değiştir';
+        }
+    });
+</script>
+

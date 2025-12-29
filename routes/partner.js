@@ -90,6 +90,50 @@ router.get('/dashboard', async (req, res) => {
     }
 });
 
+// Partner Settings Page
+router.get('/settings', async (req, res) => {
+    try {
+        // Check if partner is logged in via cookie
+        const token = req.cookies.partnerToken;
+        if (!token) {
+            return res.redirect('/login');
+        }
+
+        // Verify token and get partner
+        const jwt = require('jsonwebtoken');
+        const JWT_SECRET = process.env.JWT_SECRET || 'venture-global-secret-key-2024';
+        
+        let decoded;
+        try {
+            decoded = jwt.verify(token, JWT_SECRET);
+        } catch (error) {
+            return res.redirect('/login');
+        }
+
+        const partnerResult = await pool.query(
+            'SELECT id, first_name, last_name, email, company_name, phone, email_verified, is_active FROM partners WHERE id = $1',
+            [decoded.partnerId]
+        );
+
+        if (partnerResult.rows.length === 0 || !partnerResult.rows[0].is_active) {
+            return res.redirect('/login');
+        }
+
+        const partner = partnerResult.rows[0];
+
+        res.render('partner/settings', {
+            title: 'Ayarlar - Partner Panel',
+            partner,
+            currentLanguage: res.locals.currentLanguage || 'tr',
+            t: res.locals.t
+        });
+
+    } catch (error) {
+        console.error('Partner settings error:', error);
+        res.redirect('/login');
+    }
+});
+
 // =====================================================
 // PARTNER API ENDPOINTS
 // =====================================================
