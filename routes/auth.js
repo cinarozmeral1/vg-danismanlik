@@ -357,58 +357,122 @@ router.post('/login', async (req, res) => {
             });
         }
 
-        // Find user (including admin status)
-        const result = await pool.query(
+        // First, try to find user (student/admin)
+        const userResult = await pool.query(
             'SELECT id, first_name, last_name, email, password_hash, email_verified, is_admin FROM users WHERE email = $1',
             [email]
         );
 
-        if (result.rows.length === 0) {
-            return res.status(401).json({
-                success: false,
-                message: language === 'tr' ? 'Geçersiz e-posta veya şifre' : 'Invalid eposta or password'
+        if (userResult.rows.length > 0) {
+            // User found - process user login
+            const user = userResult.rows[0];
+
+            // Soft enforcement: allow login but mark as unverified for banner/redirects
+            const needsVerification = !user.is_admin && !user.email_verified;
+
+            // Check password
+            const passwordMatch = await bcrypt.compare(password, user.password_hash);
+            if (!passwordMatch) {
+                return res.status(401).json({
+                    success: false,
+                    message: language === 'tr' ? 'Geçersiz e-posta veya şifre' : 'Invalid email or password'
+                });
+            }
+
+            // Generate token with login timestamp
+            const token = generateUserToken(user.id);
+            await pool.query('UPDATE users SET last_login_at = NOW() WHERE id = $1', [user.id]);
+
+            // Set cookie
+            res.cookie('userToken', token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
             });
-        }
 
-        const user = result.rows[0];
-
-        // Soft enforcement: allow login but mark as unverified for banner/redirects
-        const needsVerification = !user.is_admin && !user.email_verified;
-
-        // Check password
-        const passwordMatch = await bcrypt.compare(password, user.password_hash);
-        if (!passwordMatch) {
-            return res.status(401).json({
-                success: false,
-                message: language === 'tr' ? 'Geçersiz e-posta veya şifre' : 'Invalid eposta or password'
-            });
-        }
-
-        // Generate token with login timestamp
-        const token = generateUserToken(user.id);
-        await pool.query('UPDATE users SET last_login_at = NOW() WHERE id = $1', [user.id]);
-
-        // Set cookie
-        res.cookie('userToken', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-        });
-
-        res.json({
-            success: true,
-            message: language === 'tr' ? 'Giriş başarılı' : 'Login successful',
-            user: {
-                id: user.id,
-                first_name: user.first_name,
-                last_name: user.last_name,
-                email: user.email,
+            return res.json({
+                success: true,
+                message: language === 'tr' ? 'Giriş başarılı' : 'Login successful',
+                user: {
+                    id: user.id,
+                    first_name: user.first_name,
+                    last_name: user.last_name,
+                    email: user.email,
+                    is_admin: user.is_admin,
+                    email_verified: user.email_verified
+                },
+                token,
                 is_admin: user.is_admin,
-                email_verified: user.email_verified
-            },
-            token,
-            is_admin: user.is_admin,
-            needs_verification: needsVerification
+                is_partner: false,
+                needs_verification: needsVerification
+            });
+        }
+
+        // If not found in users, try partners table
+        const partnerResult = await pool.query(
+            'SELECT id, first_name, last_name, email, password_hash, email_verified, is_active, company_name FROM partners WHERE email = $1',
+            [email]
+        );
+
+        if (partnerResult.rows.length > 0) {
+            // Partner found - process partner login
+            const partner = partnerResult.rows[0];
+
+            // Check if partner is active
+            if (!partner.is_active) {
+                return res.status(401).json({
+                    success: false,
+                    message: language === 'tr' ? 'Partner hesabınız aktif değil' : 'Your partner account is not active'
+                });
+            }
+
+            // Check if email is verified
+            if (!partner.email_verified) {
+                return res.status(401).json({
+                    success: false,
+                    message: language === 'tr' ? 'Lütfen e-posta adresinizi doğrulayın' : 'Please verify your email address'
+                });
+            }
+
+            // Check password
+            const passwordMatch = await bcrypt.compare(password, partner.password_hash);
+            if (!passwordMatch) {
+                return res.status(401).json({
+                    success: false,
+                    message: language === 'tr' ? 'Geçersiz e-posta veya şifre' : 'Invalid email or password'
+                });
+            }
+
+            // Generate partner token
+            const token = generatePartnerToken(partner.id);
+
+            // Set cookie for partner
+            res.cookie('partnerToken', token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+            });
+
+            return res.json({
+                success: true,
+                message: language === 'tr' ? 'Giriş başarılı' : 'Login successful',
+                partner: {
+                    id: partner.id,
+                    name: `${partner.first_name} ${partner.last_name}`,
+                    email: partner.email,
+                    company_name: partner.company_name
+                },
+                token,
+                is_admin: false,
+                is_partner: true,
+                redirect: '/partner/dashboard'
+            });
+        }
+
+        // Neither user nor partner found
+        return res.status(401).json({
+            success: false,
+            message: language === 'tr' ? 'Geçersiz e-posta veya şifre' : 'Invalid email or password'
         });
 
     } catch (error) {

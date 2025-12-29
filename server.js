@@ -318,61 +318,126 @@ app.post('/login', async (req, res) => {
             });
         }
 
-        // Find user in users table
-        const result = await pool.query(
+        const bcrypt = require('bcrypt');
+        const { generateUserToken, generatePartnerToken } = require('./middleware/auth');
+
+        // First, try to find user (student/admin)
+        const userResult = await pool.query(
             'SELECT * FROM users WHERE email = $1',
             [email]
         );
 
-        if (result.rows.length === 0) {
-            return res.status(401).json({
-                success: false,
-                message: 'Invalid credentials'
+        if (userResult.rows.length > 0) {
+            // User found - process user login
+            const user = userResult.rows[0];
+
+            // Check password
+            const isValidPassword = await bcrypt.compare(password, user.password_hash);
+            if (!isValidPassword) {
+                return res.status(401).json({
+                    success: false,
+                    message: 'Geçersiz e-posta veya şifre'
+                });
+            }
+
+            // Generate user token
+            const token = generateUserToken(user.id);
+
+            // Set user token cookie
+            res.cookie('userToken', token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
+                maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000 // 30 days or 1 day
+            });
+
+            return res.json({
+                success: true,
+                message: 'Giriş başarılı',
+                user: {
+                    id: user.id,
+                    first_name: user.first_name,
+                    last_name: user.last_name,
+                    email: user.email,
+                    is_admin: user.is_admin
+                },
+                token: token,
+                is_partner: false
             });
         }
 
-        const user = result.rows[0];
+        // If not found in users, try partners table
+        const partnerResult = await pool.query(
+            'SELECT id, first_name, last_name, email, password_hash, email_verified, is_active, company_name FROM partners WHERE email = $1',
+            [email]
+        );
 
-        // Check password
-        const bcrypt = require('bcrypt');
-        const isValidPassword = await bcrypt.compare(password, user.password_hash);
-        if (!isValidPassword) {
-            return res.status(401).json({
-                success: false,
-                message: 'Invalid credentials'
+        if (partnerResult.rows.length > 0) {
+            // Partner found - process partner login
+            const partner = partnerResult.rows[0];
+
+            // Check if partner is active
+            if (!partner.is_active) {
+                return res.status(401).json({
+                    success: false,
+                    message: 'Partner hesabınız aktif değil'
+                });
+            }
+
+            // Check if email is verified
+            if (!partner.email_verified) {
+                return res.status(401).json({
+                    success: false,
+                    message: 'Lütfen e-posta adresinizi doğrulayın'
+                });
+            }
+
+            // Check password
+            const isValidPassword = await bcrypt.compare(password, partner.password_hash);
+            if (!isValidPassword) {
+                return res.status(401).json({
+                    success: false,
+                    message: 'Geçersiz e-posta veya şifre'
+                });
+            }
+
+            // Generate partner token
+            const token = generatePartnerToken(partner.id);
+
+            // Set partner token cookie
+            res.cookie('partnerToken', token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
+                maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000
+            });
+
+            return res.json({
+                success: true,
+                message: 'Giriş başarılı',
+                partner: {
+                    id: partner.id,
+                    name: `${partner.first_name} ${partner.last_name}`,
+                    email: partner.email,
+                    company_name: partner.company_name
+                },
+                token: token,
+                is_partner: true,
+                redirect: '/partner/dashboard'
             });
         }
 
-        // Generate user token
-        const { generateUserToken } = require('./middleware/auth');
-        const token = generateUserToken(user.id);
-
-        // Set user token cookie
-        res.cookie('userToken', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000 // 30 days or 1 day
-        });
-
-        res.json({
-            success: true,
-            message: 'Login successful',
-            user: {
-                id: user.id,
-                first_name: user.first_name,
-                last_name: user.last_name,
-                email: user.email,
-                is_admin: user.is_admin
-            },
-            token: token
+        // Neither user nor partner found
+        return res.status(401).json({
+            success: false,
+            message: 'Geçersiz e-posta veya şifre'
         });
 
     } catch (error) {
-        console.error('User login error:', error);
+        console.error('Login error:', error);
         res.status(500).json({
             success: false,
-            message: 'An error occurred during login'
+            message: 'Giriş sırasında bir hata oluştu'
         });
     }
 });

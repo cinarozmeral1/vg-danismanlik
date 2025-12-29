@@ -112,10 +112,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Redirect after a short delay
                 setTimeout(() => {
-                    // Admin kullanıcısını admin paneline, diğerlerini anasayfaya yönlendir
-                    if (data.user && data.user.is_admin) {
+                    // Partner girişi için partner dashboard'a yönlendir
+                    if (data.is_partner) {
+                        window.location.href = data.redirect || '/partner/dashboard';
+                    }
+                    // Admin kullanıcısını admin paneline yönlendir
+                    else if (data.user && data.user.is_admin) {
                         window.location.href = '/admin/dashboard';
-                    } else {
+                    } 
+                    // Öğrenciyi kullanıcı paneline yönlendir
+                    else {
                         window.location.href = '/user/dashboard';
                     }
                 }, 1500);
