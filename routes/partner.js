@@ -15,7 +15,7 @@ router.get('/dashboard', async (req, res) => {
         // Check if partner is logged in via cookie
         const token = req.cookies.partnerToken;
         if (!token) {
-            return res.redirect('/partner-login');
+            return res.redirect('/login');
         }
 
         // Verify token and get partner
@@ -26,7 +26,7 @@ router.get('/dashboard', async (req, res) => {
         try {
             decoded = jwt.verify(token, JWT_SECRET);
         } catch (error) {
-            return res.redirect('/partner-login');
+            return res.redirect('/login');
         }
 
         const partnerResult = await pool.query(
@@ -35,7 +35,7 @@ router.get('/dashboard', async (req, res) => {
         );
 
         if (partnerResult.rows.length === 0 || !partnerResult.rows[0].is_active) {
-            return res.redirect('/partner-login');
+            return res.redirect('/login');
         }
 
         const partnerData = partnerResult.rows[0];
@@ -44,41 +44,49 @@ router.get('/dashboard', async (req, res) => {
             name: `${partnerData.first_name} ${partnerData.last_name}`
         };
 
-        // Get partner's students count
+        // Get partner's students with details
         const studentsResult = await pool.query(
-            'SELECT COUNT(*) as count FROM users WHERE partner_id = $1',
+            `SELECT id, first_name, last_name, email, phone, created_at 
+             FROM users 
+             WHERE partner_id = $1 
+             ORDER BY created_at DESC`,
             [partner.id]
         );
+        const students = studentsResult.rows;
 
-        // Get total earnings
+        // Get all earnings with student info
         const earningsResult = await pool.query(
             `SELECT 
-                COALESCE(SUM(CASE WHEN is_paid = true THEN amount ELSE 0 END), 0) as total_paid,
-                COALESCE(SUM(CASE WHEN is_paid = false THEN amount ELSE 0 END), 0) as total_pending,
-                COALESCE(SUM(amount), 0) as total_all
-             FROM partner_earnings 
-             WHERE partner_id = $1`,
+                pe.id,
+                pe.user_id,
+                pe.amount,
+                pe.currency,
+                pe.earning_date,
+                pe.is_paid,
+                pe.payment_date,
+                pe.notes,
+                pe.created_at,
+                CONCAT(u.first_name, ' ', u.last_name) as student_name
+             FROM partner_earnings pe
+             JOIN users u ON pe.user_id = u.id
+             WHERE pe.partner_id = $1
+             ORDER BY pe.earning_date DESC`,
             [partner.id]
         );
-
-        const stats = {
-            studentCount: parseInt(studentsResult.rows[0]?.count || 0),
-            totalPaid: parseFloat(earningsResult.rows[0]?.total_paid || 0),
-            totalPending: parseFloat(earningsResult.rows[0]?.total_pending || 0),
-            totalAll: parseFloat(earningsResult.rows[0]?.total_all || 0)
-        };
+        const earnings = earningsResult.rows;
 
         res.render('partner/dashboard', {
-            title: 'Partner Dashboard',
+            title: 'Partner Dashboard - Venture Global',
             partner,
-            stats,
+            students,
+            earnings,
             currentLanguage: res.locals.currentLanguage || 'tr',
             t: res.locals.t
         });
 
     } catch (error) {
         console.error('Partner dashboard error:', error);
-        res.redirect('/partner-login');
+        res.redirect('/login');
     }
 });
 

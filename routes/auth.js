@@ -621,6 +621,21 @@ router.post('/logout', (req, res) => {
     });
 });
 
+// Partner specific logout
+router.post('/partner-logout', (req, res) => {
+    res.clearCookie('partnerToken', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        path: '/'
+    });
+    
+    res.json({
+        success: true,
+        message: 'Partner çıkışı başarılı'
+    });
+});
+
 // =====================================================
 // PARTNER AUTHENTICATION ENDPOINTS
 // =====================================================
@@ -733,7 +748,7 @@ router.get('/verify-partner-email', async (req, res) => {
 
         // Find partner with this token
         const result = await pool.query(
-            'SELECT id, name, email FROM partners WHERE verification_token = $1 AND email_verified = false',
+            'SELECT id, first_name, last_name, email FROM partners WHERE verification_token = $1 AND email_verified = false',
             [token]
         );
 
@@ -745,15 +760,15 @@ router.get('/verify-partner-email', async (req, res) => {
             });
         }
 
-        const partner = result.rows[0];
+        const partnerData = result.rows[0];
 
         // Render password setup page for partner
         res.render('partner-setup-password', { 
             title: 'Şifre Belirleme',
             partner: {
-                id: partner.id,
-                name: partner.name,
-                email: partner.email
+                id: partnerData.id,
+                name: `${partnerData.first_name} ${partnerData.last_name}`,
+                email: partnerData.email
             },
             token,
             language 
@@ -790,7 +805,7 @@ router.post('/partner-setup-password', async (req, res) => {
 
         // Find partner with this token
         const result = await pool.query(
-            'SELECT id, name, email FROM partners WHERE verification_token = $1',
+            'SELECT id, first_name, last_name, email FROM partners WHERE verification_token = $1',
             [token]
         );
 
