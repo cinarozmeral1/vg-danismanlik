@@ -46,6 +46,62 @@
 <!-- Features Section -->
 <section class="section bg-light text-dark">
     <div class="container">
+        <!-- AI Student Wizard Button (Only Turkish - no English support) -->
+        <% if (typeof currentLanguage === 'undefined' || currentLanguage === 'tr') { %>
+        <div class="text-center mb-5" id="wizardButtonSection">
+            <a href="/student-wizard" class="wizard-cta-btn">
+                <i class="fas fa-magic me-2"></i>
+                <span>Öğrenci Sihirbazı</span>
+                <span class="wizard-badge">YENİ</span>
+            </a>
+            <p class="text-muted mt-3 mb-0">Yapay zeka ile size en uygun üniversiteyi bulun!</p>
+        </div>
+        <% } %>
+        <style>
+            .wizard-cta-btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                background: linear-gradient(135deg, #0056b3 0%, #28a745 100%);
+                color: white;
+                border-radius: 50px;
+                font-weight: 600;
+                font-size: 1.1rem;
+                padding: 15px 35px;
+                text-decoration: none;
+                box-shadow: 0 4px 15px rgba(0,86,179,0.3);
+                transition: all 0.3s ease;
+            }
+            .wizard-cta-btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 25px rgba(0,86,179,0.4);
+                color: white;
+            }
+            .wizard-badge {
+                background: #ffc107;
+                color: #333;
+                font-size: 0.65rem;
+                padding: 3px 8px;
+                border-radius: 10px;
+                font-weight: 700;
+            }
+            @media (max-width: 576px) {
+                .wizard-cta-btn {
+                    font-size: 0.95rem;
+                    padding: 12px 20px;
+                    gap: 6px;
+                }
+                .wizard-cta-btn i {
+                    font-size: 1rem;
+                }
+                .wizard-badge {
+                    font-size: 0.55rem;
+                    padding: 2px 6px;
+                }
+            }
+        </style>
+
         <div class="section-title">
             <h2 class="text-black"><%= t.home.features.title %></h2>
             <p><%= t.home.features.subtitle %></p>

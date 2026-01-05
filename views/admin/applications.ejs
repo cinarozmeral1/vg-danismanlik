@@ -45,10 +45,59 @@
             <p class="text-muted">Sistemdeki tüm başvuruları yönetin</p>
         </div>
 
+        <!-- Application Type Cards -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card h-100 application-type-card active" id="universityCard" onclick="showUniversityApplications()">
+                    <div class="card-body text-center py-4">
+                        <div class="mb-3">
+                            <i class="fas fa-university fa-3x text-primary"></i>
+                        </div>
+                        <h5 class="card-title">Üniversite Başvuruları</h5>
+                        <p class="card-text text-muted">Üniversite ve program başvurularını yönetin</p>
+                        <span class="badge bg-primary fs-5"><%= applications.length %></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100 application-type-card" id="visaCard" onclick="showVisaApplications()">
+                    <div class="card-body text-center py-4">
+                        <div class="mb-3">
+                            <i class="fas fa-passport fa-3x text-success"></i>
+                        </div>
+                        <h5 class="card-title">Vize Başvuruları</h5>
+                        <p class="card-text text-muted">Vize randevularını ve başvurularını yönetin</p>
+                        <span class="badge bg-success fs-5" id="visaCount"><%= typeof visaApplications !== 'undefined' ? visaApplications.length : 0 %></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .application-type-card {
+                cursor: pointer;
+                transition: all 0.3s ease;
+                border: 2px solid transparent;
+            }
+            .application-type-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            }
+            .application-type-card.active {
+                border-color: #0d6efd;
+                box-shadow: 0 5px 20px rgba(13, 110, 253, 0.3);
+            }
+            #visaApplicationsSection {
+                display: none;
+            }
+        </style>
+
+        <!-- University Applications Section -->
+        <div id="universityApplicationsSection">
         <!-- Applications Table -->
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Başvuru Listesi (<%= applications.length %>)</h5>
+                <h5 class="mb-0"><i class="fas fa-university me-2"></i>Üniversite Başvuruları (<%= applications.length %>)</h5>
                 <button class="btn btn-primary btn-sm" id="openUserSelectionModalBtn">
                     <i class="fas fa-plus me-2"></i>Yeni Başvuru
                 </button>
@@ -145,18 +194,219 @@
                 <% } %>
             </div>
         </div>
+        </div><!-- End of University Applications Section -->
+
+        <!-- Visa Applications Section -->
+        <div id="visaApplicationsSection">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-passport me-2"></i>Vize Başvuruları (<span id="visaCountHeader"><%= typeof visaApplications !== 'undefined' ? visaApplications.length : 0 %></span>)</h5>
+                    <button class="btn btn-success btn-sm" id="openVisaModalBtn" onclick="openVisaModal()">
+                        <i class="fas fa-plus me-2"></i>Yeni Vize Başvurusu
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="visaTable">
+                            <thead>
+                                <tr>
+                                    <th>Öğrenci</th>
+                                    <th>Ülke</th>
+                                    <th>Konsolosluk Şehri</th>
+                                    <th>Randevu Tarihleri</th>
+                                    <th>Durum</th>
+                                    <th>Tarih</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody id="visaTableBody">
+                                <% if (typeof visaApplications !== 'undefined' && visaApplications.length > 0) { %>
+                                    <% visaApplications.forEach(visa => { %>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar-sm me-2">
+                                                    <i class="fas fa-user-circle fa-2x text-success"></i>
+                                                </div>
+                                                <div>
+                                                    <strong><%= visa.first_name %> <%= visa.last_name %></strong>
+                                                    <br><small class="text-muted"><%= visa.email %></small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <% if (visa.country === 'Germany') { %>🇩🇪 Almanya
+                                            <% } else if (visa.country === 'Czech Republic') { %>🇨🇿 Çekya
+                                            <% } else if (visa.country === 'Italy') { %>🇮🇹 İtalya
+                                            <% } else if (visa.country === 'Austria') { %>🇦🇹 Avusturya
+                                            <% } else if (visa.country === 'UK') { %>🇬🇧 İngiltere
+                                            <% } else if (visa.country === 'Poland') { %>🇵🇱 Polonya
+                                            <% } else if (visa.country === 'Hungary') { %>🇭🇺 Macaristan
+                                            <% } else { %><%= visa.country %>
+                                            <% } %>
+                                        </td>
+                                        <td><%= visa.consulate_city %></td>
+                                        <td>
+                                            <% if (visa.appointments && visa.appointments.length > 0) { %>
+                                                <% visa.appointments.forEach(apt => { %>
+                                                    <span class="badge bg-info mb-1"><%= new Date(apt.appointment_date).toLocaleDateString('tr-TR') %></span><br>
+                                                <% }); %>
+                                            <% } else { %>
+                                                <span class="text-muted">Randevu yok</span>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <% if (visa.status === 'pending') { %>
+                                                <span class="badge bg-warning">Beklemede</span>
+                                            <% } else if (visa.status === 'approved') { %>
+                                                <span class="badge bg-success">Kabul Edildi</span>
+                                            <% } else if (visa.status === 'rejected') { %>
+                                                <span class="badge bg-danger">Reddedildi</span>
+                                            <% } %>
+                                        </td>
+                                        <td><%= new Date(visa.created_at).toLocaleDateString('tr-TR') %></td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <button class="btn btn-sm btn-outline-primary" onclick="editVisaApplication(<%= visa.id %>)" title="Düzenle">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-success" onclick="updateVisaStatus(<%= visa.id %>, 'approved')" title="Kabul Et">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="updateVisaStatus(<%= visa.id %>, 'rejected')" title="Reddet">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-warning" onclick="updateVisaStatus(<%= visa.id %>, 'pending')" title="Beklemede">
+                                                    <i class="fas fa-clock"></i>
+                                                </button>
+                                            </div>
+                                            <button class="btn btn-sm btn-outline-danger ms-2" onclick="deleteVisaApplication(<%= visa.id %>)" title="Sil">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <% }); %>
+                                <% } else { %>
+                                    <tr id="noVisaRow">
+                                        <td colspan="7" class="text-center py-5">
+                                            <i class="fas fa-passport fa-3x text-muted mb-3"></i>
+                                            <h5 class="text-muted">Henüz vize başvurusu bulunmuyor</h5>
+                                            <p class="text-muted">İlk vize başvurusunu oluşturmak için "Yeni Vize Başvurusu" butonuna tıklayın.</p>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div><!-- End of Visa Applications Section -->
+
+        <!-- Visa Application Modal -->
+        <div class="modal fade" id="visaApplicationModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title"><i class="fas fa-passport me-2"></i>Yeni Vize Başvurusu</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                        <form id="visaApplicationForm">
+                            <input type="hidden" id="visaEditId" name="editId">
+                            
+                            <!-- Öğrenci Seçimi -->
+                            <div class="mb-3">
+                                <label class="form-label">Öğrenci *</label>
+                                <select class="form-select" id="visaUserId" name="user_id" required>
+                                    <option value="">Öğrenci Seçin</option>
+                                    <% if (typeof users !== 'undefined' && users) { %>
+                                        <% users.forEach(user => { %>
+                                            <option value="<%= user.id %>"><%= user.first_name %> <%= user.last_name %> (<%= user.email %>)</option>
+                                        <% }); %>
+                                    <% } %>
+                                </select>
+                            </div>
+                            
+                            <!-- Ülke Seçimi -->
+                            <div class="mb-3">
+                                <label class="form-label">Ülke *</label>
+                                <select class="form-select" id="visaCountry" name="country" required>
+                                    <option value="">Ülke Seçin</option>
+                                    <option value="Germany">🇩🇪 Almanya</option>
+                                    <option value="Czech Republic">🇨🇿 Çek Cumhuriyeti</option>
+                                    <option value="Italy">🇮🇹 İtalya</option>
+                                    <option value="Austria">🇦🇹 Avusturya</option>
+                                    <option value="UK">🇬🇧 İngiltere</option>
+                                    <option value="Poland">🇵🇱 Polonya</option>
+                                    <option value="Hungary">🇭🇺 Macaristan</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Konsolosluk Şehri -->
+                            <div class="mb-3">
+                                <label class="form-label">Konsolosluk Şehri (Türkiye) *</label>
+                                <input type="text" class="form-control" id="visaConsulateCity" name="consulate_city" placeholder="Örn: İstanbul, Ankara, İzmir..." required>
+                            </div>
+                            
+                            <!-- Randevu Tarihleri -->
+                            <div class="mb-3">
+                                <label class="form-label">Randevu Tarihleri</label>
+                                <div id="appointmentsContainer">
+                                    <div class="row mb-2 appointment-row">
+                                        <div class="col-5">
+                                            <input type="date" class="form-control appointment-date" placeholder="Tarih">
+                                        </div>
+                                        <div class="col-4">
+                                            <input type="time" class="form-control appointment-time" placeholder="Saat">
+                                        </div>
+                                        <div class="col-3">
+                                            <button type="button" class="btn btn-outline-success w-100" onclick="addAppointmentRow()">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <small class="text-muted">İstediğiniz kadar randevu tarihi ve saati ekleyebilirsiniz</small>
+                            </div>
+                            
+                            <!-- Durum -->
+                            <div class="mb-3">
+                                <label class="form-label">Durum</label>
+                                <select class="form-select" id="visaStatus" name="status">
+                                    <option value="pending">Beklemede</option>
+                                    <option value="approved">Kabul Edildi</option>
+                                    <option value="rejected">Reddedildi</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Notlar -->
+                            <div class="mb-3">
+                                <label class="form-label">Notlar</label>
+                                <textarea class="form-control" id="visaNotes" name="notes" rows="3" placeholder="Ek notlar..."></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                        <button type="button" class="btn btn-success" onclick="saveVisaApplication()">
+                            <i class="fas fa-save me-2"></i>Kaydet
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- User Selection Modal -->
         <div class="modal fade" id="userSelectionModal" tabindex="-1" aria-labelledby="userSelectionModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-xl">
+            <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
-                    <div class="modal-header">
+                    <div class="modal-header bg-primary text-white">
                         <h5 class="modal-title" id="userSelectionModalLabel">
                             <i class="fas fa-user-plus me-2"></i>Öğrenci Seçimi
                         </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
                         <!-- Search Bar -->
                         <div class="mb-3">
                             <div class="input-group">
@@ -166,7 +416,7 @@
                         </div>
 
                         <!-- Users List -->
-                        <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                        <div class="table-responsive">
                             <table class="table table-hover" id="usersTable">
                                 <thead class="table-light sticky-top">
                                     <tr>
@@ -641,6 +891,265 @@
             const toggle = document.getElementById(`feeToggle${appId}`);
             if (toggle) toggle.checked = !isPaid;
         });
+    }
+
+    // ==================== VISA APPLICATION FUNCTIONS ====================
+    
+    // Show/Hide sections
+    function showUniversityApplications() {
+        document.getElementById('universityApplicationsSection').style.display = 'block';
+        document.getElementById('visaApplicationsSection').style.display = 'none';
+        document.getElementById('universityCard').classList.add('active');
+        document.getElementById('visaCard').classList.remove('active');
+    }
+    
+    function showVisaApplications() {
+        document.getElementById('universityApplicationsSection').style.display = 'none';
+        document.getElementById('visaApplicationsSection').style.display = 'block';
+        document.getElementById('universityCard').classList.remove('active');
+        document.getElementById('visaCard').classList.add('active');
+    }
+    
+    // Open visa modal
+    function openVisaModal() {
+        document.getElementById('visaApplicationForm').reset();
+        document.getElementById('visaEditId').value = '';
+        
+        // Reset appointments container
+        document.getElementById('appointmentsContainer').innerHTML = `
+            <div class="row mb-2 appointment-row">
+                <div class="col-5">
+                    <input type="date" class="form-control appointment-date" placeholder="Tarih">
+                </div>
+                <div class="col-4">
+                    <input type="time" class="form-control appointment-time" placeholder="Saat">
+                </div>
+                <div class="col-3">
+                    <button type="button" class="btn btn-outline-success w-100" onclick="addAppointmentRow()">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        const modal = new bootstrap.Modal(document.getElementById('visaApplicationModal'));
+        modal.show();
+    }
+    
+    // Add appointment row
+    function addAppointmentRow() {
+        const container = document.getElementById('appointmentsContainer');
+        const newRow = document.createElement('div');
+        newRow.className = 'row mb-2 appointment-row';
+        newRow.innerHTML = `
+            <div class="col-5">
+                <input type="date" class="form-control appointment-date" placeholder="Tarih">
+            </div>
+            <div class="col-4">
+                <input type="time" class="form-control appointment-time" placeholder="Saat">
+            </div>
+            <div class="col-3">
+                <button type="button" class="btn btn-outline-danger w-100" onclick="removeAppointmentRow(this)">
+                    <i class="fas fa-minus"></i>
+                </button>
+            </div>
+        `;
+        container.appendChild(newRow);
+    }
+    
+    // Remove appointment row
+    function removeAppointmentRow(btn) {
+        btn.closest('.appointment-row').remove();
+    }
+    
+    // Save visa application
+    async function saveVisaApplication() {
+        const form = document.getElementById('visaApplicationForm');
+        const formData = new FormData(form);
+        
+        const userId = formData.get('user_id');
+        const country = formData.get('country');
+        const consulateCity = formData.get('consulate_city');
+        const status = formData.get('status');
+        const notes = formData.get('notes');
+        const editId = formData.get('editId');
+        
+        // Get all appointments (combine date + time)
+        const appointmentRows = document.querySelectorAll('.appointment-row');
+        const appointments = [];
+        appointmentRows.forEach(row => {
+            const dateInput = row.querySelector('.appointment-date');
+            const timeInput = row.querySelector('.appointment-time');
+            if (dateInput && dateInput.value) {
+                const date = dateInput.value;
+                const time = timeInput && timeInput.value ? timeInput.value : '12:00';
+                appointments.push(`${date}T${time}`);
+            }
+        });
+        
+        if (!userId || !country || !consulateCity) {
+            alert('Lütfen tüm zorunlu alanları doldurun!');
+            return;
+        }
+        
+        const data = {
+            user_id: userId,
+            country: country,
+            consulate_city: consulateCity,
+            status: status,
+            notes: notes,
+            appointments: appointments
+        };
+        
+        try {
+            const url = editId ? `/api/admin/visa-applications/${editId}` : '/api/admin/visa-applications';
+            const method = editId ? 'PUT' : 'POST';
+            
+            const response = await fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                alert(editId ? 'Vize başvurusu güncellendi!' : 'Vize başvurusu oluşturuldu!');
+                bootstrap.Modal.getInstance(document.getElementById('visaApplicationModal')).hide();
+                location.reload();
+            } else {
+                alert('Hata: ' + result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Bir hata oluştu!');
+        }
+    }
+    
+    // Edit visa application
+    async function editVisaApplication(id) {
+        try {
+            const response = await fetch(`/api/admin/visa-applications/${id}`);
+            const result = await response.json();
+            
+            if (result.success) {
+                const visa = result.data;
+                
+                document.getElementById('visaEditId').value = visa.id;
+                document.getElementById('visaUserId').value = visa.user_id;
+                document.getElementById('visaCountry').value = visa.country;
+                document.getElementById('visaConsulateCity').value = visa.consulate_city;
+                document.getElementById('visaStatus').value = visa.status;
+                document.getElementById('visaNotes').value = visa.notes || '';
+                
+                // Set appointments
+                const container = document.getElementById('appointmentsContainer');
+                container.innerHTML = '';
+                
+                if (visa.appointments && visa.appointments.length > 0) {
+                    visa.appointments.forEach((apt, index) => {
+                        const date = new Date(apt.appointment_date);
+                        const dateStr = date.toISOString().slice(0, 10);
+                        const timeStr = date.toTimeString().slice(0, 5);
+                        
+                        const row = document.createElement('div');
+                        row.className = 'row mb-2 appointment-row';
+                        row.innerHTML = `
+                            <div class="col-5">
+                                <input type="date" class="form-control appointment-date" value="${dateStr}">
+                            </div>
+                            <div class="col-4">
+                                <input type="time" class="form-control appointment-time" value="${timeStr}">
+                            </div>
+                            <div class="col-3">
+                                <button type="button" class="btn btn-outline-${index === 0 ? 'success' : 'danger'} w-100" onclick="${index === 0 ? 'addAppointmentRow()' : 'removeAppointmentRow(this)'}">
+                                    <i class="fas fa-${index === 0 ? 'plus' : 'minus'}"></i>
+                                </button>
+                            </div>
+                        `;
+                        container.appendChild(row);
+                    });
+                } else {
+                    container.innerHTML = `
+                        <div class="row mb-2 appointment-row">
+                            <div class="col-5">
+                                <input type="date" class="form-control appointment-date" placeholder="Tarih">
+                            </div>
+                            <div class="col-4">
+                                <input type="time" class="form-control appointment-time" placeholder="Saat">
+                            </div>
+                            <div class="col-3">
+                                <button type="button" class="btn btn-outline-success w-100" onclick="addAppointmentRow()">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                const modal = new bootstrap.Modal(document.getElementById('visaApplicationModal'));
+                modal.show();
+            } else {
+                alert('Hata: ' + result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Bir hata oluştu!');
+        }
+    }
+    
+    // Update visa status
+    async function updateVisaStatus(id, status) {
+        const statusText = status === 'approved' ? 'kabul etmek' : (status === 'rejected' ? 'reddetmek' : 'beklemede almak');
+        
+        if (!confirm(`Bu vize başvurusunu ${statusText} istediğinizden emin misiniz?`)) {
+            return;
+        }
+        
+        try {
+            const response = await fetch(`/api/admin/visa-applications/${id}/status`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: status })
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                alert('Vize başvurusu durumu güncellendi!');
+                location.reload();
+            } else {
+                alert('Hata: ' + result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Bir hata oluştu!');
+        }
+    }
+    
+    // Delete visa application
+    async function deleteVisaApplication(id) {
+        if (!confirm('Bu vize başvurusunu silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!')) {
+            return;
+        }
+        
+        try {
+            const response = await fetch(`/api/admin/visa-applications/${id}`, {
+                method: 'DELETE'
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                alert('Vize başvurusu silindi!');
+                location.reload();
+            } else {
+                alert('Hata: ' + result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Bir hata oluştu!');
+        }
     }
 
 </script>

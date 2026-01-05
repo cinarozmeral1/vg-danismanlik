@@ -131,6 +131,7 @@ const userRoutes = require('./routes/user');
 const partnerRoutes = require('./routes/partner');
 const guardianRoutes = require('./routes/guardians');
 const stripeWebhookRoutes = require('./routes/stripe-webhook');
+const wizardRoutes = require('./routes/wizard');
 
 // Import authentication middleware
 const { authenticateAdmin } = require('./middleware/auth');
@@ -520,6 +521,9 @@ app.use('/api/user', userRoutes);
 app.use('/admin', adminRoutes);
 app.use('/user', userRoutes);
 app.use('/partner', partnerRoutes);
+app.use('/student-wizard', wizardRoutes);
+app.use('/wizard', wizardRoutes);  // Kısa yol
+app.use('/api/wizard', wizardRoutes);
 
 // Scheduled cleanup for unverified users older than 72h since last login
 app.post('/api/maintenance/delete-unverified', async (req, res) => {
@@ -1224,7 +1228,43 @@ app.get('/programs', async (req, res) => {
 
 // Authentication pages
 app.get('/login', (req, res) => {
-    res.render('login', { title: res.locals.t.auth.login.title });
+    // Cloudinary URL'lerini kullan
+    let carouselImages = [];
+    let selectedGroup = null;
+    
+    try {
+        // Cloudinary URL'lerini oku
+        const cloudinaryUrlsPath = path.join(__dirname, 'cloudinary-urls.json');
+        const cloudinaryData = JSON.parse(fs.readFileSync(cloudinaryUrlsPath, 'utf8'));
+        
+        // Tüm grupları al
+        const groups = Object.keys(cloudinaryData).filter(g => cloudinaryData[g].length > 0);
+        
+        if (groups.length > 0) {
+            // Rastgele bir grup seç
+            selectedGroup = groups[Math.floor(Math.random() * groups.length)];
+            
+            // Gruptaki Cloudinary URL'lerini al (orijinal sıralama korunuyor)
+            // Yüksek kalite ve upscale parametresi ekle
+            carouselImages = cloudinaryData[selectedGroup]
+                .map(img => {
+                    // URL'ye transformasyon ekle:
+                    // q_100 = maksimum kalite
+                    // f_auto = otomatik format (WebP destekleyenlere WebP)
+                    // c_scale,w_1600 = genişliği 1600px'e çıkar
+                    // e_sharpen = keskinleştir
+                    return img.url.replace('/upload/', '/upload/q_100,f_auto,c_scale,w_1600,e_sharpen/');
+                });
+        }
+    } catch (err) {
+        console.error('Carousel images error:', err);
+    }
+    
+    res.render('login', { 
+        title: res.locals.t.auth.login.title,
+        carouselImages: carouselImages,
+        carouselGroup: selectedGroup
+    });
 });
 
 app.get('/register', (req, res) => {

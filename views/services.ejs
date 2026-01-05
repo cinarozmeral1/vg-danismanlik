@@ -13,6 +13,76 @@
 <!-- Services Section -->
 <section class="py-5">
     <div class="container">
+        <!-- AI Student Wizard Button (Only Turkish - no English support) -->
+        <% if (typeof currentLanguage === 'undefined' || currentLanguage === 'tr') { %>
+        <div class="text-center mb-5">
+            <div class="wizard-highlight-box">
+                <div class="wizard-icon-wrapper">
+                    <i class="fas fa-magic"></i>
+                </div>
+                <h4 class="mb-2">Hangi Üniversite Size Uygun?</h4>
+                <p class="text-muted mb-3">Yapay zeka destekli sihirbazımız, profilinize en uygun üniversite ve programı saniyeler içinde bulur.</p>
+                <a href="/student-wizard" class="wizard-cta-btn-services">
+                    <i class="fas fa-magic me-2"></i>
+                    Öğrenci Sihirbazını Dene
+                    <span class="wizard-badge-services">ÜCRETSİZ</span>
+                </a>
+            </div>
+        </div>
+        <style>
+            .wizard-highlight-box {
+                background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                border: 2px dashed #0056b3;
+                border-radius: 20px;
+                padding: 30px;
+                max-width: 600px;
+                margin: 0 auto;
+            }
+            .wizard-icon-wrapper {
+                width: 60px;
+                height: 60px;
+                background: linear-gradient(135deg, #0056b3 0%, #28a745 100%);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 15px;
+                color: white;
+                font-size: 1.5rem;
+            }
+            .wizard-cta-btn-services {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                background: linear-gradient(135deg, #0056b3 0%, #28a745 100%);
+                color: white;
+                border-radius: 50px;
+                font-weight: 600;
+                font-size: 1rem;
+                padding: 12px 28px;
+                text-decoration: none;
+                box-shadow: 0 4px 15px rgba(0,86,179,0.3);
+                transition: all 0.3s ease;
+                position: relative;
+            }
+            .wizard-cta-btn-services:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(0,86,179,0.4);
+                color: white;
+            }
+            .wizard-badge-services {
+                background: #ffc107;
+                color: #000;
+                font-size: 0.7rem;
+                padding: 3px 8px;
+                border-radius: 20px;
+                font-weight: 700;
+                margin-left: 5px;
+            }
+        </style>
+        <% } %>
+        
         <div class="row">
             <div class="col-lg-4 mb-4">
                 <div class="card h-100 shadow" style="background-color: #e6f0fa !important;">

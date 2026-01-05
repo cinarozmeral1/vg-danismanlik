@@ -299,6 +299,32 @@
             }, 5000);
         }
 
+        // Logout function
+        function logout() {
+            console.log('Logout function called');
+            fetch('/api/auth/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include'
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Logout response:', data);
+                if (data.success) {
+                    window.location.href = '/';
+                } else {
+                    console.error('Logout failed:', data.message);
+                    window.location.href = '/';
+                }
+            })
+            .catch(error => {
+                console.error('Error during logout:', error);
+                window.location.href = '/';
+            });
+        }
+
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Files page loaded');

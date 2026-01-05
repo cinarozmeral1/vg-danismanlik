@@ -405,6 +405,7 @@
                                     <li><a class="dropdown-item" href="/admin/dashboard"><i class="fas fa-user-shield me-2"></i>Admin Panel</a></li>
                                     <li><a class="dropdown-item" href="/admin/users"><i class="fas fa-users me-2"></i>Öğrenciler</a></li>
                                     <li><a class="dropdown-item" href="/admin/applications"><i class="fas fa-file-alt me-2"></i>Başvurular</a></li>
+                                    <li><a class="dropdown-item" href="/admin/partners"><i class="fas fa-handshake me-2"></i>Partnerler</a></li>
                                     <li><a class="dropdown-item" href="/admin/universities"><i class="fas fa-university me-2"></i>Üniversiteler</a></li>
                                     <li><a class="dropdown-item" href="/admin/backups"><i class="fas fa-database me-2"></i>Yedekleme</a></li>
                                     <li><hr class="dropdown-divider"></li>
@@ -478,14 +479,41 @@
                         
                         <!-- User Quick Actions -->
                         <% if (currentUser && currentUser.is_admin) { %>
-                            <a href="/admin/dashboard" style="display: block; background: #ffffff; color: var(--primary-600); border: 1px solid var(--primary-600); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-size: 0.875rem; font-weight: 600; text-align: center;">
+                            <a href="/admin/dashboard" style="display: block; background: #ffffff; color: var(--primary-600); border: 1px solid var(--primary-600); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-size: 0.875rem; font-weight: 600; text-align: center; margin-bottom: 8px;">
                                 <i class="fas fa-tachometer-alt me-2"></i>Admin Paneli
                             </a>
                         <% } else { %>
-                            <a href="/user/dashboard" style="display: block; background: #ffffff; color: var(--primary-600); border: 1px solid var(--primary-600); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-size: 0.875rem; font-weight: 600; text-align: center;">
+                            <a href="/user/dashboard" style="display: block; background: #ffffff; color: var(--primary-600); border: 1px solid var(--primary-600); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-size: 0.875rem; font-weight: 600; text-align: center; margin-bottom: 8px;">
                                 <i class="fas fa-user me-2"></i>Profilim
                             </a>
                         <% } %>
+                        <!-- ÇIKIŞ YAP BUTONU -->
+                        <a href="/admin/logout" class="mobile-logout-btn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            ÇIKIŞ YAP
+                        </a>
+                        <style>
+                            .mobile-logout-btn {
+                                display: flex !important;
+                                align-items: center !important;
+                                justify-content: center !important;
+                                gap: 10px !important;
+                                background-color: #fecaca !important;
+                                color: #000000 !important;
+                                padding: 14px 20px !important;
+                                border-radius: 8px !important;
+                                text-decoration: none !important;
+                                font-size: 16px !important;
+                                font-weight: 800 !important;
+                                text-align: center !important;
+                                border: 2px solid #dc2626 !important;
+                                letter-spacing: 0.5px !important;
+                            }
+                            .mobile-logout-btn i {
+                                color: #000000 !important;
+                                font-size: 18px !important;
+                            }
+                        </style>
                     </div>
                 <% } %>
 
@@ -678,6 +706,12 @@
                                     </a>
                                 </li>
                                 <li>
+                                    <a href="/admin/partners" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                        <i class="fas fa-handshake" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 500;">Partnerler</span>
+                                    </a>
+                                </li>
+                                <li>
                                     <a href="/admin/universities" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
                                         <i class="fas fa-university" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
                                         <span style="font-size: 0.9rem; font-weight: 500;">Üniversiteler</span>
@@ -736,24 +770,39 @@
                         </div>
                     </div>
 
-                    <!-- Auth Buttons -->
+                    <!-- Auth Buttons - Sadece giriş yapmamışsa göster -->
+                    <% if (typeof isLoggedIn === 'undefined' || isLoggedIn !== true) { %>
                     <div style="padding: 1rem; border-top: 1px solid #e5e7eb; background: #f9fafb;">
-                        <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn === true) { %>
-                            <!-- Logout Button (only when logged in) -->
-                            <div data-action="logout" style="background: #dc2626; color: #000000; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; text-align: center; margin-bottom: 8px;">
-                                <i class="fas fa-sign-out-alt" style="margin-right: 8px; color: #000000;"></i><span style="color: #000000;">Çıkış Yap</span>
-                            </div>
-                        <% } else { %>
-                            <!-- Login and Register buttons (only when not logged in) -->
-                            <a href="/login" style="display: block; background: #ffffff; color: #000000; border: 2px solid #2563eb; padding: 12px; border-radius: 8px; font-weight: 600; text-decoration: none; text-align: center; margin-bottom: 8px;">
-                                <i class="fas fa-sign-in-alt" style="margin-right: 8px; color: #000000;"></i><span style="color: #000000;">Giriş Yap</span>
-                            </a>vc
-                            
-                            <a href="/register" style="display: block; background: #2563eb; color: #000000; border: 2px solid #2563eb; padding: 12px; border-radius: 8px; font-weight: 600; text-decoration: none; text-align: center;">
-                                <i class="fas fa-user-plus" style="margin-right: 8px; color: #000000;"></i><span style="color: #000000;">Kayıt Ol</span>
-                            </a>
-                        <% } %>
+                        <a href="/login" style="display: block; background: #ffffff; color: #1e40af; border: 2px solid #2563eb; padding: 14px; border-radius: 8px; font-weight: 600; text-decoration: none; text-align: center; margin-bottom: 8px;">
+                            <i class="fas fa-sign-in-alt" style="margin-right: 8px;"></i>Giriş Yap
+                        </a>
+                        <a href="/register" class="mobile-register-btn">
+                            <i class="fas fa-user-plus"></i>
+                            KAYIT OL
+                        </a>
+                        <style>
+                            .mobile-register-btn {
+                                display: flex !important;
+                                align-items: center !important;
+                                justify-content: center !important;
+                                gap: 10px !important;
+                                background-color: #dbeafe !important;
+                                color: #000000 !important;
+                                padding: 14px 20px !important;
+                                border-radius: 8px !important;
+                                text-decoration: none !important;
+                                font-size: 16px !important;
+                                font-weight: 700 !important;
+                                text-align: center !important;
+                                border: 2px solid #2563eb !important;
+                            }
+                            .mobile-register-btn i {
+                                color: #000000 !important;
+                                font-size: 16px !important;
+                            }
+                        </style>
                     </div>
+                    <% } %>
                 </div>
             </nav>
         </div>
@@ -948,6 +997,24 @@
                     window.location.href = '/';
                 });
             }
+            
+            // Mobile logout handler - global function
+            window.handleMobileLogout = function() {
+                console.log('Mobile logout clicked');
+                fetch('/api/auth/logout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include'
+                })
+                .then(res => res.json())
+                .then(data => {
+                    window.location.href = '/';
+                })
+                .catch(err => {
+                    console.error('Logout error:', err);
+                    window.location.href = '/';
+                });
+            };
             
             function setupMobileNavEvents() {
                 const mobileNav = document.getElementById('mobileNav');
@@ -1242,6 +1309,299 @@
             "closes": "18:00"
         }
         }
+    </script>
+
+    <!-- Cookie Consent Banner -->
+    <div id="cookieConsent" class="cookie-consent" style="display: none;">
+        <div class="cookie-content">
+            <div class="cookie-text">
+                <i class="fas fa-cookie-bite me-2"></i>
+                <span>Bu web sitesi deneyiminizi geliştirmek için çerezleri kullanmaktadır.</span>
+            </div>
+            <div class="cookie-buttons">
+                <button class="btn btn-outline-light btn-sm" onclick="declineCookies()">Reddet</button>
+                <button class="btn btn-light btn-sm" onclick="acceptCookies()">Kabul Et</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Wizard Popup -->
+    <div id="aiWizardPopup" class="ai-wizard-popup" style="display: none;">
+        <div class="ai-wizard-overlay" onclick="closeAIPopup()"></div>
+        <div class="ai-wizard-modal">
+            <button class="ai-wizard-close" onclick="closeAIPopup()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="ai-wizard-content">
+                <div class="ai-wizard-icon">
+                    <i class="fas fa-magic"></i>
+                </div>
+                <h3>Yapay Zeka Öğrenci Sihirbazı</h3>
+                <p>Size en uygun üniversiteyi bulmak için birkaç soruya cevap verin!</p>
+                <ul class="ai-features">
+                    <li><i class="fas fa-check-circle"></i> Kişiselleştirilmiş öneri</li>
+                    <li><i class="fas fa-check-circle"></i> 7 Avrupa ülkesi</li>
+                    <li><i class="fas fa-check-circle"></i> 50+ üniversite</li>
+                </ul>
+                <a href="/student-wizard" class="btn btn-ai-start">
+                    <i class="fas fa-rocket me-2"></i>Hemen Başla
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <style>
+    /* Cookie Consent */
+    .cookie-consent {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(135deg, #0056b3, #004494);
+        color: white;
+        padding: 15px 20px;
+        z-index: 99999;
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
+    }
+    
+    .cookie-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+    
+    .cookie-text {
+        display: flex;
+        align-items: center;
+        font-size: 0.95rem;
+    }
+    
+    .cookie-buttons {
+        display: flex;
+        gap: 10px;
+    }
+    
+    @media (max-width: 576px) {
+        .cookie-content {
+            flex-direction: column;
+            text-align: center;
+        }
+        .cookie-text {
+            flex-direction: column;
+            gap: 5px;
+        }
+    }
+    
+    /* AI Wizard Popup */
+    .ai-wizard-popup {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 999999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .ai-wizard-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.6);
+        backdrop-filter: blur(5px);
+    }
+    
+    .ai-wizard-modal {
+        position: relative;
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        max-width: 450px;
+        width: 90%;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        animation: popupSlideIn 0.4s ease;
+    }
+    
+    @keyframes popupSlideIn {
+        from {
+            opacity: 0;
+            transform: scale(0.8) translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+    
+    .ai-wizard-close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: #f0f0f0;
+        border: none;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 1rem;
+        color: #666;
+        transition: all 0.3s ease;
+    }
+    
+    .ai-wizard-close:hover {
+        background: #e0e0e0;
+        color: #333;
+    }
+    
+    .ai-wizard-content {
+        text-align: center;
+    }
+    
+    .ai-wizard-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #0056b3, #28a745);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 2rem;
+        color: white;
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+    
+    .ai-wizard-content h3 {
+        color: #0056b3;
+        margin-bottom: 10px;
+        font-weight: 700;
+    }
+    
+    .ai-wizard-content p {
+        color: #666;
+        margin-bottom: 20px;
+    }
+    
+    .ai-features {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 25px 0;
+        text-align: left;
+    }
+    
+    .ai-features li {
+        padding: 8px 0;
+        color: #444;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .ai-features li i {
+        color: #28a745;
+    }
+    
+    .btn-ai-start {
+        background: linear-gradient(135deg, #0056b3, #28a745);
+        color: white;
+        padding: 15px 40px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        display: inline-block;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-ai-start:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0,86,179,0.3);
+        color: white;
+    }
+    
+    @media (max-width: 576px) {
+        .ai-wizard-modal {
+            padding: 30px 20px;
+        }
+        .ai-wizard-icon {
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+        }
+        .ai-wizard-content h3 {
+            font-size: 1.2rem;
+        }
+    }
+    </style>
+
+    <script>
+    // Cookie Consent - Kabul veya reddedilene kadar her zaman göster
+    function showCookieConsent() {
+        const cookieChoice = localStorage.getItem('cookieChoice'); // 'accepted' veya 'declined'
+        
+        // Eğer daha önce bir seçim yapılmışsa gösterme
+        if (cookieChoice) return;
+        
+        // Seçim yapılmamışsa her zaman göster
+        setTimeout(() => {
+            document.getElementById('cookieConsent').style.display = 'block';
+        }, 500);
+    }
+    
+    function acceptCookies() {
+        localStorage.setItem('cookieChoice', 'accepted');
+        document.getElementById('cookieConsent').style.display = 'none';
+    }
+    
+    function declineCookies() {
+        localStorage.setItem('cookieChoice', 'declined');
+        document.getElementById('cookieConsent').style.display = 'none';
+    }
+    
+    // AI Wizard Popup
+    function showAIPopup() {
+        const today = new Date().toDateString();
+        const lastShown = localStorage.getItem('aiPopupShown');
+        const currentPath = window.location.pathname;
+        
+        // Sihirbaz sayfasında, login sayfasında veya admin sayfalarında gösterme
+        if (currentPath.includes('wizard') || currentPath.includes('login') || 
+            currentPath.includes('admin') || currentPath.includes('user') ||
+            currentPath.includes('partner') || currentPath.includes('register')) {
+            return;
+        }
+        
+        // Günde bir kez göster
+        if (lastShown !== today) {
+            setTimeout(() => {
+                document.getElementById('aiWizardPopup').style.display = 'flex';
+            }, 3000); // 3 saniye sonra göster
+            localStorage.setItem('aiPopupShown', today);
+        }
+    }
+    
+    function closeAIPopup() {
+        document.getElementById('aiWizardPopup').style.display = 'none';
+    }
+    
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        showCookieConsent();
+        showAIPopup();
+    });
     </script>
 
 </body>

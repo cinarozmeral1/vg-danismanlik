@@ -5,7 +5,7 @@ const pool = require('../config/database');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const { sendApplicationCreationEmail, sendApplicationStatusEmail, sendPartnerVerificationEmail, generateVerificationToken } = require('../services/emailService');
+const { sendApplicationCreationEmail, sendApplicationStatusEmail, sendPartnerVerificationEmail, sendVisaApplicationEmail, generateVerificationToken } = require('../services/emailService');
 const { DateTime } = require('luxon');
 
 // File upload middleware for university logos
@@ -367,6 +367,95 @@ router.get('/dashboard', async (req, res) => {
             console.log('ℹ️ Applications table not found, using empty array');
         }
 
+        // Calculate percentage changes (last 30 days vs previous 30 days)
+        const now = new Date();
+        const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
+
+        // User percentage change
+        let userPercentChange = 0;
+        try {
+            const recentUsersResult = await pool.query(
+                'SELECT COUNT(*) FROM users WHERE created_at >= $1',
+                [thirtyDaysAgo]
+            );
+            const previousUsersResult = await pool.query(
+                'SELECT COUNT(*) FROM users WHERE created_at >= $1 AND created_at < $2',
+                [sixtyDaysAgo, thirtyDaysAgo]
+            );
+            const recentUsers = parseInt(recentUsersResult.rows[0].count) || 0;
+            const previousUsers = parseInt(previousUsersResult.rows[0].count) || 0;
+            
+            if (previousUsers > 0) {
+                userPercentChange = Math.round(((recentUsers - previousUsers) / previousUsers) * 100);
+            } else if (recentUsers > 0) {
+                userPercentChange = 100;
+            }
+        } catch (error) {
+            console.log('Error calculating user percentage:', error.message);
+        }
+
+        // Application percentage change
+        let applicationPercentChange = 0;
+        let pendingPercentChange = 0;
+        let approvedPercentChange = 0;
+        try {
+            const recentAppsResult = await pool.query(
+                'SELECT COUNT(*) FROM applications WHERE created_at >= $1',
+                [thirtyDaysAgo]
+            );
+            const previousAppsResult = await pool.query(
+                'SELECT COUNT(*) FROM applications WHERE created_at >= $1 AND created_at < $2',
+                [sixtyDaysAgo, thirtyDaysAgo]
+            );
+            const recentApps = parseInt(recentAppsResult.rows[0].count) || 0;
+            const previousApps = parseInt(previousAppsResult.rows[0].count) || 0;
+            
+            if (previousApps > 0) {
+                applicationPercentChange = Math.round(((recentApps - previousApps) / previousApps) * 100);
+            } else if (recentApps > 0) {
+                applicationPercentChange = 100;
+            }
+
+            // Pending applications change
+            const recentPendingResult = await pool.query(
+                "SELECT COUNT(*) FROM applications WHERE status = 'pending' AND created_at >= $1",
+                [thirtyDaysAgo]
+            );
+            const previousPendingResult = await pool.query(
+                "SELECT COUNT(*) FROM applications WHERE status = 'pending' AND created_at >= $1 AND created_at < $2",
+                [sixtyDaysAgo, thirtyDaysAgo]
+            );
+            const recentPending = parseInt(recentPendingResult.rows[0].count) || 0;
+            const previousPending = parseInt(previousPendingResult.rows[0].count) || 0;
+            
+            if (previousPending > 0) {
+                pendingPercentChange = Math.round(((recentPending - previousPending) / previousPending) * 100);
+            } else if (recentPending > 0) {
+                pendingPercentChange = 100;
+            }
+
+            // Approved applications change
+            const recentApprovedResult = await pool.query(
+                "SELECT COUNT(*) FROM applications WHERE status = 'approved' AND created_at >= $1",
+                [thirtyDaysAgo]
+            );
+            const previousApprovedResult = await pool.query(
+                "SELECT COUNT(*) FROM applications WHERE status = 'approved' AND created_at >= $1 AND created_at < $2",
+                [sixtyDaysAgo, thirtyDaysAgo]
+            );
+            const recentApproved = parseInt(recentApprovedResult.rows[0].count) || 0;
+            const previousApproved = parseInt(previousApprovedResult.rows[0].count) || 0;
+            
+            if (previousApproved > 0) {
+                approvedPercentChange = Math.round(((recentApproved - previousApproved) / previousApproved) * 100);
+            } else if (recentApproved > 0) {
+                approvedPercentChange = 100;
+            }
+        } catch (error) {
+            console.log('Error calculating application percentages:', error.message);
+        }
+
         // Get financial data (receivables - unpaid services)
         let receivablesData = {
             totalAmount: 0,
@@ -452,6 +541,12 @@ router.get('/dashboard', async (req, res) => {
                 totalUsers: sidebarCounts.userCount,
                 totalApplications: sidebarCounts.applicationCount,
                 totalUniversities: sidebarCounts.universityCount
+            },
+            percentChanges: {
+                users: userPercentChange,
+                applications: applicationPercentChange,
+                pending: pendingPercentChange,
+                approved: approvedPercentChange
             },
             ...sidebarCounts
         });
@@ -551,6 +646,33 @@ router.get('/applications', async (req, res) => {
             ];
         }
 
+        // Get visa applications
+        let visaApplications = [];
+        try {
+            const visaResult = await pool.query(`
+                SELECT 
+                    va.*,
+                    u.first_name,
+                    u.last_name,
+                    u.email
+                FROM visa_applications va
+                JOIN users u ON va.user_id = u.id
+                ORDER BY va.created_at DESC
+            `);
+            visaApplications = visaResult.rows;
+            
+            // Get appointments for each visa application
+            for (let visa of visaApplications) {
+                const appointmentsResult = await pool.query(
+                    'SELECT * FROM visa_appointments WHERE visa_application_id = $1 ORDER BY appointment_date ASC',
+                    [visa.id]
+                );
+                visa.appointments = appointmentsResult.rows;
+            }
+        } catch (error) {
+            console.log('ℹ️ Visa applications table not found or error:', error.message);
+        }
+
         // Get sidebar counts
         const sidebarCounts = await getAdminSidebarCounts();
 
@@ -558,6 +680,7 @@ router.get('/applications', async (req, res) => {
             title: 'Başvurular - Admin Panel',
             activePage: 'applications',
             applications: applications,
+            visaApplications: visaApplications,
             users: usersResult.rows,
             ...sidebarCounts
         });
@@ -4665,6 +4788,296 @@ router.get('/api/partner-earnings', async (req, res) => {
     } catch (error) {
         console.error('Get all partner earnings error:', error);
         res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// ==================== VISA APPLICATIONS API ====================
+
+// Create visa application
+router.post('/visa-applications', async (req, res) => {
+    try {
+        const { user_id, country, consulate_city, status, notes, appointments } = req.body;
+        
+        // Create visa application
+        const result = await pool.query(
+            `INSERT INTO visa_applications (user_id, country, consulate_city, status, notes)
+             VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+            [user_id, country, consulate_city, status || 'pending', notes]
+        );
+        
+        const visaApplicationId = result.rows[0].id;
+        
+        // Add appointments
+        if (appointments && appointments.length > 0) {
+            for (const aptDate of appointments) {
+                if (aptDate) {
+                    await pool.query(
+                        `INSERT INTO visa_appointments (visa_application_id, appointment_date)
+                         VALUES ($1, $2)`,
+                        [visaApplicationId, aptDate]
+                    );
+                }
+            }
+        }
+        
+        // Get user info for email
+        const userResult = await pool.query('SELECT * FROM users WHERE id = $1', [user_id]);
+        const user = userResult.rows[0];
+        
+        // Send email notification
+        if (user && user.email) {
+            try {
+                await sendVisaApplicationEmail(user, country, consulate_city, 'created');
+            } catch (emailError) {
+                console.error('Email sending failed:', emailError);
+            }
+        }
+        
+        res.json({ success: true, message: 'Vize başvurusu oluşturuldu', data: result.rows[0] });
+        
+    } catch (error) {
+        console.error('Create visa application error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Get single visa application
+router.get('/visa-applications/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        const result = await pool.query(
+            `SELECT va.*, u.first_name, u.last_name, u.email
+             FROM visa_applications va
+             JOIN users u ON va.user_id = u.id
+             WHERE va.id = $1`,
+            [id]
+        );
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Vize başvurusu bulunamadı' });
+        }
+        
+        const visa = result.rows[0];
+        
+        // Get appointments
+        const appointmentsResult = await pool.query(
+            'SELECT * FROM visa_appointments WHERE visa_application_id = $1 ORDER BY appointment_date ASC',
+            [id]
+        );
+        visa.appointments = appointmentsResult.rows;
+        
+        res.json({ success: true, data: visa });
+        
+    } catch (error) {
+        console.error('Get visa application error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Update visa application
+router.put('/visa-applications/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { user_id, country, consulate_city, status, notes, appointments } = req.body;
+        
+        // Get old status for email comparison
+        const oldResult = await pool.query('SELECT * FROM visa_applications WHERE id = $1', [id]);
+        const oldStatus = oldResult.rows[0]?.status;
+        
+        // Update visa application
+        await pool.query(
+            `UPDATE visa_applications 
+             SET user_id = $1, country = $2, consulate_city = $3, status = $4, notes = $5, updated_at = NOW()
+             WHERE id = $6`,
+            [user_id, country, consulate_city, status, notes, id]
+        );
+        
+        // Delete old appointments and add new ones
+        await pool.query('DELETE FROM visa_appointments WHERE visa_application_id = $1', [id]);
+        
+        if (appointments && appointments.length > 0) {
+            for (const aptDate of appointments) {
+                if (aptDate) {
+                    await pool.query(
+                        `INSERT INTO visa_appointments (visa_application_id, appointment_date)
+                         VALUES ($1, $2)`,
+                        [id, aptDate]
+                    );
+                }
+            }
+        }
+        
+        // Send email if status changed
+        if (oldStatus && oldStatus !== status) {
+            const userResult = await pool.query('SELECT * FROM users WHERE id = $1', [user_id]);
+            const user = userResult.rows[0];
+            
+            if (user && user.email) {
+                try {
+                    await sendVisaApplicationEmail(user, country, consulate_city, status);
+                } catch (emailError) {
+                    console.error('Email sending failed:', emailError);
+                }
+            }
+        }
+        
+        res.json({ success: true, message: 'Vize başvurusu güncellendi' });
+        
+    } catch (error) {
+        console.error('Update visa application error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Update visa application status
+router.put('/visa-applications/:id/status', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+        
+        // Get visa application info
+        const visaResult = await pool.query(
+            `SELECT va.*, u.first_name, u.last_name, u.email
+             FROM visa_applications va
+             JOIN users u ON va.user_id = u.id
+             WHERE va.id = $1`,
+            [id]
+        );
+        
+        if (visaResult.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Vize başvurusu bulunamadı' });
+        }
+        
+        const visa = visaResult.rows[0];
+        
+        // Update status
+        await pool.query(
+            'UPDATE visa_applications SET status = $1, updated_at = NOW() WHERE id = $2',
+            [status, id]
+        );
+        
+        // Send email notification
+        try {
+            await sendVisaApplicationEmail(visa, visa.country, visa.consulate_city, status);
+        } catch (emailError) {
+            console.error('Email sending failed:', emailError);
+        }
+        
+        res.json({ success: true, message: 'Vize başvurusu durumu güncellendi' });
+        
+    } catch (error) {
+        console.error('Update visa status error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Delete visa application
+router.delete('/visa-applications/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        // Delete appointments first (cascade should handle this, but just in case)
+        await pool.query('DELETE FROM visa_appointments WHERE visa_application_id = $1', [id]);
+        
+        // Delete visa application
+        await pool.query('DELETE FROM visa_applications WHERE id = $1', [id]);
+        
+        res.json({ success: true, message: 'Vize başvurusu silindi' });
+        
+    } catch (error) {
+        console.error('Delete visa application error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ==================== AI RECOMMENDATIONS ROUTES ====================
+
+// AI Recommendations Page
+router.get('/ai-recommendations', async (req, res) => {
+    try {
+        res.render('admin/ai-recommendations', {
+            title: 'AI Önerileri',
+            activePage: 'ai-recommendations'
+        });
+    } catch (error) {
+        console.error('AI recommendations page error:', error);
+        res.status(500).send('Sayfa yüklenirken hata oluştu');
+    }
+});
+
+// Get All AI Recommendations (API)
+router.get('/ai-recommendations/list', async (req, res) => {
+    try {
+        const limit = parseInt(req.query.limit) || 100;
+        
+        const result = await pool.query(`
+            SELECT 
+                r.*,
+                u.first_name,
+                u.last_name,
+                u.email
+            FROM ai_recommendations r
+            JOIN users u ON r.user_id = u.id
+            ORDER BY r.created_at DESC
+            LIMIT $1
+        `, [limit]);
+        
+        res.json({
+            success: true,
+            data: result.rows
+        });
+    } catch (error) {
+        console.error('Get AI recommendations error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Delete AI Recommendation
+router.delete('/ai-recommendations/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        // Check if recommendation exists
+        const checkResult = await pool.query(
+            'SELECT id FROM ai_recommendations WHERE id = $1',
+            [id]
+        );
+        
+        if (checkResult.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Öneri bulunamadı' });
+        }
+        
+        // Delete the recommendation
+        await pool.query('DELETE FROM ai_recommendations WHERE id = $1', [id]);
+        
+        res.json({ success: true, message: 'Öneri başarıyla silindi' });
+    } catch (error) {
+        console.error('Delete AI recommendation error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Get AI Recommendation for a specific user (for admin student details page)
+router.get('/users/:userId/ai-recommendation', async (req, res) => {
+    try {
+        const { userId } = req.params;
+        
+        const result = await pool.query(`
+            SELECT * FROM ai_recommendations 
+            WHERE user_id = $1 
+            ORDER BY created_at DESC 
+            LIMIT 1
+        `, [userId]);
+        
+        if (result.rows.length === 0) {
+            return res.json({ success: true, recommendation: null });
+        }
+        
+        res.json({ success: true, recommendation: result.rows[0] });
+    } catch (error) {
+        console.error('Get user AI recommendation error:', error);
+        res.status(500).json({ success: false, message: error.message });
     }
 });
 

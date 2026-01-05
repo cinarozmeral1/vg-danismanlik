@@ -1375,4 +1375,41 @@ router.post('/api/installments/:id/create-payment-intent', authenticateUser, asy
     }
 });
 
+// Get user visa applications API
+router.get('/api/visa-applications', authenticateUser, async (req, res) => {
+    try {
+        const result = await pool.query(`
+            SELECT 
+                va.id, va.country, va.consulate_city, va.status, va.notes, va.created_at, va.updated_at
+            FROM visa_applications va
+            WHERE va.user_id = $1
+            ORDER BY va.created_at DESC
+        `, [req.user.id]);
+
+        // Get appointments for each visa application
+        const visaApplications = await Promise.all(result.rows.map(async (visa) => {
+            const appointmentsResult = await pool.query(
+                'SELECT id, appointment_date FROM visa_appointments WHERE visa_application_id = $1 ORDER BY appointment_date ASC',
+                [visa.id]
+            );
+            return {
+                ...visa,
+                appointments: appointmentsResult.rows
+            };
+        }));
+
+        res.json({
+            success: true,
+            visaApplications: visaApplications
+        });
+
+    } catch (error) {
+        console.error('Get user visa applications error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Vize başvuruları yüklenirken bir hata oluştu'
+        });
+    }
+});
+
 module.exports = router; 

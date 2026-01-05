@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+    <style>
+        :root {
+            --wizard-primary: #0056b3;
+            --wizard-secondary: #004494;
+            --wizard-accent: #28a745;
+            --wizard-bg: #fef6f0;
+            --wizard-card-bg: #ffffff;
+        }
+        
+        body {
+            background: var(--wizard-bg);
+            min-height: 100vh;
+        }
+        
+        .wizard-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .wizard-header {
+            text-align: center;
+            padding: 30px 0;
+        }
+        
+        .wizard-header h1 {
+            color: var(--wizard-primary);
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .wizard-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        /* Progress Bar */
+        .wizard-progress {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 8px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .wizard-progress-bar {
+            background: linear-gradient(90deg, var(--wizard-primary), var(--wizard-accent));
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        
+        .wizard-step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .step-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ddd;
+            transition: all 0.3s ease;
+        }
+        
+        .step-dot.active {
+            background: var(--wizard-primary);
+            transform: scale(1.2);
+        }
+        
+        .step-dot.completed {
+            background: var(--wizard-accent);
+        }
+        
+        /* Question Card */
+        .wizard-question {
+            background: var(--wizard-card-bg);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .question-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .question-subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        /* Selection Cards */
+        .selection-cards {
+            display: grid;
+            gap: 15px;
+            flex: 1;
+        }
+        
+        .selection-cards.two-cols {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .selection-cards.three-cols {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        
+        .selection-cards.four-cols {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        @media (min-width: 768px) {
+            .selection-cards.four-cols {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            .selection-cards.six-cols {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        .selection-card {
+            background: #f8f9fa;
+            border: 3px solid transparent;
+            border-radius: 15px;
+            padding: 25px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .selection-card:hover {
+            border-color: var(--wizard-primary);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0,86,179,0.15);
+        }
+        
+        .selection-card.selected {
+            border-color: var(--wizard-primary);
+            background: linear-gradient(135deg, rgba(0,86,179,0.1), rgba(40,167,69,0.1));
+        }
+        
+        .selection-card.selected .card-icon {
+            color: var(--wizard-primary);
+        }
+        
+        .selection-card .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #666;
+            transition: color 0.3s ease;
+        }
+        
+        .selection-card .card-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .selection-card .card-desc {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        /* Large Cards (for education level) */
+        .selection-card.large {
+            padding: 40px 30px;
+        }
+        
+        .selection-card.large .card-icon {
+            font-size: 4rem;
+        }
+        
+        /* Country Cards with Flags */
+        .country-card {
+            position: relative;
+        }
+        
+        .country-card .flag-emoji {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        
+        .country-card .preference-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--wizard-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .country-card.selected .preference-badge {
+            opacity: 1;
+        }
+        
+        /* Slider */
+        .wizard-slider {
+            width: 100%;
+            margin: 30px 0;
+        }
+        
+        .wizard-slider input[type="range"] {
+            width: 100%;
+            height: 10px;
+            border-radius: 5px;
+            background: #e9ecef;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .wizard-slider input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: var(--wizard-primary);
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,86,179,0.3);
+        }
+        
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .slider-value {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--wizard-primary);
+            margin-bottom: 10px;
+        }
+        
+        /* Navigation Buttons */
+        .wizard-nav {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+        }
+        
+        .btn-wizard {
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-wizard-back {
+            background: #f8f9fa;
+            color: #666;
+            border: 2px solid #ddd;
+        }
+        
+        .btn-wizard-back:hover {
+            background: #e9ecef;
+            color: #333;
+        }
+        
+        .btn-wizard-next {
+            background: linear-gradient(135deg, var(--wizard-primary), var(--wizard-secondary));
+            color: white;
+            border: none;
+            flex: 1;
+            max-width: 300px;
+        }
+        
+        .btn-wizard-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,86,179,0.3);
+            color: white;
+        }
+        
+        .btn-wizard-next:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Multi-select info */
+        .multi-select-info {
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 15px;
+        }
+        
+        .multi-select-info .count {
+            font-weight: bold;
+            color: var(--wizard-primary);
+        }
+        
+        /* Result Section */
+        .wizard-result {
+            background: var(--wizard-card-bg);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        .result-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .result-header .success-icon {
+            font-size: 5rem;
+            color: var(--wizard-accent);
+            margin-bottom: 20px;
+        }
+        
+        .result-card {
+            background: linear-gradient(135deg, var(--wizard-primary), var(--wizard-secondary));
+            color: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .result-card h3 {
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .result-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .result-item i {
+            width: 30px;
+            font-size: 1.2rem;
+        }
+        
+        .result-item .label {
+            width: 120px;
+            opacity: 0.8;
+        }
+        
+        .result-item .value {
+            font-weight: 600;
+            flex: 1;
+        }
+        
+        .prep-warning {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .prep-warning h5 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .prep-warning p {
+            color: #856404;
+            margin: 0;
+        }
+        
+        .reasoning-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .reasoning-card h5 {
+            color: var(--wizard-primary);
+            margin-bottom: 15px;
+        }
+        
+        /* Login Modal */
+        .login-required {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .login-required .lock-icon {
+            font-size: 4rem;
+            color: #ffc107;
+            margin-bottom: 20px;
+        }
+        
+        /* Loading */
+        .wizard-loading {
+            text-align: center;
+            padding: 60px;
+        }
+        
+        .wizard-loading .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid #e9ecef;
+            border-top-color: var(--wizard-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Textarea */
+        .wizard-textarea {
+            width: 100%;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 1rem;
+            resize: none;
+            transition: border-color 0.3s ease;
+        }
+        
+        .wizard-textarea:focus {
+            outline: none;
+            border-color: var(--wizard-primary);
+        }
+        
+        .char-count {
+            text-align: right;
+            color: #666;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+        
+        /* Back to home */
+        .back-home {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+        }
+        
+        .back-home a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--wizard-primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .back-home a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .wizard-container {
+                padding: 10px;
+            }
+            
+            .wizard-header {
+                padding: 20px 0;
+            }
+            
+            .wizard-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .wizard-header p {
+                font-size: 0.95rem;
+            }
+            
+            .wizard-question {
+                padding: 20px 15px;
+                min-height: auto;
+                border-radius: 15px;
+            }
+            
+            .question-title {
+                font-size: 1.2rem;
+            }
+            
+            .question-subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .selection-cards {
+                gap: 10px;
+            }
+            
+            .selection-cards.two-cols {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .selection-cards.three-cols,
+            .selection-cards.four-cols,
+            .selection-cards.six-cols {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .selection-card {
+                padding: 15px 10px;
+                border-radius: 12px;
+            }
+            
+            .selection-card .card-icon {
+                font-size: 1.8rem;
+                margin-bottom: 8px;
+            }
+            
+            .selection-card .card-title {
+                font-size: 0.85rem;
+            }
+            
+            .selection-card .card-desc {
+                font-size: 0.75rem;
+                display: none;
+            }
+            
+            .selection-card.large {
+                padding: 20px 15px;
+            }
+            
+            .selection-card.large .card-icon {
+                font-size: 2.5rem;
+            }
+            
+            .selection-card.large .card-desc {
+                display: block;
+                font-size: 0.8rem;
+            }
+            
+            .country-card .flag-emoji {
+                font-size: 2rem;
+            }
+            
+            .country-card .preference-badge {
+                width: 22px;
+                height: 22px;
+                font-size: 0.75rem;
+            }
+            
+            .wizard-nav {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .btn-wizard {
+                padding: 12px 20px;
+                font-size: 1rem;
+                width: 100%;
+            }
+            
+            .btn-wizard-next {
+                max-width: 100%;
+                order: -1;
+            }
+            
+            .back-home {
+                position: relative;
+                top: 0;
+                left: 0;
+                padding: 10px 15px;
+                background: white;
+                margin-bottom: 10px;
+                border-radius: 10px;
+            }
+            
+            /* Result section mobile */
+            .wizard-result {
+                padding: 20px 15px;
+            }
+            
+            .result-header .success-icon {
+                font-size: 3.5rem;
+            }
+            
+            .result-card {
+                padding: 20px 15px;
+            }
+            
+            .result-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 3px;
+            }
+            
+            .result-item .label {
+                width: auto;
+                font-size: 0.85rem;
+            }
+            
+            .result-item .value {
+                font-size: 1rem;
+            }
+            
+            .reasoning-card {
+                padding: 15px;
+            }
+            
+            .reasoning-card p {
+                font-size: 0.9rem;
+            }
+            
+            /* Slider mobile */
+            .slider-value {
+                font-size: 1.5rem;
+            }
+            
+            /* Multi-select info */
+            .multi-select-info {
+                font-size: 0.85rem;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            .selection-cards.two-cols {
+                grid-template-columns: 1fr;
+            }
+            
+            .selection-card.large {
+                padding: 25px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Back to Home -->
+    <div class="back-home">
+        <a href="/"><i class="fas fa-arrow-left"></i> Ana Sayfa</a>
+    </div>
+
+    <div class="wizard-container">
+        <!-- Header -->
+        <div class="wizard-header">
+            <h1><i class="fas fa-magic me-2"></i>Öğrenci Sihirbazı</h1>
+            <p>Birkaç soruya cevap verin, size en uygun üniversiteyi bulalım!</p>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="wizard-progress">
+            <div class="wizard-progress-bar" id="progressBar" style="width: 10%"></div>
+        </div>
+        
+        <!-- Step Indicator -->
+        <div class="wizard-step-indicator" id="stepIndicator">
+            <!-- Steps will be added dynamically -->
+        </div>
+        
+        <!-- Question Container -->
+        <div id="questionContainer">
+            <!-- Questions will be loaded here -->
+        </div>
+        
+        <!-- Navigation -->
+        <div class="wizard-nav" id="wizardNav">
+            <button class="btn btn-wizard btn-wizard-back" id="btnBack" onclick="previousStep()" style="display: none;">
+                <i class="fas fa-arrow-left me-2"></i>Geri
+            </button>
+            <button class="btn btn-wizard btn-wizard-next" id="btnNext" onclick="nextStep()" disabled>
+                İleri<i class="fas fa-arrow-right ms-2"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-user me-2"></i>Giriş Yapın</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-center mb-4">Sonuçlarınızı görmek için giriş yapın veya kayıt olun.</p>
+                    <form id="wizardLoginForm">
+                        <div class="mb-3">
+                            <label class="form-label">E-posta</label>
+                            <input type="email" class="form-control" id="loginEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Şifre</label>
+                            <input type="password" class="form-control" id="loginPassword" required>
+                        </div>
+                        <div id="loginError" class="alert alert-danger d-none"></div>
+                        <button type="submit" class="btn btn-primary w-100">Giriş Yap</button>
+                    </form>
+                    <hr>
+                    <p class="text-center mb-0">
+                        Hesabınız yok mu? <a href="/register?redirect=wizard">Kayıt Olun</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Wizard State
+        let currentStep = 0;
+        let totalSteps = 10;
+        let educationLevel = null; // 'bachelor' or 'master'
+        let answers = {};
+        let isAuthenticated = false;
+        let currentUser = null;
+        
+        // Questions Configuration
+        const bachelorQuestions = [
+            {
+                id: 'education_level',
+                title: 'Hangi seviyede eğitim almak istiyorsunuz?',
+                subtitle: 'Hedeflerinize uygun seçeneği seçin',
+                type: 'single',
+                layout: 'two-cols',
+                large: true,
+                options: [
+                    { value: 'bachelor', label: 'Lisans', icon: 'fa-graduation-cap', desc: '3-4 yıllık üniversite eğitimi' },
+                    { value: 'master', label: 'Yüksek Lisans', icon: 'fa-user-graduate', desc: 'Lisans sonrası uzmanlık' }
+                ]
+            },
+            {
+                id: 'english_level',
+                title: 'İngilizce bir filmi altyazısız izleyebilir misiniz?',
+                subtitle: 'İngilizce seviyenizi en iyi tanımlayan seçeneği işaretleyin',
+                type: 'single',
+                layout: 'three-cols',
+                options: [
+                    { value: 'A1', label: 'Hiç Anlamam', icon: 'fa-times-circle', desc: 'Başlangıç seviyesi' },
+                    { value: 'A2', label: 'Bazı Kelimeleri', icon: 'fa-minus-circle', desc: 'Temel seviye' },
+                    { value: 'B1', label: 'Genel Konuyu', icon: 'fa-circle', desc: 'Orta seviye' },
+                    { value: 'B2', label: 'Çoğu Şeyi', icon: 'fa-check-circle', desc: 'Orta-ileri' },
+                    { value: 'C1', label: 'Rahatça', icon: 'fa-star', desc: 'İleri seviye' },
+                    { value: 'C2', label: 'Anadilim Gibi', icon: 'fa-crown', desc: 'Profesyonel' }
+                ]
+            },
+            {
+                id: 'english_exam',
+                title: 'İngilizce sınav sonucunuz var mı?',
+                subtitle: 'Varsa sınav türünü seçin, yoksa "Henüz Yok" seçeneğini işaretleyin',
+                type: 'single',
+                layout: 'four-cols',
+                options: [
+                    { value: 'IELTS', label: 'IELTS', icon: 'fa-certificate', desc: 'Academic/General' },
+                    { value: 'TOEFL', label: 'TOEFL', icon: 'fa-certificate', desc: 'iBT' },
+                    { value: 'Cambridge', label: 'Cambridge', icon: 'fa-certificate', desc: 'FCE/CAE/CPE' },
+                    { value: 'none', label: 'Henüz Yok', icon: 'fa-clock', desc: 'Sınava girmedim' }
+                ],
+                hasScore: true
+            },
+            {
+                id: 'high_school_gpa',
+                title: 'Lise genel not ortalamanız nasıl?',
+                subtitle: '100 üzerinden yaklaşık notunuzu seçin',
+                type: 'single',
+                layout: 'three-cols',
+                options: [
+                    { value: 50, label: '45-55', icon: 'fa-star', desc: 'Geçer' },
+                    { value: 60, label: '55-65', icon: 'fa-star', desc: 'Orta' },
+                    { value: 70, label: '65-75', icon: 'fa-star', desc: 'İyi' },
+                    { value: 80, label: '75-85', icon: 'fa-star', desc: 'Çok İyi' },
+                    { value: 90, label: '85-95', icon: 'fa-star', desc: 'Pekiyi' },
+                    { value: 100, label: '95-100', icon: 'fa-trophy', desc: 'Mükemmel' }
+                ]
+            },
+            {
+                id: 'math_level',
+                title: 'Matematik ve fen derslerinde kendinizi nasıl hissediyorsunuz?',
+                subtitle: 'Sayısal derslerdeki başarınızı değerlendirin',
+                type: 'single',
+                layout: 'two-cols',
+                options: [
+                    { value: 1, label: 'Zorlanıyorum', icon: 'fa-frown', desc: 'Tercih etmiyorum' },
+                    { value: 2, label: 'İdare Eder', icon: 'fa-meh', desc: 'Gerekirse yaparım' },
+                    { value: 3, label: 'Seviyorum', icon: 'fa-smile', desc: 'Başarılıyım' },
+                    { value: 4, label: 'Çok İyiyim', icon: 'fa-star', desc: 'Yarışmalara katıldım' }
+                ]
+            },
+            {
+                id: 'high_school_activities',
+                title: 'Lisede hangi aktivitelere katıldınız?',
+                subtitle: 'Birden fazla seçebilirsiniz (en fazla 5)',
+                type: 'multi',
+                maxSelect: 5,
+                layout: 'three-cols',
+                options: [
+                    { value: 'sports', label: 'Spor Takımı', icon: 'fa-futbol' },
+                    { value: 'music_art', label: 'Müzik/Sanat', icon: 'fa-music' },
+                    { value: 'volunteer', label: 'Gönüllülük', icon: 'fa-heart' },
+                    { value: 'science_club', label: 'Bilim Kulübü', icon: 'fa-flask' },
+                    { value: 'debate', label: 'Münazara', icon: 'fa-comments' },
+                    { value: 'student_council', label: 'Öğrenci Konseyi', icon: 'fa-users' },
+                    { value: 'competition', label: 'Yarışma/Olimpiyat', icon: 'fa-trophy' },
+                    { value: 'summer_school', label: 'Yaz Okulu/Kamp', icon: 'fa-sun' },
+                    { value: 'internship', label: 'Staj/İş', icon: 'fa-briefcase' },
+                    { value: 'social_project', label: 'Sosyal Proje', icon: 'fa-hand-holding-heart' },
+                    { value: 'none', label: 'Hiçbiri', icon: 'fa-minus' }
+                ]
+            },
+            {
+                id: 'interests',
+                title: 'Hangi alanlarda kariyer yapmak istiyorsunuz?',
+                subtitle: 'İlgi alanlarınızı seçin (en fazla 3)',
+                type: 'multi',
+                maxSelect: 3,
+                layout: 'three-cols',
+                options: [
+                    { value: 'engineering', label: 'Mühendislik', icon: 'fa-cogs' },
+                    { value: 'business', label: 'İşletme/Ekonomi', icon: 'fa-chart-line' },
+                    { value: 'medicine', label: 'Tıp/Sağlık', icon: 'fa-heartbeat' },
+                    { value: 'law', label: 'Hukuk', icon: 'fa-balance-scale' },
+                    { value: 'architecture', label: 'Mimarlık/Tasarım', icon: 'fa-drafting-compass' },
+                    { value: 'computer_science', label: 'Bilgisayar/Yazılım', icon: 'fa-laptop-code' },
+                    { value: 'social_sciences', label: 'Sosyal Bilimler', icon: 'fa-users' },
+                    { value: 'natural_sciences', label: 'Doğal Bilimler', icon: 'fa-atom' },
+                    { value: 'arts', label: 'Sanat/Müzik', icon: 'fa-palette' },
+                    { value: 'media', label: 'İletişim/Medya', icon: 'fa-video' }
+                ]
+            },
+            {
+                id: 'country_preferences',
+                title: 'Hangi ülkelerde okumak istersiniz?',
+                subtitle: 'Tercih sıranıza göre 2 ülke seçin (ilk tıkladığınız 1. tercih)',
+                type: 'multi',
+                maxSelect: 2,
+                ordered: true,
+                layout: 'four-cols',
+                options: [
+                    { value: 'Germany', label: 'Almanya', flag: '🇩🇪' },
+                    { value: 'Czech Republic', label: 'Çekya', flag: '🇨🇿' },
+                    { value: 'Italy', label: 'İtalya', flag: '🇮🇹' },
+                    { value: 'Austria', label: 'Avusturya', flag: '🇦🇹' },
+                    { value: 'UK', label: 'İngiltere', flag: '🇬🇧' },
+                    { value: 'Poland', label: 'Polonya', flag: '🇵🇱' },
+                    { value: 'Hungary', label: 'Macaristan', flag: '🇭🇺' }
+                ]
+            },
+            {
+                id: 'budget_range',
+                title: 'Yıllık eğitim bütçeniz ne kadar?',
+                subtitle: 'Yaklaşık bir aralık seçin',
+                type: 'single',
+                layout: 'four-cols',
+                options: [
+                    { value: '0-3000', label: '0-3.000€', icon: 'fa-coins', desc: 'Ekonomik' },
+                    { value: '3000-6000', label: '3-6.000€', icon: 'fa-wallet', desc: 'Orta' },
+                    { value: '6000-10000', label: '6-10.000€', icon: 'fa-money-bill-wave', desc: 'Konforlu' },
+                    { value: '10000+', label: '10.000€+', icon: 'fa-gem', desc: 'Esnek' }
+                ]
+            },
+            {
+                id: 'additional_notes',
+                title: 'Eklemek istediğiniz bir şey var mı?',
+                subtitle: 'Opsiyonel - Boş bırakabilirsiniz',
+                type: 'textarea',
+                maxLength: 200,
+                placeholder: 'Özel durumlarınız, tercihleriniz veya sorularınız...'
+            }
+        ];
+        
+        const masterQuestions = [
+            bachelorQuestions[0], // Education level
+            bachelorQuestions[1], // English level
+            bachelorQuestions[2], // English exam
+            {
+                id: 'bachelor_field',
+                title: 'Lisans bölümünüz nedir?',
+                subtitle: 'Mezun olduğunuz veya okumakta olduğunuz bölüm',
+                type: 'single',
+                layout: 'three-cols',
+                options: [
+                    { value: 'engineering', label: 'Mühendislik', icon: 'fa-cogs' },
+                    { value: 'business', label: 'İşletme/İktisat', icon: 'fa-chart-line' },
+                    { value: 'medicine', label: 'Tıp/Sağlık', icon: 'fa-heartbeat' },
+                    { value: 'law', label: 'Hukuk', icon: 'fa-balance-scale' },
+                    { value: 'architecture', label: 'Mimarlık', icon: 'fa-drafting-compass' },
+                    { value: 'computer_science', label: 'Bilgisayar', icon: 'fa-laptop-code' },
+                    { value: 'social_sciences', label: 'Sosyal Bilimler', icon: 'fa-users' },
+                    { value: 'natural_sciences', label: 'Fen Bilimleri', icon: 'fa-atom' },
+                    { value: 'arts', label: 'Sanat/Tasarım', icon: 'fa-palette' },
+                    { value: 'education', label: 'Eğitim', icon: 'fa-chalkboard-teacher' },
+                    { value: 'other', label: 'Diğer', icon: 'fa-ellipsis-h' }
+                ]
+            },
+            {
+                id: 'bachelor_gpa',
+                title: 'Lisans not ortalamanız (4 üzerinden)?',
+                subtitle: 'GPA değerinizi seçin',
+                type: 'slider',
+                min: 2.0,
+                max: 4.0,
+                step: 0.1,
+                default: 3.0
+            },
+            {
+                id: 'bachelor_university_type',
+                title: 'Lisansı nerede okudunuz?',
+                subtitle: 'Üniversite türünü seçin',
+                type: 'single',
+                layout: 'three-cols',
+                options: [
+                    { value: 'state', label: 'Devlet Üni.', icon: 'fa-university', desc: 'Devlet üniversitesi' },
+                    { value: 'private', label: 'Vakıf Üni.', icon: 'fa-building', desc: 'Vakıf üniversitesi' },
+                    { value: 'abroad', label: 'Yurt Dışı', icon: 'fa-globe', desc: 'Yurt dışı üniversite' }
+                ]
+            },
+            {
+                id: 'work_experience',
+                title: 'Mezuniyet sonrası iş deneyiminiz var mı?',
+                subtitle: 'Toplam çalışma sürenizi seçin',
+                type: 'single',
+                layout: 'three-cols',
+                options: [
+                    { value: '0', label: 'Yeni Mezun', icon: 'fa-user-graduate', desc: 'Deneyim yok' },
+                    { value: '0-1', label: '0-1 Yıl', icon: 'fa-briefcase', desc: 'Başlangıç' },
+                    { value: '1-3', label: '1-3 Yıl', icon: 'fa-briefcase', desc: 'Junior' },
+                    { value: '3-5', label: '3-5 Yıl', icon: 'fa-briefcase', desc: 'Mid-level' },
+                    { value: '5+', label: '5+ Yıl', icon: 'fa-briefcase', desc: 'Senior' }
+                ]
+            },
+            {
+                id: 'bachelor_activities',
+                title: 'Lisans sırasında neler yaptınız?',
+                subtitle: 'Akademik ve profesyonel aktivitelerinizi seçin (en fazla 5)',
+                type: 'multi',
+                maxSelect: 5,
+                layout: 'four-cols',
+                options: [
+                    { value: 'research', label: 'Araştırma/Tez', icon: 'fa-search' },
+                    { value: 'internship', label: 'Staj', icon: 'fa-briefcase' },
+                    { value: 'clubs', label: 'Kulüpler', icon: 'fa-users' },
+                    { value: 'exchange', label: 'Erasmus/Değişim', icon: 'fa-plane' },
+                    { value: 'hackathon', label: 'Yarışma/Hackathon', icon: 'fa-trophy' },
+                    { value: 'volunteer', label: 'Gönüllülük', icon: 'fa-heart' },
+                    { value: 'parttime', label: 'Part-time İş', icon: 'fa-clock' },
+                    { value: 'certificate', label: 'Sertifika', icon: 'fa-certificate' }
+                ]
+            },
+            {
+                id: 'master_interest',
+                title: 'Yüksek lisansta hangi alanda uzmanlaşmak istiyorsunuz?',
+                subtitle: 'Kariyer hedeflerinize uygun alanı seçin',
+                type: 'single',
+                layout: 'three-cols',
+                options: [
+                    { value: 'same_field', label: 'Aynı Alanda', icon: 'fa-arrow-right', desc: 'Lisans alanımda derinleşmek' },
+                    { value: 'related', label: 'İlgili Alan', icon: 'fa-project-diagram', desc: 'Yakın bir alanda' },
+                    { value: 'different', label: 'Farklı Alan', icon: 'fa-random', desc: 'Tamamen farklı bir alan' },
+                    { value: 'mba', label: 'MBA', icon: 'fa-chart-line', desc: 'İşletme Yüksek Lisans' },
+                    { value: 'undecided', label: 'Kararsızım', icon: 'fa-question', desc: 'Henüz karar vermedim' }
+                ]
+            },
+            bachelorQuestions[7], // Country preferences
+            bachelorQuestions[8], // Budget
+            bachelorQuestions[9]  // Additional notes
+        ];
+        
+        let questions = bachelorQuestions;
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async function() {
+            await checkAuthentication();
+            renderStep();
+        });
+        
+        // Check if user is authenticated (as student, not admin)
+        async function checkAuthentication() {
+            try {
+                const response = await fetch('/api/wizard/check-auth');
+                const data = await response.json();
+                isAuthenticated = data.authenticated;
+                currentUser = data.user;
+                
+                // Admin girişi varsa uyarı göster
+                if (data.is_admin) {
+                    showAdminWarning();
+                }
+            } catch (error) {
+                console.error('Auth check error:', error);
+            }
+        }
+        
+        // Admin için uyarı
+        function showAdminWarning() {
+            const container = document.getElementById('questionContainer');
+            container.innerHTML = `
+                <div class="wizard-question text-center">
+                    <i class="fas fa-user-shield text-warning" style="font-size: 4rem; margin-bottom: 20px;"></i>
+                    <h3>Admin Hesabı Tespit Edildi</h3>
+                    <p class="text-muted mb-4">Admin hesapları öğrenci sihirbazını kullanamaz. Sadece öğrenciler AI destekli üniversite önerisi alabilir.</p>
+                    <div class="d-flex gap-3 justify-content-center flex-wrap">
+                        <a href="/admin/dashboard" class="btn btn-primary">
+                            <i class="fas fa-tachometer-alt me-2"></i>Admin Paneline Dön
+                        </a>
+                        <button class="btn btn-outline-secondary" onclick="logoutAndContinue()">
+                            <i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap ve Öğrenci Olarak Giriş Yap
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('wizardNav').style.display = 'none';
+        }
+        
+        // Çıkış yap ve devam et
+        async function logoutAndContinue() {
+            try {
+                await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+                location.reload();
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
+        }
+        
+        // Render current step
+        function renderStep() {
+            const question = questions[currentStep];
+            const container = document.getElementById('questionContainer');
+            
+            // Update progress
+            const progress = ((currentStep + 1) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            
+            // Update step indicator
+            renderStepIndicator();
+            
+            // Update navigation buttons
+            document.getElementById('btnBack').style.display = currentStep > 0 ? 'block' : 'none';
+            
+            if (currentStep === questions.length - 1) {
+                document.getElementById('btnNext').innerHTML = 'Sonuçları Gör<i class="fas fa-check ms-2"></i>';
+            } else {
+                document.getElementById('btnNext').innerHTML = 'İleri<i class="fas fa-arrow-right ms-2"></i>';
+            }
+            
+            // Render question
+            let html = `<div class="wizard-question">
+                <h2 class="question-title">${question.title}</h2>
+                <p class="question-subtitle">${question.subtitle}</p>`;
+            
+            if (question.type === 'single' || question.type === 'multi') {
+                html += `<div class="selection-cards ${question.layout || ''}">`; 
+                
+                question.options.forEach((opt, idx) => {
+                    const isSelected = question.type === 'multi' 
+                        ? (answers[question.id] || []).includes(opt.value)
+                        : answers[question.id] === opt.value;
+                    
+                    const selectedClass = isSelected ? 'selected' : '';
+                    const largeClass = question.large ? 'large' : '';
+                    const countryClass = opt.flag ? 'country-card' : '';
+                    
+                    let orderBadge = '';
+                    if (question.ordered && isSelected) {
+                        const order = (answers[question.id] || []).indexOf(opt.value) + 1;
+                        orderBadge = `<div class="preference-badge">${order}</div>`;
+                    }
+                    
+                    // Handle numeric values properly
+                    const valueParam = typeof opt.value === 'number' ? opt.value : `'${opt.value}'`;
+                    
+                    html += `
+                        <div class="selection-card ${selectedClass} ${largeClass} ${countryClass}" 
+                             onclick="selectOption('${question.id}', ${valueParam}, '${question.type}', ${question.maxSelect || 0}, ${question.ordered || false})">
+                            ${orderBadge}
+                            ${opt.flag ? `<div class="flag-emoji">${opt.flag}</div>` : `<div class="card-icon"><i class="fas ${opt.icon}"></i></div>`}
+                            <div class="card-title">${opt.label}</div>
+                            ${opt.desc ? `<div class="card-desc">${opt.desc}</div>` : ''}
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+                
+                if (question.type === 'multi') {
+                    const count = (answers[question.id] || []).length;
+                    html += `<div class="multi-select-info"><span class="count">${count}</span> / ${question.maxSelect} seçildi</div>`;
+                }
+            } else if (question.type === 'slider') {
+                const value = answers[question.id] || question.default;
+                html += `
+                    <div class="wizard-slider">
+                        <div class="slider-value" id="sliderValue">${value.toFixed(1)}</div>
+                        <input type="range" min="${question.min}" max="${question.max}" step="${question.step}" 
+                               value="${value}" onchange="updateSlider('${question.id}', this.value)">
+                        <div class="slider-labels">
+                            <span>${question.min}</span>
+                            <span>${question.max}</span>
+                        </div>
+                    </div>
+                `;
+                if (!answers[question.id]) answers[question.id] = question.default;
+            } else if (question.type === 'textarea') {
+                const value = answers[question.id] || '';
+                html += `
+                    <textarea class="wizard-textarea" id="additionalNotes" 
+                              maxlength="${question.maxLength}" 
+                              placeholder="${question.placeholder}"
+                              oninput="updateTextarea('${question.id}', this.value)">${value}</textarea>
+                    <div class="char-count"><span id="charCount">${value.length}</span> / ${question.maxLength}</div>
+                `;
+            }
+            
+            html += '</div>';
+            
+            container.innerHTML = html;
+            updateNextButton();
+            
+            // Handle exam score input
+            if (question.hasScore && answers[question.id] && answers[question.id] !== 'none') {
+                showScoreInput(answers[question.id]);
+            }
+        }
+        
+        // Render step indicator
+        function renderStepIndicator() {
+            const container = document.getElementById('stepIndicator');
+            let html = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                let className = 'step-dot';
+                if (i < currentStep) className += ' completed';
+                if (i === currentStep) className += ' active';
+                html += `<div class="${className}"></div>`;
+            }
+            
+            container.innerHTML = html;
+        }
+        
+        // Select option
+        function selectOption(questionId, value, type, maxSelect, ordered) {
+            if (type === 'single') {
+                answers[questionId] = value;
+                
+                // Special handling for education level
+                if (questionId === 'education_level') {
+                    educationLevel = value;
+                    questions = value === 'master' ? masterQuestions : bachelorQuestions;
+                    totalSteps = questions.length;
+                }
+                
+                // Special handling for exam type
+                if (questionId === 'english_exam') {
+                    if (value !== 'none') {
+                        setTimeout(() => showScoreInput(value), 300);
+                    } else {
+                        answers['english_exam_score'] = null;
+                    }
+                }
+            } else {
+                // Multi-select
+                if (!answers[questionId]) answers[questionId] = [];
+                
+                const idx = answers[questionId].indexOf(value);
+                if (idx > -1) {
+                    // Remove if already selected
+                    answers[questionId].splice(idx, 1);
+                } else if (answers[questionId].length < maxSelect) {
+                    // Add if not at max
+                    if (value === 'none') {
+                        answers[questionId] = ['none'];
+                    } else {
+                        // Remove 'none' if selecting something else
+                        const noneIdx = answers[questionId].indexOf('none');
+                        if (noneIdx > -1) answers[questionId].splice(noneIdx, 1);
+                        answers[questionId].push(value);
+                    }
+                }
+            }
+            
+            renderStep();
+        }
+        
+        // Show score input for exams
+        function showScoreInput(examType) {
+            const scoreRanges = {
+                'IELTS': { min: 4.0, max: 9.0, step: 0.5, label: 'IELTS Band Skoru' },
+                'TOEFL': { min: 40, max: 120, step: 1, label: 'TOEFL iBT Puanı' },
+                'Cambridge': { min: 140, max: 230, step: 1, label: 'Cambridge Scale Puanı', hint: 'FCE: 140-190, CAE: 160-210, CPE: 180-230' }
+            };
+            
+            const range = scoreRanges[examType];
+            if (!range) return;
+            
+            const currentScore = answers['english_exam_score'] || Math.round((range.min + range.max) / 2);
+            
+            const questionContainer = document.getElementById('questionContainer');
+            const existingModal = document.getElementById('scoreModal');
+            if (existingModal) existingModal.remove();
+            
+            questionContainer.insertAdjacentHTML('beforeend', `
+                <div class="modal fade show" id="scoreModal" style="display: block; background: rgba(0,0,0,0.5); z-index: 9999;">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">${range.label}</h5>
+                                <button type="button" class="btn-close" onclick="closeScoreModal()"></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <div class="text-center fs-1 fw-bold text-primary mb-3" id="examScoreDisplay">${currentScore}</div>
+                                <input type="range" class="form-range" min="${range.min}" max="${range.max}" step="${range.step}" 
+                                       value="${currentScore}" id="examScoreSlider" 
+                                       oninput="document.getElementById('examScoreDisplay').textContent = this.value">
+                                <div class="d-flex justify-content-between text-muted small mt-2">
+                                    <span>${range.min}</span>
+                                    <span>${range.max}</span>
+                                </div>
+                                ${range.hint ? `<p class="text-muted small mt-3 mb-0">${range.hint}</p>` : ''}
+                                <button class="btn btn-primary btn-lg mt-4 w-100" onclick="setExamScore(document.getElementById('examScoreSlider').value)">
+                                    <i class="fas fa-check me-2"></i>Onayla
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `);
+        }
+        
+        function closeScoreModal() {
+            const modal = document.getElementById('scoreModal');
+            if (modal) modal.remove();
+        }
+        
+        function setExamScore(score) {
+            answers['english_exam_score'] = parseFloat(score);
+            answers['english_exam_type'] = answers['english_exam'];
+            const modal = document.getElementById('scoreModal');
+            if (modal) modal.remove();
+            updateNextButton();
+        }
+        
+        // Update slider
+        function updateSlider(questionId, value) {
+            answers[questionId] = parseFloat(value);
+            document.getElementById('sliderValue').textContent = parseFloat(value).toFixed(1);
+            updateNextButton();
+        }
+        
+        // Update textarea
+        function updateTextarea(questionId, value) {
+            answers[questionId] = value;
+            document.getElementById('charCount').textContent = value.length;
+            updateNextButton();
+        }
+        
+        // Update next button state
+        function updateNextButton() {
+            const question = questions[currentStep];
+            const btn = document.getElementById('btnNext');
+            
+            if (question.type === 'textarea') {
+                btn.disabled = false; // Optional field
+            } else if (question.type === 'slider') {
+                btn.disabled = !answers[question.id];
+            } else if (question.type === 'multi') {
+                btn.disabled = !(answers[question.id] && answers[question.id].length > 0);
+            } else {
+                btn.disabled = !answers[question.id];
+            }
+        }
+        
+        // Scroll to question card (so user doesn't have to scroll down on mobile)
+        function scrollToQuestion() {
+            // Scroll to the question container so it's visible
+            const questionContainer = document.getElementById('questionContainer');
+            if (questionContainer) {
+                questionContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+        
+        // Next step
+        async function nextStep() {
+            if (currentStep < questions.length - 1) {
+                currentStep++;
+                renderStep();
+                setTimeout(scrollToQuestion, 100); // Small delay for DOM update
+            } else {
+                // Final step - submit
+                await submitWizard();
+            }
+        }
+        
+        // Previous step
+        function previousStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                renderStep();
+                setTimeout(scrollToQuestion, 100); // Small delay for DOM update
+            }
+        }
+        
+        // Submit wizard
+        async function submitWizard() {
+            // Always show login modal first if not authenticated
+            if (!isAuthenticated) {
+                showLoginModal();
+                return;
+            }
+            
+            // Show loading
+            document.getElementById('questionContainer').innerHTML = `
+                <div class="wizard-loading">
+                    <div class="spinner"></div>
+                    <h4>Analiz ediliyor...</h4>
+                    <p class="text-muted">Yapay zeka size en uygun üniversiteyi buluyor</p>
+                </div>
+            `;
+            document.getElementById('wizardNav').style.display = 'none';
+            
+            try {
+                // Prepare data
+                const submitData = {
+                    education_level: answers.education_level,
+                    english_level: answers.english_level,
+                    english_exam_type: answers.english_exam_type || null,
+                    english_exam_score: answers.english_exam_score || null,
+                    interests: answers.interests || [],
+                    country_preferences: answers.country_preferences || [],
+                    budget_range: answers.budget_range,
+                    additional_notes: answers.additional_notes || ''
+                };
+                
+                if (answers.education_level === 'bachelor') {
+                    submitData.high_school_gpa = answers.high_school_gpa;
+                    submitData.math_level = answers.math_level;
+                    submitData.high_school_activities = answers.high_school_activities || [];
+                } else {
+                    submitData.bachelor_field = answers.bachelor_field;
+                    submitData.bachelor_gpa = answers.bachelor_gpa;
+                    submitData.bachelor_university_type = answers.bachelor_university_type;
+                    submitData.work_experience = answers.work_experience;
+                    submitData.bachelor_activities = answers.bachelor_activities || [];
+                    submitData.master_interest = answers.master_interest;
+                }
+                
+                console.log('📤 Submitting wizard data:', submitData);
+                
+                const response = await fetch('/api/wizard/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify(submitData)
+                });
+                
+                console.log('📥 Response status:', response.status);
+                
+                // Check if unauthorized - show login modal
+                if (response.status === 401) {
+                    isAuthenticated = false;
+                    showLoginModal();
+                    return;
+                }
+                
+                // Check if forbidden (admin trying to use wizard)
+                if (response.status === 403) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Bu işlem için yetkiniz yok');
+                }
+                
+                const result = await response.json();
+                console.log('📥 Response data:', result);
+                
+                if (result.success) {
+                    showResult(result.data);
+                } else {
+                    throw new Error(result.message || 'Bir hata oluştu');
+                }
+                
+            } catch (error) {
+                console.error('Submit error:', error);
+                document.getElementById('wizardNav').style.display = 'flex';
+                document.getElementById('questionContainer').innerHTML = `
+                    <div class="wizard-question text-center">
+                        <i class="fas fa-exclamation-circle text-danger" style="font-size: 4rem; margin-bottom: 20px;"></i>
+                        <h3>Bir Hata Oluştu</h3>
+                        <p class="text-muted">${error.message}</p>
+                        <button class="btn btn-primary mt-3" onclick="location.reload()">Tekrar Dene</button>
+                    </div>
+                `;
+            }
+        }
+        
+        // Show login modal helper
+        function showLoginModal() {
+            // Reset to last step UI
+            document.getElementById('wizardNav').style.display = 'flex';
+            renderStep();
+            
+            // Show modal
+            const modalEl = document.getElementById('loginModal');
+            const modal = new bootstrap.Modal(modalEl);
+            modal.show();
+        }
+        
+        // Show result
+        function showResult(data) {
+            const countryFlags = {
+                'Germany': '🇩🇪',
+                'Czech Republic': '🇨🇿',
+                'Italy': '🇮🇹',
+                'Austria': '🇦🇹',
+                'UK': '🇬🇧',
+                'Poland': '🇵🇱',
+                'Hungary': '🇭🇺'
+            };
+            
+            // Get recommendations (new format or legacy)
+            const rec1 = data.recommendation_1 || {
+                university_name: data.recommended_university_name,
+                program_name: data.recommended_program_name,
+                country: data.recommended_country,
+                city: data.recommended_city,
+                tuition: data.recommended_tuition,
+                why_this_university: data.ai_reasoning,
+                city_info: data.city_info,
+                career_prospects: data.career_prospects
+            };
+            const rec2 = data.recommendation_2;
+            
+            // Helper function to render a recommendation card
+            function renderRecommendationCard(rec, number, isPrimary) {
+                const flag = countryFlags[rec.country] || '🌍';
+                const cardStyle = isPrimary 
+                    ? 'background: linear-gradient(135deg, #0056b3, #004494);' 
+                    : 'background: linear-gradient(135deg, #28a745, #20903d);';
+                
+                return `
+                    <div class="recommendation-card mb-4" style="${cardStyle} color: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+                        <div class="d-flex align-items-center mb-3">
+                            <span class="badge bg-white text-dark me-2" style="font-size: 1rem; padding: 8px 15px;">
+                                ${isPrimary ? '⭐ 1. Öneri' : '🔷 2. Öneri'}
+                            </span>
+                            <span style="font-size: 2rem;">${flag}</span>
+                        </div>
+                        
+                        <h3 class="mb-1">${rec.university_name || 'Üniversite'}</h3>
+                        <h5 class="mb-3 opacity-75">${rec.program_name || 'Program'}</h5>
+                        
+                        <div class="row mb-3">
+                            <div class="col-6 col-md-3 mb-2">
+                                <small class="opacity-75">Ülke</small>
+                                <div class="fw-bold">${rec.country}</div>
+                            </div>
+                            <div class="col-6 col-md-3 mb-2">
+                                <small class="opacity-75">Şehir</small>
+                                <div class="fw-bold">${rec.city}</div>
+                            </div>
+                            <div class="col-6 col-md-3 mb-2">
+                                <small class="opacity-75">Yıllık Ücret</small>
+                                <div class="fw-bold">${rec.tuition || 'Değişken'}</div>
+                            </div>
+                            <div class="col-6 col-md-3 mb-2">
+                                <small class="opacity-75">Dil</small>
+                                <div class="fw-bold">İngilizce</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    ${rec.why_this_university ? `
+                        <div class="info-section mb-3" style="background: #f8f9fa; border-radius: 15px; padding: 20px; border-left: 4px solid ${isPrimary ? '#0056b3' : '#28a745'};">
+                            <h6 class="mb-2"><i class="fas fa-university me-2" style="color: ${isPrimary ? '#0056b3' : '#28a745'};"></i>Neden Bu Üniversite?</h6>
+                            <p class="mb-0 text-dark">${rec.why_this_university}</p>
+                        </div>
+                    ` : ''}
+                    
+                    ${rec.why_this_program ? `
+                        <div class="info-section mb-3" style="background: #f8f9fa; border-radius: 15px; padding: 20px; border-left: 4px solid #6f42c1;">
+                            <h6 class="mb-2"><i class="fas fa-book me-2" style="color: #6f42c1;"></i>Neden Bu Program?</h6>
+                            <p class="mb-0 text-dark">${rec.why_this_program}</p>
+                        </div>
+                    ` : ''}
+                    
+                    ${rec.country_info ? `
+                        <div class="info-section mb-3" style="background: #f8f9fa; border-radius: 15px; padding: 20px; border-left: 4px solid #fd7e14;">
+                            <h6 class="mb-2"><i class="fas fa-globe me-2" style="color: #fd7e14;"></i>Ülke Hakkında</h6>
+                            <p class="mb-0 text-dark">${rec.country_info}</p>
+                        </div>
+                    ` : ''}
+                    
+                    ${rec.city_info ? `
+                        <div class="info-section mb-3" style="background: #f8f9fa; border-radius: 15px; padding: 20px; border-left: 4px solid #17a2b8;">
+                            <h6 class="mb-2"><i class="fas fa-city me-2" style="color: #17a2b8;"></i>Şehir Hakkında</h6>
+                            <p class="mb-0 text-dark">${rec.city_info}</p>
+                        </div>
+                    ` : ''}
+                    
+                    ${rec.career_prospects ? `
+                        <div class="info-section mb-3" style="background: #f8f9fa; border-radius: 15px; padding: 20px; border-left: 4px solid #28a745;">
+                            <h6 class="mb-2"><i class="fas fa-briefcase me-2" style="color: #28a745;"></i>Kariyer Fırsatları</h6>
+                            <p class="mb-0 text-dark">${rec.career_prospects}</p>
+                        </div>
+                    ` : ''}
+                `;
+            }
+            
+            let html = `
+                <div class="wizard-result">
+                    <div class="result-header">
+                        <i class="fas fa-check-circle success-icon"></i>
+                        <h2>Analiz Tamamlandı!</h2>
+                        <p class="text-muted">Size özel ${rec2 ? 'iki' : 'bir'} üniversite önerimiz hazır</p>
+                    </div>
+                    
+                    ${data.prep_school_needed ? `
+                        <div class="prep-warning" style="background: linear-gradient(135deg, #fff3cd, #ffe69c); border: none; border-radius: 15px; padding: 20px; margin-bottom: 25px;">
+                            <h5 class="text-dark"><i class="fas fa-exclamation-triangle me-2 text-warning"></i>Hazırlık Önerisi</h5>
+                            <p class="mb-0 text-dark">${data.prep_school_suggestion || 'İngilizce seviyenizi geliştirmek için bir hazırlık programı öneriyoruz.'}</p>
+                        </div>
+                    ` : ''}
+                    
+                    <!-- First Recommendation -->
+                    <div class="recommendation-section mb-4">
+                        ${renderRecommendationCard(rec1, 1, true)}
+                    </div>
+                    
+                    ${rec2 ? `
+                        <!-- Second Recommendation -->
+                        <div class="recommendation-section mb-4">
+                            <hr class="my-4">
+                            ${renderRecommendationCard(rec2, 2, false)}
+                        </div>
+                    ` : ''}
+                    
+                    ${data.comparison ? `
+                        <div class="info-section mb-3" style="background: linear-gradient(135deg, #e9ecef, #dee2e6); border-radius: 15px; padding: 20px;">
+                            <h6 class="mb-2"><i class="fas fa-balance-scale me-2" style="color: #495057;"></i>Karşılaştırma</h6>
+                            <p class="mb-0 text-dark">${data.comparison}</p>
+                        </div>
+                    ` : ''}
+                    
+                    ${data.overall_advice ? `
+                        <div class="info-section mb-3" style="background: linear-gradient(135deg, #d4edda, #c3e6cb); border-radius: 15px; padding: 20px;">
+                            <h6 class="mb-2"><i class="fas fa-lightbulb me-2" style="color: #155724;"></i>Genel Tavsiyeler</h6>
+                            <p class="mb-0 text-dark">${data.overall_advice}</p>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="text-center mt-4">
+                        <a href="/user/dashboard" class="btn btn-primary btn-lg me-2">
+                            <i class="fas fa-user me-2"></i>Portalıma Git
+                        </a>
+                        <a href="https://wa.me/message/O2KRAFDJAMX7F1" target="_blank" class="btn btn-success btn-lg">
+                            <i class="fab fa-whatsapp me-2"></i>Danışman ile Görüş
+                        </a>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('questionContainer').innerHTML = html;
+        }
+        
+        // Login form handler
+        document.getElementById('wizardLoginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('loginError');
+            const submitBtn = this.querySelector('button[type="submit"]');
+            
+            // Disable button during request
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Giriş yapılıyor...';
+            errorDiv.classList.add('d-none');
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Admin kontrolü - admin hesapları sihirbazı kullanamaz
+                    if (data.is_admin === true) {
+                        errorDiv.textContent = 'Admin hesapları sihirbazı kullanamaz. Lütfen öğrenci hesabıyla giriş yapın.';
+                        errorDiv.classList.remove('d-none');
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = 'Giriş Yap';
+                        return;
+                    }
+                    
+                    isAuthenticated = true;
+                    currentUser = data.user;
+                    
+                    // Close modal
+                    const modalEl = document.getElementById('loginModal');
+                    const modal = bootstrap.Modal.getInstance(modalEl);
+                    if (modal) modal.hide();
+                    
+                    // Update button to show processing
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Analiz başlatılıyor...';
+                    
+                    // Wait a bit for cookie to be set, then submit
+                    setTimeout(async () => {
+                        try {
+                            await submitWizard();
+                        } catch (err) {
+                            console.error('Submit error after login:', err);
+                            alert('Bir hata oluştu: ' + err.message);
+                        }
+                    }, 500);
+                } else {
+                    errorDiv.textContent = data.message || 'E-posta veya şifre hatalı';
+                    errorDiv.classList.remove('d-none');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Giriş Yap';
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                errorDiv.textContent = 'Bağlantı hatası. Lütfen tekrar deneyin.';
+                errorDiv.classList.remove('d-none');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Giriş Yap';
+            }
+        });
+    </script>
+</body>
+</html>
+

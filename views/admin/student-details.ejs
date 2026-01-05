@@ -105,6 +105,11 @@
                                 <i class="fas fa-handshake me-2"></i>PARTNER
                             </button>
                         </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="ai-recommendation-tab" data-bs-toggle="tab" data-bs-target="#ai-recommendation" type="button" role="tab" style="white-space: nowrap;">
+                                <i class="fas fa-magic me-2"></i>AI
+                            </button>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -387,7 +392,7 @@
                             <div class="card mb-4">
                                 <div class="card-header text-white" style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%);">
                                     <h6 class="mb-0"><i class="fas fa-handshake me-2"></i>Partner Atama</h6>
-                                </div>
+                </div>
                                 <div class="card-body">
                                     <div id="partnerInfo">
                                         <div class="text-center py-3">
@@ -481,6 +486,22 @@
                                             </button>
                                         </div>
                                     </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- AI Recommendation Tab -->
+                    <div class="tab-pane fade" id="ai-recommendation" role="tabpanel" style="overflow: visible; max-height: none;">
+                        <div class="container-fluid px-0">
+                            <h5 class="mb-4 text-center"><strong>AI Önerisi</strong></h5>
+                            
+                            <div id="aiRecommendationContent">
+                                <div class="text-center py-4">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Yükleniyor...</span>
+                                    </div>
+                                    <p class="text-muted mt-2">AI önerisi yükleniyor...</p>
                                 </div>
                             </div>
                         </div>
@@ -609,6 +630,12 @@ input:checked + .slider:before {
     font-size: 1.25rem;
     width: 1.4rem;
     text-align: center;
+}
+
+.student-tabs .nav-link:focus,
+.student-tabs .nav-link:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
 }
 
 /* Remove internal scrolling */
@@ -3888,6 +3915,277 @@ async function deleteEarning(earningId) {
     } catch (error) {
         console.error('Delete earning error:', error);
         alert('Kazanç silinirken bir hata oluştu!');
+    }
+}
+
+// =============== AI RECOMMENDATION FUNCTIONS ===============
+
+// Load AI recommendation when tab is clicked
+document.getElementById('ai-recommendation-tab')?.addEventListener('shown.bs.tab', function() {
+    loadAIRecommendation();
+});
+
+// Load AI recommendation
+async function loadAIRecommendation() {
+    const container = document.getElementById('aiRecommendationContent');
+    
+    try {
+        const response = await fetch(`/api/admin/users/${studentId}/ai-recommendation`, {
+            credentials: 'include'
+        });
+        const data = await response.json();
+        
+        if (data.success && data.recommendation) {
+            displayAIRecommendation(data.recommendation);
+        } else {
+            container.innerHTML = `
+                <div class="alert alert-info text-center">
+                    <i class="fas fa-info-circle fa-2x mb-3"></i>
+                    <h5>AI Önerisi Bulunamadı</h5>
+                    <p class="text-muted mb-0">Bu öğrenci henüz AI sihirbazını kullanmamış.</p>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('Load AI recommendation error:', error);
+        container.innerHTML = `
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                AI önerisi yüklenirken bir hata oluştu.
+            </div>
+        `;
+    }
+}
+
+// Display AI recommendation
+function displayAIRecommendation(rec) {
+    const container = document.getElementById('aiRecommendationContent');
+    
+    const countryFlags = {
+        'Germany': '🇩🇪',
+        'Czech Republic': '🇨🇿',
+        'Italy': '🇮🇹',
+        'Austria': '🇦🇹',
+        'UK': '🇬🇧',
+        'Poland': '🇵🇱',
+        'Hungary': '🇭🇺'
+    };
+    
+    // Parse ai_reasoning if it's JSON (new format)
+    let rec1 = null, rec2 = null, comparison = null, overall_advice = null;
+    
+    if (rec.ai_reasoning) {
+        try {
+            const fullData = JSON.parse(rec.ai_reasoning);
+            rec1 = fullData.recommendation_1;
+            rec2 = fullData.recommendation_2;
+            comparison = fullData.comparison;
+            overall_advice = fullData.overall_advice;
+        } catch (e) {
+            // Eski format - düz metin
+            console.log('Using legacy format');
+        }
+    }
+    
+    // Helper function to render recommendation card (same as wizard)
+    function renderRecommendationCard(recData, number, isPrimary) {
+        if (!recData) return '';
+        
+        const flag = countryFlags[recData.country] || '🌍';
+        const cardStyle = isPrimary 
+            ? 'background: linear-gradient(135deg, #0056b3, #004494);' 
+            : 'background: linear-gradient(135deg, #28a745, #20903d);';
+        
+        return `
+            <div class="recommendation-card mb-4" style="${cardStyle} color: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+                <div class="d-flex align-items-center mb-3">
+                    <span class="badge bg-white text-dark me-2" style="font-size: 1rem; padding: 8px 15px;">
+                        ${isPrimary ? '⭐ 1. Öneri' : '🔷 2. Öneri'}
+                    </span>
+                    <span style="font-size: 2rem;">${flag}</span>
+                </div>
+                
+                <h3 class="mb-1">${recData.university_name || 'Üniversite'}</h3>
+                <h5 class="mb-3 opacity-75">${recData.program_name || 'Program'}</h5>
+                
+                <div class="row mb-3">
+                    <div class="col-6 col-md-3 mb-2">
+                        <small class="opacity-75">Ülke</small>
+                        <div class="fw-bold">${recData.country}</div>
+                    </div>
+                    <div class="col-6 col-md-3 mb-2">
+                        <small class="opacity-75">Şehir</small>
+                        <div class="fw-bold">${recData.city}</div>
+                    </div>
+                    <div class="col-6 col-md-3 mb-2">
+                        <small class="opacity-75">Yıllık Ücret</small>
+                        <div class="fw-bold">${recData.tuition || 'Değişken'}</div>
+                    </div>
+                    <div class="col-6 col-md-3 mb-2">
+                        <small class="opacity-75">Dil</small>
+                        <div class="fw-bold">İngilizce</div>
+                    </div>
+                </div>
+            </div>
+            
+            ${recData.why_this_university ? `
+                <div class="info-section mb-3" style="background: #f8f9fa; border-radius: 15px; padding: 20px; border-left: 4px solid ${isPrimary ? '#0056b3' : '#28a745'};">
+                    <h6 class="mb-2"><i class="fas fa-university me-2" style="color: ${isPrimary ? '#0056b3' : '#28a745'};"></i>Neden Bu Üniversite?</h6>
+                    <p class="mb-0 text-dark">${recData.why_this_university}</p>
+                </div>
+            ` : ''}
+            
+            ${recData.why_this_program ? `
+                <div class="info-section mb-3" style="background: #f8f9fa; border-radius: 15px; padding: 20px; border-left: 4px solid #6f42c1;">
+                    <h6 class="mb-2"><i class="fas fa-book me-2" style="color: #6f42c1;"></i>Neden Bu Program?</h6>
+                    <p class="mb-0 text-dark">${recData.why_this_program}</p>
+                </div>
+            ` : ''}
+            
+            ${recData.country_info ? `
+                <div class="info-section mb-3" style="background: #f8f9fa; border-radius: 15px; padding: 20px; border-left: 4px solid #fd7e14;">
+                    <h6 class="mb-2"><i class="fas fa-globe me-2" style="color: #fd7e14;"></i>Ülke Hakkında</h6>
+                    <p class="mb-0 text-dark">${recData.country_info}</p>
+                </div>
+            ` : ''}
+            
+            ${recData.city_info ? `
+                <div class="info-section mb-3" style="background: #f8f9fa; border-radius: 15px; padding: 20px; border-left: 4px solid #17a2b8;">
+                    <h6 class="mb-2"><i class="fas fa-city me-2" style="color: #17a2b8;"></i>Şehir Hakkında</h6>
+                    <p class="mb-0 text-dark">${recData.city_info}</p>
+                </div>
+            ` : ''}
+            
+            ${recData.career_prospects ? `
+                <div class="info-section mb-3" style="background: #f8f9fa; border-radius: 15px; padding: 20px; border-left: 4px solid #28a745;">
+                    <h6 class="mb-2"><i class="fas fa-briefcase me-2" style="color: #28a745;"></i>Kariyer Fırsatları</h6>
+                    <p class="mb-0 text-dark">${recData.career_prospects}</p>
+                </div>
+            ` : ''}
+        `;
+    }
+    
+    let html = `
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <span class="badge bg-primary me-2">${rec.education_level === 'bachelor' ? 'Lisans' : 'Yüksek Lisans'}</span>
+                <span class="badge bg-secondary">İngilizce: ${rec.english_level || '-'}</span>
+            </div>
+            <button class="btn btn-outline-danger btn-sm" onclick="deleteAIRecommendation(${rec.id})">
+                <i class="fas fa-trash me-1"></i>Sil
+            </button>
+        </div>
+        
+        ${rec.prep_school_needed ? `
+            <div class="prep-warning mb-4" style="background: linear-gradient(135deg, #fff3cd, #ffe69c); border: none; border-radius: 15px; padding: 20px;">
+                <h5 class="text-dark"><i class="fas fa-exclamation-triangle me-2 text-warning"></i>Hazırlık Önerisi</h5>
+                <p class="mb-0 text-dark">${rec.prep_school_suggestion || 'İngilizce seviyesine göre hazırlık programı önerilmektedir.'}</p>
+            </div>
+        ` : `
+            <div class="mb-4" style="background: linear-gradient(135deg, #d4edda, #c3e6cb); border: none; border-radius: 15px; padding: 15px;">
+                <i class="fas fa-check-circle me-2 text-success"></i>Hazırlık programı gerekli değil
+            </div>
+        `}
+    `;
+    
+    // Yeni format (JSON) varsa detaylı göster
+    if (rec1) {
+        html += renderRecommendationCard(rec1, 1, true);
+        
+        if (rec2) {
+            html += `<hr class="my-4">`;
+            html += renderRecommendationCard(rec2, 2, false);
+        }
+        
+        if (comparison) {
+            html += `
+                <div class="info-section mb-3" style="background: linear-gradient(135deg, #e9ecef, #dee2e6); border-radius: 15px; padding: 20px;">
+                    <h6 class="mb-2"><i class="fas fa-balance-scale me-2" style="color: #495057;"></i>Karşılaştırma</h6>
+                    <p class="mb-0 text-dark">${comparison}</p>
+                </div>
+            `;
+        }
+        
+        if (overall_advice) {
+            html += `
+                <div class="info-section mb-3" style="background: linear-gradient(135deg, #d4edda, #c3e6cb); border-radius: 15px; padding: 20px;">
+                    <h6 class="mb-2"><i class="fas fa-lightbulb me-2" style="color: #155724;"></i>Genel Tavsiyeler</h6>
+                    <p class="mb-0 text-dark">${overall_advice}</p>
+                </div>
+            `;
+        }
+    } else {
+        // Eski format (düz metin ai_reasoning)
+        html += `
+            <div class="card mb-3" style="border-left: 3px solid #28a745;">
+                <div class="card-body">
+                    <h6 class="card-title"><span class="badge bg-success me-2">Öneri</span></h6>
+                    <p class="mb-2"><strong>Ülke:</strong> ${rec.recommended_country || '-'}</p>
+                    <p class="mb-2"><strong>Şehir:</strong> ${rec.recommended_city || '-'}</p>
+                    <p class="mb-0"><strong>Ücret:</strong> ${rec.recommended_tuition || '-'}</p>
+                </div>
+            </div>
+            
+            ${rec.ai_reasoning ? `
+                <div class="mt-4">
+                    <h6 class="text-info mb-3"><i class="fas fa-brain me-2"></i>AI Açıklaması</h6>
+                    <div class="bg-light p-3 rounded">
+                        ${rec.ai_reasoning}
+                    </div>
+                </div>
+            ` : ''}
+        `;
+    }
+    
+    html += `
+        <hr class="my-4">
+        <div class="text-muted small">
+            <i class="fas fa-calendar me-1"></i>Oluşturulma: ${new Date(rec.created_at).toLocaleString('tr-TR')}
+        </div>
+    `;
+    
+    container.innerHTML = html;
+}
+
+// Toggle AI reasoning text
+let isReasoningExpanded = false;
+function toggleAIReasoning() {
+    const content = document.getElementById('aiReasoningContent');
+    const toggleText = document.getElementById('toggleReasoningText');
+    
+    if (isReasoningExpanded) {
+        content.textContent = window.fullAIReasoning.substring(0, 300) + '...';
+        toggleText.textContent = 'Daha fazla göster';
+    } else {
+        content.textContent = window.fullAIReasoning;
+        toggleText.textContent = 'Daha az göster';
+    }
+    isReasoningExpanded = !isReasoningExpanded;
+}
+
+// Delete AI recommendation
+async function deleteAIRecommendation(id) {
+    if (!confirm('Bu AI önerisini silmek istediğinizden emin misiniz? Bu işlem öğrencinin portalından da silinmesine neden olacaktır.')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/admin/ai-recommendations/${id}`, {
+            method: 'DELETE',
+            credentials: 'include'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert('AI önerisi başarıyla silindi!');
+            loadAIRecommendation();
+        } else {
+            alert(data.message || 'AI önerisi silinemedi!');
+        }
+    } catch (error) {
+        console.error('Delete AI recommendation error:', error);
+        alert('AI önerisi silinirken bir hata oluştu!');
     }
 }
 

@@ -20,6 +20,13 @@
                 <span>Başvurular</span>
                 <span class="badge bg-success ms-auto"><%= applicationCount %></span>
             </a>
+            <a href="/admin/partners" class="nav-item">
+                <i class="fas fa-handshake"></i>
+                <span>Partnerler</span>
+                <% if (typeof partnerCount !== 'undefined' && partnerCount > 0) { %>
+                    <span class="badge bg-info ms-auto"><%= partnerCount %></span>
+                <% } %>
+            </a>
             <a href="/admin/universities" class="nav-item">
                 <i class="fas fa-university"></i>
                 <span>Üniversiteler</span>

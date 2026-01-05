@@ -33,16 +33,17 @@
 
                 <!-- Main Content -->
                 <div class="col-lg-9">
-                    <div class="card shadow-sm">
+                    <div id="alertContainer"></div>
+                    
+                    <!-- University Applications Card -->
+                    <div class="card shadow-sm mb-4">
                         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                            <h4 class="mb-0"><i class="fas fa-file-alt me-2"></i>Başvurularım</h4>
-                            <button class="btn btn-light btn-sm" id="refreshApplicationsBtn">
+                            <h5 class="mb-0"><i class="fas fa-university me-2"></i>Üniversite Başvurularım</h5>
+                            <button class="btn btn-light btn-sm" onclick="refreshApplications()">
                                 <i class="fas fa-sync-alt me-1"></i>Yenile
                             </button>
                         </div>
                         <div class="card-body">
-                            <div id="alertContainer"></div>
-                            
                             <!-- Loading Spinner -->
                             <div id="loadingSpinner" class="text-center py-4">
                                 <div class="spinner-border text-primary" role="status">
@@ -57,13 +58,39 @@
                             </div>
 
                             <!-- No Applications Message -->
-                            <div id="noApplications" class="text-center py-5" style="display: none;">
-                                <i class="fas fa-file-alt fa-3x text-muted mb-3"></i>
-                                <h5 class="text-muted">Henüz başvurunuz bulunmuyor</h5>
-                                <p class="text-muted">Yeni bir başvuru yapmak için danışmanımızla iletişime geçin.</p>
-                                <a href="/contact" class="btn btn-primary">
-                                    <i class="fas fa-envelope me-2"></i>İletişime Geç
-                                </a>
+                            <div id="noApplications" class="text-center py-4" style="display: none;">
+                                <i class="fas fa-university fa-2x text-muted mb-2"></i>
+                                <p class="text-muted mb-0">Henüz üniversite başvurunuz bulunmuyor</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Visa Applications Card -->
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="fas fa-passport me-2"></i>Vize Başvurularım</h5>
+                            <button class="btn btn-light btn-sm" onclick="refreshVisaApplications()">
+                                <i class="fas fa-sync-alt me-1"></i>Yenile
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <!-- Loading Spinner -->
+                            <div id="visaLoadingSpinner" class="text-center py-4">
+                                <div class="spinner-border text-success" role="status">
+                                    <span class="visually-hidden">Yükleniyor...</span>
+                                </div>
+                                <p class="mt-2">Vize başvurularınız yükleniyor...</p>
+                            </div>
+
+                            <!-- Visa Applications Container -->
+                            <div id="visaApplicationsContainer" style="display: none;">
+                                <!-- Visa applications will be loaded here -->
+                            </div>
+
+                            <!-- No Visa Applications Message -->
+                            <div id="noVisaApplications" class="text-center py-4" style="display: none;">
+                                <i class="fas fa-passport fa-2x text-muted mb-2"></i>
+                                <p class="text-muted mb-0">Henüz vize başvurunuz bulunmuyor</p>
                             </div>
                         </div>
                     </div>
@@ -97,9 +124,9 @@
     <script>
         // Event listeners
         document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('refreshApplicationsBtn').addEventListener('click', refreshApplications);
-            
-            // Event delegation removed - details button no longer needed
+            // Load both university and visa applications
+            loadApplications();
+            loadVisaApplications();
         });
 
         // Logout function
@@ -337,6 +364,102 @@
             loadApplications();
         }
 
+        // Load visa applications
+        function loadVisaApplications() {
+            fetch('/api/user/api/visa-applications')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('visaLoadingSpinner').style.display = 'none';
+                    
+                    if (data.success) {
+                        if (data.visaApplications && data.visaApplications.length > 0) {
+                            displayVisaApplications(data.visaApplications);
+                        } else {
+                            document.getElementById('noVisaApplications').style.display = 'block';
+                        }
+                    } else {
+                        console.error('Vize başvuruları yüklenirken hata:', data.message);
+                        document.getElementById('noVisaApplications').style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('visaLoadingSpinner').style.display = 'none';
+                    document.getElementById('noVisaApplications').style.display = 'block';
+                });
+        }
+
+        // Display visa applications
+        function displayVisaApplications(visaApplications) {
+            const container = document.getElementById('visaApplicationsContainer');
+            container.style.display = 'block';
+            
+            const countryFlags = {
+                'Germany': '🇩🇪 Almanya',
+                'Czech Republic': '🇨🇿 Çekya',
+                'Italy': '🇮🇹 İtalya',
+                'Austria': '🇦🇹 Avusturya',
+                'UK': '🇬🇧 İngiltere',
+                'Poland': '🇵🇱 Polonya',
+                'Hungary': '🇭🇺 Macaristan'
+            };
+            
+            container.innerHTML = visaApplications.map(visa => `
+                <div class="card mb-3 border-start border-4 border-${getStatusColor(visa.status)}">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h5 class="card-title mb-1">
+                                    ${countryFlags[visa.country] || visa.country}
+                                </h5>
+                                <p class="card-text text-muted mb-2">
+                                    <i class="fas fa-map-marker-alt me-1"></i>
+                                    Konsolosluk: ${visa.consulate_city}
+                                </p>
+                                ${visa.appointments && visa.appointments.length > 0 ? `
+                                    <p class="card-text small mb-2">
+                                        <i class="fas fa-calendar-alt me-1 text-info"></i>
+                                        <strong>Randevular:</strong>
+                                        ${visa.appointments.map(apt => {
+                                            const date = new Date(apt.appointment_date);
+                                            return `<span class="badge bg-info ms-1">${date.toLocaleDateString('tr-TR')} ${date.toLocaleTimeString('tr-TR', {hour: '2-digit', minute: '2-digit'})}</span>`;
+                                        }).join(' ')}
+                                    </p>
+                                ` : ''}
+                                <p class="card-text small text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    Başvuru Tarihi: ${new Date(visa.created_at).toLocaleDateString('tr-TR')}
+                                </p>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <span class="badge bg-${getStatusColor(visa.status)} fs-6">
+                                    ${getVisaStatusText(visa.status)}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Get visa status text
+        function getVisaStatusText(status) {
+            switch(status) {
+                case 'pending': return 'Beklemede';
+                case 'approved': return 'Kabul Edildi';
+                case 'rejected': return 'Reddedildi';
+                default: return 'Bilinmiyor';
+            }
+        }
+
+        // Refresh visa applications
+        function refreshVisaApplications() {
+            document.getElementById('visaLoadingSpinner').style.display = 'block';
+            document.getElementById('visaApplicationsContainer').style.display = 'none';
+            document.getElementById('noVisaApplications').style.display = 'none';
+            loadVisaApplications();
+        }
+
         // Alert function
         function showAlert(message, type) {
             const alertContainer = document.getElementById('alertContainer');
@@ -433,9 +556,6 @@
                     logout();
                 });
             });
-
-            // Load applications on page load
-            loadApplications();
 
             // Add event listeners for modal buttons
             document.addEventListener('click', function(e) {

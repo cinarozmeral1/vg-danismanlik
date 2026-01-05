@@ -685,6 +685,108 @@ const sendPartnerVerificationEmail = async (email, name, verificationToken, lang
     }
 };
 
+// Send visa application email
+const sendVisaApplicationEmail = async (user, country, consulateCity, status) => {
+    console.log('📧 Sending visa application email to:', user.email);
+    
+    const countryNames = {
+        'Germany': 'Almanya',
+        'Czech Republic': 'Çek Cumhuriyeti',
+        'Italy': 'İtalya',
+        'Austria': 'Avusturya',
+        'UK': 'İngiltere',
+        'Poland': 'Polonya',
+        'Hungary': 'Macaristan'
+    };
+    
+    const statusMessages = {
+        'created': 'Oluşturuldu',
+        'pending': 'Beklemede',
+        'approved': 'KABUL EDİLDİ',
+        'rejected': 'Reddedildi'
+    };
+    
+    const statusColors = {
+        'created': '#17a2b8',
+        'pending': '#ffc107',
+        'approved': '#28a745',
+        'rejected': '#dc3545'
+    };
+    
+    const subject = `Vize Başvurunuz - ${countryNames[country] || country} - ${statusMessages[status] || status}`;
+    
+    const html = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <div style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+                <h1 style="margin: 0; font-size: 28px;">Venture Global</h1>
+                <p style="margin: 10px 0 0 0; opacity: 0.9;">Vize Başvuru Bildirimi</p>
+            </div>
+            
+            <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
+                <h2 style="color: #333; margin-bottom: 20px;">Sayın ${user.first_name} ${user.last_name},</h2>
+                
+                <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+                    <strong>${countryNames[country] || country}</strong> için <strong>${consulateCity}</strong> konsolosluğuna yaptığınız vize başvurunuz ile ilgili güncelleme:
+                </p>
+                
+                <div style="background: ${statusColors[status] || '#17a2b8'}; color: white; padding: 20px; border-radius: 8px; text-align: center; margin: 25px 0;">
+                    <h3 style="margin: 0; font-size: 22px;">Başvuru Durumu: ${statusMessages[status]?.toUpperCase() || status.toUpperCase()}</h3>
+                </div>
+                
+                ${status === 'approved' ? `
+                    <div style="background: #d4edda; border: 1px solid #c3e6cb; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                        <p style="color: #155724; margin: 0;">
+                            🎉 <strong>Tebrikler!</strong> Vize başvurunuz onaylandı. Sonraki adımlar için sizinle iletişime geçeceğiz.
+                        </p>
+                    </div>
+                ` : ''}
+                
+                ${status === 'rejected' ? `
+                    <div style="background: #f8d7da; border: 1px solid #f5c6cb; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                        <p style="color: #721c24; margin: 0;">
+                            Maalesef vize başvurunuz reddedildi. Detaylı bilgi için danışmanınızla iletişime geçin.
+                        </p>
+                    </div>
+                ` : ''}
+                
+                <p style="color: #666; line-height: 1.6;">
+                    Herhangi bir sorunuz varsa bizimle iletişime geçmekten çekinmeyin.
+                </p>
+                
+                <hr style="border: none; border-top: 1px solid #dee2e6; margin: 25px 0;">
+                
+                <div style="text-align: center;">
+                    <a href="https://vgdanismanlik.com/login" style="background: #0078D7; color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
+                        Hesabıma Git
+                    </a>
+                </div>
+            </div>
+            
+            <div style="text-align: center; color: #999; font-size: 12px; margin-top: 20px;">
+                <p>© 2024 Venture Global - Eğitim Danışmanlığı</p>
+                <p>info@vgdanismanlik.com | +90 539 927 30 08</p>
+            </div>
+        </div>
+    `;
+    
+    try {
+        const result = await transporter.sendMail({
+            from: `"Venture Global" <${process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com'}>`,
+            to: user.email,
+            subject: subject,
+            html: html
+        });
+        
+        console.log('✅ Visa application email sent successfully to:', user.email);
+        return true;
+    } catch (error) {
+        console.error('❌ Visa application email sending failed:', error);
+        console.error('   Error code:', error.code);
+        console.error('   Error message:', error.message);
+        return false;
+    }
+};
+
 module.exports = {
     transporter,
     sendVerificationEmail,
@@ -692,6 +794,7 @@ module.exports = {
     sendApplicationCreationEmail,
     sendApplicationStatusEmail,
     sendPartnerVerificationEmail,
+    sendVisaApplicationEmail,
     generateVerificationToken,
     generateResetToken
 }; 
