@@ -4,12 +4,30 @@
     {
       "src": "server.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "api/cron/*.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
+      "src": "/api/cron/(.*)",
+      "dest": "/api/cron/$1"
+    },
+    {
       "src": "/(.*)",
       "dest": "/server.js"
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/generate-blog",
+      "schedule": "0 9 */3 * *"
+    },
+    {
+      "path": "/api/cron/backup-database",
+      "schedule": "0 3 * * *"
     }
   ],
   "env": {

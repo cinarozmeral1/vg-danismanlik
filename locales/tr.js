@@ -6,6 +6,7 @@ module.exports = {
         services: "Hizmetler",
         ourServices: "Hizmetlerimiz",
         media: "Medyada Biz",
+        blog: "Blog",
         universities: "Üniversiteler",
         aboutUs: "Tanışalım",
         contact: "İletişim",

@@ -1,4 +1,4 @@
-// Google Gemini AI Service for Student Wizard
+// AI Service for Student Wizard - Groq (Primary) + Gemini (Fallback)
 // Bu servis Venture Global partner üniversiteleri ve bölümleri kullanarak AI tabanlı öneriler üretir
 const { Pool } = require('pg');
 
@@ -7,11 +7,13 @@ const pool = new Pool({
     ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
-// Gemini API endpoint - Using gemini-2.0-flash-lite (free tier friendly)
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent';
+// API Endpoints
+const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
 
 /**
  * Analyze student profile and generate university recommendation
+ * Uses Groq (primary) -> Gemini (fallback) -> Rule-based (last resort)
  */
 async function analyzeStudentProfile(studentData) {
     // Get universities and departments from database FIRST (needed for both AI and fallback)
@@ -34,19 +36,41 @@ async function analyzeStudentProfile(studentData) {
         // Build the prompt
         const prompt = buildAnalysisPrompt(studentData, universities, prepSchools);
         
-        // Call Gemini API
-        const response = await callGeminiAPI(prompt);
+        // Try AI APIs: Groq first, then Gemini
+        let response = null;
+        
+        // Try Groq API first (faster and more reliable)
+        try {
+            response = await callGroqAPI(prompt);
+            if (response) {
+                console.log('✅ AI response from Groq');
+            }
+        } catch (groqError) {
+            console.warn('⚠️ Groq API failed:', groqError.message);
+        }
+        
+        // If Groq fails, try Gemini
+        if (!response) {
+            try {
+                response = await callGeminiAPI(prompt);
+                if (response) {
+                    console.log('✅ AI response from Gemini');
+                }
+            } catch (geminiError) {
+                console.warn('⚠️ Gemini API failed:', geminiError.message);
+            }
+        }
         
         if (!response) {
-            console.warn('⚠️ Empty Gemini response, using fallback with real data');
+            console.warn('⚠️ All AI APIs failed, using intelligent fallback');
             return generateFallbackRecommendation(studentData, universities);
         }
         
         // Parse and return the response
-        return parseGeminiResponse(response, studentData, universities);
+        return parseAIResponse(response, studentData, universities);
         
     } catch (error) {
-        console.error('Gemini analysis error:', error);
+        console.error('AI analysis error:', error);
         // Fallback to rule-based recommendation WITH REAL UNIVERSITY DATA
         return generateFallbackRecommendation(studentData, universities);
     }
@@ -315,17 +339,78 @@ function getMathLevelText(level) {
 }
 
 /**
- * Call Gemini API
+ * Call Groq API (Primary AI - Fast and Free)
+ * Model: llama-3.3-70b-versatile (very capable)
+ */
+async function callGroqAPI(prompt) {
+    const apiKey = process.env.GROQ_API_KEY;
+    
+    if (!apiKey) {
+        console.log('ℹ️ GROQ_API_KEY not configured, skipping Groq');
+        throw new Error('GROQ_API_KEY is not configured');
+    }
+
+    console.log('🤖 Calling Groq API (Llama 3.3 70B)...');
+
+    try {
+        const response = await fetch(GROQ_API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+                model: 'llama-3.3-70b-versatile',
+                messages: [
+                    {
+                        role: 'system',
+                        content: 'Sen Venture Global için çalışan deneyimli bir eğitim danışmanısın. Türk öğrencilere yurt dışı eğitim konusunda yardımcı oluyorsun. Yanıtlarını her zaman Türkçe ver ve SADECE JSON formatında yanıt ver.'
+                    },
+                    {
+                        role: 'user',
+                        content: prompt
+                    }
+                ],
+                temperature: 0.7,
+                max_tokens: 4096,
+                top_p: 0.95
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            console.error('❌ Groq API error:', response.status, errorData);
+            throw new Error(`Groq API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
+        }
+
+        const data = await response.json();
+        const responseText = data.choices?.[0]?.message?.content || null;
+        
+        if (!responseText) {
+            console.error('❌ Empty response from Groq');
+            return null;
+        }
+        
+        console.log('✅ Groq API response received (' + responseText.length + ' chars)');
+        return responseText;
+    } catch (error) {
+        console.error('❌ Groq API call failed:', error.message);
+        throw error;
+    }
+}
+
+/**
+ * Call Gemini API (Fallback AI)
  */
 async function callGeminiAPI(prompt) {
     const apiKey = process.env.GEMINI_API_KEY;
     
     if (!apiKey) {
-        console.error('❌ GEMINI_API_KEY is not configured');
+        console.log('ℹ️ GEMINI_API_KEY not configured, skipping Gemini');
         throw new Error('GEMINI_API_KEY is not configured');
     }
 
-    console.log('🤖 Calling Gemini API...');
+    console.log('🤖 Calling Gemini API (fallback)...');
 
     try {
         const response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
@@ -350,7 +435,7 @@ async function callGeminiAPI(prompt) {
 
         if (!response.ok) {
             const errorText = await response.text();
-            console.error('❌ Gemini API error response:', errorText);
+            console.error('❌ Gemini API error:', response.status);
             throw new Error(`Gemini API error: ${response.status}`);
         }
 
@@ -371,9 +456,9 @@ async function callGeminiAPI(prompt) {
 }
 
 /**
- * Parse Gemini response
+ * Parse AI response (works for both Groq and Gemini)
  */
-function parseGeminiResponse(responseText, studentData, universities) {
+function parseAIResponse(responseText, studentData, universities) {
     try {
         // Extract JSON from response
         let jsonStr = responseText;
@@ -386,7 +471,7 @@ function parseGeminiResponse(responseText, studentData, universities) {
         
         const parsed = JSON.parse(jsonStr);
         
-        console.log('✅ Successfully parsed Gemini response');
+        console.log('✅ Successfully parsed AI response');
         
         // New format with two recommendations
         return {
@@ -429,7 +514,7 @@ function parseGeminiResponse(responseText, studentData, universities) {
             }
         };
     } catch (error) {
-        console.error('❌ Error parsing Gemini response:', error.message);
+        console.error('❌ Error parsing AI response:', error.message);
         console.log('Raw response (first 500 chars):', responseText?.substring(0, 500));
         return generateFallbackRecommendation(studentData, universities);
     }

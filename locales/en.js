@@ -6,6 +6,7 @@ module.exports = {
         services: "Services",
         ourServices: "Our Services",
         media: "In the Media",
+        blog: "Blog",
         universities: "Universities",
         aboutUs: "About Us",
         contact: "Contact",

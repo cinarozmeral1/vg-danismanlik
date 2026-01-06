@@ -20,6 +20,8 @@ Allow: /about-us
 Allow: /contact
 Allow: /student-life/
 Allow: /partners/
+Allow: /blog
+Allow: /blog/
 
 # Sitemap
 Sitemap: https://vgdanismanlik.com/sitemap.xml

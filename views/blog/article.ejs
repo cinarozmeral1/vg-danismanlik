@@ -1,0 +1,439 @@
+<style>
+.article-section {
+    padding: 50px 0;
+    background: #f8f9fa;
+    min-height: 60vh;
+}
+
+.article-container {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+    overflow: hidden;
+    border: 1px solid #e9ecef;
+}
+
+.article-image-wrapper {
+    width: 100%;
+    height: 350px;
+    overflow: hidden;
+}
+
+.article-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.article-header {
+    padding: 30px 35px;
+    border-bottom: 1px solid #e9ecef;
+    background: #ffffff;
+}
+
+.article-badge {
+    display: inline-block;
+    background: #0078D7;
+    color: #ffffff;
+    font-size: 0.8rem;
+    padding: 6px 14px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.article-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    line-height: 1.35;
+    margin: 0 0 15px 0;
+}
+
+.article-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    color: #666666;
+    font-size: 0.9rem;
+}
+
+.article-meta span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.article-content {
+    padding: 40px 35px;
+    font-size: 1.05rem;
+    line-height: 1.85;
+    color: #333333;
+    background: #ffffff;
+}
+
+.article-content h2 {
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 35px 0 18px 0;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.article-content h2:first-child {
+    margin-top: 0;
+}
+
+.article-content h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333333;
+    margin: 28px 0 14px 0;
+}
+
+.article-content p {
+    margin-bottom: 18px;
+    color: #444444;
+}
+
+.article-content ul, .article-content ol {
+    margin-bottom: 20px;
+    padding-left: 28px;
+}
+
+.article-content li {
+    margin-bottom: 10px;
+    line-height: 1.7;
+}
+
+.article-content a {
+    color: #0078D7;
+    text-decoration: none;
+}
+
+.article-content a:hover {
+    text-decoration: underline;
+}
+
+.article-content strong {
+    color: #1a1a2e;
+    font-weight: 600;
+}
+
+.article-footer {
+    padding: 25px 35px;
+    background: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+}
+
+.author-box {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.author-avatar {
+    width: 55px;
+    height: 55px;
+    background: #0078D7;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+.author-info h5 {
+    margin: 0 0 5px 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a1a2e;
+}
+
+.author-info p {
+    margin: 0;
+    color: #666666;
+    font-size: 0.88rem;
+}
+
+.sidebar-card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+    padding: 25px;
+    margin-bottom: 25px;
+    border: 1px solid #e9ecef;
+}
+
+.sidebar-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 0 0 20px 0;
+    padding-bottom: 14px;
+    border-bottom: 2px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.share-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.share-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    text-decoration: none;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.share-btn:hover {
+    transform: scale(1.1);
+    color: #ffffff;
+}
+
+.share-btn.twitter { background: #1DA1F2; }
+.share-btn.facebook { background: #4267B2; }
+.share-btn.linkedin { background: #0A66C2; }
+.share-btn.whatsapp { background: #25D366; }
+.share-btn.copy { background: #555555; }
+
+.related-item {
+    display: flex;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid #f0f0f0;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.related-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.related-item:first-child {
+    padding-top: 0;
+}
+
+.related-item:hover {
+    transform: translateX(5px);
+}
+
+.related-item img {
+    width: 80px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.related-item span {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #333333;
+    line-height: 1.4;
+}
+
+.related-item:hover span {
+    color: #0078D7;
+}
+
+.cta-card {
+    background: #0078D7;
+    color: #ffffff;
+    border: none;
+}
+
+.cta-card .sidebar-title {
+    color: #ffffff;
+    border-bottom-color: rgba(255,255,255,0.25);
+}
+
+.cta-card p {
+    font-size: 0.92rem;
+    margin-bottom: 18px;
+    opacity: 0.95;
+    color: #ffffff;
+}
+
+.back-btn {
+    margin-top: 25px;
+}
+
+@media (max-width: 991px) {
+    .article-content {
+        padding: 30px 25px;
+    }
+    
+    .article-header {
+        padding: 25px;
+    }
+    
+    .article-title {
+        font-size: 1.5rem;
+    }
+    
+    .article-image-wrapper {
+        height: 250px;
+    }
+}
+</style>
+
+<!-- Breadcrumb -->
+<section class="bg-primary text-white py-3">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0" style="background: transparent;">
+                <li class="breadcrumb-item">
+                    <a href="/" style="color: rgba(255,255,255,0.85); text-decoration: none;">
+                        <i class="fas fa-home"></i>
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="/blog" style="color: rgba(255,255,255,0.85); text-decoration: none;">Blog</a>
+                </li>
+                <li class="breadcrumb-item active" style="color: rgba(255,255,255,0.6);">
+                    <%= post.title.length > 40 ? post.title.substring(0, 40) + '...' : post.title %>
+                </li>
+            </ol>
+        </nav>
+    </div>
+</section>
+
+<!-- Article Section -->
+<section class="article-section">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Main Content -->
+            <div class="col-lg-8">
+                <article class="article-container">
+                    <div class="article-image-wrapper">
+                            <img src="<%= post.image || 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&q=80' %>" 
+                                 alt="<%= post.title %>" class="article-image"
+                                 onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&q=80';">
+                        </div>
+                    
+                    <div class="article-header">
+                        <% if (post.topic) { %>
+                            <span class="article-badge">
+                                <% if (post.topic === 'university') { %>
+                                    <i class="fas fa-university me-1"></i> Üniversite
+                                <% } else if (post.topic === 'country') { %>
+                                    <i class="fas fa-globe me-1"></i> Ülke Rehberi
+                                <% } else if (post.topic === 'country_program') { %>
+                                    <i class="fas fa-graduation-cap me-1"></i> Program
+                                <% } else { %>
+                                    <i class="fas fa-book me-1"></i> Makale
+                                <% } %>
+                            </span>
+                        <% } %>
+                        
+                        <h1 class="article-title"><%= post.title %></h1>
+                        
+                        <div class="article-meta">
+                            <span><i class="far fa-calendar"></i> <%= post.date %></span>
+                            <span><i class="far fa-eye"></i> <%= post.views %> görüntülenme</span>
+                            <span><i class="far fa-user"></i> Venture Global</span>
+                        </div>
+                    </div>
+                    
+                    <div class="article-content">
+                        <%- post.content %>
+                    </div>
+                    
+                    <div class="article-footer">
+                        <div class="author-box">
+                            <div class="author-avatar">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <div class="author-info">
+                                <h5>Venture Global Eğitim Danışmanlığı</h5>
+                                <p>Yurtdışı eğitim alanında uzman danışmanlık ekibi</p>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                
+                <div class="back-btn">
+                    <a href="/blog" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left me-2"></i> Tüm Makaleler
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Share -->
+                <div class="sidebar-card">
+                    <h4 class="sidebar-title">
+                        <i class="fas fa-share-alt"></i> Paylaş
+                    </h4>
+                    <div class="share-buttons">
+                        <a href="https://twitter.com/intent/tweet?url=<%= encodeURIComponent(canonicalUrl) %>&text=<%= encodeURIComponent(post.title) %>" 
+                           target="_blank" class="share-btn twitter" title="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent(canonicalUrl) %>" 
+                           target="_blank" class="share-btn facebook" title="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/shareArticle?mini=true&url=<%= encodeURIComponent(canonicalUrl) %>" 
+                           target="_blank" class="share-btn linkedin" title="LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="https://wa.me/?text=<%= encodeURIComponent(post.title + ' ' + canonicalUrl) %>" 
+                           target="_blank" class="share-btn whatsapp" title="WhatsApp">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                        <button onclick="navigator.clipboard.writeText('<%= canonicalUrl %>');alert('Link kopyalandı!');" 
+                                class="share-btn copy" title="Linki Kopyala">
+                            <i class="fas fa-link"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Related Posts -->
+                <% if (relatedPosts && relatedPosts.length > 0) { %>
+                <div class="sidebar-card">
+                    <h4 class="sidebar-title">
+                        <i class="fas fa-newspaper"></i> İlgili Yazılar
+                    </h4>
+                    <% relatedPosts.forEach(function(related) { %>
+                        <a href="/blog/<%= related.slug %>" class="related-item">
+                            <img src="<%= related.image %>" alt="<%= related.title %>">
+                            <span><%= related.title %></span>
+                        </a>
+                    <% }); %>
+                </div>
+                <% } %>
+                
+                <!-- CTA -->
+                <div class="sidebar-card cta-card">
+                    <h4 class="sidebar-title">
+                        <i class="fas fa-comments"></i> Ücretsiz Danışmanlık
+                    </h4>
+                    <p>Yurtdışı eğitim hakkında sorularınız mı var? Uzmanlarımız yardımcı olmaktan mutluluk duyar.</p>
+                    <a href="/#contact" class="btn btn-light w-100">
+                        <i class="fas fa-phone me-2"></i> İletişime Geç
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

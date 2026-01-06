@@ -1,0 +1,242 @@
+<style>
+.blog-section {
+    padding: 60px 0;
+    background: #f8f9fa;
+    min-height: 60vh;
+}
+
+.blog-card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e9ecef;
+}
+
+.blog-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+}
+
+.blog-card-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+    background: linear-gradient(135deg, #0078D7 0%, #00BCF2 100%);
+}
+
+.blog-card-body {
+    padding: 24px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+}
+
+.blog-card-badge {
+    display: inline-block;
+    background: #0078D7;
+    color: #ffffff;
+    font-size: 0.75rem;
+    padding: 5px 12px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.blog-card-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.blog-card-title a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.blog-card-title a:hover {
+    color: #0078D7;
+}
+
+.blog-card-excerpt {
+    color: #555555;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    flex: 1;
+}
+
+.blog-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px solid #e9ecef;
+    font-size: 0.85rem;
+    color: #888888;
+}
+
+.blog-card-link {
+    color: #0078D7;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.blog-card-link:hover {
+    text-decoration: underline;
+    color: #005a9e;
+}
+
+.pagination-nav {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 50px;
+}
+
+.pagination-nav a {
+    padding: 12px 18px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    color: #333333;
+    text-decoration: none;
+    font-weight: 500;
+    background: #ffffff;
+    transition: all 0.2s;
+}
+
+.pagination-nav a:hover,
+.pagination-nav a.active {
+    background: #0078D7;
+    color: #ffffff;
+    border-color: #0078D7;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    background: #ffffff;
+    border-radius: 12px;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: #dee2e6;
+    margin-bottom: 20px;
+    display: block;
+}
+</style>
+
+<!-- Hero Section -->
+<section class="bg-primary text-white py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="display-4 fw-bold">Blog</h1>
+                <p class="lead">Yurtdışı eğitim hakkında güncel makaleler ve rehberler</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Blog Grid -->
+<section class="blog-section">
+    <div class="container">
+        <% if (posts && posts.length > 0) { %>
+            <div class="row g-4">
+                <% posts.forEach(function(post) { %>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="blog-card">
+                            <a href="/blog/<%= post.slug %>">
+                                <img src="<%= post.image %>" alt="<%= post.title %>" class="blog-card-image" 
+                                     onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&q=80';">
+                            </a>
+                            <div class="blog-card-body">
+                                <% if (post.topic) { %>
+                                    <span class="blog-card-badge">
+                                        <% if (post.topic === 'university') { %>
+                                            <i class="fas fa-university me-1"></i> Üniversite
+                                        <% } else if (post.topic === 'country') { %>
+                                            <i class="fas fa-globe me-1"></i> Ülke Rehberi
+                                        <% } else if (post.topic === 'country_program') { %>
+                                            <i class="fas fa-graduation-cap me-1"></i> Program
+                                        <% } else { %>
+                                            <i class="fas fa-book me-1"></i> Makale
+                                        <% } %>
+                                    </span>
+                                <% } %>
+                                
+                                <h3 class="blog-card-title">
+                                    <a href="/blog/<%= post.slug %>"><%= post.title %></a>
+                                </h3>
+                                
+                                <p class="blog-card-excerpt"><%= post.excerpt %></p>
+                                
+                                <div class="blog-card-footer">
+                                    <span><i class="far fa-calendar me-1"></i> <%= post.date %></span>
+                                    <a href="/blog/<%= post.slug %>" class="blog-card-link">
+                                        Devamını Oku <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+            
+            <% if (totalPages > 1) { %>
+                <nav class="pagination-nav">
+                    <% if (hasPrevPage) { %>
+                        <a href="/blog?page=<%= currentPage - 1 %>">
+                            <i class="fas fa-chevron-left me-1"></i> Önceki
+                        </a>
+                    <% } %>
+                    
+                    <% for (let i = 1; i <= Math.min(totalPages, 5); i++) { %>
+                        <a href="/blog?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>">
+                            <%= i %>
+                        </a>
+                    <% } %>
+                    
+                    <% if (hasNextPage) { %>
+                        <a href="/blog?page=<%= currentPage + 1 %>">
+                            Sonraki <i class="fas fa-chevron-right ms-1"></i>
+                        </a>
+                    <% } %>
+                </nav>
+            <% } %>
+            
+        <% } else { %>
+            <div class="empty-state">
+                <i class="fas fa-newspaper"></i>
+                <h3 class="text-muted">Henüz makale yok</h3>
+                <p class="text-muted">Yakında yeni makaleler eklenecek.</p>
+            </div>
+        <% } %>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 bg-primary text-white">
+    <div class="container text-center">
+        <h2 class="fw-bold mb-3">Yurtdışında Eğitim Hayalinizi Gerçekleştirin</h2>
+        <p class="lead mb-4">Venture Global ile ücretsiz danışmanlık hizmeti alın.</p>
+        <a href="/#contact" class="btn btn-light btn-lg px-4">
+            <i class="fas fa-comments me-2"></i> Ücretsiz Danışmanlık
+        </a>
+    </div>
+</section>

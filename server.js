@@ -132,6 +132,7 @@ const partnerRoutes = require('./routes/partner');
 const guardianRoutes = require('./routes/guardians');
 const stripeWebhookRoutes = require('./routes/stripe-webhook');
 const wizardRoutes = require('./routes/wizard');
+const blogRoutes = require('./routes/blog');
 
 // Import authentication middleware
 const { authenticateAdmin } = require('./middleware/auth');
@@ -524,6 +525,7 @@ app.use('/partner', partnerRoutes);
 app.use('/student-wizard', wizardRoutes);
 app.use('/wizard', wizardRoutes);  // Kısa yol
 app.use('/api/wizard', wizardRoutes);
+app.use('/blog', blogRoutes);  // SEO Blog
 
 // Scheduled cleanup for unverified users older than 72h since last login
 app.post('/api/maintenance/delete-unverified', async (req, res) => {
@@ -821,6 +823,20 @@ app.get('/sitemap.xml', async (req, res) => {
             console.error('Database error fetching universities for sitemap:', dbError);
         }
         
+        // Get all blog posts
+        let blogPosts = [];
+        try {
+            const blogResult = await pool.query(`
+                SELECT slug, published_at, updated_at
+                FROM blog_posts 
+                WHERE is_published = true
+                ORDER BY published_at DESC
+            `);
+            blogPosts = blogResult.rows;
+        } catch (dbError) {
+            console.error('Database error fetching blog posts for sitemap:', dbError);
+        }
+        
         const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
@@ -860,6 +876,16 @@ app.get('/sitemap.xml', async (req, res) => {
         <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="tr" href="${baseUrl}/change-language/tr"/>
+        <xhtml:link rel="alternate" hreflang="en" href="${baseUrl}/change-language/en"/>
+    </url>
+    
+    <!-- Blog -->
+    <url>
+        <loc>${baseUrl}/blog</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
         <xhtml:link rel="alternate" hreflang="tr" href="${baseUrl}/change-language/tr"/>
         <xhtml:link rel="alternate" hreflang="en" href="${baseUrl}/change-language/en"/>
     </url>
@@ -963,6 +989,19 @@ app.get('/sitemap.xml', async (req, res) => {
         <loc>${baseUrl}/university/${uni.id}</loc>
         <lastmod>${lastmod}</lastmod>
         <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>`;
+    }).join('\n')}
+    
+    <!-- Blog Posts -->
+    ${blogPosts.map(post => {
+        const lastmod = post.updated_at 
+            ? new Date(post.updated_at).toISOString().split('T')[0]
+            : new Date(post.published_at).toISOString().split('T')[0];
+        return `    <url>
+        <loc>${baseUrl}/blog/${post.slug}</loc>
+        <lastmod>${lastmod}</lastmod>
+        <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>`;
     }).join('\n')}
