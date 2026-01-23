@@ -120,7 +120,7 @@
             <div class="col-12">
                 <div class="stats-counter-container d-flex justify-content-center gap-5 flex-wrap">
                     <div class="stat-counter text-center">
-                        <div class="stat-number" data-target="7">
+                        <div class="stat-number" data-target="8">
                             <span class="counter">0</span>
                         </div>
                         <p class="stat-label text-muted mb-0"><%= t.home.stats.countries %></p>
@@ -281,6 +281,220 @@
     </div>
 </section>
 
+<!-- Partner Universities Slider Section -->
+<section class="university-slider-section py-5" style="background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold mb-3" style="color: #1a365d;"><%= t.home.partnerUniversities?.title || 'Partner Üniversitelerimiz' %></h2>
+            <p class="lead text-muted"><%= t.home.partnerUniversities?.subtitle || "Avrupa'nın en prestijli üniversiteleri ile işbirliği içindeyiz" %></p>
+        </div>
+        
+        <div class="university-logo-slider swiper" id="universitySlider">
+            <div class="swiper-wrapper">
+                <!-- Priority universities first -->
+                <div class="swiper-slide"><div class="logo-card"><img src="/images/slider-logos/London_school_of_economics_logo_with_name.svg.png" alt="London School of Economics" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="logo-card"><img src="/images/slider-logos/logo_tum_normal.png" alt="Technical University of Munich" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="logo-card"><img src="/images/slider-logos/CVUT.png" alt="Czech Technical University" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="logo-card"><img src="/images/slider-logos/Charles.png" alt="Charles University" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="logo-card logo-xxlarge"><img src="/images/slider-logos/University_of_Edinburgh-Logo.wine.png" alt="University of Edinburgh" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="logo-card"><img src="/images/slider-logos/delft-university-of-technology-259-logo.png" alt="Delft University of Technology" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="logo-card logo-xxlarge"><img src="/images/slider-logos/vse-prague-logo-new.png" alt="VSE Prague" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="logo-card"><img src="/images/slider-logos/Manchester_University_Logo_(2).png" alt="University of Manchester" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="logo-card"><img src="/images/slider-logos/King's_College_London_logo.svg.png" alt="King's College London" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="logo-card"><img src="/images/slider-logos/Uniroma1.svg.png" alt="Sapienza University of Rome" loading="lazy"></div></div>
+                <!-- Other universities -->
+                <div class="swiper-slide"><div class="logo-card logo-xlarge"><img src="/images/slider-logos/Logo_Politecnico_di_Milano.jpeg" alt="Politecnico di Milano" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="logo-card"><img src="/images/slider-logos/icon_uam.png" alt="Adam Mickiewicz University" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="logo-card"><img src="/images/slider-logos/university-of-florence-logo.png" alt="University of Florence" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="logo-card logo-mobile-fit"><img src="/images/slider-logos/192163_Semmelweis_logo_ENG_Vertical__PNG.png" alt="Semmelweis University" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="logo-card"><img src="/images/slider-logos/Logo_of_Amsterdam_University_of_Applied_Sciences.png" alt="University of Amsterdam" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="logo-card"><img src="/images/slider-logos/University_of_Sussex_Logo.svg.png" alt="University of Sussex" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="logo-card logo-large"><img src="/images/slider-logos/university-of-groningen-rug8904.jpg" alt="University of Groningen" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="logo-card"><img src="/images/slider-logos/Logo_TU_Dresden_2025.svg.png" alt="TU Dresden" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="logo-card logo-large"><img src="/images/slider-logos/masaryk-university-logo.png.png" alt="Masaryk University" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="logo-card logo-xlarge"><img src="/images/slider-logos/university_of_winchester_0.png" alt="University of Winchester" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="logo-card"><img src="/images/slider-logos/Utrecht-univesrsity-logo.svg.png" alt="Utrecht University" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="logo-card"><img src="/images/slider-logos/VU_logo.png" alt="Vrije Universiteit Amsterdam" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="logo-card"><img src="/images/slider-logos/Leiden.png" alt="Leiden University" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="logo-card logo-mobile-fit"><img src="/images/slider-logos/Radboud-300x148-1.png" alt="Radboud University" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="logo-card"><img src="/images/slider-logos/university-of-padua-logo.png" alt="University of Padova" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="logo-card"><img src="/images/slider-logos/Polito.png" alt="Politecnico di Torino" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="logo-card"><img src="/images/slider-logos/Siena.png" alt="University of Siena" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="logo-card logo-large"><img src="/images/slider-logos/vsb.png" alt="VSB Technical University" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="logo-card logo-large"><img src="/images/slider-logos/203446_CZU_logotype_V_ENG_green.png" alt="Czech University of Life Sciences" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="logo-card logo-xlarge"><img src="/images/slider-logos/the-hague-university-of-applied-sciences-logo-636869625459921343.jpg" alt="The Hague University" loading="lazy"></div></div>
+                <div class="swiper-slide"><div class="logo-card"><img src="/images/slider-logos/Logo-UCSC-1.jpg" alt="Università Cattolica" loading="lazy"></div></div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-5">
+            <a href="/universities" class="btn btn-primary btn-lg px-5 py-3 rounded-pill fw-bold" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);">
+                <%= t.home.partnerUniversities?.button || 'Tüm Üniversiteleri Keşfet' %>
+                <i class="fas fa-arrow-right ms-2"></i>
+            </a>
+        </div>
+    </div>
+    
+    <style>
+    .university-slider-section {
+        overflow: hidden;
+    }
+    
+    .university-logo-slider {
+        width: 100%;
+        overflow: visible;
+        padding: 30px 0;
+    }
+    
+    .university-logo-slider .swiper-wrapper {
+        transition-timing-function: linear !important;
+        align-items: stretch;
+    }
+    
+    .university-logo-slider .swiper-slide {
+        width: auto;
+        height: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 20px;
+    }
+    
+    .university-logo-slider .swiper-slide .logo-card {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 25px 30px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 140px;
+        width: 260px;
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+    
+    .university-logo-slider .swiper-slide .logo-card:hover {
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        transform: translateY(-3px);
+    }
+    
+    .university-logo-slider .swiper-slide img {
+        max-height: 90px;
+        max-width: 200px;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        filter: none;
+        opacity: 1;
+    }
+    
+    /* Küçük yazılı logolar için - kart aynı boyutta, logo içeride büyük */
+    .university-logo-slider .swiper-slide .logo-card.logo-large img {
+        max-height: 115px;
+        max-width: 240px;
+    }
+    
+    /* Çok küçük yazılı logolar için - maksimum büyütme */
+    .university-logo-slider .swiper-slide .logo-card.logo-xlarge img {
+        max-height: 130px;
+        max-width: 250px;
+    }
+    
+    /* En küçük yazılı logolar için - ekstra büyütme */
+    .university-logo-slider .swiper-slide .logo-card.logo-xxlarge img {
+        max-height: 135px;
+        max-width: 255px;
+    }
+    
+    /* Mobilde taşan logolar için özel ayar */
+    .university-logo-slider .swiper-slide .logo-card.logo-mobile-fit img {
+        max-height: 115px;
+        max-width: 230px;
+    }
+    
+    @media (max-width: 768px) {
+        .university-logo-slider .swiper-slide .logo-card.logo-xxlarge img {
+            max-height: 75px;
+            max-width: 155px;
+        }
+        
+        .university-logo-slider .swiper-slide .logo-card.logo-xlarge img {
+            max-height: 70px;
+            max-width: 150px;
+        }
+        
+        .university-logo-slider .swiper-slide .logo-card.logo-large img {
+            max-height: 65px;
+            max-width: 145px;
+        }
+        
+        .university-logo-slider .swiper-slide .logo-card.logo-mobile-fit img {
+            max-height: 55px;
+            max-width: 130px;
+        }
+    }
+    
+    
+    @media (max-width: 992px) {
+        .university-logo-slider .swiper-slide .logo-card {
+            padding: 20px 25px;
+            height: 120px;
+            width: 220px;
+        }
+        
+        .university-logo-slider .swiper-slide img {
+            max-height: 70px;
+            max-width: 170px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .university-logo-slider .swiper-slide {
+            padding: 0 8px;
+        }
+        
+        .university-logo-slider .swiper-slide .logo-card {
+            padding: 15px 20px;
+            height: 100px;
+            width: 180px;
+        }
+        
+        .university-logo-slider .swiper-slide img {
+            max-height: 60px;
+            max-width: 140px;
+        }
+    }
+    </style>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof Swiper !== 'undefined') {
+            new Swiper('#universitySlider', {
+                slidesPerView: 'auto',
+                spaceBetween: 0,
+                loop: true,
+                loopAdditionalSlides: 5,
+                speed: 2500,
+                autoplay: {
+                    delay: 0,
+                    disableOnInteraction: false,
+                    pauseOnMouseEnter: false,
+                },
+                allowTouchMove: false,
+                freeMode: {
+                    enabled: true,
+                    momentum: false,
+                },
+                grabCursor: false,
+                watchSlidesProgress: true,
+            });
+        }
+    });
+    </script>
+</section>
+
 <!-- SEO Content Section -->
 <section class="section bg-white py-5">
     <div class="container">
@@ -293,14 +507,116 @@
                 <div class="row g-4">
                     <div class="col-md-6">
                         <div class="p-4 bg-light rounded">
-                            <h3 class="h5 fw-bold mb-3"><i class="fas fa-university text-primary me-2"></i><%= t.home.seoContent.card1Title %></h3>
+                            <h3 class="h5 fw-bold mb-3"><%= t.home.seoContent.card1Title %></h3>
                             <p class="mb-0"><%= t.home.seoContent.card1Content %></p>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="p-4 bg-light rounded">
-                            <h3 class="h5 fw-bold mb-3"><i class="fas fa-globe text-success me-2"></i><%= t.home.seoContent.card2Title %></h3>
+                            <h3 class="h5 fw-bold mb-3"><%= t.home.seoContent.card2Title %></h3>
                             <p class="mb-0"><%= t.home.seoContent.card2Content %></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- WCEP Canadian Diploma Advantage Section -->
+<section class="section py-5" style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);">
+    <div class="container">
+        <div class="row align-items-center g-4">
+            <!-- Sol Taraf - Bilgi -->
+            <div class="col-lg-5">
+                <div class="text-white">
+                    <!-- Logo -->
+                    <div class="mb-3 p-2 d-inline-flex align-items-center" style="background: white; border-radius: 10px;">
+                        <img src="/images/partners/wcep/channels4_profile.jpg" alt="WCEP" style="height: 60px; border-radius: 6px;">
+                    </div>
+                    
+                    <h2 class="fw-bold mb-3" style="font-size: 1.8rem;">
+                        <%= t.home.wcepBanner.title %> <span style="color: #fbbf24;"><%= t.home.wcepBanner.titleHighlight %></span>
+                    </h2>
+                    
+                    <p class="mb-4" style="font-size: 1rem; line-height: 1.7;">
+                        <%= t.home.wcepBanner.description %>
+                    </p>
+                    
+                    <!-- Avantaj Kartları -->
+                    <div class="row g-2 mb-4">
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background: rgba(255,255,255,0.15);">
+                                <i class="fas fa-university me-2" style="color: #fbbf24;"></i>
+                                <strong><%= t.home.wcepBanner.germany %></strong><br>
+                                <small><%= t.home.wcepBanner.germanyBenefit %></small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background: rgba(255,255,255,0.15);">
+                                <i class="fas fa-crown me-2" style="color: #fbbf24;"></i>
+                                <strong><%= t.home.wcepBanner.uk %></strong><br>
+                                <small><%= t.home.wcepBanner.ukBenefit %></small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background: rgba(255,255,255,0.15);">
+                                <i class="fas fa-stethoscope me-2" style="color: #fbbf24;"></i>
+                                <strong><%= t.home.wcepBanner.czech %></strong><br>
+                                <small><%= t.home.wcepBanner.czechBenefit %></small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded" style="background: rgba(255,255,255,0.15);">
+                                <i class="fas fa-globe-europe me-2" style="color: #fbbf24;"></i>
+                                <strong><%= t.home.wcepBanner.europe %></strong><br>
+                                <small><%= t.home.wcepBanner.europeBenefit %></small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="/partners/wcep" class="btn btn-warning px-4">
+                            <i class="fas fa-info-circle me-2"></i><%= t.home.wcepBanner.aboutWcep %>
+                        </a>
+                        <a href="/contact" class="btn btn-outline-light px-4">
+                            <i class="fas fa-phone me-2"></i><%= t.home.wcepBanner.getInfo %>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sağ Taraf - Video -->
+            <div class="col-lg-7">
+                <div class="card shadow-lg border-0" style="border-radius: 12px; overflow: hidden;">
+                    <div class="card-header text-center text-white py-2" style="background: linear-gradient(90deg, #1f2937 0%, #374151 100%);">
+                        <h6 class="mb-0"><i class="fas fa-play-circle me-2"></i><%= t.home.wcepBanner.videoTitle %></h6>
+                    </div>
+                    <div class="card-body p-0">
+                        <!-- YouTube Video - 16:9 ratio -->
+                        <div class="ratio ratio-16x9">
+                            <iframe src="https://www.youtube.com/embed/JxVsYJCN2hs" 
+                                    title="WCEP - Worldwide Cultural Exchange Program" 
+                                    frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                    allowfullscreen>
+                            </iframe>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white text-center py-2">
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="fw-bold text-danger">15+</div>
+                                <small class="text-muted"><%= t.home.wcepBanner.yearsExperience %></small>
+                            </div>
+                            <div class="col-4">
+                                <div class="fw-bold text-danger">1000+</div>
+                                <small class="text-muted"><%= t.home.wcepBanner.successfulStudents %></small>
+                            </div>
+                            <div class="col-4">
+                                <div class="fw-bold text-danger">50+</div>
+                                <small class="text-muted"><%= t.home.wcepBanner.partnerSchools %></small>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -314,9 +630,6 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6 text-white mb-4 mb-lg-0">
-                <div class="mb-3">
-                    <i class="fas fa-graduation-cap" style="font-size: 3.5rem; color: #fbbf24;"></i>
-                </div>
                 <h2 class="fw-bold mb-3">Kanpus <%= t.home.kanpusBanner.title %></h2>
                 <p class="lead mb-4"><%= t.home.kanpusBanner.subtitle %></p>
                 <div class="alert alert-warning mb-4" style="background: rgba(251, 191, 36, 0.2); border: 2px solid #fbbf24; border-radius: 12px;">
