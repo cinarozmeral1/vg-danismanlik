@@ -455,7 +455,7 @@ body {
 
 /* Logo styling */
 .navbar-logo {
-    height: 36px;
+    height: 42px;
     width: auto;
     object-fit: contain;
     transition: transform 0.2s ease;
@@ -468,7 +468,7 @@ body {
 /* Mobile logo adjustments */
 @media (max-width: 991px) {
     .navbar-logo {
-        height: 32px;
+        height: 36px;
     }
 }
 
@@ -534,7 +534,7 @@ body {
     }
     
     .navbar-logo {
-        height: 32px !important;
+        height: 38px !important;
     }
 }
 
@@ -556,14 +556,14 @@ body {
         font-size: 0.8rem !important;
     }
     
-    .navbar-brand {
+.navbar-brand {
         font-size: 0.95rem !important;
     }
     
     .navbar-logo {
-        height: 30px !important;
+        height: 34px !important;
     }
-    
+
     .navbar .me-3 {
         margin-right: 0.5rem !important;
     }
