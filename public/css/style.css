@@ -390,6 +390,8 @@ html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     background-color: #fff8f2;
+    overflow-x: hidden;
+    max-width: 100%;
 }
 
 body {
@@ -399,6 +401,9 @@ body {
   background-color: #fff8f2;
     margin: 0;
     padding: 0;
+    overflow-x: hidden;
+    max-width: 100%;
+    width: 100%;
 }
 
 /* ===== PROFESSIONAL NAVBAR ===== */
@@ -415,6 +420,21 @@ body {
   z-index: 9999;
   transition: all 0.2s ease;
   padding: 0.85rem 0;
+  /* Windows cross-browser fix - force GPU layer */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Cross-browser stacking context fix for Windows */
+.navbar .navbar-collapse {
+  position: relative;
+  z-index: 9999;
+}
+
+.navbar .navbar-nav {
+  position: relative;
+  z-index: 9999;
 }
 
 .navbar-brand {
@@ -564,6 +584,12 @@ body {
 }
 
 /* ===== PROFESSIONAL DROPDOWNS ===== */
+
+/* Navbar dropdown position context fix for Windows */
+.navbar .nav-item.dropdown {
+  position: relative;
+}
+
 .dropdown-menu {
   background: white;
   border: 1px solid var(--gray-200);
@@ -573,6 +599,14 @@ body {
   margin-top: var(--space-2);
   min-width: 240px;
   animation: dropdownSlideIn 0.2s ease-out;
+  /* Windows z-index fix */
+  z-index: 10000 !important;
+  position: absolute;
+}
+
+/* Ensure navbar dropdowns always appear on top */
+.navbar .dropdown-menu {
+  z-index: 10000 !important;
 }
 
 .dropdown-item {
@@ -725,6 +759,17 @@ body {
 /* ===== SECTIONS ===== */
 .section {
   padding: var(--space-12) 0;
+  /* Windows cross-browser fix - ensure sections don't overlap navbar */
+  position: relative;
+  z-index: 1;
+}
+
+/* Ensure main content stays below navbar dropdowns */
+main, 
+section:not(.navbar),
+.container {
+  position: relative;
+  z-index: 1;
 }
 
 .section-title {
@@ -1323,6 +1368,8 @@ body {
 body {
   overflow-x: hidden;
   overflow-y: visible;
+  max-width: 100%;
+  width: 100%;
 }
 
 .container {
@@ -3776,7 +3823,7 @@ body {
         top: 0 !important;
         left: 0 !important;
         z-index: 1039 !important;
-        width: 100vw !important;
+        width: 100% !important;
         height: 100vh !important;
         background-color: rgba(0, 0, 0, 0.5) !important;
         transition: opacity 0.3s ease !important;
@@ -4422,7 +4469,7 @@ body {
 }
 
 .promo-badge::before {
-    content: '🎓';
+    content: '';
     font-size: 1rem;
 }
 
@@ -4884,4 +4931,101 @@ body {
 /* Prevent body scroll when popup is open */
 body.promo-popup-open {
     overflow: hidden;
+}
+
+/* ===== WINDOWS & CROSS-BROWSER COMPATIBILITY ===== */
+
+/* Career page layout fixes for Windows */
+body[data-page="career"] .card {
+    position: relative;
+    z-index: 1;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+}
+
+body[data-page="career"] .row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+body[data-page="career"] .col-lg-5,
+body[data-page="career"] .col-lg-7,
+body[data-page="career"] .col-md-6 {
+    display: flex;
+    flex-direction: column;
+}
+
+body[data-page="career"] .card.h-100 {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+body[data-page="career"] .card-body {
+    flex: 1;
+}
+
+/* General Windows browser fixes */
+@supports (-ms-ime-align: auto) {
+    /* Edge-specific fixes */
+    .navbar .dropdown-menu {
+        z-index: 10001 !important;
+    }
+}
+
+/* Firefox-specific fixes */
+@-moz-document url-prefix() {
+    .navbar .dropdown-menu {
+        z-index: 10001 !important;
+    }
+}
+
+/* Ensure Bootstrap dropdowns work properly on all browsers */
+.dropdown-menu.show {
+    display: block !important;
+    z-index: 10000 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* ===== GLOBAL OVERFLOW FIX FOR ALL BROWSERS (Safari, Chrome, Firefox) ===== */
+/* Prevent horizontal scrolling on all pages */
+html {
+    overflow-x: hidden !important;
+    max-width: 100% !important;
+    width: 100% !important;
+}
+
+body {
+    overflow-x: hidden !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    position: relative;
+}
+
+/* Ensure navbar doesn't cause overflow */
+.navbar {
+    max-width: 100% !important;
+}
+
+.navbar .container-fluid {
+    max-width: 100% !important;
+}
+
+/* Ensure main content doesn't overflow */
+main {
+    max-width: 100% !important;
+}
+
+/* Footer overflow fix */
+footer {
+    max-width: 100% !important;
+}
+
+/* Safari-specific overflow fixes */
+@supports (-webkit-touch-callout: none) {
+    html, body {
+        overflow-x: hidden !important;
+        -webkit-overflow-scrolling: touch;
+    }
 }

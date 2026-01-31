@@ -7,8 +7,8 @@
     <!-- Primary Meta Tags -->
     <title><%= typeof seoTitle !== 'undefined' && seoTitle ? seoTitle : 'VG Danışmanlık | Venture Global - Yurt Dışı Eğitim Danışmanlığı, Üniversite Danışmanlık' %></title>
     <meta name="title" content="<%= typeof seoTitle !== 'undefined' && seoTitle ? seoTitle : 'VG Danışmanlık | Venture Global - Yurt Dışı Eğitim Danışmanlığı, Üniversite Danışmanlık' %>">
-    <meta name="description" content="<%= typeof seoDescription !== 'undefined' && seoDescription ? seoDescription : 'VG Danışmanlık (Venture Global) - Türkiye\'nin güvenilir yurt dışı eğitim danışmanlığı. Üniversite danışmanlık, yurt dışı üniversite başvuru, vize işlemleri ve konaklama desteği. Almanya, Çekya, İtalya, Avusturya, İngiltere, Polonya, Macaristan\'da profesyonel eğitim danışmanlığı hizmeti.' %>">
-    <meta name="keywords" content="<%= typeof seoKeywords !== 'undefined' && seoKeywords ? seoKeywords : 'vg danışmanlık, venture global, vg danışmanlık yurt dışı, eğitim danışmanlığı, yurt dışı eğitim danışmanlığı, yurt dışı danışmanlık, üniversite danışmanlık, yurt dışı üniversite danışmanlık, yurt dışı üniversite başvuru, venture global danışmanlık, yurtdışı eğitim, avrupa üniversite, dil okulu danışmanlığı, almanya üniversite, çekya üniversite, italya üniversite, avusturya üniversite, ingiltere üniversite, polonya üniversite, macaristan üniversite, üniversite başvurusu, vize danışmanlığı, konaklama desteği, avrupa eğitim danışmanlığı, yurtdışı eğitim danışmanı' %>">
+    <meta name="description" content="<%= typeof seoDescription !== 'undefined' && seoDescription ? seoDescription : 'VG Danışmanlık (Venture Global) - Türkiye\'nin güvenilir yurt dışı eğitim danışmanlığı. Üniversite danışmanlık, yurt dışı üniversite başvuru, vize işlemleri ve konaklama desteği. Almanya, Çekya, İtalya, Avusturya, İngiltere, Polonya, Macaristan, Hollanda\'da profesyonel eğitim danışmanlığı hizmeti.' %>">
+    <meta name="keywords" content="<%= typeof seoKeywords !== 'undefined' && seoKeywords ? seoKeywords : 'vg danışmanlık, venture global, vg danışmanlık yurt dışı, eğitim danışmanlığı, yurt dışı eğitim danışmanlığı, yurt dışı danışmanlık, üniversite danışmanlık, yurt dışı üniversite danışmanlık, yurt dışı üniversite başvuru, venture global danışmanlık, yurtdışı eğitim, avrupa üniversite, dil okulu danışmanlığı, almanya üniversite, çekya üniversite, italya üniversite, avusturya üniversite, ingiltere üniversite, polonya üniversite, macaristan üniversite, hollanda üniversite, üniversite başvurusu, vize danışmanlığı, konaklama desteği, avrupa eğitim danışmanlığı, yurtdışı eğitim danışmanı' %>">
     <meta name="author" content="Venture Global">
     <meta name="robots" content="<%= typeof seoRobots !== 'undefined' && seoRobots ? seoRobots : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' %>">
     <meta name="language" content="<%= typeof currentLanguage !== 'undefined' ? currentLanguage : 'tr' %>">
@@ -69,6 +69,40 @@
     <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
     <link rel="dns-prefetch" href="//fonts.googleapis.com">
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    <link rel="dns-prefetch" href="//www.googletagmanager.com">
+    <link rel="dns-prefetch" href="//accounts.google.com">
+    
+    <!-- Google Analytics 4 - Conditional Loading Based on Cookie Consent -->
+    <script>
+        // GA4 will be loaded only after user accepts cookies
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        
+        // Check cookie consent before loading GA
+        if (localStorage.getItem('cookieChoice') === 'accepted') {
+            loadGoogleAnalytics();
+        }
+        
+        function loadGoogleAnalytics() {
+            // Load GA4 script dynamically
+            const script = document.createElement('script');
+            script.async = true;
+            script.src = 'https://www.googletagmanager.com/gtag/js?id=' + (window.GA_MEASUREMENT_ID || 'G-XXXXXXXXXX');
+            document.head.appendChild(script);
+            
+            script.onload = function() {
+                gtag('js', new Date());
+                gtag('config', window.GA_MEASUREMENT_ID || 'G-XXXXXXXXXX', {
+                    'anonymize_ip': true,
+                    'cookie_flags': 'SameSite=None;Secure'
+                });
+                console.log('✅ Google Analytics loaded');
+            };
+        }
+    </script>
+    
+    <!-- Google OAuth Client Library -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     
     <!-- Favicon -->
     <link rel="icon" href="/favicon.png?v=6" type="image/png">
@@ -91,8 +125,11 @@
     <!-- Google Fonts - Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- Swiper Slider CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+    
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/css/style.css?v=20241126-premium-popup-redesign">
+    <link rel="stylesheet" href="/css/style.css?v=20260201-overflow-fix">
     
     <!-- Structured Data (JSON-LD) - Organization & Educational Service -->
     <script type="application/ld+json">
@@ -104,7 +141,7 @@
         "legalName": "Venture Global - VG Danışmanlık",
         "url": "https://vgdanismanlik.com",
         "logo": "https://vgdanismanlik.com/images/logos/venture-global-logo.png",
-        "description": "VG Danışmanlık (Venture Global) - Türkiye'nin lider yurt dışı eğitim danışmanlığı firması. Üniversite danışmanlık, yurt dışı üniversite başvuru, vize işlemleri ve konaklama desteği. Almanya, Çekya, İtalya, Avusturya, İngiltere, Polonya, Macaristan'da 50+ üniversite ile profesyonel eğitim danışmanlığı hizmeti.",
+        "description": "VG Danışmanlık (Venture Global) - Türkiye'nin lider yurt dışı eğitim danışmanlığı firması. Üniversite danışmanlık, yurt dışı üniversite başvuru, vize işlemleri ve konaklama desteği. Almanya, Çekya, İtalya, Avusturya, İngiltere, Polonya, Macaristan, Hollanda'da 50+ üniversite ile profesyonel eğitim danışmanlığı hizmeti.",
         "slogan": "Avrupa'da Eğitim Hayalinizi Gerçekleştirin",
         "foundingDate": "2020",
         "address": {
@@ -304,7 +341,7 @@
                 <!-- Left Side - Main Navigation -->
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.home : 'Ana Sayfa' %></a>
+                        <a class="nav-link" href="/" style="white-space: nowrap;"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.home : 'Ana Sayfa' %></a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -321,21 +358,17 @@
                             <%= (typeof t !== 'undefined' && t.nav) ? (t.nav.partners || 'Çözüm Ortaklarımız') : 'Çözüm Ortaklarımız' %>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item d-flex align-items-center" href="/partners/kanpus">
-                                <img src="/images/partners/kanpus/kanpus-logo.webp" alt="Kanpus" style="height: 20px; width: auto; margin-right: 10px;">
-                                Kanpus
-                            </a></li>
                             <li><a class="dropdown-item d-flex align-items-center" href="/partners/wcep">
                                 <img src="/images/partners/wcep/wcep-logo.png" alt="WCEP" style="height: 20px; width: auto; margin-right: 10px;">
                                 WCEP
                             </a></li>
+                            <li><a class="dropdown-item d-flex align-items-center" href="/partners/kanpus">
+                                <img src="/images/partners/kanpus/kanpus-logo.webp" alt="Kanpus" style="height: 20px; width: auto; margin-right: 10px;">
+                                Kanpus
+                            </a></li>
                             <li><a class="dropdown-item d-flex align-items-center" href="/partners/medczech">
                                 <img src="/images/partners/medczech/medczech-logo.png" alt="MedCzech" style="height: 20px; width: auto; margin-right: 10px;">
                                 MedCzech
-                            </a></li>
-                            <li><a class="dropdown-item d-flex align-items-center" href="/partners/bestschool">
-                                <i class="fas fa-school me-2" style="color: #0d6efd;"></i>
-                                BestSchool.cz
                             </a></li>
                         </ul>
                     </li>
@@ -351,6 +384,7 @@
                             <li><a class="dropdown-item" href="/student-life/uk"><span class="me-2">🇬🇧</span><%= (typeof t !== 'undefined' && t.countries) ? t.countries.uk : 'İngiltere' %></a></li>
                             <li><a class="dropdown-item" href="/student-life/poland"><span class="me-2">🇵🇱</span><%= (typeof t !== 'undefined' && t.countries) ? t.countries.poland : 'Polonya' %></a></li>
                             <li><a class="dropdown-item" href="/student-life/hungary"><span class="me-2">🇭🇺</span><%= (typeof t !== 'undefined' && t.countries) ? t.countries.hungary : 'Macaristan' %></a></li>
+                            <li><a class="dropdown-item" href="/student-life/netherlands"><span class="me-2">🇳🇱</span><%= (typeof t !== 'undefined' && t.countries) ? t.countries.netherlands : 'Hollanda' %></a></li>
                         </ul>
                     </li>
                     <li class="nav-item">
@@ -361,8 +395,14 @@
                     </li>
 
                     
-                    <li class="nav-item">
-                        <a class="nav-link" href="/contact"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.contact : 'İletişim' %></a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="contactDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <%= (typeof t !== 'undefined' && t.nav) ? t.nav.contact : 'İletişim' %>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="contactDropdown">
+                            <li><a class="dropdown-item" href="/contact"><i class="fas fa-envelope me-2"></i><%= (typeof t !== 'undefined' && t.nav) ? t.nav.contact : 'İletişim' %></a></li>
+                            <li><a class="dropdown-item" href="/career"><i class="fas fa-briefcase me-2"></i><%= (typeof t !== 'undefined' && t.nav) ? t.nav.career : 'Kariyer' %></a></li>
+                        </ul>
                     </li>
                 </ul>
                 
@@ -383,8 +423,8 @@
                             <span id="currentLanguage"><%= currentLanguage === 'tr' ? 'TR' : 'EN' %></span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item language-switcher" href="/change-language/tr" data-lang="tr"><i class="fas fa-flag me-2"></i>Türkçe</a></li>
-                            <li><a class="dropdown-item language-switcher" href="/change-language/en" data-lang="en"><i class="fas fa-flag me-2"></i>English</a></li>
+                            <li><a class="dropdown-item language-switcher" href="/change-language/tr" data-lang="tr"><span class="me-2">🇹🇷</span>Türkçe</a></li>
+                            <li><a class="dropdown-item language-switcher" href="/change-language/en" data-lang="en"><span class="me-2">🇬🇧</span>English</a></li>
                         </ul>
                     </li>
                     
@@ -406,11 +446,21 @@
                                     <li><a class="dropdown-item" href="/admin/dashboard"><i class="fas fa-user-shield me-2"></i>Admin Panel</a></li>
                                     <li><a class="dropdown-item" href="/admin/users"><i class="fas fa-users me-2"></i>Öğrenciler</a></li>
                                     <li><a class="dropdown-item" href="/admin/applications"><i class="fas fa-file-alt me-2"></i>Başvurular</a></li>
+                                    <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
                                     <li><a class="dropdown-item" href="/admin/partners"><i class="fas fa-handshake me-2"></i>Partnerler</a></li>
+                                    <% } %>
                                     <li><a class="dropdown-item" href="/admin/universities"><i class="fas fa-university me-2"></i>Üniversiteler</a></li>
+                                    <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
                                     <li><a class="dropdown-item" href="/admin/backups"><i class="fas fa-database me-2"></i>Yedekleme</a></li>
+                                    <li><a class="dropdown-item" href="/admin/admins"><i class="fas fa-user-shield me-2"></i>Adminler</a></li>
+                                    <% } %>
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item text-danger" href="/admin/logout"><i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap</a></li>
+                                <% } else if (currentUser && currentUser.is_partner) { %>
+                                    <li><a class="dropdown-item" href="/partner/dashboard"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
+                                    <li><a class="dropdown-item" href="/partner/settings"><i class="fas fa-cog me-2"></i>Ayarlar</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger" href="#" onclick="partnerLogout(); return false;"><i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap</a></li>
                                 <% } else { %>
                                     <li><a class="dropdown-item" href="/user/dashboard"><i class="fas fa-user me-2"></i>Profil Bilgileri</a></li>
                                     <li><a class="dropdown-item" href="/user/applications"><i class="fas fa-file-alt me-2"></i>Başvurularım</a></li>
@@ -457,6 +507,30 @@
         
         <div class="offcanvas-body p-0" style="background: #ffffff !important; background-color: #ffffff !important; background-image: none !important;">
             <nav class="mobile-nav" style="background: #ffffff !important; background-color: #ffffff !important; background-image: none !important;">
+                
+                <!-- Auth Buttons - En üstte, giriş yapmamış kullanıcılar için -->
+                <% if (typeof isLoggedIn === 'undefined' || isLoggedIn !== true) { %>
+                <div style="background: var(--primary-50); padding: 1rem 1.25rem; border-bottom: 2px solid var(--primary-200);">
+                    <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+                        <a href="/login" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; background: #ffffff; color: #000000; border: 2px solid #2563eb; padding: 12px 16px; border-radius: 8px; font-weight: 600; text-decoration: none; text-align: center; font-size: 0.9rem;">
+                            <i class="fas fa-sign-in-alt" style="color: #000000;"></i>Giriş Yap
+                        </a>
+                        <a href="/register" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; background: #dbeafe; color: #000000; border: 2px solid #2563eb; padding: 12px 16px; border-radius: 8px; font-weight: 600; text-decoration: none; text-align: center; font-size: 0.9rem;">
+                            <i class="fas fa-user-plus" style="color: #000000;"></i>Kayıt Ol
+                        </a>
+                    </div>
+                    <!-- Dil Seçimi -->
+                    <div style="display: flex; gap: 8px;">
+                        <a href="/change-language/tr" style="flex: 1; padding: 8px; border-radius: 6px; text-decoration: none; text-align: center; font-size: 0.8rem; font-weight: 600; <%= currentLanguage === 'tr' ? 'background: #ffffff; border: 2px solid var(--primary-600); color: #0f172a;' : 'background: #ffffff; border: 1px solid var(--gray-300); color: #0f172a;' %>">
+                            🇹🇷 Türkçe
+                        </a>
+                        <a href="/change-language/en" style="flex: 1; padding: 8px; border-radius: 6px; text-decoration: none; text-align: center; font-size: 0.8rem; font-weight: 600; <%= currentLanguage === 'en' ? 'background: #ffffff; border: 2px solid var(--primary-600); color: #0f172a;' : 'background: #ffffff; border: 1px solid var(--gray-300); color: #0f172a;' %>">
+                            🇬🇧 English
+                        </a>
+                    </div>
+                </div>
+                <% } %>
+                
                 <!-- User Section -->
                 <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn === true) { %>
                     <div style="background: var(--gray-50); padding: 1.25rem; border-bottom: 1px solid var(--gray-200);">
@@ -471,6 +545,8 @@
                                 <small style="color: var(--gray-600);">
                                     <% if (currentUser && currentUser.is_admin) { %>
                                         <i class="fas fa-shield-alt" style="color: var(--warning); margin-right: 4px;"></i>Admin
+                                    <% } else if (currentUser && currentUser.is_partner) { %>
+                                        <i class="fas fa-handshake" style="color: var(--success); margin-right: 4px;"></i>Partner
                                     <% } else { %>
                                         <i class="fas fa-graduation-cap" style="color: var(--primary-600); margin-right: 4px;"></i>Öğrenci
                                     <% } %>
@@ -480,20 +556,53 @@
                         
                         <!-- User Quick Actions -->
                         <% if (currentUser && currentUser.is_admin) { %>
-                            <a href="/admin/dashboard" style="display: block; background: #ffffff; color: var(--primary-600); border: 1px solid var(--primary-600); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-size: 0.875rem; font-weight: 600; text-align: center; margin-bottom: 8px;">
-                                <i class="fas fa-tachometer-alt me-2"></i>Admin Paneli
+                            <a href="/admin/dashboard" class="mobile-admin-btn">
+                                <i class="fas fa-tachometer-alt"></i>
+                                Admin Paneli
+                            </a>
+                            <a href="/admin/logout" class="mobile-logout-btn">
+                                <i class="fas fa-sign-out-alt"></i>
+                                ÇIKIŞ YAP
+                            </a>
+                        <% } else if (currentUser && currentUser.is_partner) { %>
+                            <a href="/partner/dashboard" class="mobile-admin-btn">
+                                <i class="fas fa-handshake"></i>
+                                Partner Paneli
+                            </a>
+                            <a href="#" onclick="partnerLogout(); return false;" class="mobile-logout-btn">
+                                <i class="fas fa-sign-out-alt"></i>
+                                ÇIKIŞ YAP
                             </a>
                         <% } else { %>
-                            <a href="/user/dashboard" style="display: block; background: #ffffff; color: var(--primary-600); border: 1px solid var(--primary-600); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-size: 0.875rem; font-weight: 600; text-align: center; margin-bottom: 8px;">
-                                <i class="fas fa-user me-2"></i>Profilim
+                            <a href="/user/dashboard" class="mobile-admin-btn">
+                                <i class="fas fa-user"></i>
+                                Profilim
                             </a>
-                        <% } %>
-                        <!-- ÇIKIŞ YAP BUTONU -->
                         <a href="/admin/logout" class="mobile-logout-btn">
                             <i class="fas fa-sign-out-alt"></i>
                             ÇIKIŞ YAP
                         </a>
+                        <% } %>
                         <style>
+                            .mobile-admin-btn {
+                                display: flex !important;
+                                align-items: center !important;
+                                justify-content: center !important;
+                                gap: 10px !important;
+                                background-color: #ffffff !important;
+                                color: var(--primary-600) !important;
+                                padding: 12px 20px !important;
+                                border-radius: 8px !important;
+                                text-decoration: none !important;
+                                font-size: 14px !important;
+                                font-weight: 600 !important;
+                                text-align: center !important;
+                                border: 2px solid var(--primary-600) !important;
+                                margin-bottom: 8px !important;
+                            }
+                            .mobile-admin-btn i {
+                                font-size: 16px !important;
+                            }
                             .mobile-logout-btn {
                                 display: flex !important;
                                 align-items: center !important;
@@ -501,20 +610,34 @@
                                 gap: 10px !important;
                                 background-color: #fecaca !important;
                                 color: #000000 !important;
-                                padding: 14px 20px !important;
+                                padding: 12px 20px !important;
                                 border-radius: 8px !important;
                                 text-decoration: none !important;
-                                font-size: 16px !important;
-                                font-weight: 800 !important;
+                                font-size: 14px !important;
+                                font-weight: 600 !important;
                                 text-align: center !important;
                                 border: 2px solid #dc2626 !important;
-                                letter-spacing: 0.5px !important;
                             }
                             .mobile-logout-btn i {
                                 color: #000000 !important;
-                                font-size: 18px !important;
+                                font-size: 16px !important;
                             }
                         </style>
+                        
+                        <!-- Dil Seçimi - Admin/Çıkış butonlarının hemen altında -->
+                        <div style="margin-top: 12px;">
+                            <small style="color: var(--gray-600); display: block; margin-bottom: 0.5rem; font-size: 0.75rem;">
+                                <i class="fas fa-globe" style="margin-right: 4px;"></i>Dil Seçimi
+                            </small>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <a href="/change-language/tr" style="flex: 1; padding: 0.5rem; border-radius: 6px; text-decoration: none; text-align: center; font-size: 0.8rem; font-weight: 600; <%= currentLanguage === 'tr' ? 'background: var(--primary-50); border: 1px solid var(--primary-600); color: #0f172a;' : 'background: #ffffff; border: 1px solid var(--gray-300); color: #0f172a;' %>">
+                                    🇹🇷 Türkçe
+                                </a>
+                                <a href="/change-language/en" style="flex: 1; padding: 0.5rem; border-radius: 6px; text-decoration: none; text-align: center; font-size: 0.8rem; font-weight: 600; <%= currentLanguage === 'en' ? 'background: var(--primary-50); border: 1px solid var(--primary-600); color: #0f172a;' : 'background: #ffffff; border: 1px solid var(--gray-300); color: #0f172a;' %>">
+                                    🇬🇧 English
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 <% } %>
 
@@ -536,11 +659,22 @@
                                 <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.universities : 'Üniversiteler' %></span>
                             </a>
                         </li>
-                        
+                        <li>
+                            <a href="/services" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                <i class="fas fa-briefcase" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.ourServices : 'Hizmetlerimiz' %></span>
+                            </a>
+                        </li>
                         <li>
                             <a href="/contact" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
                                 <i class="fas fa-envelope" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
                                 <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.contact : 'İletişim' %></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/career" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                <i class="fas fa-user-tie" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.career : 'Kariyer' %></span>
                             </a>
                         </li>
                                 </ul>
@@ -562,31 +696,14 @@
                         </li>
                         <li>
                             <a href="/media" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                <i class="fas fa-bullhorn" style="width: 20px; margin-right: 12px; color: #8b5cf6;"></i>
+                                <i class="fas fa-bullhorn" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
                                 <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.media : 'Medyada Biz' %></span>
                             </a>
                         </li>
                         <li>
                             <a href="/blog" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                <i class="fas fa-blog" style="width: 20px; margin-right: 12px; color: #10b981;"></i>
+                                <i class="fas fa-blog" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
                                 <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.nav) ? (t.nav.blog || 'Blog') : 'Blog' %></span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Services Section -->
-                <div style="border-bottom: 1px solid var(--gray-200);">
-                    <div style="background: var(--gray-50); padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--gray-200);">
-                        <small style="color: var(--gray-600); font-weight: 600; text-transform: uppercase; font-size: 0.75rem;">
-                            <i class="fas fa-briefcase" style="margin-right: 6px;"></i><%= (typeof t !== 'undefined' && t.nav) ? t.nav.services : 'Hizmetler' %>
-                        </small>
-                    </div>
-                    <ul style="list-style: none; margin: 0; padding: 0;">
-                        <li>
-                            <a href="/services" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                <i class="fas fa-briefcase" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
-                                <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.ourServices : 'Hizmetlerimiz' %></span>
                             </a>
                         </li>
                     </ul>
@@ -642,6 +759,12 @@
                                 <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.countries) ? t.countries.hungary : 'Macaristan' %></span>
                             </a>
                         </li>
+                        <li>
+                            <a href="/student-life/netherlands" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                <span style="width: 20px; margin-right: 12px; font-size: 1.2rem;">🇳🇱</span>
+                                <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.countries) ? t.countries.netherlands : 'Hollanda' %></span>
+                            </a>
+                        </li>
                     </ul>
                         </div>
 
@@ -654,27 +777,21 @@
                     </div>
                     <ul style="list-style: none; margin: 0; padding: 0;">
                         <li>
-                            <a href="/partners/kanpus" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                <img src="/images/partners/kanpus/kanpus-logo.webp" alt="Kanpus" style="height: 20px; width: auto; margin-right: 12px; object-fit: contain;">
-                                <span style="font-size: 0.9rem; font-weight: 500;">Kanpus</span>
-                            </a>
-                        </li>
-                        <li>
                             <a href="/partners/wcep" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
                                 <img src="/images/partners/wcep/wcep-logo.png" alt="WCEP" style="height: 20px; width: auto; margin-right: 12px; object-fit: contain;">
                                 <span style="font-size: 0.9rem; font-weight: 500;">WCEP</span>
                             </a>
                         </li>
                         <li>
-                            <a href="/partners/medczech" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                <img src="/images/partners/medczech/medczech-logo.png" alt="MedCzech" style="height: 20px; width: auto; margin-right: 12px; object-fit: contain;">
-                                <span style="font-size: 0.9rem; font-weight: 500;">MedCzech</span>
+                            <a href="/partners/kanpus" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                <img src="/images/partners/kanpus/kanpus-logo.webp" alt="Kanpus" style="height: 20px; width: auto; margin-right: 12px; object-fit: contain;">
+                                <span style="font-size: 0.9rem; font-weight: 500;">Kanpus</span>
                             </a>
                         </li>
                         <li>
-                            <a href="/partners/bestschool" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                <i class="fas fa-school" style="width: 20px; margin-right: 12px; color: #059669;"></i>
-                                <span style="font-size: 0.9rem; font-weight: 500;">BestSchool.cz</span>
+                            <a href="/partners/medczech" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                <img src="/images/partners/medczech/medczech-logo.png" alt="MedCzech" style="height: 20px; width: auto; margin-right: 12px; object-fit: contain;">
+                                <span style="font-size: 0.9rem; font-weight: 500;">MedCzech</span>
                             </a>
                         </li>
                     </ul>
@@ -712,18 +829,34 @@
                                         <span style="font-size: 0.9rem; font-weight: 500;">Başvurular</span>
                                     </a>
                                 </li>
+                                <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
                                 <li>
                                     <a href="/admin/partners" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
                                         <i class="fas fa-handshake" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
                                         <span style="font-size: 0.9rem; font-weight: 500;">Partnerler</span>
                                     </a>
                                 </li>
+                                <% } %>
                                 <li>
                                     <a href="/admin/universities" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
                                         <i class="fas fa-university" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
                                         <span style="font-size: 0.9rem; font-weight: 500;">Üniversiteler</span>
                                     </a>
                                 </li>
+                                <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
+                                <li>
+                                    <a href="/admin/backups" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                        <i class="fas fa-database" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 500;">Yedekleme</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/admin/admins" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                        <i class="fas fa-user-shield" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 500;">Adminler</span>
+                                    </a>
+                                </li>
+                                <% } %>
                             <% } else { %>
                                 <li>
                                     <a href="/user/dashboard" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
@@ -760,57 +893,6 @@
                     </div>
                 <% } %>
 
-                <!-- Footer Actions -->
-                <div style="background: #fff; border-top: 1px solid var(--gray-200); padding: 1.25rem; margin-top: auto;">
-                    <!-- Language Selector -->
-                    <div style="margin-bottom: 1rem;">
-                        <small style="color: var(--gray-600); display: block; margin-bottom: 0.5rem; font-size: 0.75rem;">
-                            <i class="fas fa-globe" style="margin-right: 4px;"></i>Dil Seçimi
-                        </small>
-                        <div style="display: flex; gap: 0.5rem;">
-                            <a href="/change-language/tr" style="flex: 1; padding: 0.5rem; border-radius: 6px; text-decoration: none; text-align: center; font-size: 0.8rem; font-weight: 600; <%= currentLanguage === 'tr' ? 'background: var(--primary-50); border: 1px solid var(--primary-600); color: #0f172a;' : 'background: #ffffff; border: 1px solid var(--gray-300); color: #0f172a;' %>">
-                                🇹🇷 Türkçe
-                            </a>
-                            <a href="/change-language/en" style="flex: 1; padding: 0.5rem; border-radius: 6px; text-decoration: none; text-align: center; font-size: 0.8rem; font-weight: 600; <%= currentLanguage === 'en' ? 'background: var(--primary-50); border: 1px solid var(--primary-600); color: #0f172a;' : 'background: #ffffff; border: 1px solid var(--gray-300); color: #0f172a;' %>">
-                                🇬🇧 English
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Auth Buttons - Sadece giriş yapmamışsa göster -->
-                    <% if (typeof isLoggedIn === 'undefined' || isLoggedIn !== true) { %>
-                    <div style="padding: 1rem; border-top: 1px solid #e5e7eb; background: #f9fafb;">
-                        <a href="/login" style="display: block; background: #ffffff; color: #1e40af; border: 2px solid #2563eb; padding: 14px; border-radius: 8px; font-weight: 600; text-decoration: none; text-align: center; margin-bottom: 8px;">
-                            <i class="fas fa-sign-in-alt" style="margin-right: 8px;"></i>Giriş Yap
-                        </a>
-                        <a href="/register" class="mobile-register-btn">
-                            <i class="fas fa-user-plus"></i>
-                            KAYIT OL
-                        </a>
-                        <style>
-                            .mobile-register-btn {
-                                display: flex !important;
-                                align-items: center !important;
-                                justify-content: center !important;
-                                gap: 10px !important;
-                                background-color: #dbeafe !important;
-                                color: #000000 !important;
-                                padding: 14px 20px !important;
-                                border-radius: 8px !important;
-                                text-decoration: none !important;
-                                font-size: 16px !important;
-                                font-weight: 700 !important;
-                                text-align: center !important;
-                                border: 2px solid #2563eb !important;
-                            }
-                            .mobile-register-btn i {
-                                color: #000000 !important;
-                                font-size: 16px !important;
-                            }
-                        </style>
-                    </div>
-                    <% } %>
-                </div>
             </nav>
         </div>
     </div>
@@ -823,13 +905,13 @@
     <!-- SEO-Optimized Hidden Content (Screen Reader Accessible) -->
     <div class="sr-only seo-content" aria-hidden="false">
         <h2>Venture Global - Yurt Dışı Eğitim Danışmanlığı</h2>
-        <p>Venture Global olarak yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı, yurt dışı dil okulu danışmanlığı ve Avrupa eğitim danışmanlığı hizmetleri sunuyoruz. Almanya, Çekya, İtalya, Avusturya, İngiltere, Polonya ve Macaristan'da üniversite eğitimi için profesyonel danışmanlık hizmeti veriyoruz.</p>
+        <p>Venture Global olarak yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı, yurt dışı dil okulu danışmanlığı ve Avrupa eğitim danışmanlığı hizmetleri sunuyoruz. Almanya, Çekya, İtalya, Avusturya, İngiltere, Polonya, Macaristan ve Hollanda'da üniversite eğitimi için profesyonel danışmanlık hizmeti veriyoruz.</p>
         <h3>Yurt Dışı Danışmanlık Hizmetleri</h3>
         <p>Venture Global yurt dışı danışmanlık alanında uzman ekibimiz ile üniversite başvuru süreçlerinizde yanınızdayız. Yurt dışı eğitim danışmanlığı konusunda deneyimli danışmanlarımız, size en uygun üniversite ve programı bulmanızda yardımcı olur.</p>
         <h3>Yurt Dışı Dil Okulu Danışmanlığı</h3>
         <p>Yurt dışı dil okulu danışmanlığı hizmetimiz ile İngilizce, Almanca, İtalyanca ve diğer dilleri öğrenmek için en uygun dil okullarını seçmenize yardımcı oluyoruz. Avrupa eğitim danışmanlığı kapsamında dil eğitimi programları sunuyoruz.</p>
         <h3>Avrupa Eğitim Danışmanlığı</h3>
-        <p>Avrupa eğitim danışmanlığı alanında lider firmalardan biri olan Venture Global, 7 ülkede 50+ üniversite ile çalışmaktadır. Yurt dışı üniversite başvuru süreçlerinizde profesyonel destek sağlıyoruz.</p>
+        <p>Avrupa eğitim danışmanlığı alanında lider firmalardan biri olan Venture Global, 8 ülkede 50+ üniversite ile çalışmaktadır. Yurt dışı üniversite başvuru süreçlerinizde profesyonel destek sağlıyoruz.</p>
         <ul>
             <li>Yurt dışı danışmanlık hizmetleri</li>
             <li>Yurt dışı eğitim danışmanlığı</li>
@@ -888,15 +970,67 @@
                     </div>
                     
                     <!-- Social Media -->
-                    <div class="d-flex gap-3 mt-4">
-                        <a href="https://www.instagram.com/ventureglobal/" target="_blank" rel="noopener" class="text-white-50 text-decoration-none"><i class="fab fa-instagram"></i></a>
-                        <a href="https://www.linkedin.com/company/104334371/admin/dashboard/" target="_blank" rel="noopener" class="text-white-50 text-decoration-none"><i class="fab fa-linkedin-in"></i></a>
+                    <div class="d-flex gap-3 mt-4" style="position: relative; z-index: 100;">
+                        <a href="https://www.instagram.com/ventureglobal/" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 8px; color: white; font-size: 1.2rem; text-decoration: none; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.linkedin.com/company/venture-global-consultancy-start-up/" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 8px; color: white; font-size: 1.2rem; text-decoration: none; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://www.youtube.com/@VentureGlobal/shorts" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 8px; color: white; font-size: 1.2rem; text-decoration: none; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Payment Methods & Powered By Section -->
+            <div class="border-top border-white-25 pt-4 mt-4">
+                <div class="row align-items-center mb-4">
+                    <!-- Payment Methods -->
+                    <div class="col-md-8 mb-3 mb-md-0">
+                        <div class="d-flex flex-wrap align-items-center gap-3">
+                            <div class="d-flex align-items-center">
+                                <small class="text-white-50 me-3" style="font-size: 11px;">Ödeme Yöntemleri</small>
+                                <span class="badge bg-warning text-dark" style="font-size: 9px; padding: 4px 10px; border-radius: 12px; font-weight: 600;">Çok Yakında</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2" style="opacity: 0.6;">
+                                <!-- Stripe -->
+                                <div style="background: #fff; padding: 6px 10px; border-radius: 6px; display: flex; align-items: center; justify-content: center; height: 32px;">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" style="height: 16px; width: auto;">
+                                </div>
+                                <!-- Visa -->
+                                <div style="background: #fff; padding: 6px 10px; border-radius: 6px; display: flex; align-items: center; justify-content: center; height: 32px;">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" style="height: 14px; width: auto;">
+                                </div>
+                                <!-- Mastercard -->
+                                <div style="background: #fff; padding: 6px 10px; border-radius: 6px; display: flex; align-items: center; justify-content: center; height: 32px;">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" style="height: 20px; width: auto;">
+                                </div>
+                                <!-- Amex -->
+                                <div style="background: #006FCF; padding: 6px 10px; border-radius: 6px; display: flex; align-items: center; justify-content: center; height: 32px;">
+                                    <span style="color: #fff; font-weight: 700; font-size: 11px; letter-spacing: -0.5px;">AMEX</span>
+                                </div>
+                                <!-- Apple Pay -->
+                                <div style="background: #000; padding: 6px 10px; border-radius: 6px; display: flex; align-items: center; justify-content: center; height: 32px;">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b0/Apple_Pay_logo.svg" alt="Apple Pay" style="height: 18px; width: auto; filter: brightness(0) invert(1);">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Powered By Google & Oracle -->
+                    <div class="col-md-4 text-md-end">
+                        <div class="d-flex flex-column align-items-md-end gap-2">
+                            <div class="d-flex align-items-center gap-2">
+                                <small class="text-white-50" style="font-size: 11px;">Powered by</small>
+                                <div style="background: #fff; padding: 6px 12px; border-radius: 6px; display: inline-flex; align-items: center;">
+                                    <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google" style="height: 18px; width: auto;">
+                                </div>
+                                <div style="background: #fff; padding: 6px 12px; border-radius: 6px; display: inline-flex; align-items: center;">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/50/Oracle_logo.svg" alt="Oracle" style="height: 16px; width: auto;">
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             
             <!-- Footer Bottom -->
-            <div class="border-top border-white-25 pt-4 mt-4">
+            <div class="border-top border-white-25 pt-4 mt-3">
                 <div class="row align-items-center">
                     <div class="col-md-6">
                         <small class="text-white-50">&copy; 2024 Venture Global. Tüm hakları saklıdır.</small>
@@ -913,9 +1047,33 @@
         </div>
     </footer>
 
+    <!-- Swiper Slider JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    
     <!-- Bootstrap 5 JS - Load with defer for better performance -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
     <script src="/js/main.js?v=20241126-premium-popup-redesign"></script>
+    
+    <!-- Partner Logout Function -->
+    <script>
+        function partnerLogout() {
+            fetch('/api/auth/partner-logout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include'
+            })
+            .then(response => response.json())
+            .then(data => {
+                window.location.href = '/login';
+            })
+            .catch(error => {
+                console.error('Logout error:', error);
+                document.cookie = 'partnerToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                window.location.href = '/login';
+            });
+        }
+    </script>
+    
     
     <script>
         // Prevent multiple initializations
@@ -1318,57 +1476,70 @@
         }
     </script>
 
-    <!-- Cookie Consent Banner -->
+    <!-- Cookie Consent Banner - Profesyonel Tasarım -->
     <div id="cookieConsent" class="cookie-consent" style="display: none;">
         <div class="cookie-content">
+            <div class="cookie-icon">
+                <i class="fas fa-cookie-bite"></i>
+            </div>
             <div class="cookie-text">
-                <i class="fas fa-cookie-bite me-2"></i>
-                <span>Bu web sitesi deneyiminizi geliştirmek için çerezleri kullanmaktadır.</span>
+                <strong>🍪 Çerez Politikası</strong>
+                <p>Size daha iyi bir deneyim sunmak için çerezleri kullanıyoruz. Çerezler, dil tercihinizi hatırlamak, oturumunuzu yönetmek ve sitemizi geliştirmek için kullanılır.</p>
             </div>
             <div class="cookie-buttons">
-                <button class="btn btn-outline-light btn-sm" onclick="declineCookies()">Reddet</button>
-                <button class="btn btn-light btn-sm" onclick="acceptCookies()">Kabul Et</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- AI Wizard Popup -->
-    <div id="aiWizardPopup" class="ai-wizard-popup" style="display: none;">
-        <div class="ai-wizard-overlay" onclick="closeAIPopup()"></div>
-        <div class="ai-wizard-modal">
-            <button class="ai-wizard-close" onclick="closeAIPopup()">
-                <i class="fas fa-times"></i>
+                <button class="btn-cookie-decline" onclick="declineCookies()">
+                    <i class="fas fa-times me-1"></i>Reddet
             </button>
-            <div class="ai-wizard-content">
-                <div class="ai-wizard-icon">
-                    <i class="fas fa-magic"></i>
-                </div>
-                <h3>Yapay Zeka Öğrenci Sihirbazı</h3>
-                <p>Size en uygun üniversiteyi bulmak için birkaç soruya cevap verin!</p>
-                <ul class="ai-features">
-                    <li><i class="fas fa-check-circle"></i> Kişiselleştirilmiş öneri</li>
-                    <li><i class="fas fa-check-circle"></i> 7 Avrupa ülkesi</li>
-                    <li><i class="fas fa-check-circle"></i> 50+ üniversite</li>
-                </ul>
-                <a href="/student-wizard" class="btn btn-ai-start">
-                    <i class="fas fa-rocket me-2"></i>Hemen Başla
-                </a>
+                <button class="btn-cookie-accept" onclick="acceptCookies()">
+                    <i class="fas fa-check me-1"></i>Kabul Et
+                </button>
             </div>
         </div>
     </div>
 
     <style>
-    /* Cookie Consent */
+    /* Cookie Consent - Modern Tasarım */
     .cookie-consent {
         position: fixed;
         bottom: 0;
         left: 0;
         right: 0;
-        background: linear-gradient(135deg, #0056b3, #004494);
+        background: linear-gradient(135deg, #1e3a5f, #0d2137);
         color: white;
-        padding: 15px 20px;
+        padding: 20px;
         z-index: 99999;
-        box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
+        box-shadow: 0 -5px 30px rgba(0,0,0,0.3);
+        border-top: 3px solid #3b82f6;
+    }
+    
+    .cookie-consent.cookie-slide-in {
+        animation: slideInUp 0.4s ease-out;
+    }
+    
+    .cookie-consent.cookie-slide-out {
+        animation: slideOutDown 0.3s ease-in forwards;
+    }
+    
+    @keyframes slideInUp {
+        from {
+            transform: translateY(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes slideOutDown {
+        from {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateY(100%);
+            opacity: 0;
+        }
     }
     
     .cookie-content {
@@ -1376,238 +1547,223 @@
         margin: 0 auto;
         display: flex;
         align-items: center;
-        justify-content: space-between;
         gap: 20px;
         flex-wrap: wrap;
     }
     
-    .cookie-text {
-        display: flex;
-        align-items: center;
-        font-size: 0.95rem;
+    .cookie-icon {
+        font-size: 2.5rem;
+        color: #fbbf24;
+        animation: cookieBounce 2s infinite;
+    }
+    
+    @keyframes cookieBounce {
+        0%, 100% { transform: rotate(0deg); }
+        25% { transform: rotate(-10deg); }
+        75% { transform: rotate(10deg); }
+    }
+    
+        .cookie-text {
+        flex: 1;
+        min-width: 250px;
+        }
+    
+    .cookie-text strong {
+        display: block;
+        font-size: 1.1rem;
+        margin-bottom: 5px;
+    }
+    
+    .cookie-text p {
+        margin: 0;
+        font-size: 0.9rem;
+        opacity: 0.9;
+        line-height: 1.5;
     }
     
     .cookie-buttons {
         display: flex;
-        gap: 10px;
+        gap: 12px;
+        flex-shrink: 0;
     }
     
-    @media (max-width: 576px) {
+    .btn-cookie-decline {
+        background: transparent;
+        color: white;
+        border: 2px solid rgba(255,255,255,0.4);
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        }
+    
+    .btn-cookie-decline:hover {
+        background: rgba(255,255,255,0.1);
+        border-color: rgba(255,255,255,0.6);
+    }
+    
+    .btn-cookie-accept {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        border: none;
+        padding: 12px 28px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    }
+    
+    .btn-cookie-accept:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    }
+    
+    @media (max-width: 768px) {
         .cookie-content {
             flex-direction: column;
-            text-align: center;
-        }
-        .cookie-text {
-            flex-direction: column;
-            gap: 5px;
-        }
-    }
-    
-    /* AI Wizard Popup */
-    .ai-wizard-popup {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 999999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .ai-wizard-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0,0,0,0.6);
-        backdrop-filter: blur(5px);
-    }
-    
-    .ai-wizard-modal {
-        position: relative;
-        background: white;
-        border-radius: 20px;
-        padding: 40px;
-        max-width: 450px;
-        width: 90%;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        animation: popupSlideIn 0.4s ease;
-    }
-    
-    @keyframes popupSlideIn {
-        from {
-            opacity: 0;
-            transform: scale(0.8) translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: scale(1) translateY(0);
-        }
-    }
-    
-    .ai-wizard-close {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        background: #f0f0f0;
-        border: none;
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-        cursor: pointer;
-        font-size: 1rem;
-        color: #666;
-        transition: all 0.3s ease;
-    }
-    
-    .ai-wizard-close:hover {
-        background: #e0e0e0;
-        color: #333;
-    }
-    
-    .ai-wizard-content {
         text-align: center;
     }
     
-    .ai-wizard-icon {
-        width: 80px;
-        height: 80px;
-        background: linear-gradient(135deg, #0056b3, #28a745);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 20px;
+        .cookie-icon {
         font-size: 2rem;
-        color: white;
-        animation: pulse 2s infinite;
-    }
-    
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-    }
-    
-    .ai-wizard-content h3 {
-        color: #0056b3;
-        margin-bottom: 10px;
-        font-weight: 700;
-    }
-    
-    .ai-wizard-content p {
-        color: #666;
-        margin-bottom: 20px;
-    }
-    
-    .ai-features {
-        list-style: none;
-        padding: 0;
-        margin: 0 0 25px 0;
-        text-align: left;
-    }
-    
-    .ai-features li {
-        padding: 8px 0;
-        color: #444;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    
-    .ai-features li i {
-        color: #28a745;
-    }
-    
-    .btn-ai-start {
-        background: linear-gradient(135deg, #0056b3, #28a745);
-        color: white;
-        padding: 15px 40px;
-        border-radius: 50px;
-        font-weight: 600;
-        font-size: 1.1rem;
-        display: inline-block;
-        text-decoration: none;
-        transition: all 0.3s ease;
-    }
-    
-    .btn-ai-start:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 30px rgba(0,86,179,0.3);
-        color: white;
-    }
-    
-    @media (max-width: 576px) {
-        .ai-wizard-modal {
-            padding: 30px 20px;
         }
-        .ai-wizard-icon {
-            width: 60px;
-            height: 60px;
-            font-size: 1.5rem;
-        }
-        .ai-wizard-content h3 {
-            font-size: 1.2rem;
-        }
+        
+        .cookie-text {
+            min-width: auto;
+    }
+    
+        .cookie-buttons {
+            width: 100%;
+            justify-content: center;
+    }
+    
+        .btn-cookie-decline,
+        .btn-cookie-accept {
+            flex: 1;
+            max-width: 150px;
+    }
     }
     </style>
 
+
+    <style>
+    </style>
+
     <script>
-    // Cookie Consent - Kabul veya reddedilene kadar her zaman göster
+    // ===== ÇEREZ YÖNETİM SİSTEMİ =====
+    // Çerezler şunlar için kullanılır:
+    // 1. Oturum yönetimi (giriş durumu)
+    // 2. Dil tercihi
+    // 3. Kullanıcı deneyimi tercihleri
+    // 4. Analytics (kabul edilirse)
+    
+    // Çerez Consent - Kabul veya reddedilene kadar göster
     function showCookieConsent() {
-        const cookieChoice = localStorage.getItem('cookieChoice'); // 'accepted' veya 'declined'
+        const cookieChoice = localStorage.getItem('cookieChoice');
         
-        // Eğer daha önce bir seçim yapılmışsa gösterme
-        if (cookieChoice) return;
-        
-        // Seçim yapılmamışsa her zaman göster
-        setTimeout(() => {
-            document.getElementById('cookieConsent').style.display = 'block';
-        }, 500);
+        // Seçim yapılmamışsa göster
+        if (!cookieChoice) {
+            setTimeout(() => {
+                const banner = document.getElementById('cookieConsent');
+                if (banner) {
+                    banner.style.display = 'block';
+                    banner.classList.add('cookie-slide-in');
+                }
+            }, 1000);
+        }
     }
     
     function acceptCookies() {
         localStorage.setItem('cookieChoice', 'accepted');
-        document.getElementById('cookieConsent').style.display = 'none';
+        localStorage.setItem('cookieChoiceDate', new Date().toISOString());
+        
+        // Analytics çerezlerini etkinleştir
+        enableAnalytics();
+        
+        // Banner'ı kapat
+        const banner = document.getElementById('cookieConsent');
+        if (banner) {
+            banner.classList.add('cookie-slide-out');
+        setTimeout(() => {
+                banner.style.display = 'none';
+            }, 300);
+    }
+    
+        console.log('✅ Çerezler kabul edildi - Analytics aktif');
     }
     
     function declineCookies() {
         localStorage.setItem('cookieChoice', 'declined');
-        document.getElementById('cookieConsent').style.display = 'none';
-    }
-    
-    // AI Wizard Popup
-    function showAIPopup() {
-        const today = new Date().toDateString();
-        const lastShown = localStorage.getItem('aiPopupShown');
-        const currentPath = window.location.pathname;
+        localStorage.setItem('cookieChoiceDate', new Date().toISOString());
         
-        // Sihirbaz sayfasında, login sayfasında veya admin sayfalarında gösterme
-        if (currentPath.includes('wizard') || currentPath.includes('login') || 
-            currentPath.includes('admin') || currentPath.includes('user') ||
-            currentPath.includes('partner') || currentPath.includes('register')) {
-            return;
-        }
+        // Sadece gerekli çerezleri tut
+        disableAnalytics();
         
-        // Günde bir kez göster
-        if (lastShown !== today) {
+        // Banner'ı kapat
+        const banner = document.getElementById('cookieConsent');
+        if (banner) {
+            banner.classList.add('cookie-slide-out');
             setTimeout(() => {
-                document.getElementById('aiWizardPopup').style.display = 'flex';
-            }, 3000); // 3 saniye sonra göster
-            localStorage.setItem('aiPopupShown', today);
+                banner.style.display = 'none';
+            }, 300);
+        }
+        
+        console.log('❌ Çerezler reddedildi - Sadece gerekli çerezler aktif');
+    }
+    
+    // Analytics etkinleştir (Google Analytics 4)
+    function enableAnalytics() {
+        // GA4 için - loadGoogleAnalytics fonksiyonunu çağır
+        if (typeof loadGoogleAnalytics === 'function') {
+            loadGoogleAnalytics();
+        }
+        
+        // GA disable flag'ini kaldır
+        if (window.GA_MEASUREMENT_ID) {
+            window['ga-disable-' + window.GA_MEASUREMENT_ID] = false;
+        }
+        
+        console.log('📊 Analytics enabled');
+    }
+    
+    // Analytics devre dışı bırak
+    function disableAnalytics() {
+        // GA4 için disable flag
+        if (window.GA_MEASUREMENT_ID) {
+            window['ga-disable-' + window.GA_MEASUREMENT_ID] = true;
+        }
+        
+        // Analytics çerezlerini temizle
+        document.cookie.split(";").forEach(function(c) {
+            const name = c.split("=")[0].trim();
+            // Analytics çerezlerini sil (_ga, _gid, _gat, _fbp vb.)
+            if (name.startsWith('_ga') || name.startsWith('_gid') || name.startsWith('_gat') || name.startsWith('_fbp')) {
+                document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=' + window.location.hostname;
+                document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
+            }
+        });
+        
+        console.log('📊 Analytics disabled');
+    }
+    
+    // Kullanıcı tercihine göre analytics yönet
+    function initCookiePreferences() {
+        const choice = localStorage.getItem('cookieChoice');
+        if (choice === 'accepted') {
+            enableAnalytics();
+        } else if (choice === 'declined') {
+            disableAnalytics();
         }
     }
     
-    function closeAIPopup() {
-        document.getElementById('aiWizardPopup').style.display = 'none';
-    }
-    
-    // Initialize on page load
+    // Sayfa yüklendiğinde
     document.addEventListener('DOMContentLoaded', function() {
+        initCookiePreferences();
         showCookieConsent();
-        showAIPopup();
     });
     </script>
 
