@@ -1305,12 +1305,12 @@ section:not(.navbar),
   background: white;
   border-right: 1px solid var(--gray-200);
   box-shadow: var(--shadow-md);
-  position: sticky;
+  position: fixed;
   top: 72px;
-  height: calc(100vh - 72px);
+  left: 0;
+  bottom: 0;
   overflow-y: auto;
   z-index: 1000;
-  flex-shrink: 0;
 }
 
 .sidebar-header {
