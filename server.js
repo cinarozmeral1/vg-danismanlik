@@ -14,7 +14,53 @@ const htmlMinifier = require('./middleware/minify');
 const nodemailer = require('nodemailer');
 const pool = require('./config/database');
 const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
 const emailService = require('./services/emailService');
+
+// Cloudinary configuration
+cloudinary.config({
+    cloud_name: 'dkhe6tjqo',
+    api_key: '373479217921793',
+    api_secret: 'GWf3lT2-xcUUPAAGRLMyT3ieyvY'
+});
+
+// Auto-run Google OAuth migration on startup
+(async function runGoogleOAuthMigration() {
+    try {
+        // Check if google_id column exists
+        const checkColumn = await pool.query(`
+            SELECT column_name FROM information_schema.columns 
+            WHERE table_name = 'users' AND column_name = 'google_id'
+        `);
+        
+        if (checkColumn.rows.length === 0) {
+            console.log('🔧 Running Google OAuth migration...');
+            
+            // Add google_id column
+            await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS google_id VARCHAR(255) UNIQUE`);
+            console.log('✅ Added google_id column');
+            
+            // Add registered_via column
+            await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS registered_via VARCHAR(50) DEFAULT 'email'`);
+            console.log('✅ Added registered_via column');
+            
+            // Add personal_info_completed column
+            await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS personal_info_completed BOOLEAN DEFAULT false`);
+            console.log('✅ Added personal_info_completed column');
+            
+            // Update existing users
+            await pool.query(`
+                UPDATE users SET personal_info_completed = true 
+                WHERE tc_number IS NOT NULL AND tc_number != '' 
+                AND phone IS NOT NULL AND phone != ''
+                AND personal_info_completed IS NULL
+            `);
+            console.log('✅ Google OAuth migration completed');
+        }
+    } catch (err) {
+        console.log('⚠️ Migration check:', err.message);
+    }
+})();
 
 // Multer configuration for file uploads
 const storage = multer.diskStorage({
@@ -280,13 +326,23 @@ app.get('/change-language/:lang', (req, res) => {
         console.log('Language changed to:', lang);
     }
     
-    // Önceki sayfaya yönlendir
-    const referer = req.get('Referer') || '/';
-    res.redirect(referer);
+    // Önceki sayfaya yönlendir - sadece kendi sitemizden geldiyse
+    const referer = req.get('Referer') || '';
+    const isInternalReferer = referer.includes('vgdanismanlik.com') || referer.includes('localhost');
+    
+    // Dış siteden gelindiyse (Google, vb.) ana sayfaya yönlendir
+    res.redirect(isInternalReferer ? referer : '/');
 });
 
 // User info middleware'ini ekle
 app.use(userInfoMiddleware);
+
+// Google OAuth Client ID middleware
+app.use((req, res, next) => {
+    res.locals.googleClientId = (process.env.GOOGLE_CLIENT_ID || '').trim();
+    res.locals.gaTrackingId = (process.env.GA_MEASUREMENT_ID || '').trim();
+    next();
+});
 
 // SEO middleware'ini ekle
 app.use(seoMiddleware);
@@ -540,6 +596,199 @@ app.post('/api/maintenance/delete-unverified', async (req, res) => {
   }
 });
 
+// Cloudinary signature endpoint for direct browser uploads
+app.get('/api/cloudinary-signature', async (req, res) => {
+    const token = req.cookies?.userToken;
+    if (!token) {
+        return res.status(401).json({ success: false, message: 'Not authenticated' });
+    }
+    
+    try {
+        const jwt = require('jsonwebtoken');
+        const JWT_SECRET = process.env.JWT_SECRET || 'venture-global-secret-key-2024';
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const userId = decoded.userId;
+        
+        if (!userId) {
+            return res.status(401).json({ success: false, message: 'Invalid token' });
+        }
+        
+        const timestamp = Math.round(new Date().getTime() / 1000);
+        const folder = `user-documents/${userId}`;
+        
+        const signature = cloudinary.utils.api_sign_request(
+            { timestamp, folder },
+            'GWf3lT2-xcUUPAAGRLMyT3ieyvY'
+        );
+        
+        res.json({
+            signature,
+            timestamp,
+            folder,
+            cloudName: 'dkhe6tjqo',
+            apiKey: '373479217921793',
+            userId: userId
+        });
+    } catch (error) {
+        console.error('Signature error:', error);
+        res.status(401).json({ success: false, message: 'Authentication failed' });
+    }
+});
+
+// Save Cloudinary file to database
+app.post('/api/save-cloudinary-file', async (req, res) => {
+    const token = req.cookies?.userToken;
+    if (!token) {
+        return res.status(401).json({ success: false, message: 'Not authenticated' });
+    }
+    
+    try {
+        const jwt = require('jsonwebtoken');
+        const JWT_SECRET = process.env.JWT_SECRET || 'venture-global-secret-key-2024';
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const userId = decoded.userId;
+        
+        if (!userId) {
+            return res.status(401).json({ success: false, message: 'Invalid token' });
+        }
+        
+        const { title, description, cloudinaryUrl, publicId, originalFilename, fileSize, mimeType } = req.body;
+        
+        if (!title || !cloudinaryUrl) {
+            return res.status(400).json({ success: false, message: 'Title and URL required' });
+        }
+        
+        const result = await pool.query(
+            `INSERT INTO user_documents 
+            (user_id, title, description, file_path, original_filename, file_size, mime_type)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            RETURNING id`,
+            [
+                userId,
+                title,
+                description || null,
+                cloudinaryUrl,
+                originalFilename || 'file',
+                fileSize || 0,
+                mimeType || 'application/octet-stream'
+            ]
+        );
+        
+        res.json({
+            success: true,
+            message: 'Dosya başarıyla yüklendi!',
+            fileId: result.rows[0].id
+        });
+    } catch (error) {
+        console.error('Save cloudinary file error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Check table structure
+app.get('/api/check-table', async (req, res) => {
+    try {
+        const result = await pool.query(`
+            SELECT column_name, data_type, is_nullable, column_default
+            FROM information_schema.columns 
+            WHERE table_name = 'user_documents'
+            ORDER BY ordinal_position
+        `);
+        
+        const constraints = await pool.query(`
+            SELECT conname, contype, pg_get_constraintdef(oid) as definition
+            FROM pg_constraint 
+            WHERE conrelid = 'user_documents'::regclass
+        `);
+        
+        res.json({
+            columns: result.rows,
+            constraints: constraints.rows
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Database migration endpoint for user_documents table
+app.get('/api/fix-documents-table', async (req, res) => {
+    try {
+        const results = [];
+        
+        // 1. Add file_data column if not exists
+        try {
+            await pool.query(`ALTER TABLE user_documents ADD COLUMN IF NOT EXISTS file_data TEXT`);
+            results.push('✅ file_data column added');
+        } catch (e) { results.push('⚠️ file_data: ' + e.message); }
+        
+        // 2. Add uploaded_at column if not exists
+        try {
+            await pool.query(`ALTER TABLE user_documents ADD COLUMN IF NOT EXISTS uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP`);
+            results.push('✅ uploaded_at column added');
+        } catch (e) { results.push('⚠️ uploaded_at: ' + e.message); }
+        
+        // 3. Make file_path nullable
+        try {
+            await pool.query(`ALTER TABLE user_documents ALTER COLUMN file_path DROP NOT NULL`);
+            results.push('✅ file_path made nullable');
+        } catch (e) { results.push('⚠️ file_path: ' + e.message); }
+        
+        // 4. Make original_filename nullable
+        try {
+            await pool.query(`ALTER TABLE user_documents ALTER COLUMN original_filename DROP NOT NULL`);
+            results.push('✅ original_filename made nullable');
+        } catch (e) { results.push('⚠️ original_filename: ' + e.message); }
+        
+        // 5. Make file_size nullable
+        try {
+            await pool.query(`ALTER TABLE user_documents ALTER COLUMN file_size DROP NOT NULL`);
+            results.push('✅ file_size made nullable');
+        } catch (e) { results.push('⚠️ file_size: ' + e.message); }
+        
+        // 6. Make mime_type nullable
+        try {
+            await pool.query(`ALTER TABLE user_documents ALTER COLUMN mime_type DROP NOT NULL`);
+            results.push('✅ mime_type made nullable');
+        } catch (e) { results.push('⚠️ mime_type: ' + e.message); }
+        
+        // 7. Drop category NOT NULL constraint
+        try {
+            await pool.query(`ALTER TABLE user_documents ALTER COLUMN category DROP NOT NULL`);
+            results.push('✅ category NOT NULL dropped');
+        } catch (e) { results.push('⚠️ category NOT NULL: ' + e.message); }
+        
+        // 8. Drop category CHECK constraint
+        try {
+            await pool.query(`ALTER TABLE user_documents DROP CONSTRAINT IF EXISTS user_documents_category_check`);
+            results.push('✅ category CHECK constraint dropped');
+        } catch (e) { results.push('⚠️ category CHECK: ' + e.message); }
+        
+        // 9. Set default for category
+        try {
+            await pool.query(`ALTER TABLE user_documents ALTER COLUMN category SET DEFAULT 'other'`);
+            results.push('✅ category default set to other');
+        } catch (e) { results.push('⚠️ category default: ' + e.message); }
+        
+        // 10. Update existing NULL categories
+        try {
+            await pool.query(`UPDATE user_documents SET category = 'other' WHERE category IS NULL`);
+            results.push('✅ NULL categories updated to other');
+        } catch (e) { results.push('⚠️ update categories: ' + e.message); }
+        
+        res.json({ 
+            success: true, 
+            message: 'Migration completed!',
+            results: results
+        });
+    } catch (error) {
+        res.status(500).json({ 
+            success: false, 
+            message: error.message,
+            detail: error.detail
+        });
+  }
+});
+
 // Add missing columns to users table (idempotent)
 app.post('/api/maintenance/add-user-columns', async (req, res) => {
   try {
@@ -594,15 +843,19 @@ app.get('/admin/universities/edit/:id', async (req, res) => {
 
         const university = universityResult.rows[0];
 
-        // Get university departments
+        // Get university departments (sorted by sort_order, handling NULLs)
         const departmentsResult = await pool.query(`
-            SELECT id, name_tr, name_en, price, currency
+            SELECT id, name_tr, name_en, price, currency, COALESCE(sort_order, 9999) as sort_order
             FROM university_departments 
             WHERE university_id = $1 AND is_active = true
-            ORDER BY name_tr ASC
+            ORDER BY COALESCE(sort_order, 9999) ASC, name_tr ASC
         `, [universityId]);
 
+        // Attach departments to university object for consistency
+        university.departments = departmentsResult.rows || [];
+
         res.render('admin/university-edit', {
+            layout: 'admin/layout',
             title: `${university.name} Düzenle - Venture Global`,
             university: university,
             departments: departmentsResult.rows || []
@@ -642,12 +895,12 @@ app.get('/c/:id', async (req, res) => {
 
         const university = universityResult.rows[0];
 
-        // Get university departments
+        // Get university departments (sorted by sort_order, handling NULLs)
         const departmentsResult = await pool.query(`
-            SELECT id, name_tr, name_en, price, currency
+            SELECT id, name_tr, name_en, price, currency, COALESCE(sort_order, 9999) as sort_order
             FROM university_departments 
             WHERE university_id = $1 AND is_active = true
-            ORDER BY name_tr ASC
+            ORDER BY COALESCE(sort_order, 9999) ASC, name_tr ASC
         `, [universityId]);
 
         // Get university programs (empty for now)
@@ -968,12 +1221,6 @@ app.get('/sitemap.xml', async (req, res) => {
         <priority>0.7</priority>
     </url>
     <url>
-        <loc>${baseUrl}/partners/bestschool</loc>
-        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.7</priority>
-    </url>
-    <url>
         <loc>${baseUrl}/partners/kanpus</loc>
         <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
         <changefreq>monthly</changefreq>
@@ -1020,10 +1267,10 @@ app.get('/', async (req, res) => {
     try {
         // Set SEO metadata with competitive keywords - Focus on "VG Danışmanlık", "Venture Global", and "Eğitim Danışmanlığı"
         res.locals.seoTitle = 'VG Danışmanlık | Venture Global - Yurt Dışı Eğitim Danışmanlığı & Üniversite Danışmanlık';
-        res.locals.seoDescription = 'VG Danışmanlık (Venture Global) - Türkiye\'nin güvenilir eğitim danışmanlığı. Yurt dışı danışmanlık, yurt dışı üniversite danışmanlık, üniversite başvuru ve eğitim danışmanlığı hizmetleri. Almanya, Çekya, İtalya, Avusturya, İngiltere, Polonya, Macaristan\'da 50+ üniversite ile profesyonel yurt dışı eğitim danışmanlığı.';
+        res.locals.seoDescription = 'VG Danışmanlık (Venture Global) - Türkiye\'nin güvenilir eğitim danışmanlığı. Yurt dışı danışmanlık, yurt dışı üniversite danışmanlık, üniversite başvuru ve eğitim danışmanlığı hizmetleri. Almanya, Çekya, İtalya, Avusturya, İngiltere, Polonya, Macaristan, Hollanda\'da 50+ üniversite ile profesyonel yurt dışı eğitim danışmanlığı.';
         res.locals.seoKeywords = 'vg danışmanlık, venture global, vg danışmanlık yurt dışı, eğitim danışmanlığı, yurt dışı eğitim danışmanlığı, yurt dışı danışmanlık, üniversite danışmanlık, yurt dışı üniversite danışmanlık, venture global danışmanlık, yurtdışı eğitim, yurtdışı üniversite, avrupa eğitim danışmanlığı, üniversite başvurusu, yurt dışı üniversite başvuru, vize danışmanlığı, almanya üniversite, çekya üniversite, italya üniversite, avusturya üniversite, ingiltere üniversite';
         res.locals.ogTitle = 'VG Danışmanlık | Venture Global - Yurt Dışı Eğitim Danışmanlığı';
-        res.locals.ogDescription = 'VG Danışmanlık (Venture Global) ile yurt dışı eğitim danışmanlığı. Üniversite danışmanlık, yurt dışı üniversite başvuru süreçlerinde profesyonel destek. 7 ülkede 50+ üniversite.';
+        res.locals.ogDescription = 'VG Danışmanlık (Venture Global) ile yurt dışı eğitim danışmanlığı. Üniversite danışmanlık, yurt dışı üniversite başvuru süreçlerinde profesyonel destek. 8 ülkede 50+ üniversite.';
         res.locals.ogType = 'website';
         
         res.render('index', {
@@ -1047,10 +1294,10 @@ app.get('/services', (req, res) => {
 
 app.get('/about-us', (req, res) => {
     res.locals.seoTitle = 'Venture Global (VG Danışmanlık) Hakkında - Yurt Dışı Eğitim Danışmanlığı | Profesyonel Eğitim Danışmanlığı';
-    res.locals.seoDescription = 'Venture Global (VG Danışmanlık) yurt dışı eğitim danışmanlığı firması. Yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı, yurt dışı dil okulu danışmanlığı ve Avrupa eğitim danışmanlığı alanında 7 ülkede, 50+ üniversite seçeneği ile profesyonel danışmanlık hizmeti sunuyoruz.';
+    res.locals.seoDescription = 'Venture Global (VG Danışmanlık) yurt dışı eğitim danışmanlığı firması. Yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı, yurt dışı dil okulu danışmanlığı ve Avrupa eğitim danışmanlığı alanında 8 ülkede, 50+ üniversite seçeneği ile profesyonel danışmanlık hizmeti sunuyoruz.';
     res.locals.seoKeywords = 'Venture Global, vg danışmanlık, venture global danışmanlık, yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı, yurt dışı dil okulu danışmanlığı, Avrupa eğitim danışmanlığı, eğitim danışmanlığı, yurtdışı eğitim, avrupa üniversite, eğitim danışmanlığı firması, venture global eğitim';
     res.locals.ogTitle = 'Venture Global (VG Danışmanlık) - Yurt Dışı Eğitim Danışmanlığı';
-    res.locals.ogDescription = 'Venture Global (VG Danışmanlık) yurt dışı danışmanlık ve eğitim danışmanlığı firması. 7 ülkede profesyonel hizmet.';
+    res.locals.ogDescription = 'Venture Global (VG Danışmanlık) yurt dışı danışmanlık ve eğitim danışmanlığı firması. 8 ülkede profesyonel hizmet.';
     res.render('about-us', { title: res.locals.t.nav.aboutUs });
 });
 
@@ -1071,10 +1318,6 @@ app.get('/partners/medczech', (req, res) => {
     res.render('partners/medczech', { title: 'MedCzech - Venture Global' });
 });
 
-app.get('/partners/bestschool', (req, res) => {
-    res.render('partners/bestschool', { title: 'BestSchool.cz - Venture Global' });
-});
-
 app.get('/partners/kanpus', (req, res) => {
     res.render('partners/kanpus', { title: 'Kanpus - Venture Global' });
 });
@@ -1085,10 +1328,10 @@ app.get('/universities', async (req, res) => {
     try {
         // Set SEO metadata with competitive keywords
         res.locals.seoTitle = 'Üniversiteler - Yurt Dışı Üniversite Başvurusu | Venture Global Eğitim Danışmanlığı';
-        res.locals.seoDescription = 'Almanya, Çekya, İtalya, Avusturya, İngiltere, Polonya ve Macaristan\'daki prestijli üniversiteleri keşfedin. Yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı ve Avrupa eğitim danışmanlığı hizmetlerimiz ile 50+ üniversite seçeneği. Size en uygun eğitim fırsatını bulun.';
-        res.locals.seoKeywords = 'yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı, Avrupa eğitim danışmanlığı, avrupa üniversiteleri, almanya üniversiteleri, çekya üniversiteleri, italya üniversiteleri, avusturya üniversiteleri, ingiltere üniversiteleri, polonya üniversiteleri, macaristan üniversiteleri, yurtdışı üniversite başvurusu';
+        res.locals.seoDescription = 'Almanya, Çekya, İtalya, Avusturya, İngiltere, Polonya, Macaristan ve Hollanda\'daki prestijli üniversiteleri keşfedin. Yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı ve Avrupa eğitim danışmanlığı hizmetlerimiz ile 50+ üniversite seçeneği. Size en uygun eğitim fırsatını bulun.';
+        res.locals.seoKeywords = 'yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı, Avrupa eğitim danışmanlığı, avrupa üniversiteleri, almanya üniversiteleri, çekya üniversiteleri, italya üniversiteleri, avusturya üniversiteleri, ingiltere üniversiteleri, polonya üniversiteleri, macaristan üniversiteleri, hollanda üniversiteleri, yurtdışı üniversite başvurusu';
         
-        // Get all universities from database with optimized query
+        // Get all universities from database with optimized query (sorted by admin-defined sort_order)
         const universitiesResult = await pool.query(`
             SELECT 
                 u.id,
@@ -1099,13 +1342,14 @@ app.get('/universities', async (req, res) => {
                 u.logo_url,
                 u.world_ranking,
                 u.is_featured,
+                u.sort_order,
                 u.created_at,
                 COUNT(ud.id) as department_count
             FROM universities u
             LEFT JOIN university_departments ud ON u.id = ud.university_id AND ud.is_active = true
             WHERE u.is_active = true
-            GROUP BY u.id, u.name, u.name_en, u.country, u.city, u.logo_url, u.world_ranking, u.is_featured, u.created_at
-            ORDER BY u.is_featured DESC, u.name ASC
+            GROUP BY u.id, u.name, u.name_en, u.country, u.city, u.logo_url, u.world_ranking, u.is_featured, u.sort_order, u.created_at
+            ORDER BY u.sort_order ASC, u.is_featured DESC, u.name ASC
             LIMIT 50
         `);
 
@@ -1180,12 +1424,12 @@ app.get('/university/:id', async (req, res) => {
 
         const university = universityResult.rows[0];
 
-        // Get university departments (use university.id from the found university)
+        // Get university departments (sorted by sort_order, handling NULLs)
         const departmentsResult = await pool.query(`
-            SELECT id, name_tr, name_en, price, currency
+            SELECT id, name_tr, name_en, price, currency, COALESCE(sort_order, 9999) as sort_order
             FROM university_departments 
             WHERE university_id = $1 AND is_active = true
-            ORDER BY name_tr ASC
+            ORDER BY COALESCE(sort_order, 9999) ASC, name_tr ASC
         `, [university.id]);
 
         // Get university programs (empty for now)
@@ -1310,6 +1554,23 @@ app.get('/register', (req, res) => {
     res.render('register', { title: res.locals.t.auth.register.title });
 });
 
+// Google registration completion page
+app.get('/complete-google-registration', (req, res) => {
+    const googleEmail = req.cookies.google_pending_email;
+    const googleName = req.cookies.google_pending_name;
+    
+    // If no pending Google registration, redirect to login
+    if (!googleEmail) {
+        return res.redirect('/login');
+    }
+    
+    res.render('complete-google-registration', { 
+        title: res.locals.currentLanguage === 'tr' ? 'Kaydınızı Tamamlayın' : 'Complete Registration',
+        googleEmail: googleEmail,
+        googleName: googleName
+    });
+});
+
 app.get('/forgot-password', (req, res) => {
     res.render('forgot-password', { title: res.locals.t.auth.forgotPassword.title });
 });
@@ -1418,6 +1679,7 @@ app.get('/admin/dashboard', async (req, res) => {
         console.log('Applications fetched:', applicationsResult.rows.length);
 
         res.render('admin/dashboard', {
+            layout: 'admin/layout',
             title: 'Admin Panel',
             users: usersResult.rows,
             applications: applicationsResult.rows,
@@ -1449,6 +1711,7 @@ app.get('/admin/users', async (req, res) => {
         );
 
         res.render('admin/users', {
+            layout: 'admin/layout',
             title: 'Öğrenciler - Admin Panel',
             users: usersResult.rows
         });
@@ -1487,6 +1750,7 @@ app.get('/admin/users/:id/details', async (req, res) => {
         const user = userResult.rows[0];
 
         res.render('admin/student-details', {
+            layout: 'admin/layout',
             title: `${user.first_name} ${user.last_name} - Öğrenci Detayları`,
             user: user,
             currentLanguage: res.locals.currentLanguage || 'tr',
@@ -1531,6 +1795,7 @@ app.get('/admin/applications', async (req, res) => {
         `);
 
         res.render('admin/applications', {
+            layout: 'admin/layout',
             title: 'Başvurular - Admin Panel',
             applications: applicationsResult.rows,
             users: usersResult.rows
@@ -1554,6 +1819,7 @@ app.get('/admin/applications/new', async (req, res) => {
         );
 
         res.render('admin/new-application', {
+            layout: 'admin/layout',
             title: 'Yeni Başvuru - Admin Panel',
             users: usersResult.rows
         });
@@ -1588,6 +1854,7 @@ app.get('/admin/applications/:id/edit', async (req, res) => {
         }
 
         res.render('admin/edit-application', {
+            layout: 'admin/layout',
             title: 'Başvuru Düzenle - Admin Panel',
             application: applicationResult.rows[0]
         });
@@ -1654,6 +1921,7 @@ app.get('/admin/universities', async (req, res) => {
         };
 
         res.render('admin/universities', {
+            layout: 'admin/layout',
             title: 'Üniversiteler - Admin Panel',
             activePage: 'universities',
             universities: universitiesResult.rows,
@@ -1688,6 +1956,7 @@ app.get('/admin/universities/new', async (req, res) => {
         };
 
         res.render('admin/university-add', {
+            layout: 'admin/layout',
             title: 'Yeni Üniversite Ekle - Admin Panel',
             ...sidebarCounts
         });
@@ -1855,6 +2124,7 @@ app.get('/admin/programs/:id/edit', async (req, res) => {
         };
 
         res.render('admin/program-edit', {
+            layout: 'admin/layout',
             title: `${program.name} - Program Düzenle - Admin Panel`,
             program,
             ...sidebarCounts
@@ -1977,6 +2247,7 @@ app.get('/admin/universities/:id/edit', async (req, res) => {
         };
 
         res.render('admin/university-edit', {
+            layout: 'admin/layout',
             title: `${university.name} - Düzenle - Admin Panel`,
             university: university,
             ...sidebarCounts
@@ -2029,7 +2300,7 @@ app.get('/admin/universities/:id/programs/new', async (req, res) => {
         res.render('admin/program-add', {
             title: `${university.name} - Program Ekle - Admin Panel`,
             university: university,
-            layout: 'layout',
+            layout: 'admin/layout',
             ...sidebarCounts
         });
     } catch (error) {
@@ -2214,6 +2485,11 @@ app.get('/contact', (req, res) => {
     res.render('contact', { title: res.locals.t.nav.contact });
 });
 
+// Career Page Route
+app.get('/career', (req, res) => {
+    res.render('career', { title: res.locals.t.nav.career || 'Kariyer' });
+});
+
 app.get('/test-form', (req, res) => {
     res.sendFile(path.join(__dirname, 'test-form.html'));
 });
@@ -2267,6 +2543,13 @@ app.get('/student-life/poland', (req, res) => {
 app.get('/student-life/hungary', (req, res) => {
     res.render('student-life-hungary', { 
         title: res.locals.t.studentLifePage.hero.hungary.title,
+        t: res.locals.t 
+    });
+});
+
+app.get('/student-life/netherlands', (req, res) => {
+    res.render('student-life-netherlands', { 
+        title: res.locals.t.studentLifePage.hero.netherlands.title,
         t: res.locals.t 
     });
 });
@@ -3233,6 +3516,142 @@ app.post('/api/contact', async (req, res) => {
     }
 });
 
+// Career Application API Route
+const careerUpload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 3.5 * 1024 * 1024 }, // 3.5MB
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+        const ext = file.originalname.toLowerCase().split('.').pop();
+        const allowedExts = ['pdf', 'doc', 'docx'];
+        
+        if (allowedTypes.includes(file.mimetype) || allowedExts.includes(ext)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Sadece PDF, DOC ve DOCX dosyaları kabul edilmektedir.'), false);
+        }
+    }
+});
+
+app.post('/api/career-application', careerUpload.single('cvFile'), async (req, res) => {
+    try {
+        const { firstName, lastName, email, phone, description } = req.body;
+        const cvFile = req.file;
+        
+        // Validate required fields
+        if (!firstName || !lastName || !email || !phone || !description) {
+            return res.status(400).json({
+                success: false,
+                message: 'Tüm alanlar zorunludur'
+            });
+        }
+        
+        if (!cvFile) {
+            return res.status(400).json({
+                success: false,
+                message: 'CV dosyası zorunludur'
+            });
+        }
+        
+        console.log('================================');
+        console.log('📋 YENİ KARİYER BAŞVURUSU');
+        console.log('================================');
+        console.log('Ad:', firstName);
+        console.log('Soyad:', lastName);
+        console.log('E-posta:', email);
+        console.log('Telefon:', phone);
+        console.log('Açıklama:', description);
+        console.log('CV Dosyası:', cvFile.originalname, '(' + (cvFile.size / 1024 / 1024).toFixed(2) + ' MB)');
+        console.log('================================');
+        
+        // Use the email service transporter
+        const transporter = emailService.transporter;
+        
+        const mailOptions = {
+            from: process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com',
+            to: 'info@vgdanismanlik.com',
+            subject: `Yeni Kariyer Başvurusu - ${firstName} ${lastName}`,
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                    <div style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+                        <h1 style="margin: 0; font-size: 28px;">Venture Global</h1>
+                        <p style="margin: 10px 0 0 0; opacity: 0.9;">Yeni Kariyer Başvurusu</p>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
+                        <h2 style="color: #333; margin-bottom: 20px;">Bölge Temsilcisi Başvurusu</h2>
+                        
+                        <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #0078D7;">
+                            <h3 style="color: #0078D7; margin-top: 0;">Kişisel Bilgiler</h3>
+                            <p><strong>Ad Soyad:</strong> ${firstName} ${lastName}</p>
+                            <p><strong>E-posta:</strong> <a href="mailto:${email}">${email}</a></p>
+                            <p><strong>Telefon:</strong> <a href="tel:${phone}">${phone}</a></p>
+                        </div>
+                        
+                        <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #28a745;">
+                            <h3 style="color: #28a745; margin-top: 0;">CV Hakkında Açıklama</h3>
+                            <p style="white-space: pre-wrap;">${description}</p>
+                        </div>
+                        
+                        <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #ffc107;">
+                            <h3 style="color: #856404; margin-top: 0;">CV Dosyası</h3>
+                            <p><strong>Dosya Adı:</strong> ${cvFile.originalname}</p>
+                            <p><strong>Boyut:</strong> ${(cvFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                            <p><em>CV dosyası bu e-postaya eklenmiştir.</em></p>
+                        </div>
+                        
+                        <div style="margin-top: 20px; padding: 15px; background: #e7f3ff; border-radius: 8px; text-align: center;">
+                            <p style="margin: 0; color: #0056b3;">
+                                <i>Bu başvuru vgdanismanlik.com kariyer sayfasından gönderilmiştir.</i>
+                            </p>
+                            <p style="margin: 5px 0 0 0; color: #666; font-size: 12px;">
+                                Tarih: ${new Date().toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul' })}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            attachments: [
+                {
+                    filename: cvFile.originalname,
+                    content: cvFile.buffer,
+                    contentType: cvFile.mimetype
+                }
+            ]
+        };
+        
+        console.log('📧 Kariyer başvurusu e-postası gönderiliyor...');
+        const info = await transporter.sendMail(mailOptions);
+        console.log('✅ Kariyer başvurusu e-postası gönderildi:', info.messageId);
+        
+        res.json({
+            success: true,
+            message: 'Başvurunuz başarıyla gönderildi!'
+        });
+        
+    } catch (error) {
+        console.error('Kariyer başvurusu hatası:', error);
+        
+        if (error instanceof multer.MulterError) {
+            if (error.code === 'LIMIT_FILE_SIZE') {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Dosya boyutu çok büyük. Maksimum 3.5 MB yüklenebilir.'
+                });
+            }
+            return res.status(400).json({
+                success: false,
+                message: 'Dosya yükleme hatası: ' + error.message
+            });
+        }
+        
+        res.status(500).json({
+            success: false,
+            message: 'Başvuru gönderilirken bir hata oluştu. Lütfen tekrar deneyin.'
+        });
+    }
+});
+
 // API ve hata handler'ları
 app.post('/api/assessment', async (req, res) => {
     const { firstName, lastName, email, phone, currentEducation, targetCountry, targetProgram, targetLevel, budget, educationLevel, country, program } = req.body;
@@ -3292,23 +3711,194 @@ app.post('/api/assessment', async (req, res) => {
         });
     }
 });
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({
-        success: false,
-        error: 'Sunucu hatası'
+// Debug endpoint - Test registration
+app.get('/api/debug/test-register', async (req, res) => {
+    try {
+        const testEmail = 'debugtest' + Date.now() + '@test.com';
+        console.log('DEBUG: Testing registration for:', testEmail);
+        
+        // Check NOT NULL columns
+        const notNullCols = await pool.query(`
+            SELECT column_name, is_nullable, column_default 
+            FROM information_schema.columns 
+            WHERE table_name = 'users' AND is_nullable = 'NO' AND column_default IS NULL
+        `);
+        console.log('DEBUG: NOT NULL columns without defaults:', notNullCols.rows);
+        
+        res.json({
+            success: true,
+            message: 'Debug info',
+            not_null_columns: notNullCols.rows.map(c => c.column_name)
+        });
+    } catch (error) {
+        console.error('DEBUG ERROR:', error);
+        res.json({ success: false, error: error.message });
+    }
+});
+
+// Debug endpoint - Check email configuration
+app.get('/api/debug/check-email', async (req, res) => {
+    res.json({
+        success: true,
+        email_user: process.env.EMAIL_USER ? process.env.EMAIL_USER.substring(0, 5) + '***' : 'NOT SET',
+        email_pass: process.env.EMAIL_PASS ? 'SET (length: ' + process.env.EMAIL_PASS.length + ')' : 'NOT SET',
+        base_url: process.env.BASE_URL || 'NOT SET',
+        node_env: process.env.NODE_ENV || 'NOT SET'
     });
 });
-app.use((req, res) => {
-    res.status(404).render('404', { title: 'Sayfa Bulunamadı' });
-});
-// Error handling middleware
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({
+
+// Debug endpoint - Test send email directly with nodemailer
+app.get('/api/debug/test-email', async (req, res) => {
+    const nodemailer = require('nodemailer');
+    const testEmail = req.query.email;
+    
+    if (!testEmail) {
+        return res.json({ success: false, message: 'Email parametresi gerekli: ?email=test@example.com' });
+    }
+    
+    try {
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
+            }
+        });
+        
+        const info = await transporter.sendMail({
+            from: process.env.EMAIL_USER,
+            to: testEmail,
+            subject: 'Venture Global - Test Email',
+            html: `
+                <div style="font-family: Arial, sans-serif; padding: 20px;">
+                    <h2>Test Email</h2>
+                    <p>Bu bir test emailidir. ${new Date().toLocaleString('tr-TR')}</p>
+                    <p>Email servisi çalışıyor!</p>
+                </div>
+            `
+        });
+        
+        res.json({ 
+            success: true, 
+            message: 'Email gönderildi: ' + testEmail,
+            messageId: info.messageId,
+            response: info.response
+        });
+    } catch (error) {
+        res.json({ 
         success: false,
-        error: 'Sunucu hatası'
-    });
+            error: error.message, 
+            code: error.code,
+            command: error.command
+        });
+    }
+});
+
+// Debug endpoint - Check and run Google OAuth migration
+app.get('/api/debug/check-google-oauth', async (req, res) => {
+    try {
+        // Check columns
+        const columns = await pool.query(`
+            SELECT column_name, data_type, is_nullable 
+            FROM information_schema.columns 
+            WHERE table_name = 'users' 
+            ORDER BY ordinal_position
+        `);
+        
+        const googleColumns = columns.rows.filter(c => 
+            ['google_id', 'registered_via', 'personal_info_completed'].includes(c.column_name)
+        );
+        
+        // Try to run migration if columns missing
+        if (googleColumns.length < 3) {
+            try {
+                await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS google_id VARCHAR(255)`);
+                await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS registered_via VARCHAR(50) DEFAULT 'email'`);
+                await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS personal_info_completed BOOLEAN DEFAULT false`);
+            } catch (e) {
+                // Ignore errors
+            }
+        }
+        
+        // Re-check columns after migration
+        const columnsAfter = await pool.query(`
+            SELECT column_name, data_type, is_nullable 
+            FROM information_schema.columns 
+            WHERE table_name = 'users' 
+            AND column_name IN ('google_id', 'registered_via', 'personal_info_completed')
+        `);
+        
+        res.json({
+            success: true,
+            all_columns: columns.rows.map(c => c.column_name),
+            google_oauth_columns: columnsAfter.rows,
+            migration_needed: googleColumns.length < 3
+        });
+    } catch (error) {
+        res.json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+// Cron API - Blog otomatik oluşturma
+app.get('/api/cron/generate-blog', async (req, res) => {
+    console.log('🔔🔔🔔 BLOG CRON ENDPOINT CALLED 🔔🔔🔔');
+    console.log('⏰ Timestamp:', new Date().toISOString());
+    
+    // Security check - allow Vercel cron, secret, or test mode
+    const isVercelCron = req.headers['x-vercel-cron'] === '1';
+    const hasSecret = req.query.secret === process.env.CRON_SECRET;
+    const isTest = req.query.test === 'true';
+    
+    console.log('🔐 Auth check - Vercel:', isVercelCron, 'Secret:', hasSecret, 'Test:', isTest);
+    
+    // Check GROQ_API_KEY
+    if (!process.env.GROQ_API_KEY) {
+        console.error('❌ GROQ_API_KEY not configured!');
+        return res.status(500).json({
+            success: false,
+            error: 'GROQ_API_KEY not configured in environment variables'
+        });
+    }
+    
+    try {
+        const { generateBlogPost } = require('./services/blogAIService');
+        
+        console.log('📝 Starting blog generation...');
+        const startTime = Date.now();
+        
+        const post = await generateBlogPost();
+        
+        const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+        
+        console.log('✅ Blog post generated successfully');
+        console.log('📄 Title:', post.title_tr);
+        console.log('🔗 Slug:', post.slug);
+        console.log('⏱️ Duration:', duration, 'seconds');
+        
+        res.json({
+            success: true,
+            message: 'Blog post generated successfully',
+            post: {
+                id: post.id,
+                title: post.title_tr,
+                slug: post.slug,
+                url: `/blog/${post.slug}`
+            },
+            duration: `${duration}s`,
+            timestamp: new Date().toISOString()
+        });
+    } catch (error) {
+        console.error('❌ Blog generation error:', error.message);
+        console.error('❌ Error stack:', error.stack);
+        res.status(500).json({
+            success: false,
+            error: error.message,
+            timestamp: new Date().toISOString()
+        });
+    }
 });
 
 // 404 handler

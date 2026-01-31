@@ -139,27 +139,44 @@ async function ensureTablesExist() {
                 id SERIAL PRIMARY KEY,
                 user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
                 title VARCHAR(255) NOT NULL,
-                category VARCHAR(50) NOT NULL CHECK (category IN ('education', 'identity', 'language', 'other')),
+                category VARCHAR(50) DEFAULT 'other',
                 description TEXT,
-                file_path TEXT NOT NULL,
-                original_filename VARCHAR(255) NOT NULL,
-                file_size INTEGER NOT NULL,
-                mime_type VARCHAR(100) NOT NULL,
+                file_path TEXT,
+                file_data TEXT,
+                original_filename VARCHAR(255),
+                file_size INTEGER,
+                mime_type VARCHAR(100),
                 is_verified BOOLEAN DEFAULT FALSE,
                 verification_notes TEXT,
+                uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         `);
 
-        // Update existing table if file_path column is too small
-        await pool.query(`
-            ALTER TABLE user_documents 
-            ALTER COLUMN file_path TYPE TEXT
-        `).catch(err => {
-            // Ignore error if column already TEXT or doesn't exist
-            console.log('Note: file_path column update skipped (may already be TEXT)');
-        });
+        // Migration: Fix user_documents table for file uploads
+        try {
+            // Add file_data column if not exists
+            await pool.query(`ALTER TABLE user_documents ADD COLUMN IF NOT EXISTS file_data TEXT`);
+            // Add uploaded_at column if not exists  
+            await pool.query(`ALTER TABLE user_documents ADD COLUMN IF NOT EXISTS uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP`);
+            // Make file_path nullable
+            await pool.query(`ALTER TABLE user_documents ALTER COLUMN file_path DROP NOT NULL`).catch(() => {});
+            // Make original_filename nullable
+            await pool.query(`ALTER TABLE user_documents ALTER COLUMN original_filename DROP NOT NULL`).catch(() => {});
+            // Make file_size nullable
+            await pool.query(`ALTER TABLE user_documents ALTER COLUMN file_size DROP NOT NULL`).catch(() => {});
+            // Make mime_type nullable
+            await pool.query(`ALTER TABLE user_documents ALTER COLUMN mime_type DROP NOT NULL`).catch(() => {});
+            // Drop category NOT NULL constraint and CHECK constraint
+            await pool.query(`ALTER TABLE user_documents ALTER COLUMN category DROP NOT NULL`).catch(() => {});
+            await pool.query(`ALTER TABLE user_documents DROP CONSTRAINT IF EXISTS user_documents_category_check`).catch(() => {});
+            // Set default for category
+            await pool.query(`ALTER TABLE user_documents ALTER COLUMN category SET DEFAULT 'other'`).catch(() => {});
+            console.log('✅ user_documents table migration completed');
+        } catch (migrationError) {
+            console.log('Note: Some migrations skipped:', migrationError.message);
+        }
 
         // Create applications table
         await pool.query(`
@@ -297,11 +314,11 @@ const authenticateAdmin = async (req, res, next) => {
     }
 };
 
-// Helper function to get admin sidebar counts
-const getAdminSidebarCounts = async () => {
+// Helper function to get admin sidebar counts and admin role info
+const getAdminSidebarCounts = async (res = null) => {
     try {
-        // Check if tables exist first
-        const usersResult = await pool.query('SELECT COUNT(*) as count FROM users');
+        // Check if tables exist first - exclude admin users from count
+        const usersResult = await pool.query('SELECT COUNT(*) as count FROM users WHERE is_admin = false OR is_admin IS NULL');
         let applicationCount = 0;
         let universityCount = 0;
         let partnerCount = 0;
@@ -331,26 +348,34 @@ const getAdminSidebarCounts = async () => {
             console.log('ℹ️ Partners table not found, using 0');
         }
         
+        // Include admin role info from res.locals if available
+        const isSuperAdmin = res && res.locals ? res.locals.isSuperAdmin : false;
+        const isCoAdmin = res && res.locals ? res.locals.isCoAdmin : false;
+        const adminRole = res && res.locals ? res.locals.adminRole : null;
+        
         return {
             userCount: parseInt(usersResult.rows[0].count),
             applicationCount: applicationCount,
             pendingApplicationCount: applicationCount, // Pending applications count
             approvedApplicationCount: approvedApplicationCount, // Approved applications count
             universityCount: universityCount,
-            partnerCount: partnerCount
+            partnerCount: partnerCount,
+            isSuperAdmin: isSuperAdmin,
+            isCoAdmin: isCoAdmin,
+            adminRole: adminRole
         };
     } catch (error) {
         console.error('Error getting admin sidebar counts:', error);
-        return { userCount: 0, applicationCount: 0, universityCount: 0, partnerCount: 0 };
+        return { userCount: 0, applicationCount: 0, universityCount: 0, partnerCount: 0, isSuperAdmin: false, isCoAdmin: false, adminRole: null };
     }
 };
 
 // Admin dashboard route
 router.get('/dashboard', async (req, res) => {
     try {
-        // Get all users
+        // Get all users - exclude admin users
         const usersResult = await pool.query(
-            'SELECT id, first_name, last_name, email, phone, english_level, created_at, is_admin FROM users ORDER BY created_at DESC'
+            'SELECT id, first_name, last_name, email, phone, english_level, created_at, is_admin FROM users WHERE is_admin = false OR is_admin IS NULL ORDER BY created_at DESC'
         );
 
         // Get all applications (if table exists)
@@ -528,9 +553,10 @@ router.get('/dashboard', async (req, res) => {
         }
 
         // Get sidebar counts
-        const sidebarCounts = await getAdminSidebarCounts();
+        const sidebarCounts = await getAdminSidebarCounts(res);
 
         res.render('admin/dashboard', {
+            layout: 'admin/layout',
             title: 'Admin Panel',
             activePage: 'dashboard',
             users: usersResult.rows,
@@ -559,14 +585,16 @@ router.get('/dashboard', async (req, res) => {
 // Admin users page route
 router.get('/users', async (req, res) => {
     try {
+        // Exclude admin users from the list - admin is not a student
         const usersResult = await pool.query(
-            'SELECT id, first_name, last_name, email, phone, english_level, created_at, is_admin FROM users ORDER BY created_at DESC'
+            'SELECT id, first_name, last_name, email, phone, english_level, created_at, is_admin FROM users WHERE is_admin = false OR is_admin IS NULL ORDER BY created_at DESC'
         );
 
         // Get sidebar counts
-        const sidebarCounts = await getAdminSidebarCounts();
+        const sidebarCounts = await getAdminSidebarCounts(res);
 
         res.render('admin/users', {
+            layout: 'admin/layout',
             title: 'Öğrenciler - Admin Panel',
             activePage: 'users',
             users: usersResult.rows,
@@ -581,9 +609,9 @@ router.get('/users', async (req, res) => {
 // Admin applications page route
 router.get('/applications', async (req, res) => {
     try {
-        // Get all users for the modal
+        // Get all users for the modal - exclude admin users (admin cannot be selected for applications)
         const usersResult = await pool.query(
-            'SELECT id, first_name, last_name, email, phone, created_at, is_admin FROM users ORDER BY first_name, last_name'
+            'SELECT id, first_name, last_name, email, phone, created_at, is_admin FROM users WHERE is_admin = false OR is_admin IS NULL ORDER BY first_name, last_name'
         );
         
         // Check if applications table exists
@@ -597,7 +625,17 @@ router.get('/applications', async (req, res) => {
                     u.email,
                     a.university_name as university,
                     a.program_name as program,
-                    'Türkiye' as country
+                    CASE a.country
+                        WHEN 'Germany' THEN '🇩🇪 Almanya'
+                        WHEN 'Czech Republic' THEN '🇨🇿 Çekya'
+                        WHEN 'Italy' THEN '🇮🇹 İtalya'
+                        WHEN 'Austria' THEN '🇦🇹 Avusturya'
+                        WHEN 'UK' THEN '🇬🇧 İngiltere'
+                        WHEN 'Poland' THEN '🇵🇱 Polonya'
+                        WHEN 'Hungary' THEN '🇭🇺 Macaristan'
+                        WHEN 'Netherlands' THEN '🇳🇱 Hollanda'
+                        ELSE COALESCE(a.country, '-')
+                    END as country
                 FROM applications a 
                 JOIN users u ON a.user_id = u.id 
                 ORDER BY a.created_at DESC
@@ -674,9 +712,10 @@ router.get('/applications', async (req, res) => {
         }
 
         // Get sidebar counts
-        const sidebarCounts = await getAdminSidebarCounts();
+        const sidebarCounts = await getAdminSidebarCounts(res);
 
         res.render('admin/applications', {
+            layout: 'admin/layout',
             title: 'Başvurular - Admin Panel',
             activePage: 'applications',
             applications: applications,
@@ -693,15 +732,16 @@ router.get('/applications', async (req, res) => {
 // Get new application page
 router.get('/applications/new', async (req, res) => {
     try {
-        // Get all users for student selection
+        // Get all users for student selection - exclude admin users
         const usersResult = await pool.query(
-            'SELECT id, first_name, last_name, email, phone, english_level, created_at FROM users ORDER BY first_name, last_name'
+            'SELECT id, first_name, last_name, email, phone, english_level, created_at FROM users WHERE is_admin = false OR is_admin IS NULL ORDER BY first_name, last_name'
         );
         
         // Get sidebar counts
-        const sidebarCounts = await getAdminSidebarCounts();
+        const sidebarCounts = await getAdminSidebarCounts(res);
         
         res.render('admin/new-application', {
+            layout: 'admin/layout',
             title: 'Yeni Başvuru - Admin Panel',
             activePage: 'applications',
             users: usersResult.rows,
@@ -778,11 +818,11 @@ router.put('/users/:id/guardians', async (req, res) => {
     }
 });
 
-// Get all users (API)
-router.get('/users', async (req, res) => {
+// Get all users (API) - exclude admin users
+router.get('/api/users', async (req, res) => {
     try {
         const result = await pool.query(
-            'SELECT id, first_name, last_name, email, phone, english_level, created_at, is_admin FROM users ORDER BY created_at DESC'
+            'SELECT id, first_name, last_name, email, phone, english_level, created_at, is_admin FROM users WHERE is_admin = false OR is_admin IS NULL ORDER BY created_at DESC'
         );
         
         res.json({
@@ -791,6 +831,26 @@ router.get('/users', async (req, res) => {
         });
     } catch (error) {
         console.error('Get users error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// Get universities for selection dropdown (for application forms)
+router.get('/universities-for-selection', async (req, res) => {
+    try {
+        const result = await pool.query(
+            `SELECT id, name, country, city, logo_url 
+             FROM universities 
+             WHERE is_active = true 
+             ORDER BY name ASC`
+        );
+        
+        res.json({
+            success: true,
+            universities: result.rows
+        });
+    } catch (error) {
+        console.error('Get universities for selection error:', error);
         res.status(500).json({ success: false, message: 'Server error' });
     }
 });
@@ -820,11 +880,17 @@ router.get('/users/:id/details', async (req, res) => {
         }
 
         const user = userResult.rows[0];
+        
+        // Prevent viewing admin details - admin is not a student
+        if (user.is_admin) {
+            return res.redirect('/admin/users');
+        }
 
         // Get sidebar counts
-        const sidebarCounts = await getAdminSidebarCounts();
+        const sidebarCounts = await getAdminSidebarCounts(res);
 
         res.render('admin/student-details', {
+            layout: 'admin/layout',
             title: `${user.first_name} ${user.last_name} - Öğrenci Detayları`,
             activePage: 'users',
             user: user,
@@ -1019,9 +1085,10 @@ router.get('/applications/:id/edit', async (req, res) => {
         }
         
         // Get sidebar counts
-        const sidebarCounts = await getAdminSidebarCounts();
+        const sidebarCounts = await getAdminSidebarCounts(res);
         
         res.render('admin/edit-application', {
+            layout: 'admin/layout',
             title: 'Başvuru Düzenle - Admin Panel',
             activePage: 'applications',
             application: applicationResult.rows[0],
@@ -1335,6 +1402,7 @@ router.get('/universities-page', async (req, res) => {
         console.log('✅ Universities query successful, found:', universities.rows.length, 'universities');
         
         res.render('admin/universities-simple', {
+            layout: 'admin/layout',
             title: 'Universities List - Venture Global',
             universities: universities.rows,
             count: universities.rows.length
@@ -1342,6 +1410,7 @@ router.get('/universities-page', async (req, res) => {
     } catch (error) {
         console.error('❌ Simple universities page error:', error);
         res.render('admin/universities-simple', {
+            layout: 'admin/layout',
             title: 'Universities List - Venture Global',
             universities: [],
             count: 0,
@@ -1359,6 +1428,7 @@ router.get('/universities', async (req, res) => {
         
         // Check if universities table exists
         let universities = [];
+        let countries = [];
         try {
             console.log('🔍 Checking universities table...');
             const result = await pool.query(`
@@ -1372,23 +1442,30 @@ router.get('/universities', async (req, res) => {
                     u.world_ranking,
                     u.is_active,
                     u.is_featured,
+                    u.sort_order,
                     u.created_at,
                     COUNT(ud.id) as department_count
                 FROM universities u
                 LEFT JOIN university_departments ud ON u.id = ud.university_id AND ud.is_active = true
-                GROUP BY u.id, u.name, u.name_en, u.country, u.city, u.logo_url, u.world_ranking, u.is_active, u.is_featured, u.created_at
-                ORDER BY u.is_featured DESC, u.name ASC
+                GROUP BY u.id, u.name, u.name_en, u.country, u.city, u.logo_url, u.world_ranking, u.is_active, u.is_featured, u.sort_order, u.created_at
+                ORDER BY u.sort_order ASC, u.name ASC
             `);
             universities = result.rows;
             console.log('✅ Universities query successful, found:', universities.length, 'universities');
+            
+            // Get distinct countries for filter
+            const countriesResult = await pool.query(`
+                SELECT DISTINCT country FROM universities ORDER BY country ASC
+            `);
+            countries = countriesResult.rows.map(r => r.country);
         } catch (error) {
             console.log('❌ Universities table error:', error.message);
             universities = [];
+            countries = [];
         }
         
         // RENDER THE PAGE INSTEAD OF JSON
         console.log('🎨 Rendering universities template with:', universities.length, 'universities');
-        console.log('📊 Sample university:', universities[0]);
         
         // BYPASS AUTH - CREATE FAKE USER FOR TEMPLATE
         const fakeUser = {
@@ -1399,11 +1476,13 @@ router.get('/universities', async (req, res) => {
         };
         
         // Get sidebar counts
-        const sidebarCounts = await getAdminSidebarCounts();
+        const sidebarCounts = await getAdminSidebarCounts(res);
         
         res.render('admin/universities', {
+            layout: 'admin/layout',
             title: 'Universities Management',
             universities: universities,
+            countries: countries,
             user: fakeUser,
             ...sidebarCounts
         });
@@ -1412,6 +1491,7 @@ router.get('/universities', async (req, res) => {
         res.status(500).render('admin/universities', {
             title: 'Universities Management',
             universities: [],
+            countries: [],
             user: req.user,
             error: 'Server error'
         });
@@ -1422,9 +1502,10 @@ router.get('/universities', async (req, res) => {
 router.get('/universities/new', async (req, res) => {
     try {
         // Get sidebar counts
-        const sidebarCounts = await getAdminSidebarCounts();
+        const sidebarCounts = await getAdminSidebarCounts(res);
         
         res.render('admin/university-add', {
+            layout: 'admin/layout',
             title: 'Yeni Üniversite Ekle - Admin Panel',
             activePage: 'universities',
             ...sidebarCounts
@@ -1441,25 +1522,30 @@ router.get('/universities/:id/edit', async (req, res) => {
         const { id } = req.params;
         console.log('🎯 Get university edit page for ID:', id);
         
-        // Get university details with departments
+        // Get university details with departments (sorted by sort_order as integer)
         const universityResult = await pool.query(`
             SELECT 
                 u.*,
                 COALESCE(
-                    json_agg(
-                        json_build_object(
+                    (
+                        SELECT json_agg(dept ORDER BY (dept->>'sort_order')::int NULLS LAST)
+                        FROM (
+                            SELECT json_build_object(
                             'id', ud.id,
                             'name_tr', ud.name_tr,
                             'name_en', ud.name_en,
-                            'price', ud.price
-                        )
-                    ) FILTER (WHERE ud.id IS NOT NULL),
+                                'price', ud.price,
+                                'sort_order', COALESCE(ud.sort_order, 9999)
+                            ) as dept
+                            FROM university_departments ud
+                            WHERE ud.university_id = u.id AND ud.is_active = true
+                            ORDER BY COALESCE(ud.sort_order, 9999) ASC, ud.name_tr ASC
+                        ) sub
+                    ),
                     '[]'::json
                 ) as departments
             FROM universities u
-            LEFT JOIN university_departments ud ON u.id = ud.university_id AND ud.is_active = true
             WHERE u.id = $1
-            GROUP BY u.id
         `, [id]);
         
         if (universityResult.rows.length === 0) {
@@ -1474,9 +1560,10 @@ router.get('/universities/:id/edit', async (req, res) => {
         console.log('📚 Departments:', university.departments);
         
         // Get sidebar counts
-        const sidebarCounts = await getAdminSidebarCounts();
+        const sidebarCounts = await getAdminSidebarCounts(res);
         
         res.render('admin/university-edit', {
+            layout: 'admin/layout',
             title: 'Üniversite Düzenle - Admin Panel',
             university: university,
             activePage: 'universities',
@@ -1491,6 +1578,67 @@ router.get('/universities/:id/edit', async (req, res) => {
     }
 });
 
+// Update university sort order (drag-and-drop reordering)
+// IMPORTANT: This route MUST be defined BEFORE /universities/:id to avoid route conflict
+router.put('/universities/reorder', async (req, res) => {
+    try {
+        // Check authentication
+        if (!res.locals.isLoggedIn || !res.locals.isAdmin) {
+            console.log('Reorder denied - not authenticated as admin');
+            return res.status(401).json({
+                success: false,
+                message: 'Yetkilendirme hatası. Lütfen tekrar giriş yapın.'
+            });
+        }
+        
+        console.log('Reorder request received from admin:', res.locals.currentUser?.email);
+        const { order } = req.body; // Array of university IDs in order
+        
+        if (!order || !Array.isArray(order) || order.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Sıralama verisi gerekli'
+            });
+        }
+        
+        // Use transaction for atomic update
+        const client = await pool.connect();
+        try {
+            await client.query('BEGIN');
+            
+            // Update each university's sort_order based on position in array
+            for (let i = 0; i < order.length; i++) {
+                const universityId = parseInt(order[i]);
+                const sortOrder = i + 1;
+                
+                if (isNaN(universityId)) {
+                    throw new Error(`Geçersiz üniversite ID: ${order[i]}`);
+                }
+                
+                await client.query(
+                    'UPDATE universities SET sort_order = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2',
+                    [sortOrder, universityId]
+                );
+            }
+            
+            await client.query('COMMIT');
+            console.log('Reorder completed for', order.length, 'universities');
+            
+            res.json({
+                success: true,
+                message: 'Sıralama başarıyla güncellendi'
+            });
+        } catch (txError) {
+            await client.query('ROLLBACK');
+            throw txError;
+        } finally {
+            client.release();
+        }
+    } catch (error) {
+        console.error('Reorder universities error:', error);
+        res.status(500).json({ success: false, message: 'Server error: ' + error.message });
+    }
+});
 
 // Update university with logo upload support
 router.put('/universities/:id', async (req, res) => {
@@ -1577,21 +1725,24 @@ router.put('/universities/:id', async (req, res) => {
                 await pool.query('DELETE FROM university_departments WHERE university_id = $1', [id]);
                 console.log('✅ Existing departments deleted');
                 
-                // Add new departments
-                for (const dept of departments) {
+                // Add new departments with sort_order (Spotify tarzı sıralama)
+                for (let i = 0; i < departments.length; i++) {
+                    const dept = departments[i];
                     if (dept.name_tr && dept.name_en) {
+                        const sortOrder = dept.sort_order || (i + 1);
                         await pool.query(
-                            `INSERT INTO university_departments (university_id, name_tr, name_en, price, currency) 
-                             VALUES ($1, $2, $3, $4, $5)`,
+                            `INSERT INTO university_departments (university_id, name_tr, name_en, price, currency, sort_order) 
+                             VALUES ($1, $2, $3, $4, $5, $6)`,
                             [
                                 id,
                                 dept.name_tr,
                                 dept.name_en,
                                 dept.price ? parseFloat(dept.price) : null,
-                                'EUR'
+                                'EUR',
+                                sortOrder
                             ]
                         );
-                        console.log(`✅ Department updated: ${dept.name_tr}`);
+                        console.log(`✅ Department updated: ${dept.name_tr} (sıra: ${sortOrder})`);
                     }
                 }
             } catch (deptError) {
@@ -1858,23 +2009,27 @@ router.post('/universities', async (req, res) => {
         const university = universityResult.rows[0];
         console.log('✅ University created:', university);
 
-        // Add departments if provided
+        // Add departments if provided with sort_order (Spotify tarzı sıralama)
         if (departments && typeof departments === 'object') {
             console.log('📝 Adding departments:', departments);
-            for (const [key, dept] of Object.entries(departments)) {
+            const deptEntries = Object.entries(departments);
+            for (let i = 0; i < deptEntries.length; i++) {
+                const [key, dept] = deptEntries[i];
                 if (dept.name_tr && dept.name_en) {
+                    const sortOrder = dept.sort_order || (i + 1);
                     await pool.query(
-                        `INSERT INTO university_departments (university_id, name_tr, name_en, price, currency) 
-                         VALUES ($1, $2, $3, $4, $5)`,
+                        `INSERT INTO university_departments (university_id, name_tr, name_en, price, currency, sort_order) 
+                         VALUES ($1, $2, $3, $4, $5, $6)`,
                         [
                             university.id,
                             dept.name_tr,
                             dept.name_en,
                             dept.price ? parseFloat(dept.price) : null,
-                            'EUR'
+                            'EUR',
+                            sortOrder
                         ]
                     );
-                    console.log(`✅ Department added: ${dept.name_tr}`);
+                    console.log(`✅ Department added: ${dept.name_tr} (sıra: ${sortOrder})`);
                 }
             }
         }
@@ -2170,12 +2325,13 @@ router.delete('/users/:id/files/:fileId', async (req, res) => {
 router.post('/users/:id/files/upload', upload.single('file'), async (req, res) => {
     try {
         const { id } = req.params;
-        const { title, description } = req.body;
+        const { title, description, category } = req.body;
         
         console.log('📁 Admin upload request received:', { 
             userId: id, 
             title, 
             description,
+            category,
             file: req.file ? req.file.originalname : 'No file' 
         });
         
@@ -2193,6 +2349,10 @@ router.post('/users/:id/files/upload', upload.single('file'), async (req, res) =
             });
         }
 
+        // Determine category - default to 'other' if not provided
+        const validCategories = ['education', 'identity', 'language', 'other'];
+        const fileCategory = validCategories.includes(category) ? category : 'other';
+
         // Convert file buffer to Base64 for database storage
         const fileBuffer = req.file.buffer; // Memory storage provides buffer directly
         const base64Data = fileBuffer.toString('base64');
@@ -2201,10 +2361,10 @@ router.post('/users/:id/files/upload', upload.single('file'), async (req, res) =
 
         // Insert into user_documents table using file_data column
         const result = await pool.query(`
-            INSERT INTO user_documents (user_id, title, description, file_data, original_filename, file_size, mime_type)
-            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            INSERT INTO user_documents (user_id, title, description, category, file_data, original_filename, file_size, mime_type)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
             RETURNING id
-        `, [id, title, description || null, base64Data, req.file.originalname, req.file.size, req.file.mimetype]);
+        `, [id, title, description || null, fileCategory, base64Data, req.file.originalname, req.file.size, req.file.mimetype]);
 
         console.log('✅ Admin file uploaded successfully:', result.rows[0].id);
         
@@ -3451,11 +3611,11 @@ router.get('/users/:userId/file-categories', async (req, res) => {
     }
 });
 
-// File upload endpoint
-router.post('/users/:userId/files/upload', upload.single('file'), async (req, res) => {
+// File upload endpoint (alternate)
+router.post('/users/:userId/files/upload-alt', upload.single('file'), async (req, res) => {
     try {
         const { userId } = req.params;
-        const { title, description } = req.body;
+        const { title, description, category } = req.body;
         
         if (!req.file) {
             return res.status(400).json({
@@ -3463,14 +3623,18 @@ router.post('/users/:userId/files/upload', upload.single('file'), async (req, re
                 message: 'Dosya bulunamadı'
             });
         }
+
+        // Determine category - default to 'other' if not provided
+        const validCategories = ['education', 'identity', 'language', 'other'];
+        const fileCategory = validCategories.includes(category) ? category : 'other';
         
         // Convert file buffer to Base64 for database storage
         const fileBuffer = req.file.buffer;
         const base64Data = fileBuffer.toString('base64');
         
         const fileResult = await pool.query(`
-            INSERT INTO user_documents (user_id, title, original_filename, file_data, mime_type, file_size, description)
-            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            INSERT INTO user_documents (user_id, title, original_filename, file_data, mime_type, file_size, description, category)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
             RETURNING *
         `, [
             userId, 
@@ -3479,7 +3643,8 @@ router.post('/users/:userId/files/upload', upload.single('file'), async (req, re
             base64Data,
             req.file.mimetype,
             req.file.size,
-            description || ''
+            description || '',
+            fileCategory
         ]);
         
         res.json({
@@ -4035,12 +4200,17 @@ router.get('/api/financial-export', async (req, res) => {
 // YEDEKLEME SİSTEMİ - ADMIN PANEL
 // ==========================================
 
-// Yedekleme sayfası
+// Yedekleme sayfası (Sadece Super Admin)
 router.get('/backups', async (req, res) => {
     try {
-        // Admin kontrolü (res.locals'dan)
+        // Super Admin kontrolü
         if (!res.locals.isLoggedIn || !res.locals.isAdmin) {
             return res.redirect('/login');
+        }
+        
+        // Co-admin'ler bu sayfaya erişemez
+        if (res.locals.adminRole !== 'super_admin') {
+            return res.redirect('/admin/dashboard');
         }
 
         // Yedekleme bilgileri
@@ -4055,9 +4225,10 @@ router.get('/backups', async (req, res) => {
         };
 
         // Get sidebar counts
-        const sidebarCounts = await getAdminSidebarCounts();
+        const sidebarCounts = await getAdminSidebarCounts(res);
 
         res.render('admin/backups', {
+            layout: 'admin/layout',
             title: 'Yedekleme Sistemi',
             activePage: 'backups',
             currentUser: res.locals.currentUser,
@@ -4296,25 +4467,35 @@ router.get('/payments/statistics', async (req, res) => {
 });
 
 // =====================================================
-// PARTNER MANAGEMENT ROUTES
+// PARTNER MANAGEMENT ROUTES (Sadece Super Admin)
 // =====================================================
 
 // Get partners list page
 router.get('/partners', async (req, res) => {
     try {
-        const sidebarCounts = await getAdminSidebarCounts();
+        // Co-admin'ler bu sayfaya erişemez
+        if (res.locals.adminRole !== 'super_admin') {
+            return res.redirect('/admin/dashboard');
+        }
         
-        // Get all partners with correct counts using subqueries
+        const sidebarCounts = await getAdminSidebarCounts(res);
+        
+        // Get all partners with correct counts using subqueries (includes both legacy and new student_partners table)
         const partnersResult = await pool.query(`
             SELECT 
                 p.*,
-                (SELECT COUNT(*) FROM users WHERE partner_id = p.id) as student_count,
+                (SELECT COUNT(DISTINCT student_id) FROM (
+                    SELECT id as student_id FROM users WHERE partner_id = p.id
+                    UNION
+                    SELECT student_id FROM student_partners WHERE partner_id = p.id
+                ) combined) as student_count,
                 (SELECT COALESCE(SUM(amount), 0) FROM partner_earnings WHERE partner_id = p.id) as total_earnings
             FROM partners p
             ORDER BY p.created_at DESC
         `);
         
         res.render('admin/partners', {
+            layout: 'admin/layout',
             title: 'Partnerler - Admin Panel',
             activePage: 'partners',
             partners: partnersResult.rows,
@@ -4326,7 +4507,7 @@ router.get('/partners', async (req, res) => {
     }
 });
 
-// Get partners list API
+// Get partners list API (includes both legacy and new student_partners table)
 router.get('/api/partners', async (req, res) => {
     try {
         const result = await pool.query(`
@@ -4340,7 +4521,11 @@ router.get('/api/partners', async (req, res) => {
                 p.email_verified,
                 p.is_active,
                 p.created_at,
-                (SELECT COUNT(*) FROM users WHERE partner_id = p.id) as student_count,
+                (SELECT COUNT(DISTINCT student_id) FROM (
+                    SELECT id as student_id FROM users WHERE partner_id = p.id
+                    UNION
+                    SELECT student_id FROM student_partners WHERE partner_id = p.id
+                ) combined) as student_count,
                 (SELECT COALESCE(SUM(CASE WHEN is_paid = true THEN amount ELSE 0 END), 0) FROM partner_earnings WHERE partner_id = p.id) as paid_earnings,
                 (SELECT COALESCE(SUM(CASE WHEN is_paid = false THEN amount ELSE 0 END), 0) FROM partner_earnings WHERE partner_id = p.id) as pending_earnings
             FROM partners p
@@ -4531,17 +4716,82 @@ router.post('/partners/:id/resend-verification', async (req, res) => {
 });
 
 // =====================================================
-// STUDENT-PARTNER ASSIGNMENT ROUTES
+// STUDENT-PARTNER ASSIGNMENT ROUTES (Multi-Partner Support)
 // =====================================================
 
-// Assign partner to student
+// Add partner assignment to student (multiple partners allowed)
+router.post('/users/:id/partners', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { partner_id } = req.body;
+        
+        if (!partner_id) {
+            return res.status(400).json({
+                success: false,
+                message: 'Partner ID gerekli'
+            });
+        }
+        
+        // Validate partner exists
+        const partnerCheck = await pool.query(
+            'SELECT id, first_name, last_name FROM partners WHERE id = $1',
+            [partner_id]
+        );
+        
+        if (partnerCheck.rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Partner bulunamadı'
+            });
+        }
+        
+        // Insert into student_partners (ignore if already exists)
+        await pool.query(`
+            INSERT INTO student_partners (student_id, partner_id)
+            VALUES ($1, $2)
+            ON CONFLICT (student_id, partner_id) DO NOTHING
+        `, [id, partner_id]);
+        
+        res.json({
+            success: true,
+            message: 'Partner başarıyla atandı'
+        });
+        
+    } catch (error) {
+        console.error('Add partner assignment error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// Remove partner assignment from student
+router.delete('/users/:id/partners/:partnerId', async (req, res) => {
+    try {
+        const { id, partnerId } = req.params;
+        
+        await pool.query(`
+            DELETE FROM student_partners 
+            WHERE student_id = $1 AND partner_id = $2
+        `, [id, partnerId]);
+        
+        res.json({
+            success: true,
+            message: 'Partner ataması kaldırıldı'
+        });
+        
+    } catch (error) {
+        console.error('Remove partner assignment error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// Legacy: Assign single partner (keep for backward compatibility)
 router.put('/users/:id/partner', async (req, res) => {
     try {
         const { id } = req.params;
         const { partner_id } = req.body;
         
-        // Validate partner exists (if partner_id is provided)
         if (partner_id) {
+            // Validate partner exists
             const partnerCheck = await pool.query(
                 'SELECT id, first_name, last_name FROM partners WHERE id = $1',
                 [partner_id]
@@ -4553,30 +4803,25 @@ router.put('/users/:id/partner', async (req, res) => {
                     message: 'Partner bulunamadı'
                 });
             }
-        }
-        
-        // Update user's partner_id
-        const result = await pool.query(
-            'UPDATE users SET partner_id = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING first_name, last_name, partner_id',
-            [partner_id || null, id]
-        );
-        
-        if (result.rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Öğrenci bulunamadı'
+            
+            // Add to student_partners
+            await pool.query(`
+                INSERT INTO student_partners (student_id, partner_id)
+                VALUES ($1, $2)
+                ON CONFLICT (student_id, partner_id) DO NOTHING
+            `, [id, partner_id]);
+            
+            res.json({
+                success: true,
+                message: 'Partner başarıyla atandı'
+            });
+        } else {
+            // Remove all partner assignments (legacy behavior)
+            res.json({
+                success: true,
+                message: 'Partner ataması için yeni endpoint kullanın: DELETE /users/:id/partners/:partnerId'
             });
         }
-        
-        const message = partner_id 
-            ? 'Partner başarıyla atandı' 
-            : 'Partner ataması kaldırıldı';
-        
-        res.json({
-            success: true,
-            message,
-            user: result.rows[0]
-        });
         
     } catch (error) {
         console.error('Assign partner error:', error);
@@ -4584,12 +4829,27 @@ router.put('/users/:id/partner', async (req, res) => {
     }
 });
 
-// Get student's partner info
+// Get student's partner info (multiple partners)
 router.get('/users/:id/partner', async (req, res) => {
     try {
         const { id } = req.params;
         
-        // Get user's partner info
+        // Get all assigned partners for this student
+        const assignedPartnersResult = await pool.query(`
+            SELECT 
+                sp.partner_id,
+                p.first_name,
+                p.last_name,
+                p.email,
+                p.company_name,
+                sp.assigned_at
+            FROM student_partners sp
+            JOIN partners p ON sp.partner_id = p.id
+            WHERE sp.student_id = $1
+            ORDER BY sp.assigned_at DESC
+        `, [id]);
+        
+        // Also check legacy partner_id in users table
         const userResult = await pool.query(`
             SELECT 
                 u.partner_id,
@@ -4615,6 +4875,7 @@ router.get('/users/:id/partner', async (req, res) => {
         const earningsResult = await pool.query(`
             SELECT 
                 pe.id,
+                pe.partner_id,
                 pe.amount,
                 pe.currency,
                 pe.earning_date,
@@ -4625,18 +4886,34 @@ router.get('/users/:id/partner', async (req, res) => {
             FROM partner_earnings pe
             JOIN partners p ON pe.partner_id = p.id
             WHERE pe.user_id = $1
-            ORDER BY pe.earning_date DESC
+            ORDER BY COALESCE(pe.earning_date, pe.created_at) DESC NULLS LAST
         `, [id]);
+        
+        // Build assigned partners list (from new table)
+        const assignedPartners = assignedPartnersResult.rows.map(p => ({
+            id: p.partner_id,
+            name: `${p.first_name} ${p.last_name}`,
+            email: p.email,
+            company_name: p.company_name,
+            assigned_at: p.assigned_at
+        }));
+        
+        // Get assigned partner IDs for easy lookup
+        const assignedPartnerIds = assignedPartners.map(p => p.id);
         
         res.json({
             success: true,
-            has_partner: !!user.partner_id,
+            has_partner: assignedPartners.length > 0 || !!user.partner_id,
+            // Legacy single partner (for backward compatibility)
             partner: user.partner_id ? {
                 id: user.partner_id,
                 name: `${user.partner_first_name} ${user.partner_last_name}`,
                 email: user.partner_email,
                 company_name: user.partner_company
             } : null,
+            // New: multiple assigned partners
+            assigned_partners: assignedPartners,
+            assigned_partner_ids: assignedPartnerIds,
             earnings: earningsResult.rows
         });
         
@@ -4674,12 +4951,21 @@ router.post('/partner-earnings', async (req, res) => {
             return res.status(404).json({ success: false, message: 'Öğrenci bulunamadı' });
         }
         
-        // Insert earning
+        // Insert earning - earning_date is only set when is_paid is true
         const result = await pool.query(`
-            INSERT INTO partner_earnings (partner_id, user_id, amount, currency, earning_date, is_paid, notes)
-            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            INSERT INTO partner_earnings (partner_id, user_id, amount, currency, earning_date, is_paid, payment_date, notes)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
             RETURNING *
-        `, [partner_id, user_id, amount, currency || 'EUR', earning_date || new Date().toISOString().split('T')[0], is_paid || false, notes || null]);
+        `, [
+            partner_id, 
+            user_id, 
+            amount, 
+            currency || 'EUR', 
+            is_paid ? (earning_date || new Date().toISOString().split('T')[0]) : null, 
+            is_paid || false,
+            is_paid ? (earning_date || new Date().toISOString().split('T')[0]) : null,
+            notes || null
+        ]);
         
         // Also update user's partner_id if not set
         if (!userCheck.rows[0].partner_id) {
@@ -4777,7 +5063,7 @@ router.get('/api/partner-earnings', async (req, res) => {
             FROM partner_earnings pe
             JOIN partners p ON pe.partner_id = p.id
             JOIN users u ON pe.user_id = u.id
-            ORDER BY pe.created_at DESC
+            ORDER BY COALESCE(pe.earning_date, pe.created_at) DESC NULLS LAST
         `);
         
         res.json({
@@ -4996,9 +5282,13 @@ router.delete('/visa-applications/:id', async (req, res) => {
 // AI Recommendations Page
 router.get('/ai-recommendations', async (req, res) => {
     try {
+        const sidebarCounts = await getAdminSidebarCounts(res);
+        
         res.render('admin/ai-recommendations', {
+            layout: 'admin/layout',
             title: 'AI Önerileri',
-            activePage: 'ai-recommendations'
+            activePage: 'ai-recommendations',
+            ...sidebarCounts
         });
     } catch (error) {
         console.error('AI recommendations page error:', error);
@@ -5077,6 +5367,215 @@ router.get('/users/:userId/ai-recommendation', async (req, res) => {
         res.json({ success: true, recommendation: result.rows[0] });
     } catch (error) {
         console.error('Get user AI recommendation error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// =====================================================
+// CO-ADMIN MANAGEMENT ROUTES (Sadece Super Admin)
+// =====================================================
+
+const bcrypt = require('bcrypt');
+
+// Get co-admins list page
+router.get('/admins', async (req, res) => {
+    try {
+        // Sadece super_admin bu sayfaya erişebilir
+        if (res.locals.adminRole !== 'super_admin') {
+            return res.redirect('/admin/dashboard');
+        }
+        
+        const sidebarCounts = await getAdminSidebarCounts(res);
+        
+        // Get all co-admins (admin_role = 'co_admin')
+        const adminsResult = await pool.query(`
+            SELECT id, first_name, last_name, email, admin_role, created_at, is_admin
+            FROM users 
+            WHERE is_admin = true AND admin_role = 'co_admin'
+            ORDER BY created_at DESC
+        `);
+        
+        res.render('admin/admins', {
+            layout: 'admin/layout',
+            title: 'Adminler - Yönetim Paneli',
+            activePage: 'admins',
+            coAdmins: adminsResult.rows,
+            ...sidebarCounts
+        });
+    } catch (error) {
+        console.error('Get co-admins error:', error);
+        res.status(500).render('error', { message: 'Sayfa yüklenirken hata oluştu' });
+    }
+});
+
+// Create new co-admin
+router.post('/api/admins', async (req, res) => {
+    try {
+        // Sadece super_admin co-admin ekleyebilir
+        if (res.locals.adminRole !== 'super_admin') {
+            return res.status(403).json({ success: false, message: 'Bu işlem için yetkiniz yok' });
+        }
+        
+        const { first_name, last_name, email, password } = req.body;
+        
+        // Validation
+        if (!first_name || !last_name || !email || !password) {
+            return res.status(400).json({ success: false, message: 'Tüm alanlar zorunludur' });
+        }
+        
+        // Check if email already exists
+        const existingUser = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
+        if (existingUser.rows.length > 0) {
+            return res.status(400).json({ success: false, message: 'Bu e-posta adresi zaten kullanılıyor' });
+        }
+        
+        // Hash password
+        const passwordHash = await bcrypt.hash(password, 10);
+        
+        // Create co-admin
+        const result = await pool.query(`
+            INSERT INTO users (first_name, last_name, email, password_hash, is_admin, admin_role, email_verified)
+            VALUES ($1, $2, $3, $4, true, 'co_admin', true)
+            RETURNING id, first_name, last_name, email, admin_role, created_at
+        `, [first_name, last_name, email, passwordHash]);
+        
+        res.json({ 
+            success: true, 
+            message: 'Co-admin başarıyla oluşturuldu',
+            admin: result.rows[0]
+        });
+    } catch (error) {
+        console.error('Create co-admin error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Update co-admin
+router.put('/api/admins/:id', async (req, res) => {
+    try {
+        // Sadece super_admin düzenleyebilir
+        if (res.locals.adminRole !== 'super_admin') {
+            return res.status(403).json({ success: false, message: 'Bu işlem için yetkiniz yok' });
+        }
+        
+        const { id } = req.params;
+        const { first_name, last_name, email, password } = req.body;
+        
+        // Check if admin exists and is a co_admin
+        const adminCheck = await pool.query(
+            'SELECT id, admin_role FROM users WHERE id = $1 AND is_admin = true',
+            [id]
+        );
+        
+        if (adminCheck.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Admin bulunamadı' });
+        }
+        
+        // Super admin'i düzenlemeye izin verme
+        if (adminCheck.rows[0].admin_role === 'super_admin') {
+            return res.status(403).json({ success: false, message: 'Ana admin düzenlenemez' });
+        }
+        
+        // Check if new email already exists (for another user)
+        const existingUser = await pool.query(
+            'SELECT id FROM users WHERE email = $1 AND id != $2',
+            [email, id]
+        );
+        if (existingUser.rows.length > 0) {
+            return res.status(400).json({ success: false, message: 'Bu e-posta adresi zaten kullanılıyor' });
+        }
+        
+        // Update with or without password
+        let result;
+        if (password && password.trim() !== '') {
+            const passwordHash = await bcrypt.hash(password, 10);
+            result = await pool.query(`
+                UPDATE users 
+                SET first_name = $1, last_name = $2, email = $3, password_hash = $4, updated_at = NOW()
+                WHERE id = $5
+                RETURNING id, first_name, last_name, email, admin_role, created_at
+            `, [first_name, last_name, email, passwordHash, id]);
+        } else {
+            result = await pool.query(`
+                UPDATE users 
+                SET first_name = $1, last_name = $2, email = $3, updated_at = NOW()
+                WHERE id = $4
+                RETURNING id, first_name, last_name, email, admin_role, created_at
+            `, [first_name, last_name, email, id]);
+        }
+        
+        res.json({ 
+            success: true, 
+            message: 'Co-admin başarıyla güncellendi',
+            admin: result.rows[0]
+        });
+    } catch (error) {
+        console.error('Update co-admin error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Delete co-admin
+router.delete('/api/admins/:id', async (req, res) => {
+    try {
+        // Sadece super_admin silebilir
+        if (res.locals.adminRole !== 'super_admin') {
+            return res.status(403).json({ success: false, message: 'Bu işlem için yetkiniz yok' });
+        }
+        
+        const { id } = req.params;
+        
+        // Check if admin exists and is a co_admin
+        const adminCheck = await pool.query(
+            'SELECT id, admin_role, email FROM users WHERE id = $1 AND is_admin = true',
+            [id]
+        );
+        
+        if (adminCheck.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Admin bulunamadı' });
+        }
+        
+        // Super admin silinemez
+        if (adminCheck.rows[0].admin_role === 'super_admin') {
+            return res.status(403).json({ success: false, message: 'Ana admin silinemez' });
+        }
+        
+        // Delete co-admin
+        await pool.query('DELETE FROM users WHERE id = $1', [id]);
+        
+        res.json({ 
+            success: true, 
+            message: 'Co-admin başarıyla silindi'
+        });
+    } catch (error) {
+        console.error('Delete co-admin error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Get single co-admin details
+router.get('/api/admins/:id', async (req, res) => {
+    try {
+        // Sadece super_admin görebilir
+        if (res.locals.adminRole !== 'super_admin') {
+            return res.status(403).json({ success: false, message: 'Bu işlem için yetkiniz yok' });
+        }
+        
+        const { id } = req.params;
+        
+        const result = await pool.query(`
+            SELECT id, first_name, last_name, email, admin_role, created_at
+            FROM users 
+            WHERE id = $1 AND is_admin = true AND admin_role = 'co_admin'
+        `, [id]);
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Admin bulunamadı' });
+        }
+        
+        res.json({ success: true, admin: result.rows[0] });
+    } catch (error) {
+        console.error('Get co-admin error:', error);
         res.status(500).json({ success: false, message: error.message });
     }
 });
