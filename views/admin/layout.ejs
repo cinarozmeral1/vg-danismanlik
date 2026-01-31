@@ -25,7 +25,7 @@
     <style>
         .admin-container {
             display: flex;
-            min-height: 100vh;
+            min-height: calc(100vh - 72px);
             background-color: #f8f9fa;
         }
         
@@ -34,8 +34,8 @@
             background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
             color: white;
             position: sticky;
-            top: 0;
-            height: 100vh;
+            top: 72px;
+            height: calc(100vh - 72px);
             overflow-y: auto;
             z-index: 1000;
             flex-shrink: 0;
