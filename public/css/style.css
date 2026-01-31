@@ -1307,8 +1307,8 @@ section:not(.navbar),
   box-shadow: var(--shadow-md);
   position: fixed;
   left: 0;
-  top: var(--navbar-height);
-  height: calc(100vh - var(--navbar-height));
+  top: 72px;
+  height: calc(100vh - 72px);
   overflow-y: auto;
   z-index: 1000;
   flex-shrink: 0;
