@@ -475,7 +475,7 @@ body {
 .navbar .navbar-nav .nav-link {
     font-weight: var(--font-medium);
     color: var(--gray-700);
-    padding: 0.75rem 1.1rem;
+    padding: 0.5rem 0.7rem;
 }
 
 .navbar .navbar-nav .nav-link:hover,
@@ -492,9 +492,9 @@ body {
   color: var(--gray-700) !important;
   font-weight: var(--font-medium);
   font-size: var(--text-sm);
-  padding: var(--space-3) var(--space-4);
+  padding: 0.5rem 0.6rem;
   border-radius: var(--radius-md);
-  margin: 0 var(--space-1);
+  margin: 0 0.125rem;
   transition: all 0.2s ease;
     position: relative;
   text-decoration: none;
@@ -509,6 +509,68 @@ body {
 .navbar-nav .nav-link:focus {
   outline: 2px solid var(--primary-500);
   outline-offset: 2px;
+}
+
+/* Compact navbar for medium-large screens (992px - 1400px) */
+@media (min-width: 992px) and (max-width: 1400px) {
+    .navbar .navbar-nav .nav-link {
+        padding: 0.4rem 0.5rem;
+        font-size: 0.8rem;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 0.4rem 0.5rem !important;
+        font-size: 0.8rem !important;
+        margin: 0 0.1rem !important;
+    }
+    
+    .navbar .btn-sm {
+        padding: 0.35rem 0.7rem !important;
+        font-size: 0.8rem !important;
+    }
+    
+    .navbar-brand {
+        font-size: 1rem !important;
+    }
+    
+    .navbar-logo {
+        height: 30px !important;
+    }
+}
+
+/* Extra compact for screens between 992px and 1200px */
+@media (min-width: 992px) and (max-width: 1200px) {
+    .navbar .navbar-nav .nav-link {
+        padding: 0.35rem 0.4rem;
+        font-size: 0.75rem;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 0.35rem 0.4rem !important;
+        font-size: 0.75rem !important;
+        margin: 0 !important;
+    }
+    
+    .navbar .btn-sm {
+        padding: 0.3rem 0.6rem !important;
+        font-size: 0.75rem !important;
+    }
+    
+    .navbar-brand {
+        font-size: 0.9rem !important;
+    }
+    
+    .navbar-logo {
+        height: 28px !important;
+    }
+    
+    .navbar .me-3 {
+        margin-right: 0.5rem !important;
+    }
+    
+    .navbar .me-2 {
+        margin-right: 0.3rem !important;
+    }
 }
 
 /* ===== PROFESSIONAL BUTTONS ===== */
