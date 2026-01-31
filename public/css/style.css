@@ -475,7 +475,7 @@ body {
 .navbar .navbar-nav .nav-link {
     font-weight: var(--font-medium);
     color: var(--gray-700);
-    padding: 0.5rem 0.7rem;
+    padding: 0.6rem 0.85rem;
 }
 
 .navbar .navbar-nav .nav-link:hover,
@@ -492,9 +492,9 @@ body {
   color: var(--gray-700) !important;
   font-weight: var(--font-medium);
   font-size: var(--text-sm);
-  padding: 0.5rem 0.6rem;
+  padding: 0.6rem 0.75rem;
   border-radius: var(--radius-md);
-  margin: 0 0.125rem;
+  margin: 0 0.2rem;
   transition: all 0.2s ease;
     position: relative;
   text-decoration: none;
@@ -514,12 +514,39 @@ body {
 /* Compact navbar for medium-large screens (992px - 1400px) */
 @media (min-width: 992px) and (max-width: 1400px) {
     .navbar .navbar-nav .nav-link {
-        padding: 0.4rem 0.5rem;
+        padding: 0.5rem 0.65rem;
+        font-size: 0.875rem;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 0.5rem 0.65rem !important;
+        font-size: 0.875rem !important;
+        margin: 0 0.15rem !important;
+    }
+    
+    .navbar .btn-sm {
+        padding: 0.4rem 0.85rem !important;
+        font-size: 0.875rem !important;
+    }
+    
+    .navbar-brand {
+        font-size: 1.05rem !important;
+    }
+    
+    .navbar-logo {
+        height: 32px !important;
+    }
+}
+
+/* Extra compact for screens between 992px and 1200px */
+@media (min-width: 992px) and (max-width: 1200px) {
+    .navbar .navbar-nav .nav-link {
+        padding: 0.45rem 0.5rem;
         font-size: 0.8rem;
     }
     
     .navbar-nav .nav-link {
-        padding: 0.4rem 0.5rem !important;
+        padding: 0.45rem 0.5rem !important;
         font-size: 0.8rem !important;
         margin: 0 0.1rem !important;
     }
@@ -530,38 +557,11 @@ body {
     }
     
     .navbar-brand {
-        font-size: 1rem !important;
+        font-size: 0.95rem !important;
     }
     
     .navbar-logo {
         height: 30px !important;
-    }
-}
-
-/* Extra compact for screens between 992px and 1200px */
-@media (min-width: 992px) and (max-width: 1200px) {
-    .navbar .navbar-nav .nav-link {
-        padding: 0.35rem 0.4rem;
-        font-size: 0.75rem;
-    }
-    
-    .navbar-nav .nav-link {
-        padding: 0.35rem 0.4rem !important;
-        font-size: 0.75rem !important;
-        margin: 0 !important;
-    }
-    
-    .navbar .btn-sm {
-        padding: 0.3rem 0.6rem !important;
-        font-size: 0.75rem !important;
-    }
-    
-    .navbar-brand {
-        font-size: 0.9rem !important;
-    }
-    
-    .navbar-logo {
-        height: 28px !important;
     }
     
     .navbar .me-3 {
@@ -569,7 +569,7 @@ body {
     }
     
     .navbar .me-2 {
-        margin-right: 0.3rem !important;
+        margin-right: 0.25rem !important;
     }
 }
 
