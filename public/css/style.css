@@ -3875,13 +3875,24 @@ body {
 
 /* Mobile-specific optimizations */
 @media (max-width: 991px) {
-    /* Offcanvas navbar'in ustunde olmali */
+    /* Navbar her zaman en ustte - offcanvas'in ustunde */
+    .navbar {
+        z-index: 10005 !important;
+    }
+    
+    /* Hamburger ikonu her zaman gorunur */
+    .navbar-toggler {
+        z-index: 10006 !important;
+        position: relative !important;
+    }
+    
+    /* Offcanvas navbar'in ALTINDA */
     #mobileNav,
     .offcanvas,
     .offcanvas-end {
         z-index: 10001 !important;
-        top: 0 !important;
-        height: 100vh !important;
+        top: 72px !important; /* Navbar'in altindan basla */
+        height: calc(100vh - 72px) !important;
         position: fixed !important;
     }
     
@@ -3906,7 +3917,12 @@ body {
     .offcanvas-body {
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
-        max-height: calc(100vh - 80px) !important;
+        max-height: calc(100vh - 152px) !important;
+    }
+    
+    /* Admin sayfalarinda body padding kaldir */
+    body[data-admin-page="true"] {
+        padding-top: 0 !important;
     }
 }
 

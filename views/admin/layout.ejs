@@ -363,26 +363,41 @@
         }
         
         @media (max-width: 768px) {
-            .admin-container {
-                padding-top: 0;
-                flex-direction: column;
+            /* Admin sayfasinda body padding yok */
+            body, body[data-admin-page="true"] {
+                padding-top: 0 !important;
+                margin-top: 0 !important;
             }
             
-            /* Sidebar normal akista - overlay degil */
+            .admin-container {
+                display: flex !important;
+                flex-direction: column !important;
+                padding-top: 0 !important;
+                margin-top: 0 !important;
+            }
+            
+            /* Sidebar normal akista - overlay DEGIL, sayfa icinde */
             .admin-sidebar {
                 position: relative !important;
-                left: 0 !important;
-                top: 0 !important;
+                position: static !important;
+                left: auto !important;
+                top: auto !important;
                 width: 100% !important;
                 height: auto !important;
                 max-height: none !important;
-                z-index: 1;
-                border-radius: 0;
+                min-height: auto !important;
+                z-index: 1 !important;
+                border-radius: 0 !important;
+                flex-shrink: 0 !important;
+                order: 1 !important;
             }
             
+            /* Main content sidebar'in altinda */
             .admin-main {
                 margin-left: 0 !important;
-                width: 100%;
+                width: 100% !important;
+                order: 2 !important;
+                flex: 1 !important;
             }
             
             .stats-grid {
