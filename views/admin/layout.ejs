@@ -363,41 +363,30 @@
         }
         
         @media (max-width: 768px) {
-            /* Admin sayfasinda body padding yok */
-            body, body[data-admin-page="true"] {
-                padding-top: 0 !important;
-                margin-top: 0 !important;
-            }
-            
             .admin-container {
-                display: flex !important;
-                flex-direction: column !important;
-                padding-top: 0 !important;
-                margin-top: 0 !important;
+                padding-top: 0;
+                flex-direction: column;
             }
             
-            /* Sidebar normal akista - overlay DEGIL, sayfa icinde */
             .admin-sidebar {
-                position: relative !important;
-                position: static !important;
-                left: auto !important;
-                top: auto !important;
-                width: 100% !important;
-                height: auto !important;
-                max-height: none !important;
-                min-height: auto !important;
-                z-index: 1 !important;
-                border-radius: 0 !important;
-                flex-shrink: 0 !important;
-                order: 1 !important;
+                position: fixed !important;
+                left: -280px;
+                top: 72px;
+                width: 280px;
+                height: calc(100vh - 72px);
+                max-height: calc(100vh - 72px);
+                z-index: 1050;
+                transition: left 0.3s ease;
+                overflow-y: auto;
             }
             
-            /* Main content sidebar'in altinda */
+            .admin-sidebar.show {
+                left: 0;
+            }
+            
             .admin-main {
                 margin-left: 0 !important;
-                width: 100% !important;
-                order: 2 !important;
-                flex: 1 !important;
+                width: 100%;
             }
             
             .stats-grid {
@@ -408,14 +397,34 @@
                 grid-template-columns: 1fr;
             }
             
-            /* Sidebar backdrop - mobilde gerekli degil */
+            /* Sidebar backdrop */
             .admin-sidebar-backdrop {
-                display: none !important;
+                position: fixed;
+                top: 72px;
+                left: 0;
+                width: 100%;
+                height: calc(100vh - 72px);
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 1049;
+                display: none;
             }
             
-            /* Hamburger button - mobilde gerekli degil */
+            .admin-sidebar-backdrop.show {
+                display: block;
+            }
+            
+            /* Hamburger button style */
             .admin-menu-toggle {
-                display: none !important;
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+                border: 1px solid #dee2e6;
+                border-radius: 8px;
+                background: white;
+                cursor: pointer;
+                margin-right: 10px;
             }
         }
         

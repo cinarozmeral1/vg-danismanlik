@@ -3604,8 +3604,7 @@ body {
     }
 
     .navbar-toggler {
-        z-index: 10003 !important;
-        position: relative !important;
+        z-index: 10003;
     }
 
     .navbar-backdrop {
@@ -3875,24 +3874,13 @@ body {
 
 /* Mobile-specific optimizations */
 @media (max-width: 991px) {
-    /* Navbar her zaman en ustte - offcanvas'in ustunde */
-    .navbar {
-        z-index: 10005 !important;
-    }
-    
-    /* Hamburger ikonu her zaman gorunur */
-    .navbar-toggler {
-        z-index: 10006 !important;
-        position: relative !important;
-    }
-    
-    /* Offcanvas navbar'in ALTINDA */
+    /* Offcanvas navbar'in ustunde olmali */
     #mobileNav,
     .offcanvas,
     .offcanvas-end {
         z-index: 10001 !important;
-        top: 72px !important; /* Navbar'in altindan basla */
-        height: calc(100vh - 72px) !important;
+        top: 0 !important;
+        height: 100vh !important;
         position: fixed !important;
     }
     
@@ -3917,12 +3905,7 @@ body {
     .offcanvas-body {
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
-        max-height: calc(100vh - 152px) !important;
-    }
-    
-    /* Admin sayfalarinda body padding kaldir */
-    body[data-admin-page="true"] {
-        padding-top: 0 !important;
+        max-height: calc(100vh - 80px) !important;
     }
 }
 
