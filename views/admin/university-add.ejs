@@ -20,6 +20,7 @@
                 <span>Başvurular</span>
                 <span class="badge bg-success ms-auto"><%= applicationCount %></span>
             </a>
+            <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
             <a href="/admin/partners" class="nav-item">
                 <i class="fas fa-handshake"></i>
                 <span>Partnerler</span>
@@ -27,14 +28,21 @@
                     <span class="badge bg-info ms-auto"><%= partnerCount %></span>
                 <% } %>
             </a>
+            <% } %>
             <a href="/admin/universities" class="nav-item active">
                 <i class="fas fa-university"></i>
                 <span>Üniversiteler</span>
             </a>
+            <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
             <a href="/admin/backups" class="nav-item">
                 <i class="fas fa-database"></i>
                 <span>Yedekleme</span>
             </a>
+            <a href="/admin/admins" class="nav-item">
+                <i class="fas fa-user-shield"></i>
+                <span>Adminler</span>
+            </a>
+            <% } %>
         </nav>
     </div>
 
@@ -91,6 +99,7 @@
                                             <option value="Italy">İtalya</option>
                                             <option value="Poland">Polonya</option>
                                             <option value="United Kingdom">İngiltere</option>
+                                            <option value="Netherlands">Hollanda</option>
                                         </select>
                                     </div>
                                 </div>
@@ -156,10 +165,13 @@
                                     <h6 class="text-primary mb-3">
                                         <i class="fas fa-graduation-cap me-2"></i>Bölümler
                                     </h6>
-                                    <p class="text-muted">Bu üniversitede bulunan bölümleri ekleyin</p>
+                                    <p class="text-muted">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Bölümleri sürükleyerek sıralayabilirsiniz (Spotify tarzı)
+                                    </p>
                                 </div>
                                 <div class="col-12">
-                                    <div id="departmentsContainer">
+                                    <div id="departmentsContainer" class="sortable-container">
                                         <!-- Bölümler buraya dinamik olarak eklenecek -->
                                     </div>
                                     <button type="button" class="btn btn-outline-primary btn-sm" id="addDepartmentBtn">
@@ -168,21 +180,52 @@
                                 </div>
                             </div>
 
-                            <!-- Gereksinimler -->
-                            <div class="row mb-4">
-                                <div class="col-12">
-                                    <h6 class="text-primary mb-3">
-                                        <i class="fas fa-clipboard-list me-2"></i>Gereksinimler
-                                    </h6>
-                                </div>
-                                <div class="col-12">
-                                    <div class="mb-3">
-                                        <label for="requirements" class="form-label">Gereksinimler</label>
-                                        <textarea class="form-control" id="requirements" name="requirements" rows="4" placeholder="Üniversiteye başvuru için gerekli şartlar, belgeler, sınavlar..."></textarea>
-                                        <small class="text-muted">Örnek: Lise diploması, İngilizce seviyesi, sınav sonuçları, referans mektupları</small>
-                                    </div>
-                                </div>
-                            </div>
+                            <!-- SortableJS CDN -->
+                            <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+                            
+                            <style>
+                                .sortable-container {
+                                    min-height: 50px;
+                                }
+                                .department-field {
+                                    background: #f8f9fa;
+                                    transition: all 0.2s ease;
+                                    cursor: default;
+                                }
+                                .department-field:hover {
+                                    background: #e9ecef;
+                                }
+                                .department-field.sortable-ghost {
+                                    opacity: 0.4;
+                                    background: #dee2e6;
+                                }
+                                .department-field.sortable-chosen {
+                                    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+                                    transform: scale(1.02);
+                                }
+                                .drag-handle {
+                                    cursor: grab;
+                                    color: #6c757d;
+                                    padding: 8px;
+                                    transition: color 0.2s;
+                                }
+                                .drag-handle:hover {
+                                    color: #495057;
+                                }
+                                .drag-handle:active {
+                                    cursor: grabbing;
+                                }
+                                .sort-order-badge {
+                                    background: #6c757d;
+                                    color: white;
+                                    font-size: 0.75rem;
+                                    padding: 2px 8px;
+                                    border-radius: 10px;
+                                    min-width: 24px;
+                                    text-align: center;
+                                }
+                            </style>
+
 
 
                             <!-- Form Buttons -->
@@ -214,21 +257,30 @@
         const departmentsContainer = document.getElementById('departmentsContainer');
         let departmentCount = 0;
 
-        // Bölüm ekleme fonksiyonu
+        // Bölüm ekleme fonksiyonu - Spotify tarzı drag-drop destekli
         function addDepartment(name = '', price = '') {
             const departmentDiv = document.createElement('div');
             departmentDiv.className = 'department-field mb-3 p-3 border rounded';
+            departmentDiv.setAttribute('data-sort-order', departmentCount);
             departmentDiv.innerHTML = `
-                <div class="row">
-                    <div class="col-md-5">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <div class="drag-handle" title="Sıralamak için sürükle">
+                            <i class="fas fa-grip-vertical fa-lg"></i>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <span class="sort-order-badge">${departmentCount + 1}</span>
+                    </div>
+                    <div class="col-md-4">
                         <label class="form-label">Bölüm Adı</label>
                         <input type="text" class="form-control department-name" name="departments[${departmentCount}][name_tr]" value="${name}" placeholder="Örn: Mühendislik">
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label">Fiyat (€)</label>
                         <input type="number" class="form-control department-price" name="departments[${departmentCount}][price]" value="${price}" placeholder="Örn: 5000" min="0" step="0.01">
                     </div>
-                    <div class="col-md-3 d-flex align-items-end">
+                    <div class="col-md-2 d-flex align-items-end">
                         <button type="button" class="btn btn-outline-danger btn-sm remove-department">
                             <i class="fas fa-trash"></i> Kaldır
                         </button>
@@ -238,7 +290,33 @@
             
             departmentsContainer.appendChild(departmentDiv);
             departmentCount++;
+            updateSortOrderBadges();
         }
+        
+        // Sıra numaralarını güncelle
+        function updateSortOrderBadges() {
+            const departments = departmentsContainer.querySelectorAll('.department-field');
+            departments.forEach((dept, index) => {
+                const badge = dept.querySelector('.sort-order-badge');
+                if (badge) {
+                    badge.textContent = index + 1;
+                }
+                dept.setAttribute('data-sort-order', index);
+            });
+        }
+        
+        // SortableJS başlat - Spotify tarzı sürükle-bırak
+        const sortable = new Sortable(departmentsContainer, {
+            handle: '.drag-handle',
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            chosenClass: 'sortable-chosen',
+            dragClass: 'sortable-drag',
+            onEnd: function(evt) {
+                updateSortOrderBadges();
+                console.log('🎵 Bölüm sıralaması güncellendi');
+            }
+        });
 
         // Bölüm silme fonksiyonu
         departmentsContainer.addEventListener('click', function(e) {
@@ -271,7 +349,6 @@
             const city = document.getElementById('city').value;
             const world_ranking = document.getElementById('world_ranking').value;
             const description = document.getElementById('description').value;
-            const requirements = document.getElementById('requirements').value;
             const logoFile = document.getElementById('logo_file').files[0];
             let logoUrl = document.getElementById('logo_url_hidden').value || null;
             
@@ -306,7 +383,7 @@
                         throw new Error('Logo yükleme hatası: ' + logoResult.message);
                     }
                 }
-                // Collect departments
+                // Collect departments with sort order (Spotify tarzı sıralama)
                 const departments = [];
                 const departmentFields = document.querySelectorAll('.department-field');
                 departmentFields.forEach((field, index) => {
@@ -316,7 +393,8 @@
                         departments.push({
                             name_tr: nameInput.value.trim(),
                             name_en: nameInput.value.trim(),
-                            price: priceInput ? priceInput.value : 0
+                            price: priceInput ? priceInput.value : 0,
+                            sort_order: index + 1 // Sıralama numarası
                         });
                     }
                 });
@@ -328,13 +406,12 @@
                     city,
                     world_ranking,
                     description,
-                    requirements,
                     logo_url: logoUrl || null,
                     departments
                 };
                 
                 console.log('📝 Sending data:', {
-                    name, country, city, world_ranking, description, requirements, departments
+                    name, country, city, world_ranking, description, departments
                 });
                 
                 // Send request
@@ -380,7 +457,6 @@
             formData.append('city', document.getElementById('city').value);
             formData.append('world_ranking', document.getElementById('world_ranking').value);
             formData.append('description', document.getElementById('description').value);
-            formData.append('requirements', document.getElementById('requirements').value);
 
             // Durum ayarları kaldırıldı - tüm üniversiteler aktif olacak
             

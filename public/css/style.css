@@ -401,6 +401,7 @@ body {
   background-color: #fff8f2;
     margin: 0;
     padding: 0;
+    padding-top: 72px !important; /* Fixed navbar height - must be important */
     overflow-x: hidden;
     max-width: 100%;
     width: 100%;
@@ -412,11 +413,14 @@ body {
   height: var(--navbar-height);
   background: #ffffff !important;
   background-color: #ffffff !important;
+  -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--gray-200);
   box-shadow: var(--shadow-sm);
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 9999;
   transition: all 0.2s ease;
   padding: 0.85rem 0;
@@ -725,8 +729,8 @@ body {
     align-items: center;
     color: white;
     overflow: hidden;
-    margin-top: 0;
-    padding-top: var(--navbar-height);
+    margin-top: -72px; /* Compensate for body padding-top */
+    padding-top: 72px; /* Add space for fixed navbar */
 }
 
 .hero-background {
@@ -1308,7 +1312,7 @@ section:not(.navbar),
   position: fixed;
   top: 72px;
   left: 0;
-  bottom: 0;
+  height: auto;
   overflow-y: auto;
   z-index: 1000;
 }
@@ -3578,7 +3582,7 @@ body {
 
 @media (max-width: 991px) {
     body {
-        padding-top: var(--navbar-height);
+        padding-top: 72px !important; /* Fixed navbar height on mobile */
     }
 
     main {
@@ -3600,14 +3604,14 @@ body {
     }
 
     .navbar-toggler {
-        z-index: 10003;
+        z-index: 10003 !important;
+        position: relative !important;
     }
 
     .navbar-backdrop {
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.45);
-        backdrop-filter: blur(4px);
+        background: rgba(0, 0, 0, 0.5);
         z-index: 10001;
         display: none;
     }
@@ -3743,9 +3747,11 @@ body {
     .navbar {
         background-color: #ffffff !important;
         background: #ffffff !important;
-        position: sticky;
+        position: fixed !important;
         top: 0;
-        z-index: 1030;
+        left: 0;
+        right: 0;
+        z-index: 9999;
         box-shadow: var(--shadow-md);
     }
 
@@ -3789,13 +3795,15 @@ body {
 
     .hero-section,
     .main-hero {
-        min-height: 70vh;
-        padding-top: calc(var(--navbar-height) + 1rem);
-        align-items: flex-start;
+        min-height: 80vh;
+        padding-top: 72px;
+        align-items: center;
+        justify-content: center;
     }
 
     .hero-content {
-        padding: 2rem 0 3rem;
+        padding: 2rem 1rem 3rem;
+        text-align: center;
     }
 
     .hero-stats {
@@ -3867,6 +3875,16 @@ body {
 
 /* Mobile-specific optimizations */
 @media (max-width: 991px) {
+    /* Offcanvas navbar'in ustunde olmali */
+    #mobileNav,
+    .offcanvas,
+    .offcanvas-end {
+        z-index: 10001 !important;
+        top: 0 !important;
+        height: 100vh !important;
+        position: fixed !important;
+    }
+    
     .offcanvas-end {
         transform: translateX(100%);
         transition: transform 0.2s ease-out !important;
@@ -3874,6 +3892,21 @@ body {
     
     .offcanvas-end.show {
         transform: translateX(0) !important;
+    }
+    
+    /* Menu acikken body scroll engelle */
+    body.offcanvas-open {
+        overflow: hidden !important;
+        position: fixed !important;
+        width: 100% !important;
+        height: 100% !important;
+    }
+    
+    /* Menu icerigi scrollable */
+    .offcanvas-body {
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        max-height: calc(100vh - 80px) !important;
     }
 }
 
@@ -4062,7 +4095,8 @@ body {
         color: #000000 !important;
         font-size: 1.5rem !important;
         font-weight: bold !important;
-        background: none !important;
+        background: transparent !important;
+        background-image: none !important; /* Safari fix - disable SVG */
         border: none !important;
         padding: 0.5rem !important;
         width: 2rem !important;
@@ -4070,7 +4104,35 @@ body {
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
+        opacity: 1 !important;
+        -webkit-appearance: none !important;
+        appearance: none !important;
     }
+    
+    /* Safari specific btn-close fix */
+    .btn-close-white {
+        filter: none !important;
+        -webkit-filter: none !important;
+        background-image: none !important;
+    }
+}
+
+/* Safari specific close button fix */
+.mobile-close-btn {
+    background: transparent !important;
+    border: none !important;
+    color: #ffffff !important;
+    font-size: 1.8rem !important;
+    line-height: 1 !important;
+    padding: 0 !important;
+    cursor: pointer !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
 }
 
 /* Mobile nav link optimizations */
@@ -5078,6 +5140,13 @@ main {
     max-width: 100% !important;
 }
 
+/* Universal spacing below fixed navbar - applies to all pages */
+main > section:first-child:not(.hero-section):not(.main-hero):not(.university-hero),
+main > .container:first-child,
+main > .container-fluid:first-child {
+    padding-top: 20px;
+}
+
 /* Footer overflow fix */
 footer {
     max-width: 100% !important;
@@ -5088,5 +5157,120 @@ footer {
     html, body {
         overflow-x: hidden !important;
         -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Admin Panel - Footer gizleme */
+body[data-admin-page="true"] footer,
+body[data-admin-page="true"] .footer,
+body[data-admin-page="true"] .site-footer {
+    display: none !important;
+}
+
+/* Stats Counter - Mobile için 2'li gruplama */
+@media (max-width: 576px) {
+    .stats-counter-container {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 1.5rem !important;
+        justify-items: center;
+    }
+    
+    .stats-counter-container .stat-counter {
+        width: 100%;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+    }
+    
+    .stat-label {
+        font-size: 0.85rem;
+    }
+}
+
+/* ===== ENTRANCE ANIMATIONS ===== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Animation classes */
+.animate-fade-in-up {
+    opacity: 0;
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.animate-fade-in-left {
+    opacity: 0;
+    animation: fadeInLeft 0.8s ease-out forwards;
+}
+
+.animate-fade-in-right {
+    opacity: 0;
+    animation: fadeInRight 0.8s ease-out forwards;
+}
+
+.animate-scale-in {
+    opacity: 0;
+    animation: scaleIn 0.6s ease-out forwards;
+}
+
+/* Staggered delays */
+.animate-delay-1 { animation-delay: 0.1s; }
+.animate-delay-2 { animation-delay: 0.2s; }
+.animate-delay-3 { animation-delay: 0.3s; }
+.animate-delay-4 { animation-delay: 0.4s; }
+.animate-delay-5 { animation-delay: 0.5s; }
+.animate-delay-6 { animation-delay: 0.6s; }
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .animate-fade-in-up,
+    .animate-fade-in-left,
+    .animate-fade-in-right,
+    .animate-scale-in {
+        animation: none;
+        opacity: 1;
+        transform: none;
     }
 }

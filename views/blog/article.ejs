@@ -235,12 +235,17 @@
     transform: translateX(5px);
 }
 
-.related-item img {
-    width: 80px;
-    height: 60px;
-    object-fit: cover;
+.related-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #0078D7 0%, #00BCF2 100%);
     border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
+    color: #ffffff;
+    font-size: 1.2rem;
 }
 
 .related-item span {
@@ -323,23 +328,17 @@
             <!-- Main Content -->
             <div class="col-lg-8">
                 <article class="article-container">
-                    <div class="article-image-wrapper">
-                            <img src="<%= post.image || 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&q=80' %>" 
-                                 alt="<%= post.title %>" class="article-image"
-                                 onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&q=80';">
-                        </div>
-                    
                     <div class="article-header">
                         <% if (post.topic) { %>
                             <span class="article-badge">
                                 <% if (post.topic === 'university') { %>
-                                    <i class="fas fa-university me-1"></i> Üniversite
+                                    <i class="fas fa-university me-1"></i> <%= lang === 'en' ? 'University' : 'Üniversite' %>
                                 <% } else if (post.topic === 'country') { %>
-                                    <i class="fas fa-globe me-1"></i> Ülke Rehberi
+                                    <i class="fas fa-globe me-1"></i> <%= lang === 'en' ? 'Country Guide' : 'Ülke Rehberi' %>
                                 <% } else if (post.topic === 'country_program') { %>
-                                    <i class="fas fa-graduation-cap me-1"></i> Program
+                                    <i class="fas fa-graduation-cap me-1"></i> <%= lang === 'en' ? 'Program' : 'Program' %>
                                 <% } else { %>
-                                    <i class="fas fa-book me-1"></i> Makale
+                                    <i class="fas fa-book me-1"></i> <%= lang === 'en' ? 'Article' : 'Makale' %>
                                 <% } %>
                             </span>
                         <% } %>
@@ -348,7 +347,7 @@
                         
                         <div class="article-meta">
                             <span><i class="far fa-calendar"></i> <%= post.date %></span>
-                            <span><i class="far fa-eye"></i> <%= post.views %> görüntülenme</span>
+                            <span><i class="far fa-eye"></i> <%= post.views %> <%= lang === 'en' ? 'views' : 'görüntülenme' %></span>
                             <span><i class="far fa-user"></i> Venture Global</span>
                         </div>
                     </div>
@@ -363,8 +362,8 @@
                                 <i class="fas fa-graduation-cap"></i>
                             </div>
                             <div class="author-info">
-                                <h5>Venture Global Eğitim Danışmanlığı</h5>
-                                <p>Yurtdışı eğitim alanında uzman danışmanlık ekibi</p>
+                                <h5><%= lang === 'en' ? 'Venture Global Education Consultancy' : 'Venture Global Eğitim Danışmanlığı' %></h5>
+                                <p><%= lang === 'en' ? 'Expert consultancy team in study abroad' : 'Yurtdışı eğitim alanında uzman danışmanlık ekibi' %></p>
                             </div>
                         </div>
                     </div>
@@ -372,7 +371,7 @@
                 
                 <div class="back-btn">
                     <a href="/blog" class="btn btn-outline-primary">
-                        <i class="fas fa-arrow-left me-2"></i> Tüm Makaleler
+                        <i class="fas fa-arrow-left me-2"></i> <%= lang === 'en' ? 'All Articles' : 'Tüm Makaleler' %>
                     </a>
                 </div>
             </div>
@@ -382,7 +381,7 @@
                 <!-- Share -->
                 <div class="sidebar-card">
                     <h4 class="sidebar-title">
-                        <i class="fas fa-share-alt"></i> Paylaş
+                        <i class="fas fa-share-alt"></i> <%= lang === 'en' ? 'Share' : 'Paylaş' %>
                     </h4>
                     <div class="share-buttons">
                         <a href="https://twitter.com/intent/tweet?url=<%= encodeURIComponent(canonicalUrl) %>&text=<%= encodeURIComponent(post.title) %>" 
@@ -401,7 +400,7 @@
                            target="_blank" class="share-btn whatsapp" title="WhatsApp">
                             <i class="fab fa-whatsapp"></i>
                         </a>
-                        <button onclick="navigator.clipboard.writeText('<%= canonicalUrl %>');alert('Link kopyalandı!');" 
+                        <button onclick="navigator.clipboard.writeText('<%= canonicalUrl %>');alert('<%= lang === 'en' ? 'Link copied!' : 'Link kopyalandı!' %>');" 
                                 class="share-btn copy" title="Linki Kopyala">
                             <i class="fas fa-link"></i>
                         </button>
@@ -412,11 +411,11 @@
                 <% if (relatedPosts && relatedPosts.length > 0) { %>
                 <div class="sidebar-card">
                     <h4 class="sidebar-title">
-                        <i class="fas fa-newspaper"></i> İlgili Yazılar
+                        <i class="fas fa-newspaper"></i> <%= lang === 'en' ? 'Related Articles' : 'İlgili Yazılar' %>
                     </h4>
                     <% relatedPosts.forEach(function(related) { %>
                         <a href="/blog/<%= related.slug %>" class="related-item">
-                            <img src="<%= related.image %>" alt="<%= related.title %>">
+                            <div class="related-icon"><i class="fas fa-file-alt"></i></div>
                             <span><%= related.title %></span>
                         </a>
                     <% }); %>
@@ -426,11 +425,11 @@
                 <!-- CTA -->
                 <div class="sidebar-card cta-card">
                     <h4 class="sidebar-title">
-                        <i class="fas fa-comments"></i> Ücretsiz Danışmanlık
+                        <i class="fas fa-comments"></i> <%= lang === 'en' ? 'Contact Us' : 'İletişime Geçin' %>
                     </h4>
-                    <p>Yurtdışı eğitim hakkında sorularınız mı var? Uzmanlarımız yardımcı olmaktan mutluluk duyar.</p>
-                    <a href="/#contact" class="btn btn-light w-100">
-                        <i class="fas fa-phone me-2"></i> İletişime Geç
+                    <p><%= lang === 'en' ? 'Have questions about studying abroad? Our experts are happy to help.' : 'Yurtdışı eğitim hakkında sorularınız mı var? Uzmanlarımız yardımcı olmaktan mutluluk duyar.' %></p>
+                    <a href="/contact" class="btn btn-light w-100">
+                        <i class="fas fa-phone me-2"></i> <%= lang === 'en' ? 'Contact Us' : 'İletişime Geç' %>
                     </a>
                 </div>
             </div>

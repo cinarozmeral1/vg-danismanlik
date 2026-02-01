@@ -22,12 +22,23 @@
     box-shadow: 0 8px 30px rgba(0,0,0,0.15);
 }
 
-.blog-card-image {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    display: block;
+.blog-card-header {
     background: linear-gradient(135deg, #0078D7 0%, #00BCF2 100%);
+    padding: 25px 24px;
+    position: relative;
+}
+
+.blog-card-header .country-flag {
+    font-size: 2rem;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.blog-card-header .university-name {
+    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 500;
+    opacity: 0.9;
 }
 
 .blog-card-body {
@@ -40,11 +51,11 @@
 
 .blog-card-badge {
     display: inline-block;
-    background: #0078D7;
-    color: #ffffff;
+    background: #e8f4fd;
+    color: #0078D7;
     font-size: 0.75rem;
     padding: 5px 12px;
-    border-radius: 4px;
+    border-radius: 20px;
     margin-bottom: 12px;
     font-weight: 600;
     text-transform: uppercase;
@@ -52,7 +63,7 @@
 }
 
 .blog-card-title {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     font-weight: 700;
     color: #1a1a2e;
     margin-bottom: 12px;
@@ -70,7 +81,7 @@
 
 .blog-card-excerpt {
     color: #555555;
-    font-size: 0.92rem;
+    font-size: 0.9rem;
     line-height: 1.6;
     margin-bottom: 20px;
     flex: 1;
@@ -141,13 +152,37 @@
 }
 </style>
 
+<% 
+const isEN = lang === 'en';
+const countryNames = {
+    'Czech Republic': isEN ? 'Czech Republic' : 'Çek Cumhuriyeti',
+    'Italy': isEN ? 'Italy' : 'İtalya',
+    'UK': isEN ? 'United Kingdom' : 'İngiltere',
+    'Germany': isEN ? 'Germany' : 'Almanya',
+    'Austria': isEN ? 'Austria' : 'Avusturya',
+    'Hungary': isEN ? 'Hungary' : 'Macaristan',
+    'Poland': isEN ? 'Poland' : 'Polonya',
+    'Netherlands': isEN ? 'Netherlands' : 'Hollanda'
+};
+const countryFlags = {
+    'Czech Republic': '🇨🇿',
+    'Italy': '🇮🇹',
+    'UK': '🇬🇧',
+    'Germany': '🇩🇪',
+    'Austria': '🇦🇹',
+    'Hungary': '🇭🇺',
+    'Poland': '🇵🇱',
+    'Netherlands': '🇳🇱'
+};
+%>
+
 <!-- Hero Section -->
 <section class="bg-primary text-white py-5">
     <div class="container">
         <div class="row">
             <div class="col-12 text-center">
                 <h1 class="display-4 fw-bold">Blog</h1>
-                <p class="lead">Yurtdışı eğitim hakkında güncel makaleler ve rehberler</p>
+                <p class="lead"><%= isEN ? 'Latest articles and guides about studying abroad' : 'Yurtdışı eğitim hakkında güncel makaleler ve rehberler' %></p>
             </div>
         </div>
     </div>
@@ -159,26 +194,20 @@
         <% if (posts && posts.length > 0) { %>
             <div class="row g-4">
                 <% posts.forEach(function(post) { %>
+                    <% 
+                        const flag = countryFlags[post.country] || '🎓';
+                        const countryDisplay = countryNames[post.country] || (isEN ? 'Study Abroad' : 'Yurtdışı Eğitim');
+                    %>
                     <div class="col-lg-4 col-md-6">
                         <div class="blog-card">
-                            <a href="/blog/<%= post.slug %>">
-                                <img src="<%= post.image %>" alt="<%= post.title %>" class="blog-card-image" 
-                                     onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&q=80';">
-                            </a>
+                            <div class="blog-card-header">
+                                <span class="country-flag"><%= flag %></span>
+                                <span class="university-name"><%= countryDisplay %></span>
+                            </div>
                             <div class="blog-card-body">
-                                <% if (post.topic) { %>
-                                    <span class="blog-card-badge">
-                                        <% if (post.topic === 'university') { %>
-                                            <i class="fas fa-university me-1"></i> Üniversite
-                                        <% } else if (post.topic === 'country') { %>
-                                            <i class="fas fa-globe me-1"></i> Ülke Rehberi
-                                        <% } else if (post.topic === 'country_program') { %>
-                                            <i class="fas fa-graduation-cap me-1"></i> Program
-                                        <% } else { %>
-                                            <i class="fas fa-book me-1"></i> Makale
-                                        <% } %>
-                                    </span>
-                                <% } %>
+                                <span class="blog-card-badge">
+                                    <i class="fas fa-graduation-cap me-1"></i> <%= isEN ? 'Article' : 'Makale' %>
+                                </span>
                                 
                                 <h3 class="blog-card-title">
                                     <a href="/blog/<%= post.slug %>"><%= post.title %></a>
@@ -189,7 +218,7 @@
                                 <div class="blog-card-footer">
                                     <span><i class="far fa-calendar me-1"></i> <%= post.date %></span>
                                     <a href="/blog/<%= post.slug %>" class="blog-card-link">
-                                        Devamını Oku <i class="fas fa-arrow-right"></i>
+                                        <%= isEN ? 'Read More' : 'Devamını Oku' %> <i class="fas fa-arrow-right"></i>
                                     </a>
                                 </div>
                             </div>
@@ -202,7 +231,7 @@
                 <nav class="pagination-nav">
                     <% if (hasPrevPage) { %>
                         <a href="/blog?page=<%= currentPage - 1 %>">
-                            <i class="fas fa-chevron-left me-1"></i> Önceki
+                            <i class="fas fa-chevron-left me-1"></i> <%= isEN ? 'Previous' : 'Önceki' %>
                         </a>
                     <% } %>
                     
@@ -214,7 +243,7 @@
                     
                     <% if (hasNextPage) { %>
                         <a href="/blog?page=<%= currentPage + 1 %>">
-                            Sonraki <i class="fas fa-chevron-right ms-1"></i>
+                            <%= isEN ? 'Next' : 'Sonraki' %> <i class="fas fa-chevron-right ms-1"></i>
                         </a>
                     <% } %>
                 </nav>
@@ -223,8 +252,8 @@
         <% } else { %>
             <div class="empty-state">
                 <i class="fas fa-newspaper"></i>
-                <h3 class="text-muted">Henüz makale yok</h3>
-                <p class="text-muted">Yakında yeni makaleler eklenecek.</p>
+                <h3 class="text-muted"><%= isEN ? 'No articles yet' : 'Henüz makale yok' %></h3>
+                <p class="text-muted"><%= isEN ? 'New articles will be added soon.' : 'Yakında yeni makaleler eklenecek.' %></p>
             </div>
         <% } %>
     </div>
@@ -233,10 +262,10 @@
 <!-- CTA Section -->
 <section class="py-5 bg-primary text-white">
     <div class="container text-center">
-        <h2 class="fw-bold mb-3">Yurtdışında Eğitim Hayalinizi Gerçekleştirin</h2>
-        <p class="lead mb-4">Venture Global ile ücretsiz danışmanlık hizmeti alın.</p>
-        <a href="/#contact" class="btn btn-light btn-lg px-4">
-            <i class="fas fa-comments me-2"></i> Ücretsiz Danışmanlık
+        <h2 class="fw-bold mb-3"><%= isEN ? 'Make Your Dream of Studying Abroad Come True' : 'Yurtdışında Eğitim Hayalinizi Gerçekleştirin' %></h2>
+        <p class="lead mb-4"><%= isEN ? 'Get free consultation with Venture Global.' : 'Venture Global ile ücretsiz danışmanlık hizmeti alın.' %></p>
+        <a href="/contact" class="btn btn-light btn-lg px-4">
+            <i class="fas fa-comments me-2"></i> <%= isEN ? 'Contact Us' : 'İletişime Geçin' %>
         </a>
     </div>
 </section>

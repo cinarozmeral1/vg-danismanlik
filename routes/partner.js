@@ -44,12 +44,13 @@ router.get('/dashboard', async (req, res) => {
             name: `${partnerData.first_name} ${partnerData.last_name}`
         };
 
-        // Get partner's students with details
+        // Get partner's students with details (from both legacy partner_id and new student_partners table)
         const studentsResult = await pool.query(
-            `SELECT id, first_name, last_name, email, phone, created_at 
-             FROM users 
-             WHERE partner_id = $1 
-             ORDER BY created_at DESC`,
+            `SELECT DISTINCT u.id, u.first_name, u.last_name, u.email, u.phone, u.created_at 
+             FROM users u
+             LEFT JOIN student_partners sp ON u.id = sp.student_id
+             WHERE u.partner_id = $1 OR sp.partner_id = $1
+             ORDER BY u.created_at DESC`,
             [partner.id]
         );
         const students = studentsResult.rows;
@@ -70,7 +71,7 @@ router.get('/dashboard', async (req, res) => {
              FROM partner_earnings pe
              JOIN users u ON pe.user_id = u.id
              WHERE pe.partner_id = $1
-             ORDER BY pe.earning_date DESC`,
+             ORDER BY COALESCE(pe.earning_date, pe.created_at) DESC NULLS LAST`,
             [partner.id]
         );
         const earnings = earningsResult.rows;
@@ -81,7 +82,17 @@ router.get('/dashboard', async (req, res) => {
             students,
             earnings,
             currentLanguage: res.locals.currentLanguage || 'tr',
-            t: res.locals.t
+            t: res.locals.t,
+            // For navbar
+            isLoggedIn: true,
+            isPartner: true,
+            currentUser: {
+                first_name: partner.first_name,
+                last_name: partner.last_name,
+                name: partner.name,
+                email: partner.email,
+                is_partner: true
+            }
         });
 
     } catch (error) {
@@ -121,11 +132,34 @@ router.get('/settings', async (req, res) => {
 
         const partner = partnerResult.rows[0];
 
+        // Get student count for sidebar - simple and safe
+        let studentCount = 0;
+        try {
+            const countResult = await pool.query(
+                'SELECT COUNT(*) as count FROM users WHERE partner_id = $1 AND (is_admin = false OR is_admin IS NULL)',
+                [partner.id]
+            );
+            studentCount = parseInt(countResult.rows[0].count) || 0;
+        } catch (e) {
+            studentCount = 0;
+        }
+
         res.render('partner/settings', {
             title: 'Ayarlar - Partner Panel',
             partner,
+            studentCount,
             currentLanguage: res.locals.currentLanguage || 'tr',
-            t: res.locals.t
+            t: res.locals.t,
+            // For navbar
+            isLoggedIn: true,
+            isPartner: true,
+            currentUser: {
+                first_name: partner.first_name,
+                last_name: partner.last_name,
+                name: `${partner.first_name} ${partner.last_name}`,
+                email: partner.email,
+                is_partner: true
+            }
         });
 
     } catch (error) {
@@ -138,30 +172,51 @@ router.get('/settings', async (req, res) => {
 // PARTNER API ENDPOINTS
 // =====================================================
 
-// Get partner's students
+// Get partner's students (from both legacy partner_id and new student_partners table)
 router.get('/api/students', authenticatePartner, async (req, res) => {
     try {
-        const result = await pool.query(`
-            SELECT 
+        // First get all students assigned to this partner
+        const studentsResult = await pool.query(`
+            SELECT DISTINCT 
                 u.id,
                 u.first_name,
                 u.last_name,
-                u.created_at as registered_at,
-                pe.amount as earning_amount,
+                u.email,
+                u.phone,
+                u.created_at as registered_at
+            FROM users u
+            LEFT JOIN student_partners sp ON u.id = sp.student_id
+            WHERE u.partner_id = $1 OR sp.partner_id = $1
+            ORDER BY u.created_at DESC
+        `, [req.partner.id]);
+        
+        // Get earnings for these students
+        const earningsResult = await pool.query(`
+            SELECT 
+                pe.user_id,
+                pe.amount,
                 pe.currency,
                 pe.earning_date,
                 pe.is_paid,
                 pe.payment_date,
                 pe.notes as earning_notes
-            FROM users u
-            LEFT JOIN partner_earnings pe ON u.id = pe.user_id AND pe.partner_id = $1
-            WHERE u.partner_id = $1
-            ORDER BY u.created_at DESC
+            FROM partner_earnings pe
+            WHERE pe.partner_id = $1
         `, [req.partner.id]);
+        
+        // Combine students with their earnings
+        const students = studentsResult.rows.map(student => {
+            const studentEarnings = earningsResult.rows.filter(e => e.user_id === student.id);
+            return {
+                ...student,
+                earnings: studentEarnings,
+                total_earnings: studentEarnings.reduce((sum, e) => sum + parseFloat(e.amount || 0), 0)
+            };
+        });
 
         res.json({
             success: true,
-            students: result.rows
+            students: students
         });
 
     } catch (error) {
@@ -193,7 +248,7 @@ router.get('/api/earnings', authenticatePartner, async (req, res) => {
             FROM partner_earnings pe
             JOIN users u ON pe.user_id = u.id
             WHERE pe.partner_id = $1
-            ORDER BY pe.earning_date DESC
+            ORDER BY COALESCE(pe.earning_date, pe.created_at) DESC NULLS LAST
         `, [req.partner.id]);
 
         // Calculate totals

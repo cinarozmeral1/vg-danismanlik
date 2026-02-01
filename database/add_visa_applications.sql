@@ -2,7 +2,7 @@
 CREATE TABLE IF NOT EXISTS visa_applications (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    country VARCHAR(50) NOT NULL CHECK (country IN ('Germany', 'Czech Republic', 'Italy', 'Austria', 'UK', 'Poland', 'Hungary')),
+    country VARCHAR(50) NOT NULL CHECK (country IN ('Germany', 'Czech Republic', 'Italy', 'Austria', 'UK', 'Poland', 'Hungary', 'Netherlands')),
     consulate_city VARCHAR(100) NOT NULL,
     status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
     notes TEXT,

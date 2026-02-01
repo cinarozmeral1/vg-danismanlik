@@ -12,6 +12,13 @@
                         <a href="/partner/dashboard" class="list-group-item list-group-item-action">
                             <i class="fas fa-tachometer-alt me-2"></i>Dashboard
                         </a>
+                        <a href="/partner/dashboard#studentsSection" class="list-group-item list-group-item-action">
+                            <i class="fas fa-users me-2"></i>Öğrencilerim
+                            <span class="badge bg-primary float-end"><%= typeof studentCount !== 'undefined' ? studentCount : 0 %></span>
+                        </a>
+                        <a href="/partner/dashboard#earningsSection" class="list-group-item list-group-item-action">
+                            <i class="fas fa-euro-sign me-2"></i>Kazançlarım
+                        </a>
                         <a href="/partner/settings" class="list-group-item list-group-item-action active">
                             <i class="fas fa-cog me-2"></i>Ayarlar
                         </a>
@@ -145,7 +152,7 @@
         
         setTimeout(() => {
             alert.remove();
-        }, 5000);
+        }, 10000);
     }
 
     document.getElementById('passwordForm').addEventListener('submit', async function(e) {

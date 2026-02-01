@@ -204,13 +204,13 @@
                         <div class="row text-center">
                             <div class="col-6 mb-3">
                                 <div class="p-3 bg-primary rounded">
-                                    <h4 class="text-white mb-1">300€</h4>
+                                    <h4 class="text-white mb-1">750€</h4>
                                     <small class="text-white">Üni Ücreti/Dönem</small>
                                 </div>
                             </div>
                             <div class="col-6 mb-3">
                                 <div class="p-3 bg-success rounded">
-                                    <h4 class="text-white mb-1">700€</h4>
+                                    <h4 class="text-white mb-1">1.000€</h4>
                                     <small class="text-white"><%= t.studentLifePage.sections.quickInfo.minLiving %></small>
                                 </div>
                             </div>
@@ -232,6 +232,51 @@
                             <i class="fas fa-lightbulb me-2" style="color: #111 !important;"></i>
                             <strong style="color: #111 !important;"><%= t.studentLifePage.sections.quickInfo.tip %>:</strong> <%= t.studentLifePage.countries.austria.alerts.tip %>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Important Warning - Turkish Diploma -->
+                <div class="card shadow-lg border-0 mb-4">
+                    <div class="card-header bg-danger text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <%= t.studentLifePage.diplomaWarnings.turkishInfoTitle %>
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-warning mb-3" style="background: #fffbeb; border-left: 4px solid #f59e0b;">
+                            <p class="mb-2"><strong><i class="fas fa-graduation-cap me-2"></i><%= t.studentLifePage.diplomaWarnings.diplomaRecognition %>:</strong></p>
+                            <p class="mb-0 text-dark"><%= t.studentLifePage.diplomaWarnings.austria.info %></p>
+                        </div>
+                        <div class="alert alert-danger mb-0" style="background: #fff5f5; border-left: 4px solid #dc3545;">
+                            <p class="mb-2"><strong><i class="fas fa-stethoscope me-2"></i><%= t.studentLifePage.diplomaWarnings.medicalWarning %>:</strong></p>
+                            <p class="mb-0 text-dark small"><%= t.studentLifePage.diplomaWarnings.austria.medicalWarning %></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kanada Lise Diploması Avantajı -->
+                <div class="card shadow-lg border-0 mb-4">
+                    <div class="card-header text-white" style="background: linear-gradient(135deg, #059669 0%, #047857 100%);">
+                        <h5 class="mb-0">
+                            <i class="fas fa-maple-leaf me-2"></i>
+                            <%= t.studentLifePage.diplomaWarnings.canadianAdvantageTitle %>
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-success mb-3" style="background: #f0fdf4; border-left: 4px solid #22c55e;">
+                            <p class="mb-2"><strong><i class="fas fa-check-circle me-2"></i><%= t.studentLifePage.diplomaWarnings.directAdmission %>!</strong></p>
+                            <p class="mb-0 text-dark"><%= t.studentLifePage.diplomaWarnings.austria.advantage %></p>
+                        </div>
+                        <ul class="list-unstyled mb-3">
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><%= t.studentLifePage.diplomaWarnings.austria.benefit1 %></li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><%= t.studentLifePage.diplomaWarnings.austria.benefit2 %></li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><%= t.studentLifePage.diplomaWarnings.austria.benefit3 %></li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><%= t.studentLifePage.diplomaWarnings.austria.benefit4 %></li>
+                        </ul>
+                        <a href="/partners/wcep" class="btn btn-success btn-sm w-100">
+                            <i class="fas fa-info-circle me-2"></i><%= t.studentLifePage.diplomaWarnings.aboutWcep %>
+                        </a>
                     </div>
                 </div>
 

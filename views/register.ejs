@@ -1,150 +1,436 @@
-<!DOCTYPE html>
-<html lang="<%= currentLanguage %>">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= t.auth.register.title %> - Venture Global</title>
+<!-- International Phone Input CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">
     
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/style.css">
-</head>
-<body>
-
+    <!-- Google OAuth - Server-side flow -->
+    
+    <style>
+        .register-section {
+        margin-top: 0;
+        padding-top: 30px;
+        min-height: calc(100vh - 72px);
+            background: #fef6f0;
+        }
+        
+        .register-form-side {
+            background: transparent;
+        min-height: calc(100vh - 72px);
+        }
+        
+        .register-form-container {
+            padding: 20px 30px;
+        }
+        
+        .carousel-side {
+            position: relative;
+            background: transparent;
+        min-height: calc(100vh - 72px);
+            overflow: hidden;
+        }
+        
+        .static-image-container {
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .static-login-image {
+            max-width: 90%;
+            max-height: 80vh;
+            object-fit: contain;
+            margin-top: -60px;
+        }
+        
+        .register-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .register-header {
+            background: linear-gradient(135deg, #0056b3 0%, #004494 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .register-header h3 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 1.4rem;
+        }
+        
+        .register-header p {
+            margin: 5px 0 0;
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        
+        .register-body {
+            padding: 25px;
+        }
+        
+    .register-section .form-control {
+            border-radius: 10px;
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            font-size: 0.95rem;
+        }
+        
+    .register-section .form-control:focus {
+            border-color: #0056b3;
+            box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1);
+        }
+        
+    .register-section .form-label {
+            font-size: 0.9rem;
+            margin-bottom: 0.4rem;
+        }
+        
+    .register-section .mb-3 {
+            margin-bottom: 0.8rem !important;
+        }
+        
+        .btn-register {
+            background: linear-gradient(135deg, #0056b3 0%, #004494 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            width: 100%;
+        }
+        
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 86, 179, 0.3);
+        }
+        
+        /* Divider */
+        .register-divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 15px 0;
+        }
+        
+        .register-divider::before,
+        .register-divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .register-divider span {
+            padding: 0 12px;
+            color: #666;
+            font-size: 0.85rem;
+        }
+        
+        /* Google Button */
+        .google-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .google-btn:hover {
+            background: #f8f9fa;
+            border-color: #ccc;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .google-btn img {
+            width: 22px;
+            height: 22px;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+        }
+        
+        .password-field {
+            position: relative;
+        }
+        
+        .terms-text {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .terms-text a {
+            color: #0056b3;
+        }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        @media (max-width: 576px) {
+            .register-section {
+                padding: 20px 15px;
+            }
+            
+            .register-card {
+                border-radius: 15px;
+            }
+            
+            .register-header,
+            .register-body {
+                padding: 20px;
+            }
+        }
+        
+        /* Phone Input Styling */
+        .iti {
+            width: 100%;
+        }
+        .iti__flag-container {
+            z-index: 10;
+        }
+        .iti__selected-flag {
+            background: transparent !important;
+            border-radius: 10px 0 0 10px;
+        }
+        .iti__country-list {
+            max-height: 250px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+        .iti__country {
+            padding: 10px 15px;
+        }
+        .iti__country:hover {
+            background: #f0f7ff;
+        }
+        .iti__country.iti__highlight {
+            background: #e8f4fd;
+        }
+        
+    </style>
 
     <!-- Register Section -->
-    <section class="section bg-light text-dark" style="margin-top: 100px; min-height: 80vh;">
-        <div class="container-fluid px-4">
-            <div class="row justify-content-center">
-                <div class="col-xl-10 col-lg-11 col-md-12">
-                    <div class="card shadow-lg">
-                        <div class="card-header bg-primary text-white text-center">
-                            <h3 class="mb-0">
+    <section class="register-section">
+        <div class="container-fluid p-0">
+            <div class="row g-0 min-vh-100">
+                <!-- Sol Taraf - Kayıt Formu -->
+            <div class="col-lg-6 col-md-7 register-form-side d-flex align-items-start justify-content-center" style="padding-top: 40px;">
+                <div class="register-form-container w-100" style="max-width: 680px;">
+                        <div class="register-card">
+                            <div class="register-header">
+                                <h3>
                                 <i class="fas fa-user-plus me-2"></i>
                                 <%= t.auth.register.title %>
                             </h3>
+                                <p><%= currentLanguage === 'tr' ? 'Hızlı ve kolay kayıt' : 'Quick and easy registration' %></p>
                         </div>
-                        <div class="card-body p-4">
+                
+                            <div class="register-body">
                             <div id="alertContainer"></div>
                             
-                            <form id="registerForm" class="row g-4">
-                                <div class="col-md-6">
-                                    <label for="first_name" class="form-label">Ad *</label>
-                                    <input type="text" class="form-control" id="first_name" name="first_name" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="last_name" class="form-label">Soyad *</label>
-                                    <input type="text" class="form-control" id="last_name" name="last_name" required>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label for="tc_number" class="form-label">TC Kimlik No *</label>
-                                    <input type="text" class="form-control" id="tc_number" name="tc_number" maxlength="11" pattern="[0-9]{11}" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required>
-                                    <small class="text-muted">11 haneli olarak giriniz.</small>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="email" class="form-label">E-posta *</label>
-                                    <input type="email" class="form-control" id="email" name="email" required>
+                                <!-- Google Sign Up Button - Direkt Google'a yönlendir -->
+                                <a href="/api/auth/google/redirect?action=register" id="googleRegisterBtn" class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center gap-2" style="padding: 10px; border-radius: 8px; font-weight: 500;">
+                                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width: 18px; height: 18px;">
+                                    <span><%= currentLanguage === 'tr' ? 'Google ile Kayıt Ol' : 'Sign up with Google' %></span>
+                                </a>
+                    
+                                <div class="register-divider">
+                                    <span><%= currentLanguage === 'tr' ? 'veya e-posta ile' : 'or with email' %></span>
                                 </div>
 
-                                <div class="col-md-6">
-                                    <label for="phone" class="form-label">Telefon *</label>
-                                    <input type="tel" class="form-control" id="phone" name="phone" placeholder="Örn: +90 555 123 45 67" required>
+                <!-- Email Registration Form - 2 Column Layout -->
+                    <form id="registerForm">
+                    <div class="row">
+                        <!-- Sol Sütun - Kişisel Bilgiler -->
+                        <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label for="first_name" class="form-label">
+                                    <i class="fas fa-user me-2 text-primary"></i>
+                                    <%= currentLanguage === 'tr' ? 'Ad' : 'First Name' %> *
+                                </label>
+                                <input type="text" class="form-control" id="first_name" name="first_name" required 
+                                       placeholder="<%= currentLanguage === 'tr' ? 'Adınız' : 'Your name' %>">
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label for="last_name" class="form-label">
+                                    <i class="fas fa-user me-2 text-primary"></i>
+                                    <%= currentLanguage === 'tr' ? 'Soyad' : 'Last Name' %> *
+                                </label>
+                                <input type="text" class="form-control" id="last_name" name="last_name" required 
+                                       placeholder="<%= currentLanguage === 'tr' ? 'Soyadınız' : 'Your surname' %>">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="tc_number" class="form-label">
+                                <i class="fas fa-id-card me-2 text-primary"></i>
+                                <%= currentLanguage === 'tr' ? 'TC Kimlik No' : 'ID Number' %> *
+                            </label>
+                            <input type="text" class="form-control" id="tc_number" name="tc_number" required 
+                                   placeholder="<%= currentLanguage === 'tr' ? '11 haneli TC kimlik numaranız' : 'Your 11-digit ID number' %>"
+                                   maxlength="11" pattern="[0-9]{11}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope me-2 text-primary"></i>
+                                <%= currentLanguage === 'tr' ? 'E-posta' : 'Email' %> *
+                            </label>
+                            <input type="email" class="form-control" id="email" name="email" required 
+                                   placeholder="<%= currentLanguage === 'tr' ? 'ornek@email.com' : 'example@email.com' %>">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">
+                                <i class="fas fa-phone me-2 text-primary"></i>
+                                <%= currentLanguage === 'tr' ? 'Telefon Numarası' : 'Phone Number' %> *
+                            </label>
+                            <input type="tel" class="form-control" id="phone" name="phone" required
+                                   placeholder="<%= currentLanguage === 'tr' ? '5XX XXX XX XX' : '5XX XXX XX XX' %>"
+                                   style="padding-left: 90px;">
+                            <small class="text-muted mt-1 d-block">
+                                <i class="fas fa-info-circle me-1"></i>
+                                <%= currentLanguage === 'tr' ? 'Ülke kodunu seçin ve numaranızı girin' : 'Select country code and enter your number' %>
+                            </small>
+                            </div>
+                        </div>
+
+                        <!-- Sağ Sütun - Hesap Bilgileri -->
+                        <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="english_level" class="form-label">
+                                <i class="fas fa-language me-2 text-primary"></i>
+                                <%= currentLanguage === 'tr' ? 'İngilizce Seviyesi' : 'English Level' %> *
+                            </label>
+                            <select class="form-select" id="english_level" name="english_level" required style="border-radius: 10px; padding: 12px 15px; border: 2px solid #e0e0e0;">
+                                <option value=""><%= currentLanguage === 'tr' ? 'Seçiniz' : 'Select' %></option>
+                                <option value="A1">A1 - <%= currentLanguage === 'tr' ? 'Başlangıç' : 'Beginner' %></option>
+                                <option value="A2">A2 - <%= currentLanguage === 'tr' ? 'Temel' : 'Elementary' %></option>
+                                <option value="B1">B1 - <%= currentLanguage === 'tr' ? 'Orta' : 'Intermediate' %></option>
+                                <option value="B2">B2 - <%= currentLanguage === 'tr' ? 'Orta-İleri' : 'Upper-Intermediate' %></option>
+                                <option value="C1">C1 - <%= currentLanguage === 'tr' ? 'İleri' : 'Advanced' %></option>
+                                <option value="C2">C2 - <%= currentLanguage === 'tr' ? 'Profesyonel' : 'Proficient' %></option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock me-2 text-primary"></i>
+                                <%= currentLanguage === 'tr' ? 'Şifre' : 'Password' %> *
+                            </label>
+                            <div class="password-field">
+                                <input type="password" class="form-control" id="password" name="password" required 
+                                       minlength="6" placeholder="<%= currentLanguage === 'tr' ? 'En az 6 karakter' : 'At least 6 characters' %>">
+                                <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                                    <i class="fas fa-eye" id="passwordIcon"></i>
+                                </button>
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="english_level" class="form-label">İngilizce Seviyesi *</label>
-                                    <select class="form-select" id="english_level" name="english_level" required>
-                                        <option value="">Seçiniz</option>
-                                        <option value="A1">A1</option>
-                                        <option value="A2">A2</option>
-                                        <option value="B1">B1</option>
-                                        <option value="B2">B2</option>
-                                        <option value="C1">C1</option>
-                                        <option value="C2">C2</option>
-                                    </select>
                                 </div>
 
-                                <div class="col-md-6">
-                                    <label for="high_school_graduation_date" class="form-label">Lise Mezuniyet Tarihi *</label>
-                                    <input type="text" class="form-control" id="high_school_graduation_date" name="high_school_graduation_date" placeholder="GG/AA/YYYY" required>
-                                    <small class="text-muted">Tarihi GG/AA/YYYY formatında, slash (/) kullanarak giriniz.</small>
+                            <div class="mb-3">
+                            <label for="confirm_password" class="form-label">
+                                <i class="fas fa-lock me-2 text-primary"></i>
+                                <%= currentLanguage === 'tr' ? 'Şifre Tekrarı' : 'Confirm Password' %> *
+                            </label>
+                            <div class="password-field">
+                                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required 
+                                       minlength="6" placeholder="<%= currentLanguage === 'tr' ? 'Şifreyi tekrar girin' : 'Re-enter password' %>">
+                                <button type="button" class="password-toggle" onclick="togglePassword('confirm_password')">
+                                    <i class="fas fa-eye" id="confirm_passwordIcon"></i>
+                                </button>
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="birth_date" class="form-label">Doğum Tarihi *</label>
-                                    <input type="text" class="form-control" id="birth_date" name="birth_date" placeholder="GG/AA/YYYY" required>
-                                    <small class="text-muted">Tarihi GG/AA/YYYY formatında, slash (/) kullanarak giriniz.</small>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label for="passport_type" class="form-label">Pasaport Türü *</label>
-                                    <input type="text" class="form-control" id="passport_type" name="passport_type" placeholder="Örn: Bordo, Yeşil, Gri, Siyah" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="passport_number" class="form-label">Pasaport Numarası *</label>
-                                    <input type="text" class="form-control" id="passport_number" name="passport_number" placeholder="Örn: P1234567" required>
                                 </div>
 
-                                <div class="col-md-6">
-                                    <label for="desired_country" class="form-label">Gitmek İstediği Ülke *</label>
-                                    <input type="text" class="form-control" id="desired_country" name="desired_country" placeholder="Örn: Almanya" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="active_class" class="form-label">Aktif Sınıf *</label>
-                                    <input type="text" class="form-control" id="active_class" name="active_class" placeholder="Örn: 11" required>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label for="password" class="form-label">Şifre *</label>
-                                    <input type="password" class="form-control" id="password" name="password" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="confirm_password" class="form-label">Şifre Tekrar *</label>
-                                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
-                                </div>
-
-                                <div class="col-12 form-check">
+                            <div class="mb-3 form-check">
                                     <input type="checkbox" class="form-check-input" id="terms" required>
-                                    <label class="form-check-label" for="terms">
+                            <label class="form-check-label terms-text" for="terms">
                                         <%= t.auth.register.termsText %>
                                         <a href="/terms" target="_blank"><%= t.auth.register.termsLink %></a>
                                     </label>
+                            </div>
+                        </div>
                                 </div>
 
-                                <div class="col-12 d-grid">
-                                    <button type="submit" class="btn btn-primary btn-lg">
+                        <button type="submit" class="btn btn-primary btn-register" id="submitBtn">
                                         <i class="fas fa-user-plus me-2"></i>
                                         <%= t.auth.register.submit %>
                                     </button>
-                                </div>
                             </form>
                             
-                            <hr class="my-4">
-                            
-                            <div class="text-center">
-                                <p class="mb-0">
+                                <div class="login-link text-center mt-3">
+                                    <p class="mb-0" style="font-size: 0.9rem;">
                                     <%= t.auth.register.haveAccount %>
-                                    <a href="/login" class="text-primary">
+                                        <a href="/login" class="text-primary fw-bold">
                                         <%= t.auth.register.login %>
                                     </a>
                                 </p>
                             </div>
                         </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sağ Taraf - Görsel Alanı -->
+            <div class="col-lg-6 col-md-5 d-none d-md-block carousel-side p-0">
+                    <!-- Statik görsel - login sayfasıyla aynı -->
+                    <div class="static-image-container d-flex align-items-center justify-content-center h-100">
+                        <img src="/images/venture-global-login.png" alt="Venture Global - Student Consulting" class="static-login-image">
                     </div>
                 </div>
             </div>
         </div>
     </section>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- International Phone Input JS -->
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
     
     <script>
+        // Store wizard recommendation ID if coming from wizard
+        const urlParams = new URLSearchParams(window.location.search);
+        const wizardRecommendationId = urlParams.get('wizard_rec') || sessionStorage.getItem('wizard_recommendation_id');
+        
+        // Phone input instance
+        let formPhoneInput;
+        
         document.addEventListener('DOMContentLoaded', function() {
-            const registerForm = document.getElementById('registerForm');
-            const alertContainer = document.getElementById('alertContainer');
+            // Initialize intl-tel-input for form phone
+            const phoneField = document.getElementById('phone');
+            if (phoneField) {
+                formPhoneInput = window.intlTelInput(phoneField, {
+                    initialCountry: "tr",
+                    preferredCountries: ["tr", "de", "gb", "us", "fr", "it", "es", "nl", "at", "cz"],
+                    separateDialCode: true,
+                    utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js"
+                });
+            }
             
-            // Password confirmation validation
+            // Form validation
+            const registerForm = document.getElementById('registerForm');
             const password = document.getElementById('password');
             const confirmPassword = document.getElementById('confirm_password');
             
@@ -159,59 +445,91 @@
             password.addEventListener('change', validatePassword);
             confirmPassword.addEventListener('keyup', validatePassword);
             
+            // Form submission
             registerForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
-                const formData = new FormData(registerForm);
-                const toIsoDate = (value) => {
-                    if (!value) return null;
-                    const isoPattern = /^\d{4}-\d{2}-\d{2}$/;
-                    if (isoPattern.test(value)) return value;
-                    const parts = value.split(/[\.\/]/);
-                    if (parts.length === 3) {
-                        const [day, month, year] = parts;
-                        if (day.length === 1 || day.length === 2) {
-                            return `${year.padStart(4, '0')}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-                        }
-                    }
-                    return value;
-                };
-                const data = {
-                    first_name: formData.get('first_name'),
-                    last_name: formData.get('last_name'),
-                    email: formData.get('email'),
-                    tc_number: formData.get('tc_number'),
-                    phone: formData.get('phone'),
-                    password: formData.get('password'),
-                    english_level: formData.get('english_level'),
-                    high_school_graduation_date: formData.get('high_school_graduation_date'),
-                    birth_date: formData.get('birth_date'),
-                    passport_number: formData.get('passport_number'),
-                    passport_type: formData.get('passport_type'),
-                    desired_country: formData.get('desired_country'),
-                    active_class: formData.get('active_class'),
-                    language: '<%= currentLanguage %>'
-                };
-                data.high_school_graduation_date = toIsoDate(data.high_school_graduation_date);
-                data.birth_date = toIsoDate(data.birth_date);
+                const submitBtn = document.getElementById('submitBtn');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Kaydediliyor...';
+                
+                const email = document.getElementById('email').value;
+                const passwordValue = password.value;
+                
+                // Get full phone number with country code (INTERNATIONAL format: +90 5XX XXX XX XX)
+                let phoneNumber = '';
+                if (formPhoneInput) {
+                    phoneNumber = formPhoneInput.getNumber(intlTelInputUtils.numberFormat.INTERNATIONAL);
+                }
+                
+                // Validate phone
+                if (!phoneNumber || phoneNumber.length < 10) {
+                    showAlert('danger', '<%= currentLanguage === "tr" ? "Lütfen geçerli bir telefon numarası girin" : "Please enter a valid phone number" %>');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-user-plus me-2"></i><%= t.auth.register.submit %>';
+                    return;
+                }
+                
+                // Get english level
+                const englishLevel = document.getElementById('english_level').value;
+                
+                // Validate english level
+                if (!englishLevel) {
+                    showAlert('danger', '<%= currentLanguage === "tr" ? "Lütfen İngilizce seviyenizi seçin" : "Please select your English level" %>');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-user-plus me-2"></i><%= t.auth.register.submit %>';
+                    return;
+                }
+                
+                // Get name and TC fields
+                const firstName = document.getElementById('first_name').value.trim();
+                const lastName = document.getElementById('last_name').value.trim();
+                const tcNumber = document.getElementById('tc_number').value.trim();
+                
+                // Validate name fields
+                if (!firstName || !lastName) {
+                    showAlert('danger', '<%= currentLanguage === "tr" ? "Lütfen ad ve soyadınızı girin" : "Please enter your first and last name" %>');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-user-plus me-2"></i><%= t.auth.register.submit %>';
+                    return;
+                }
+                
+                // Validate TC number (11 digits)
+                if (!tcNumber || tcNumber.length !== 11 || !/^[0-9]{11}$/.test(tcNumber)) {
+                    showAlert('danger', '<%= currentLanguage === "tr" ? "Lütfen 11 haneli geçerli bir TC kimlik numarası girin" : "Please enter a valid 11-digit ID number" %>');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-user-plus me-2"></i><%= t.auth.register.submit %>';
+                    return;
+                }
                 
                 try {
                     const response = await fetch('/api/auth/register', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(data)
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            email: email,
+                            password: passwordValue,
+                            first_name: firstName,
+                            last_name: lastName,
+                            tc_number: tcNumber,
+                            phone: phoneNumber,
+                            english_level: englishLevel,
+                            language: '<%= currentLanguage %>'
+                        })
                     });
                     
                     const result = await response.json();
                     
                     if (result.success) {
                         showAlert('success', '<%= t.auth.register.success %>');
-                        // Check if coming from wizard
-                        const urlParams = new URLSearchParams(window.location.search);
-                        const redirect = urlParams.get('redirect');
+                        
+                        // Store wizard recommendation if exists
+                        if (wizardRecommendationId) {
+                            sessionStorage.setItem('wizard_recommendation_id', wizardRecommendationId);
+                        }
+                        
                         setTimeout(() => {
+                            const redirect = urlParams.get('redirect');
                             if (redirect === 'wizard') {
                                 window.location.href = '/login?redirect=wizard';
                             } else {
@@ -220,7 +538,9 @@
                         }, 2000);
                     } else {
                         showAlert('danger', result.message);
-                        // Eğer redirectTo varsa şifremi unuttum sayfasına yönlendir
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<i class="fas fa-user-plus me-2"></i><%= t.auth.register.submit %>';
+                        
                         if (result.redirectTo) {
                             setTimeout(() => {
                                 window.location.href = result.redirectTo;
@@ -228,11 +548,33 @@
                         }
                     }
                 } catch (error) {
+                    console.error('Registration error:', error);
                     showAlert('danger', '<%= t.auth.register.error %>');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-user-plus me-2"></i><%= t.auth.register.submit %>';
                 }
             });
+        });
+        
+        // Toggle password visibility
+        function togglePassword(fieldId) {
+            const field = document.getElementById(fieldId);
+            const icon = document.getElementById(fieldId + 'Icon');
             
+            if (field.type === 'password') {
+                field.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                field.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+        
+        // Show alert
             function showAlert(type, message) {
+            const alertContainer = document.getElementById('alertContainer');
                 alertContainer.innerHTML = `
                     <div class="alert alert-${type} alert-dismissible fade show" role="alert">
                         <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
@@ -242,28 +584,47 @@
                 `;
             }
             
-            // Language change functionality
-            document.querySelectorAll('.language-option').forEach(option => {
-                option.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const language = this.getAttribute('data-language');
-                    
-                    fetch('/change-language', {
+        // Handle OAuth2 popup response (fallback)
+        async function handleGoogleOAuth2Response(userData, accessToken) {
+            const btn = document.getElementById('googleSignUpBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>İşleniyor...';
+            
+            try {
+                const result = await fetch('/api/auth/google-oauth2', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ language: language })
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        access_token: accessToken,
+                        user_data: userData,
+                        wizard_recommendation_id: wizardRecommendationId,
+                        language: '<%= currentLanguage %>'
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            window.location.reload();
-                        }
-                    });
                 });
-            });
-        });
+                
+                const data = await result.json();
+                
+                if (data.success) {
+                    showAlert('success', data.message);
+                    
+                    // Redirect based on response
+                    setTimeout(() => {
+                        window.location.href = data.redirect || '/user/dashboard';
+                    }, 1000);
+                } else {
+                    // Show detailed error for debugging
+                    const errorMsg = data.error_detail ? `${data.message} (${data.error_detail})` : data.message;
+                    console.error('Google OAuth2 error:', data);
+                    showAlert('danger', errorMsg);
+                    btn.disabled = false;
+                    btn.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"><span><%= currentLanguage === "tr" ? "Google ile Kayıt Ol" : "Sign up with Google" %></span>';
+                }
+            } catch (error) {
+                console.error('Google OAuth2 auth error:', error);
+                showAlert('danger', '<%= currentLanguage === "tr" ? "Google girişi sırasında bir hata oluştu" : "An error occurred during Google sign-in" %>');
+                btn.disabled = false;
+                btn.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"><span><%= currentLanguage === "tr" ? "Google ile Kayıt Ol" : "Sign up with Google" %></span>';
+            }
+        }
     </script>
-</body>
-</html> 

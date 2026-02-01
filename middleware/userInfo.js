@@ -14,21 +14,24 @@ const userInfoMiddleware = async (req, res, next) => {
             if (decoded.userId) {
                 // Regular user or admin user
                 const result = await pool.query(
-                    'SELECT id, first_name, last_name, email, email_verified, is_admin FROM users WHERE id = $1',
+                    'SELECT id, first_name, last_name, email, email_verified, is_admin, admin_role FROM users WHERE id = $1',
                     [decoded.userId]
                 );
                 
                 if (result.rows.length > 0) {
                     const user = result.rows[0];
-                    console.log('🔍 User found:', { id: user.id, email: user.email, is_admin: user.is_admin, email_verified: user.email_verified });
+                    console.log('🔍 User found:', { id: user.id, email: user.email, is_admin: user.is_admin, admin_role: user.admin_role, email_verified: user.email_verified });
                     // Soft enforcement: kullanıcıyı her durumda oturum sahibi yap
                     res.locals.currentUser = user;
                     res.locals.isLoggedIn = true;
                     res.locals.isAdmin = user.is_admin || false;
-                    console.log('✅ User authenticated:', { isLoggedIn: res.locals.isLoggedIn, isAdmin: res.locals.isAdmin });
+                    res.locals.isSuperAdmin = user.admin_role === 'super_admin';
+                    res.locals.isCoAdmin = user.admin_role === 'co_admin';
+                    res.locals.adminRole = user.admin_role || null;
+                    console.log('✅ User authenticated:', { isLoggedIn: res.locals.isLoggedIn, isAdmin: res.locals.isAdmin, adminRole: res.locals.adminRole });
                 }
             } else if (decoded.adminId) {
-                // Admin user
+                // Admin user (legacy admins table)
                 const result = await pool.query(
                     'SELECT id, email, name FROM admins WHERE id = $1',
                     [decoded.adminId]
@@ -39,6 +42,9 @@ const userInfoMiddleware = async (req, res, next) => {
                     res.locals.currentUser = admin;
                     res.locals.isLoggedIn = true;
                     res.locals.isAdmin = true;
+                    res.locals.isSuperAdmin = true; // Legacy admins are super_admin
+                    res.locals.isCoAdmin = false;
+                    res.locals.adminRole = 'super_admin';
                 }
             }
         }
@@ -47,6 +53,9 @@ const userInfoMiddleware = async (req, res, next) => {
         if (!res.locals.isLoggedIn) {
             res.locals.isLoggedIn = false;
             res.locals.isAdmin = false;
+            res.locals.isSuperAdmin = false;
+            res.locals.isCoAdmin = false;
+            res.locals.adminRole = null;
             res.locals.currentUser = null;
         }
         
@@ -57,6 +66,9 @@ const userInfoMiddleware = async (req, res, next) => {
         res.clearCookie('adminToken');
         res.locals.isLoggedIn = false;
         res.locals.isAdmin = false;
+        res.locals.isSuperAdmin = false;
+        res.locals.isCoAdmin = false;
+        res.locals.adminRole = null;
         res.locals.currentUser = null;
         next();
     }

@@ -1,0 +1,72 @@
+# Blog Post Generator - Runs every 3 days
+# Bu workflow her 3 günde bir otomatik olarak blog yazısı oluşturur
+# GitHub Actions cron'ları Vercel'den daha güvenilirdir
+
+name: Generate Blog Post
+
+on:
+  # Her 3 günde bir sabah 09:00 UTC'de çalışır
+  schedule:
+    - cron: '0 9 */3 * *'
+  
+  # Manuel tetikleme için
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason for manual trigger'
+        required: false
+        default: 'Manual blog generation'
+
+jobs:
+  generate-blog:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Log start time
+        run: |
+          echo "🕐 Blog generation started at $(date -u)"
+          echo "📅 Trigger: ${{ github.event_name }}"
+          
+      - name: Generate Blog Post
+        id: generate
+        run: |
+          echo "🚀 Calling blog generation endpoint..."
+          
+          # Call the blog generation endpoint with secret
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
+            "${{ secrets.SITE_URL }}/api/cron/generate-blog?secret=${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -H "X-Cron-Secret: ${{ secrets.CRON_SECRET }}")
+          
+          # Extract HTTP status code (last line)
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n 1)
+          # Extract response body (all lines except last)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+          
+          echo "📡 HTTP Status: $HTTP_CODE"
+          echo "📄 Response: $BODY"
+          
+          # Check if successful
+          if [ "$HTTP_CODE" -eq 200 ]; then
+            echo "✅ Blog post generated successfully!"
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Blog generation failed with status $HTTP_CODE"
+            echo "status=failed" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+          
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "⚠️ Blog generation failed!"
+          echo "Please check the Vercel logs for more details."
+          # İsteğe bağlı: Slack/Discord webhook ile bildirim gönderilebilir
+          
+      - name: Log completion
+        if: success()
+        run: |
+          echo "🎉 Blog generation workflow completed successfully!"
+          echo "⏰ Completed at $(date -u)"
+
+

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" prefix="content: http://purl.org/rss/1.0/modules/content/  dc: http://purl.org/dc/terms/  foaf: http://xmlns.com/foaf/0.1/  og: http://ogp.me/ns#  rdfs: http://www.w3.org/2000/01/rdf-schema#  schema: http://schema.org/  sioc: http://rdfs.org/sioc/ns#  sioct: http://rdfs.org/sioc/types#  skos: http://www.w3.org/2004/02/skos/core#  xsd: http://www.w3.org/2001/XMLSchema# ">
+<head>
+  <meta charset="utf-8" />
+<link rel="shortlink" href="https://www.ed.ac.uk/" />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://www.ed.ac.uk/" />
+<meta property="og:site_name" content="The University of Edinburgh" />
+<meta property="og:title" content="Page not found" />
+<meta property="og:description" content="" />
+<meta property="og:image" content="https://www.ed.ac.uk/themes/upstream/wpp_theme/images/uoe-logo-centred-black.png" />
+<meta property="og:image:width" content="200px" />
+<meta property="og:image:height" content="200px" />
+<meta name="Generator" content="Drupal 10 (https://www.drupal.org)" />
+<meta name="MobileOptimized" content="width" />
+<meta name="HandheldFriendly" content="true" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>
+    const uoe_gtm_necessary_container_ids = ["GTM-NFKJG5GC","GTM-W53MQQV4"];
+    const uoe_gtm_advertising_container_ids = ["GTM-TFH7FXR","GTM-WHQZZ56","GTM-P8ZBCXN"];
+    const uoe_gtm_performance_container_ids = ["GTM-K98J2SB","GTM-TQN45VX","GTM-5P5K4D2"];
+    // Necessary containers are always active.
+    uoe_gtm_necessary_container_ids.forEach(function(container_id) {
+      create_gtm_script_tag(container_id, 'necessary');
+    });
+    init_gtm();
+    document.addEventListener('changed.uoe.consent', function (event) {
+      switch (event.allowedList) {
+      case 'advertising,necessary,performance':
+        uoe_gtm_advertising_container_ids.forEach(function(container_id) {
+          create_gtm_script_tag(container_id, 'advertising');
+        });
+        uoe_gtm_performance_container_ids.forEach(function(container_id) {
+          create_gtm_script_tag(container_id, 'performance');
+        });
+        break
+      case 'necessary,performance':
+        uoe_gtm_performance_container_ids.forEach(function(container_id) {
+          create_gtm_script_tag(container_id, 'performance');
+        });
+        break
+      case 'advertising,necessary':
+        uoe_gtm_advertising_container_ids.forEach(function(container_id) {
+          create_gtm_script_tag(container_id, 'advertising');
+        });
+        break
+      }
+    })
+    function create_gtm_script_tag(container_id, container_name) {
+      var f = document.getElementsByTagName('script')[0];
+      var j = document.createElement('script');
+      j.async = true;
+      j.className = 'uoe-edgel-gtm-container-script';
+      j.id = 'uoe_edgel_gtm_' + container_name + '_' + container_id;
+      j.src = 'https://www.googletagmanager.com/gtm.js?id=' + container_id;
+      f.parentNode.insertBefore(j, f);
+      init_gtm();
+    }
+    function init_gtm() {
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        'gtm.start': new Date().getTime(),
+        event: 'gtm.js'
+      });
+    }
+  </script>
+<link rel="icon" href="/themes/upstream/wpp_theme/images/favicon.ico" type="image/vnd.microsoft.icon" />
+
+    <title>Page not found | The University of Edinburgh</title>
+    <link rel="stylesheet" media="all" href="/sites/default/files/css/css_3-j5H_2ijSOsA9fLsVYv1DSL9I1sbkzc3auVUVel9To.css?delta=0&amp;language=en&amp;theme=wpp_theme&amp;include=eJxNydEKABAMBdAfIp-k4TZlskxpf-_V6znmdjBTIUO4qvl0TCQ0hkTe8Nhoj29YViH5QMBU_QHeVht2" />
+<link rel="stylesheet" media="all" href="/sites/default/files/css/css_NBZmTHr5W_Ro2PT38D8Vi8d9_jBR1r_mwnL-dwBUY74.css?delta=1&amp;language=en&amp;theme=wpp_theme&amp;include=eJxNydEKABAMBdAfIp-k4TZlskxpf-_V6znmdjBTIUO4qvl0TCQ0hkTe8Nhoj29YViH5QMBU_QHeVht2" />
+
+      
+</head>
+<body>
+<a href="#main-content" class="skip-link">
+  Skip to main content
+</a>
+
+  <div class="dialog-off-canvas-main-canvas" data-off-canvas-main-canvas>
+    
+<header role="banner" class="masthead">
+  <div class="container-masthead">
+    <div class="row">
+      <div class="col-md-7 col-lg-8" style="padding-right: 45px;">
+        <a href="https://www.ed.ac.uk">
+          <img class="masthead-logo" src="/themes/upstream/wpp_theme/images/logo.png" alt="The University of Edinburgh">
+        </a>
+      </div>
+      <button type="button" data-bs-toggle="collapse" class="btn btn-masthead-search-toggler"
+              data-bs-target="#uoe-127754" aria-controls="uoe-127754"><span class="visually-hidden">Show/hide site search</span>
+        <svg xmlns="http://www.w3.org/2000/svg" height="1rem" width="1rem" viewBox="0 0 8 8" aria-hidden="true">
+          <path class="masthead-search-icon-path"
+                d="M3.5 0c-1.93 0-3.5 1.57-3.5 3.5s1.57 3.5 3.5 3.5c.59 0 1.17-.14 1.66-.41a1 1 0 0 0 .13.13l1 1a1.02 1.02 0 1 0 1.44-1.44l-1-1a1 1 0 0 0-.16-.13c.27-.49.44-1.06.44-1.66 0-1.93-1.57-3.5-3.5-3.5zm0 1c1.39 0 2.5 1.11 2.5 2.5 0 .66-.24 1.27-.66 1.72-.01.01-.02.02-.03.03a1 1 0 0 0-.13.13c-.44.4-1.04.63-1.69.63-1.39 0-2.5-1.11-2.5-2.5s1.11-2.5 2.5-2.5z"></path>
+        </svg>
+      </button>
+      <div class="col-md-5 col-lg-4">
+
+        <div class="masthead-text">
+          <ul class="list-inline">
+            <li class="list-inline-item">
+              <a href="https://www.ed.ac.uk/schools-departments">Schools &amp; departments</a>
+            </li>
+            <li class="list-inline-item">
+              <a href="https://www.myed.ed.ac.uk/">MyEd</a>
+            </li>
+          </ul>
+        </div>
+        <div role="search" class="masthead-search collapse" aria-expanded="false" id="uoe-127754">
+          <form action="https://search.ed.ac.uk/" method="get">
+            <div class="input-group input-group-lg">
+              <input type="search" aria-label="Input your search term" placeholder="Search" class="form-control"
+                     data-bs-items="4" data-provide="uoe-search" name="q" autocomplete="off" spellcheck="true"
+                     dir="auto" id="uoe-294332" role="combobox" aria-autocomplete="both" aria-controls="uoe-294332-list"
+                     aria-haspopup="listbox" aria-owns="uoe-294332-list" aria-expanded="false"
+                     aria-describedby="uoe-294332-desc" aria-activedescendant="">
+              <button class="btn btn-search" type="submit">
+                <span class="visually-hidden">Submit search</span>
+              </button>
+            </div>
+            <div id="uoe-294332-desc" data-bs-toggle="dropdown" class="visually-hidden">When search suggestions are
+              available, use up and down arrows to review and Enter to select.
+            </div>
+            <ul id="uoe-294332-list" class="dropdown-menu dropdown-uoe-search" role="listbox"
+                aria-label="Suggested search terms"></ul>
+            <div id="uoe-294332-status" class="visually-hidden" aria-live="polite"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+    <div class="masthead-hero">
+    <div class="container">
+      <div class="masthead-title">
+        <span class="h1"><a href=""></a></span>
+        <span class="h2"><a href=""></a></span>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+<div class="container-content">
+  <div class="row justify-content-lg-start">
+                <div class="col-12 col-lg-9">
+            <div class="row">
+        <div class="col-12">
+        </div>
+      </div>
+            <div class="row">
+        <div class="col-12">
+          <main class="main-content" id="main-content">
+                        <div class="bg-404">
+              <div class="container-fluid mt-5">
+                <div class="row mt-5">
+                  <div class="col-md-12">
+                    <div class="error-template mt-5">
+                      <h1 class="mt-5">No such page</h1>
+                      <div class="error-details">
+                        <p>This page doesn't seem to exist. Sorry for the inconvenience.</p>
+                        <ul>
+                          <li>The address (URL) may have changed</li>
+                          <li>There may be a typing mistake in the address bar</li>
+                        </ul>
+                      </div>
+                      <div class="error-actions"><br>
+                        <h2>Help</h2>
+                        <h5>Try one of these options:</h5>
+                        <ul>
+                          <li>
+                            <a href="/" class="link-primary">
+                            Go to the  homepage</a>
+                          </li>
+                          <li>
+                            <a href="https://www.ed.ac.uk" class="link-primary">
+                              University home - go to the main University website homepage </a>
+                          </li>
+                          <li>
+                            <a href="https://www.ed.ac.uk/schools-departments" class="link-primary">
+                              Schools and departments list - browse all areas of the University </a>
+                          </li>
+                          <li>
+                            <a href="https://search.ed.ac.uk" class="link-primary">
+                              Search what you were looking for </a>
+                          </li>
+                          <li>
+                            <a href="https://alerts.is.ed.ac.uk" class="link-primary">
+                              Check service alerts </a>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  
+  <div class="footer-discover">
+    <h3 class="footer-discover-heading">
+      The University of Edinburgh
+    </h3>
+  </div>
+  <div class="footer">
+    <div class="container-footer">
+      <div class="row">
+        <div class="col-md-4">
+          <ul class="list-unstyled">
+            <li><a href="https://www.ed.ac.uk/about/website/website-terms-conditions">Terms &amp; conditions</a></li>
+            <li><a href="https://edin.ac/privacy-information">Privacy &amp; cookies</a></li>
+            <li><a href="https://www.ed.ac.uk/university-secretary-group/complaint-handling-procedure">Complaints procedure</a></li>
+            <li><a href="https://www.ed.ac.uk/sustainability/what-we-do/supply-chains/initiatives/modern-slavery/statement">Modern slavery</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          <ul class="list-unstyled">
+            <li><a href="https://edin.ac/accessibility-statement">Website accessibility</a></li>
+            <li><a href="https://www.ed.ac.uk/about/website/freedom-information">Freedom of information publication scheme</a></li>
+            <li><a href="https://www.ed.ac.uk/data-protection">Data protection / Records Management</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4 col-6 justify-content-end">
+          <a href="https://www.ed.ac.uk/about/mission-governance/affiliations">
+            <img class="img-fluid" alt="University affiliations" src="/themes/upstream/wpp_theme/images/footer-affiliations.png">
+          </a>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4 order-md-2">
+          <p class="float-end">
+            <a class="btn btn-brand btn-sm" href="https://www.myed.ed.ac.uk/">
+              MyEd login <i class="bi bi-chevron-right"></i>
+            </a>
+          </p>
+        </div>
+        <div class="col-md-8 order-md-1">
+          <p>
+            The University of Edinburgh is a charitable body, registered in Scotland, with registration number SC005336, VAT Registration Number GB&nbsp;592&nbsp;9507&nbsp;00, and is acknowledged by the UK authorities as a “<a href="https://www.gov.uk/guidance/recognised-uk-degrees">Recognised body</a>” which has been granted degree awarding powers.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container-footer-copyright">
+    Unless explicitly stated otherwise, all material is copyright &copy; The University of Edinburgh 2026.
+  </div>
+  <div class="container-footer">
+      <div>
+    <nav role="navigation" aria-labelledby="block-useraccountmenu-menu" id="block-useraccountmenu">
+            
+  <h2 class="visually-hidden" id="block-useraccountmenu-menu">User account menu</h2>
+  
+
+        
+    
+                                        
+        <a class="footer-login-link" href="/user/login?destination=/system/404">
+          <abbr>CMS</abbr> login
+          <svg class="icon">
+            <use xlink:href="#edgel-chevron-right"></use>
+          </svg>
+        </a>
+      
+  
+
+
+  </nav>
+
+  </div>
+
+  </div>
+</footer>
+
+  </div>
+
+
+<script type="application/json" data-drupal-selector="drupal-settings-json">{"path":{"baseUrl":"\/","pathPrefix":"","currentPath":"","currentPathIsAdmin":false,"isFront":false,"currentLanguage":"en","currentQuery":{"file":"thumbnails\/image\/uoe_main_logo.jpg"}},"pluralDelimiter":"\u0003","suppressDeprecationErrors":true,"clientside_validation_jquery":{"validate_all_ajax_forms":2,"force_validate_on_blur":false,"force_html5_validation":false,"messages":{"required":"This field is required.","remote":"Please fix this field.","email":"Please enter a valid email address.","url":"Please enter a valid URL.","date":"Please enter a valid date.","dateISO":"Please enter a valid date (ISO).","number":"Please enter a valid number.","digits":"Please enter only digits.","equalTo":"Please enter the same value again.","maxlength":"Please enter no more than {0} characters.","minlength":"Please enter at least {0} characters.","rangelength":"Please enter a value between {0} and {1} characters long.","range":"Please enter a value between {0} and {1}.","max":"Please enter a value less than or equal to {0}.","min":"Please enter a value greater than or equal to {0}.","step":"Please enter a multiple of {0}."}},"user":{"uid":0,"permissionsHash":"7d95ad6607063d678b346e0fe3256c337c12fc18cb7ebc9353980f9aa7db7d16"}}</script>
+<script src="/sites/default/files/js/js_HhU9Oe-0sa-u9tgfZkbtotBarkR6lJyc4MNyCXkuhfg.js?scope=footer&amp;delta=0&amp;language=en&amp;theme=wpp_theme&amp;include=eJwrLyiIL8lIzU3VT8_JT0rM0SmHC-SkpicmVwIA30ENAw"></script>
+<script src="/themes/upstream/wpp_theme/js/edgel.bundle.min.js?t744er"></script>
+<script src="/sites/default/files/js/js_Dd-2nskI5K-fWlRRkT8SXx-IWwDs3r7nNJUixzS9oKc.js?scope=footer&amp;delta=2&amp;language=en&amp;theme=wpp_theme&amp;include=eJwrLyiIL8lIzU3VT8_JT0rM0SmHC-SkpicmVwIA30ENAw"></script>
+
+</body>
+</html>

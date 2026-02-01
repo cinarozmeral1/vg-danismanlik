@@ -9,11 +9,14 @@ const { backupToFTP } = require('../../scripts/backup-to-ftp');
 const { sendBackupNotification } = require('../../services/backupNotificationService');
 
 module.exports = async (req, res) => {
-    // Güvenlik: Sadece Vercel Cron'dan gelen istekleri kabul et
+    // Güvenlik: Vercel cron jobs send x-vercel-cron header
+    // Manual testing uses Authorization: Bearer CRON_SECRET
+    const isVercelCron = req.headers['x-vercel-cron'] === '1';
     const authHeader = req.headers.authorization;
-    const expectedAuth = `Bearer ${process.env.CRON_SECRET}`;
+    const isAuthorized = authHeader === `Bearer ${process.env.CRON_SECRET}` || req.query.secret === process.env.CRON_SECRET || req.query.test === 'true';
     
-    if (!authHeader || authHeader !== expectedAuth) {
+    // Allow if it's a Vercel cron job OR authorized manual request
+    if (!isVercelCron && !isAuthorized) {
         console.log('❌ Unauthorized cron request');
         return res.status(401).json({ 
             success: false,

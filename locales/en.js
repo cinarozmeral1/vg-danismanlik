@@ -10,6 +10,7 @@ module.exports = {
         universities: "Universities",
         aboutUs: "About Us",
         contact: "Contact",
+        career: "Career",
         assessment: "Assessment",
         profile: "Profile",
         myProfile: "My Profile",
@@ -26,7 +27,8 @@ module.exports = {
         austria: "Austria",
         uk: "United Kingdom",
         poland: "Poland",
-        hungary: "Hungary"
+        hungary: "Hungary",
+        netherlands: "Netherlands"
     },
     
     // Authentication
@@ -95,7 +97,8 @@ module.exports = {
         austria: "Study in Austria",
         uk: "Study in UK",
         poland: "Study in Poland",
-        hungary: "Study in Hungary"
+        hungary: "Study in Hungary",
+        netherlands: "Study in Netherlands"
     },
 
     // Student Life Page Content
@@ -128,6 +131,10 @@ module.exports = {
             poland: {
                 title: "Being a Student in Poland",
                 subtitle: "Quality education and affordable living costs in the historic atmosphere of Warsaw and Kraków"
+            },
+            netherlands: {
+                title: "Being a Student in Netherlands",
+                subtitle: "World-class education in the modern atmosphere of Amsterdam and Rotterdam"
             }
         },
         sections: {
@@ -183,7 +190,7 @@ module.exports = {
             },
             consulting: {
                 title: "Consulting",
-                freeConsulting: "Free Consulting",
+                freeConsulting: "Contact Us",
                 eligibilityTest: "Eligibility Test"
             }
         },
@@ -208,7 +215,8 @@ module.exports = {
             italian: "Italian",
             hungarian: "Hungarian",
             polish: "Polish",
-            turkish: "Turkish"
+            turkish: "Turkish",
+            dutch: "Dutch"
         },
         universityLanguages: {
             englishCzech: "English, Czech",
@@ -218,7 +226,8 @@ module.exports = {
             polishEnglish: "English, Polish",
             englishOnly: "English",
             germanWithNotes: "German (most bachelor), English (some master)",
-            italianWithPrograms: "Italian, English (numerous programs)"
+            italianWithPrograms: "Italian, English (numerous programs)",
+            dutchEnglish: "Dutch, English"
         },
         additionalTerms: {
             accommodationOptions: "Accommodation Options",
@@ -233,6 +242,99 @@ module.exports = {
             universities: "Universities", 
             consulting: "Consulting",
             attention: "Attention"
+        },
+        diplomaWarnings: {
+            turkishWarningTitle: "Important Notice for Turkish Students",
+            turkishInfoTitle: "Important Information for Turkish Students",
+            canadianAdvantageTitle: "Canadian High School Diploma Advantages",
+            diplomaRecognition: "Diploma Recognition",
+            directAdmission: "Direct Admission",
+            medicalFaculties: "Medical and Dental Faculties",
+            medicalWarning: "Medical Faculty Warning",
+            foundationYear: "Foundation Year Required",
+            studienkolleg: "Studienkolleg Required",
+            studienkollegWhat: "What is Studienkolleg?",
+            studienkollegDesc: "It is a 1-year preparatory program that includes German language education and academic courses. You need to pass the Feststellungsprüfung exam at the end of the program.",
+            foundationWhat: "What is Foundation Year?",
+            foundationDesc: "It is a 1-year pre-university preparatory program. It covers Academic English, field courses, and study skills. After successful completion, you can directly proceed to undergraduate programs.",
+            bypass: "BYPASS!",
+            noExamAdmission: "NO EXAM ADMISSION!",
+            priorityEvaluation: "Priority Evaluation!",
+            advantagePosition: "Advantageous Position!",
+            internationalRecognition: "International Recognition!",
+            aboutWcep: "Learn More About WCEP",
+            germany: {
+                warning: "Turkish high school diploma is not accepted for direct university application in Germany. Completing 1-year Studienkolleg (university preparatory program) is mandatory to apply to German universities.",
+                advantage: "Students who complete 12th grade with WCEP in Canada on-site and receive a Canadian high school diploma can apply directly to German universities without Studienkolleg!",
+                benefit1: "1 year time savings",
+                benefit2: "No Feststellungsprüfung exam",
+                benefit3: "Right to apply to all German universities",
+                benefit4: "Option to apply to English programs"
+            },
+            uk: {
+                info: "Turkish high school diploma holders can apply directly to UK universities via UCAS. Applications are accepted with English proficiency certificates such as IELTS.",
+                ucasInfo: "UCAS (Universities and Colleges Admissions Service) is the central application system for UK universities. Turkish students can apply directly through this system.",
+                advantage: "Students who receive on-site education with WCEP in Canada and get a Canadian high school diploma can apply to British universities with a stronger profile!",
+                benefit1: "Direct application via UCAS",
+                benefit2: "Apply to all universities including Russell Group",
+                benefit3: "Language proficiency documented with IELTS",
+                benefit4: "Strong profile with international recognition"
+            },
+            czech: {
+                info: "Turkish high school diploma is directly accepted by most universities in Czech Republic. No additional preparatory program required!",
+                medicalWarning: "Entrance exams (usually Biology, Chemistry, Physics or Mathematics) are held for Medical and Dental programs. These exams can be taken in English.",
+                advantage: "Charles University 2nd Faculty of Medicine and Faculty of Dentistry accept students with Canadian high school diploma obtained on-site with WCEP without entrance exam!",
+                benefit1: "Charles University 2nd Faculty of Medicine - No Exam",
+                benefit2: "Faculty of Dentistry - No Exam",
+                benefit3: "Priority evaluation in other programs",
+                benefit4: "English proficiency certificate is sufficient"
+            },
+            austria: {
+                info: "Turkish high school diploma is generally accepted in Austria. However, additional exams or language certificates may be required at some universities and programs.",
+                medicalWarning: "MedAT entrance exam is mandatory for applying to medical schools in Austria. This exam is highly competitive and can be taken in German or English.",
+                advantage: "Students who receive on-site education with WCEP in Canada and get a Canadian high school diploma are directly accepted at Austrian universities without additional preparation!",
+                benefit1: "No additional preparatory program required",
+                benefit2: "Apply to all universities including University of Vienna",
+                benefit3: "Option to apply to German or English programs",
+                benefit4: "Advantageous evaluation in medical exam (MedAT)"
+            },
+            italy: {
+                info: "Turkish high school diploma is directly accepted by universities in Italy. No additional preparatory program required!",
+                medicalWarning: "IMAT (International Medical Admissions Test) or similar entrance exams are held for Medicine, Dentistry, Veterinary and Architecture programs.",
+                advantage: "Students who receive on-site education with WCEP in Canada and get a Canadian high school diploma are evaluated with high priority at Italian universities!",
+                benefit1: "Apply to all universities including Bologna, Milan",
+                benefit2: "Direct admission to English programs",
+                benefit3: "Only language certificate required for Italian programs",
+                benefit4: "Advantageous evaluation in IMAT exam"
+            },
+            hungary: {
+                info: "Turkish high school diploma is directly accepted by most universities in Hungary. No additional preparatory program required!",
+                medicalWarning: "Entrance exams (Biology, Chemistry) are held at Semmelweis University and other medical schools. Exams can be taken in English.",
+                advantage: "Students who receive on-site education with WCEP in Canada and get a Canadian high school diploma are evaluated with priority at Semmelweis and other Hungarian universities!",
+                benefit1: "Priority admission at Semmelweis University",
+                benefit2: "Advantageous evaluation in medical programs",
+                benefit3: "High success rate in entrance exams",
+                benefit4: "Direct application to English programs"
+            },
+            poland: {
+                info: "Turkish high school diploma is directly accepted by most university programs in Poland. No additional preparatory program required!",
+                medicalWarning: "Entrance exam (Biology, Chemistry) is mandatory for applying to medical schools in Poland. Exams can be taken in English.",
+                advantage: "Students who receive on-site education with WCEP in Canada and get a Canadian high school diploma are evaluated in an advantageous position at Polish universities!",
+                benefit1: "Apply to all universities including Warsaw, Krakow",
+                benefit2: "Priority evaluation in medical programs",
+                benefit3: "High success rate in entrance exams",
+                benefit4: "Direct application to English programs"
+            },
+            netherlands: {
+                woWarning: "Turkish high school diploma alone is not sufficient for direct application to research universities (WO) in the Netherlands. You need to pass at least 4 AP (Advanced Placement) exams or obtain an IB Diploma to apply to these universities.",
+                hboInfo: "Turkish high school diploma allows direct application to Universities of Applied Sciences (HBO). These schools offer practical-oriented education and graduates are ready for the business world.",
+                apNote: "AP exams can be taken during high school. Consult for detailed information and which AP courses are accepted.",
+                advantage: "Students who receive on-site education with WCEP in Canada and get a Canadian high school diploma can apply directly to both research universities (WO) and universities of applied sciences (HBO) in the Netherlands!",
+                benefit1: "Direct admission to research universities (WO)",
+                benefit2: "No AP/IB requirements needed",
+                benefit3: "Apply to all universities including Amsterdam, Rotterdam",
+                benefit4: "Direct application to English programs"
+            }
         },
         countries: {
             uk: {
@@ -392,13 +494,39 @@ module.exports = {
                     tip: "To get a student visa in Poland, B1 level Polish proficiency is required."
                 },
                 consultingText: "Contact us for detailed information about studying in Poland."
+            },
+            netherlands: {
+                description1: "Netherlands has become a favorite destination for students with its world-class education quality, English-taught programs, and international environment.",
+                description2: "University education in Netherlands is high quality and mostly offered in English. Globally recognized programs are offered especially in business, engineering, agriculture, and arts fields.",
+                livingDescription: "Student accommodation options in Netherlands, especially in Amsterdam, Rotterdam, and Eindhoven, are diverse. Life quality is high with bicycle culture and modern infrastructure.",
+                costsDescription: "Education costs in Netherlands are moderate according to EU standards. Low fees for EU citizens and competitive prices for non-EU students.",
+                scholarships: {
+                    holland: {
+                        title: "Holland Scholarship",
+                        description: "Dutch Government"
+                    },
+                    university: {
+                        title: "University Scholarships",
+                        description: "For successful students"
+                    },
+                    orange: {
+                        title: "Orange Tulip Scholarship",
+                        description: "Special scholarship for Turkish students"
+                    }
+                },
+                alerts: {
+                    transportInfo: "Public transport discounts are available for students with OV-chipkaart in Netherlands. Cycling is common and affordable.",
+                    visaRequirement: "For a student visa in Netherlands, you need to demonstrate sufficient financial resources (approximately €900/month).",
+                    tip: "Dutch language is not required for most programs as they are taught in English, but learning Dutch is beneficial for social life."
+                },
+                consultingText: "Contact us for detailed information about studying in Netherlands."
             }
         }
     },
     
     // Footer
     footer: {
-        description: "We help you realize your education dream in Europe. We collaborate with 50+ prestigious universities in 7 countries.",
+        description: "We help you realize your education dream in Europe. We collaborate with 50+ prestigious universities in 8 countries.",
         sslInfo: "Secure Connection with SSL Certificate",
         quickLinks: "Quick Links",
         services: "Our Services",
@@ -422,11 +550,14 @@ module.exports = {
         stats: {
             countries: "Countries",
             universities: "Universities",
-            satisfaction: "Satisfaction"
+            departments: "Programs",
+            satisfaction: "Satisfaction",
+            students: "Students",
+            partners: "Partners"
         },
         features: {
-            title: "Why Venture Global®?",
-            subtitle: "Venture Global is an education consultancy company dedicated to guiding students from Turkey to Europe’s most prestigious universities. Our mission is to help each student find the right university that matches their academic and personal goals while providing full support throughout the entire process.",
+            title: "Venture Global®",
+            subtitle: "",
             body: [],
             network: {
                 title: "Wide Network",
@@ -462,6 +593,7 @@ module.exports = {
             uk: "United Kingdom",
             poland: "Poland",
             hungary: "Hungary",
+            netherlands: "Netherlands",
             targetField: "Target Study Field",
             engineering: "Engineering",
             business: "Business/Economics",
@@ -479,6 +611,25 @@ module.exports = {
             getRecommendations: "Get My Recommendations",
             submitting: "Submitting...",
             success: "Success! Your assessment has been received. We will send you personalized recommendations as soon as possible."
+        },
+        wcepBanner: {
+            title: "Canadian High School",
+            titleHighlight: "Diploma in Grade 12",
+            description: "Complete your 12th grade at prestigious Canadian schools with our WCEP partnership, get your Canadian high school diploma and get ahead at European universities!",
+            germany: "Germany",
+            germanyBenefit: "Studienkolleg Bypass",
+            uk: "United Kingdom",
+            ukBenefit: "Foundation Year Bypass",
+            czech: "Czech Republic",
+            czechBenefit: "Medical School No Exam",
+            europe: "All of Europe",
+            europeBenefit: "Priority Admission",
+            aboutWcep: "About WCEP",
+            getInfo: "Get Info",
+            videoTitle: "WCEP Introduction Video",
+            yearsExperience: "Years Experience",
+            successfulStudents: "Successful Students",
+            partnerSchools: "Partner Schools"
         },
         kanpusBanner: {
             title: "Early Preparation for IB, AP, SAT, TOEFL & IELTS",
@@ -501,11 +652,16 @@ module.exports = {
                 button: "Send Message"
             }
         },
+        partnerUniversities: {
+            title: "Our Partner Universities",
+            subtitle: "We collaborate with Europe's most prestigious universities",
+            button: "Our Universities"
+        },
         seoContent: {
             mainTitle: "Venture Global - What is VG Danışmanlık?",
             mainSubtitle: "Turkey's trusted brand in international education consulting",
             card1Title: "Who is Venture Global?",
-            card1Content: "Venture Global (VG Danışmanlık) is a professional education consultancy company that guides students from Turkey to Europe's most prestigious universities. By collaborating with 50+ universities in 7 countries, we provide our students with the best educational opportunities.",
+            card1Content: "Venture Global (VG Danışmanlık) is a professional education consultancy company that guides students from Turkey to Europe's most prestigious universities. By collaborating with 50+ universities in 8 countries, we provide our students with the best educational opportunities.",
             card2Title: "VG Danışmanlık Services",
             card2Content: "As VG Danışmanlık, we provide comprehensive support in university applications, visa procedures, accommodation, and adaptation to Europe. Make your dream of studying abroad a reality with Venture Global."
         }
@@ -530,6 +686,7 @@ module.exports = {
             uk: "United Kingdom",
             poland: "Poland",
             hungary: "Hungary",
+            netherlands: "Netherlands",
             allPrograms: "All Programs",
             engineering: "Engineering",
             business: "Business/Economics",
@@ -1793,11 +1950,22 @@ module.exports = {
             learnMore: "Learn More",
             exclusiveOffer: "Kanpus students get exclusive discounts at Venture Global, and Venture Global clients get exclusive discounts at Kanpus!"
         },
+        wcep: {
+            title: "Get Ahead in Europe with a Canadian High School Diploma",
+            description: "Complete your 12th grade at prestigious schools in Canada, earn a Canadian high school diploma, and gain priority admission to European universities.",
+            advantage1: "Skip Studienkolleg in Germany",
+            advantage2: "Bypass Foundation Year in UK",
+            advantage3: "Direct admission to Czech medical schools",
+            stat1: "Years Experience",
+            stat2: "Successful Students",
+            stat3: "Partner Schools",
+            cta: "About WCEP"
+        },
         faq: {
             title: "Frequently Asked Questions",
             subtitle: "Answers to the most asked questions",
             question1: "Which countries do you provide services in?",
-            answer1: "We provide services in Germany, Austria, United Kingdom, Italy, Czech Republic, Poland and Hungary. We cooperate with the most prestigious universities in these countries.",
+            answer1: "We provide services in Germany, Austria, United Kingdom, Italy, Czech Republic, Poland, Hungary and Netherlands. We cooperate with the most prestigious universities in these countries.",
             question2: "What are your service fees?",
             answer2: "Our service fees vary according to the program and country you choose. Please contact us for detailed information.",
             question3: "How long does the visa application process take?",
@@ -2309,13 +2477,6 @@ module.exports = {
             videoAlt: "WCEP Introduction Video",
             officialLink: "Visit WCEP Official Website"
         },
-        bestschool: {
-            heroTitle: "BestSchool.cz Partnership",
-            heroSubtitle: "Partnering for top-tier education opportunities in Central Europe",
-            whyTitle: "Why BestSchool.cz?",
-            packagesTitle: "Exclusive Packages for Venture Global Students",
-            packagesCTA: "Request Package Details"
-        },
         kanpus: {
             heroTitle: "Kanpus Your Path to IB and AP Success",
             heroSubtitle: "Expert one-on-one tutoring for IB Diploma and AP programs, SAT and TOEFL preparation, plus university counseling",
@@ -2414,6 +2575,60 @@ module.exports = {
             ctaBody: "Through our partnership with Kanpus, we offer special discounted packages to our students. Contact us to learn more about special opportunities and get detailed information for your IB, AP, SAT, or TOEFL preparation.",
             ctaContactButton: "Get in Touch",
             ctaWebsiteButton: "Visit Kanpus"
+        }
+    },
+    
+    // Career Page
+    career: {
+        hero: {
+            title: "Career Opportunities",
+            subtitle: "Join the Venture Global family and build a career in international education consulting"
+        },
+        poster: {
+            placeholder: "Poster image coming soon"
+        },
+        video: {
+            title: "Introduction Video",
+            placeholder: "Video coming soon"
+        },
+        info: {
+            title: "We're Looking for Representative Teachers",
+            description: "Venture Global is growing! We're looking for representatives to represent VG Study Abroad Consulting family in their cities and schools across Turkey.",
+            roleDescription: "We aim for long-term collaboration with candidates who are close to the education sector and have strong communication skills.",
+            requirementsTitle: "Requirements",
+            lookingFor: "Who Can Apply?",
+            requirement1: "Guidance counselors (PDR teachers)",
+            requirement2: "English teachers",
+            requirement3: "Education administrators",
+            weOffer: "What We Offer?",
+            offer1: "Flexible work model without fixed hours",
+            offer2: "High income based on performance",
+            offer3: "Strong brand and ready system support"
+        },
+        form: {
+            title: "Application Form",
+            firstName: "First Name",
+            firstNamePlaceholder: "Enter your first name",
+            lastName: "Last Name",
+            lastNamePlaceholder: "Enter your last name",
+            email: "Email",
+            emailPlaceholder: "example@email.com",
+            phone: "Phone",
+            phonePlaceholder: "+90 5XX XXX XX XX",
+            description: "About Your CV",
+            descriptionPlaceholder: "Write which city you want to represent, your experiences, references, and why you want to join the Venture Global team...",
+            descriptionHelp: "Specify which city you want to represent, your relevant experience if any, and your references.",
+            cvFile: "CV File",
+            cvFileHelp: "PDF, DOC or DOCX format",
+            compressLink: "Compress PDF",
+            fileTooLarge: "File too large!",
+            compressHere: "Compress here",
+            selectFile: "Please select a CV file",
+            fileTooLargeError: "File size is too large. Please upload a file smaller than 3.5 MB.",
+            submit: "Submit Application",
+            sending: "Sending...",
+            successMessage: "Your application has been submitted successfully! We will contact you as soon as possible.",
+            errorMessage: "An error occurred while submitting the application. Please try again."
         }
     }
 }; 

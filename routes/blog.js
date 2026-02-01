@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
         const page = parseInt(req.query.page) || 1;
         const limit = 12;
         const offset = (page - 1) * limit;
-        const lang = req.language || 'tr';
+        const lang = res.locals.currentLanguage || 'tr';
         
         const posts = await getBlogPosts(limit, offset);
         const totalCount = await getBlogPostCount();
@@ -58,7 +58,7 @@ router.get('/', async (req, res) => {
 router.get('/:slug', async (req, res) => {
     try {
         const { slug } = req.params;
-        const lang = req.language || 'tr';
+        const lang = res.locals.currentLanguage || 'tr';
         
         const post = await getBlogPostBySlug(slug);
         

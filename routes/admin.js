@@ -1,7 +1,14 @@
+
 require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
+
+// Admin sayfalarında footer'ı gizlemek için flag
+router.use((req, res, next) => {
+    res.locals.isAdminPage = true;
+    next();
+});
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -300,8 +307,11 @@ const authenticateAdmin = async (req, res, next) => {
 // Helper function to get admin sidebar counts
 const getAdminSidebarCounts = async () => {
     try {
-        // Check if tables exist first
-        const usersResult = await pool.query('SELECT COUNT(*) as count FROM users');
+        // Check if tables exist first - sadece adminleri hariç tut
+        const usersResult = await pool.query(`
+            SELECT COUNT(*) as count FROM users 
+            WHERE is_admin = false OR is_admin IS NULL
+        `);
         let applicationCount = 0;
         let universityCount = 0;
         let partnerCount = 0;
@@ -559,8 +569,12 @@ router.get('/dashboard', async (req, res) => {
 // Admin users page route
 router.get('/users', async (req, res) => {
     try {
+        // Adminleri hariç tut (sadece öğrencileri listele)
         const usersResult = await pool.query(
-            'SELECT id, first_name, last_name, email, phone, english_level, created_at, is_admin FROM users ORDER BY created_at DESC'
+            `SELECT id, first_name, last_name, email, phone, english_level, created_at, is_admin 
+             FROM users 
+             WHERE is_admin = false OR is_admin IS NULL
+             ORDER BY created_at DESC`
         );
 
         // Get sidebar counts
@@ -581,9 +595,9 @@ router.get('/users', async (req, res) => {
 // Admin applications page route
 router.get('/applications', async (req, res) => {
     try {
-        // Get all users for the modal
+        // Get all users for the modal (exclude admins - they are not students)
         const usersResult = await pool.query(
-            'SELECT id, first_name, last_name, email, phone, created_at, is_admin FROM users ORDER BY first_name, last_name'
+            'SELECT id, first_name, last_name, email, phone, created_at FROM users WHERE is_admin = false OR is_admin IS NULL ORDER BY first_name, last_name'
         );
         
         // Check if applications table exists
@@ -693,9 +707,9 @@ router.get('/applications', async (req, res) => {
 // Get new application page
 router.get('/applications/new', async (req, res) => {
     try {
-        // Get all users for student selection
+        // Get all users for student selection (exclude admins - they are not students)
         const usersResult = await pool.query(
-            'SELECT id, first_name, last_name, email, phone, english_level, created_at FROM users ORDER BY first_name, last_name'
+            'SELECT id, first_name, last_name, email, phone, english_level, created_at FROM users WHERE is_admin = false OR is_admin IS NULL ORDER BY first_name, last_name'
         );
         
         // Get sidebar counts
@@ -778,11 +792,14 @@ router.put('/users/:id/guardians', async (req, res) => {
     }
 });
 
-// Get all users (API)
+// Get all users (API) - Adminleri hariç tut
 router.get('/users', async (req, res) => {
     try {
         const result = await pool.query(
-            'SELECT id, first_name, last_name, email, phone, english_level, created_at, is_admin FROM users ORDER BY created_at DESC'
+            `SELECT id, first_name, last_name, email, phone, english_level, created_at, is_admin 
+             FROM users 
+             WHERE is_admin = false OR is_admin IS NULL
+             ORDER BY created_at DESC`
         );
         
         res.json({
@@ -1401,9 +1418,13 @@ router.get('/universities', async (req, res) => {
         // Get sidebar counts
         const sidebarCounts = await getAdminSidebarCounts();
         
+        // Extract unique countries for filter dropdown
+        const countries = [...new Set(universities.map(u => u.country).filter(Boolean))].sort();
+        
         res.render('admin/universities', {
             title: 'Universities Management',
             universities: universities,
+            countries: countries,
             user: fakeUser,
             ...sidebarCounts
         });
@@ -1412,6 +1433,7 @@ router.get('/universities', async (req, res) => {
         res.status(500).render('admin/universities', {
             title: 'Universities Management',
             universities: [],
+            countries: [],
             user: req.user,
             error: 'Server error'
         });
@@ -3716,6 +3738,23 @@ const convertCurrency = (amount, fromCurrency, toCurrency) => {
     return parseFloat(amount); // Fallback to original amount
 };
 
+// Get universities for selection in application forms (API endpoint)
+// Accessible at /api/admin/universities-for-selection (due to /api/admin mount in server.js)
+router.get('/universities-for-selection', async (req, res) => {
+    try {
+        const result = await pool.query(
+            'SELECT id, name, country, city FROM universities ORDER BY country, name'
+        );
+        res.json({ 
+            success: true, 
+            universities: result.rows 
+        });
+    } catch (error) {
+        console.error('Universities fetch error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
 // Get financial data with filters (API endpoint)
 router.get('/api/financial-data', async (req, res) => {
     try {
@@ -4304,11 +4343,15 @@ router.get('/partners', async (req, res) => {
     try {
         const sidebarCounts = await getAdminSidebarCounts();
         
-        // Get all partners with correct counts using subqueries
+        // Get all partners with correct counts using subqueries (multi-partner support)
         const partnersResult = await pool.query(`
             SELECT 
                 p.*,
-                (SELECT COUNT(*) FROM users WHERE partner_id = p.id) as student_count,
+                (
+                    SELECT COUNT(DISTINCT student_id) 
+                    FROM student_partners 
+                    WHERE partner_id = p.id
+                ) as student_count,
                 (SELECT COALESCE(SUM(amount), 0) FROM partner_earnings WHERE partner_id = p.id) as total_earnings
             FROM partners p
             ORDER BY p.created_at DESC
@@ -4340,7 +4383,11 @@ router.get('/api/partners', async (req, res) => {
                 p.email_verified,
                 p.is_active,
                 p.created_at,
-                (SELECT COUNT(*) FROM users WHERE partner_id = p.id) as student_count,
+                (
+                    SELECT COUNT(DISTINCT student_id) 
+                    FROM student_partners 
+                    WHERE partner_id = p.id
+                ) as student_count,
                 (SELECT COALESCE(SUM(CASE WHEN is_paid = true THEN amount ELSE 0 END), 0) FROM partner_earnings WHERE partner_id = p.id) as paid_earnings,
                 (SELECT COALESCE(SUM(CASE WHEN is_paid = false THEN amount ELSE 0 END), 0) FROM partner_earnings WHERE partner_id = p.id) as pending_earnings
             FROM partners p
@@ -4584,12 +4631,87 @@ router.put('/users/:id/partner', async (req, res) => {
     }
 });
 
-// Get student's partner info
+// Assign partner to student (multi-partner support via student_partners table)
+router.post('/users/:id/partners', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { partner_id } = req.body;
+        
+        if (!partner_id) {
+            return res.status(400).json({
+                success: false,
+                message: 'Partner ID gerekli'
+            });
+        }
+        
+        // Validate partner exists
+        const partnerCheck = await pool.query(
+            'SELECT id, first_name, last_name FROM partners WHERE id = $1',
+            [partner_id]
+        );
+        
+        if (partnerCheck.rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Partner bulunamadı'
+            });
+        }
+        
+        // Insert into student_partners table (multi-partner support)
+        await pool.query(`
+            INSERT INTO student_partners (student_id, partner_id)
+            VALUES ($1, $2)
+            ON CONFLICT (student_id, partner_id) DO NOTHING
+        `, [id, partner_id]);
+        
+        res.json({
+            success: true,
+            message: 'Partner başarıyla atandı',
+            partner: partnerCheck.rows[0]
+        });
+        
+    } catch (error) {
+        console.error('Assign partner (multi) error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// Remove partner assignment from student
+router.delete('/users/:id/partners/:partnerId', async (req, res) => {
+    try {
+        const { id, partnerId } = req.params;
+        
+        // Delete from student_partners table
+        const result = await pool.query(`
+            DELETE FROM student_partners 
+            WHERE student_id = $1 AND partner_id = $2
+            RETURNING id
+        `, [id, partnerId]);
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Atama bulunamadı'
+            });
+        }
+        
+        res.json({
+            success: true,
+            message: 'Partner ataması kaldırıldı'
+        });
+        
+    } catch (error) {
+        console.error('Remove partner assignment error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// Get student's partner info (with multi-partner support)
 router.get('/users/:id/partner', async (req, res) => {
     try {
         const { id } = req.params;
         
-        // Get user's partner info
+        // Get user's legacy partner info
         const userResult = await pool.query(`
             SELECT 
                 u.partner_id,
@@ -4611,6 +4733,23 @@ router.get('/users/:id/partner', async (req, res) => {
         
         const user = userResult.rows[0];
         
+        // Get all assigned partners from student_partners table (multi-partner support)
+        let assignedPartnerIds = [];
+        try {
+            const assignedPartnersResult = await pool.query(`
+                SELECT partner_id FROM student_partners WHERE student_id = $1
+            `, [id]);
+            assignedPartnerIds = assignedPartnersResult.rows.map(row => row.partner_id);
+        } catch (e) {
+            // Table might not exist yet, fallback to legacy
+            console.log('student_partners table not found, using legacy partner_id');
+        }
+        
+        // Fallback to legacy partner_id if no multi-partner assignments
+        if (assignedPartnerIds.length === 0 && user.partner_id) {
+            assignedPartnerIds = [user.partner_id];
+        }
+        
         // Get all earnings for this student
         const earningsResult = await pool.query(`
             SELECT 
@@ -4621,6 +4760,7 @@ router.get('/users/:id/partner', async (req, res) => {
                 pe.is_paid,
                 pe.payment_date,
                 pe.notes,
+                pe.partner_id,
                 CONCAT(p.first_name, ' ', p.last_name) as partner_name
             FROM partner_earnings pe
             JOIN partners p ON pe.partner_id = p.id
@@ -4630,7 +4770,8 @@ router.get('/users/:id/partner', async (req, res) => {
         
         res.json({
             success: true,
-            has_partner: !!user.partner_id,
+            has_partner: assignedPartnerIds.length > 0,
+            assigned_partner_ids: assignedPartnerIds,
             partner: user.partner_id ? {
                 id: user.partner_id,
                 name: `${user.partner_first_name} ${user.partner_last_name}`,
@@ -5077,6 +5218,178 @@ router.get('/users/:userId/ai-recommendation', async (req, res) => {
         res.json({ success: true, recommendation: result.rows[0] });
     } catch (error) {
         console.error('Get user AI recommendation error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ==================== CO-ADMIN YÖNETİMİ ====================
+
+// Adminler sayfası (sadece super admin erişebilir)
+router.get('/admins', async (req, res) => {
+    try {
+        // Super admin kontrolü
+        if (!res.locals.isSuperAdmin) {
+            return res.redirect('/admin/dashboard');
+        }
+        
+        // Co-adminleri getir (is_admin=true olan ve super admin e-postası olmayan)
+        const superAdminEmail = 'cinarozmeral1@gmail.com';
+        const coAdminsResult = await pool.query(`
+            SELECT id, first_name, last_name, email, created_at
+            FROM users
+            WHERE is_admin = true AND email != $1
+            ORDER BY created_at DESC
+        `, [superAdminEmail]);
+        
+        // İstatistikleri getir
+        const userCountResult = await pool.query('SELECT COUNT(*) FROM users WHERE is_admin = false OR is_admin IS NULL');
+        let applicationCount = 0;
+        let partnerCount = 0;
+        
+        try {
+            const applicationCountResult = await pool.query('SELECT COUNT(*) FROM applications');
+            applicationCount = parseInt(applicationCountResult.rows[0].count) || 0;
+        } catch (e) { }
+        
+        try {
+            const partnerCountResult = await pool.query('SELECT COUNT(*) FROM partners');
+            partnerCount = parseInt(partnerCountResult.rows[0].count) || 0;
+        } catch (e) { }
+        
+        res.render('admin/admins', {
+            title: 'Adminler',
+            activePage: 'admins',
+            coAdmins: coAdminsResult.rows,
+            userCount: parseInt(userCountResult.rows[0].count) || 0,
+            applicationCount: applicationCount,
+            partnerCount: partnerCount
+        });
+    } catch (error) {
+        console.error('Admins page error:', error);
+        res.status(500).send('Sayfa yüklenirken hata oluştu');
+    }
+});
+
+// Yeni co-admin oluştur
+router.post('/api/admins', async (req, res) => {
+    try {
+        // Super admin kontrolü
+        if (!res.locals.isSuperAdmin) {
+            return res.status(403).json({ success: false, message: 'Bu işlem için yetkiniz yok' });
+        }
+        
+        const { first_name, last_name, email, password } = req.body;
+        
+        if (!first_name || !last_name || !email || !password) {
+            return res.status(400).json({ success: false, message: 'Tüm alanlar zorunludur' });
+        }
+        
+        // E-posta kontrolü
+        const existingUser = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
+        if (existingUser.rows.length > 0) {
+            return res.status(400).json({ success: false, message: 'Bu e-posta adresi zaten kullanılıyor' });
+        }
+        
+        // Şifreyi hashle
+        const bcrypt = require('bcrypt');
+        const hashedPassword = await bcrypt.hash(password, 10);
+        
+        // Co-admin oluştur
+        const result = await pool.query(`
+            INSERT INTO users (first_name, last_name, email, password, is_admin, created_at)
+            VALUES ($1, $2, $3, $4, true, NOW())
+            RETURNING id, first_name, last_name, email, created_at
+        `, [first_name, last_name, email, hashedPassword]);
+        
+        res.json({ success: true, admin: result.rows[0] });
+    } catch (error) {
+        console.error('Create co-admin error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Co-admin güncelle
+router.put('/api/admins/:id', async (req, res) => {
+    try {
+        // Super admin kontrolü
+        if (!res.locals.isSuperAdmin) {
+            return res.status(403).json({ success: false, message: 'Bu işlem için yetkiniz yok' });
+        }
+        
+        const { id } = req.params;
+        const { first_name, last_name, email, password } = req.body;
+        
+        if (!first_name || !last_name || !email) {
+            return res.status(400).json({ success: false, message: 'Ad, soyad ve e-posta zorunludur' });
+        }
+        
+        // Co-admin kontrolü (super admin güncellenemez)
+        const superAdminEmail = 'cinarozmeral1@gmail.com';
+        const adminCheck = await pool.query('SELECT email FROM users WHERE id = $1', [id]);
+        if (adminCheck.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Admin bulunamadı' });
+        }
+        if (adminCheck.rows[0].email === superAdminEmail) {
+            return res.status(403).json({ success: false, message: 'Super admin güncellenemez' });
+        }
+        
+        // E-posta kontrolü (başka birinde kullanılıyor mu?)
+        const existingUser = await pool.query('SELECT id FROM users WHERE email = $1 AND id != $2', [email, id]);
+        if (existingUser.rows.length > 0) {
+            return res.status(400).json({ success: false, message: 'Bu e-posta adresi zaten kullanılıyor' });
+        }
+        
+        let result;
+        if (password && password.length >= 6) {
+            // Şifre ile güncelle
+            const bcrypt = require('bcrypt');
+            const hashedPassword = await bcrypt.hash(password, 10);
+            result = await pool.query(`
+                UPDATE users SET first_name = $1, last_name = $2, email = $3, password = $4
+                WHERE id = $5
+                RETURNING id, first_name, last_name, email
+            `, [first_name, last_name, email, hashedPassword, id]);
+        } else {
+            // Şifresiz güncelle
+            result = await pool.query(`
+                UPDATE users SET first_name = $1, last_name = $2, email = $3
+                WHERE id = $4
+                RETURNING id, first_name, last_name, email
+            `, [first_name, last_name, email, id]);
+        }
+        
+        res.json({ success: true, admin: result.rows[0] });
+    } catch (error) {
+        console.error('Update co-admin error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Co-admin sil
+router.delete('/api/admins/:id', async (req, res) => {
+    try {
+        // Super admin kontrolü
+        if (!res.locals.isSuperAdmin) {
+            return res.status(403).json({ success: false, message: 'Bu işlem için yetkiniz yok' });
+        }
+        
+        const { id } = req.params;
+        
+        // Co-admin kontrolü (super admin silinemez)
+        const superAdminEmail = 'cinarozmeral1@gmail.com';
+        const adminCheck = await pool.query('SELECT email FROM users WHERE id = $1', [id]);
+        if (adminCheck.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Admin bulunamadı' });
+        }
+        if (adminCheck.rows[0].email === superAdminEmail) {
+            return res.status(403).json({ success: false, message: 'Super admin silinemez' });
+        }
+        
+        await pool.query('DELETE FROM users WHERE id = $1', [id]);
+        
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Delete co-admin error:', error);
         res.status(500).json({ success: false, message: error.message });
     }
 });

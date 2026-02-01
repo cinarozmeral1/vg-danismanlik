@@ -1,5 +1,6 @@
 // AI Service for Student Wizard - Groq (Primary) + Gemini (Fallback)
-// Bu servis Venture Global partner üniversiteleri ve bölümleri kullanarak AI tabanlı öneriler üretir
+// Bu servis Venture Global partner üniversiteleri ve bölümleri kullanarak GERÇEK AI tabanlı öneriler üretir
+// NOT: Fallback sistemi KALDIRILDI - sadece gerçek AI kullanılır
 const { Pool } = require('pg');
 
 const pool = new Pool({
@@ -11,69 +12,95 @@ const pool = new Pool({
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
 
+// Retry configuration
+const MAX_RETRIES = 2;
+const RETRY_DELAY = 1000; // 1 second
+
 /**
  * Analyze student profile and generate university recommendation
- * Uses Groq (primary) -> Gemini (fallback) -> Rule-based (last resort)
+ * Uses ONLY real AI: Groq (primary) -> Gemini (fallback)
+ * NO rule-based fallback - AI must work or return error
  */
 async function analyzeStudentProfile(studentData) {
-    // Get universities and departments from database FIRST (needed for both AI and fallback)
+    console.log('🤖 Starting REAL AI analysis (no fallback)...');
+    
+    // Get universities and departments from database
     let universities = [];
     try {
         universities = await getUniversitiesWithDepartments();
         console.log(`📊 Found ${universities.length} universities with departments for analysis`);
     } catch (dbError) {
-        console.error('Database error:', dbError.message);
+        console.error('❌ Database error:', dbError.message);
+        throw new Error('Veritabanına bağlanılamadı. Lütfen daha sonra tekrar deneyin.');
     }
     
     if (universities.length === 0) {
-        console.warn('⚠️ No universities found, using fallback with defaults');
-        return generateFallbackRecommendation(studentData, []);
+        throw new Error('Sistemde üniversite bulunamadı. Lütfen yönetici ile iletişime geçin.');
     }
     
-    try {
         const prepSchools = await getPrepSchools();
         
         // Build the prompt
         const prompt = buildAnalysisPrompt(studentData, universities, prepSchools);
         
-        // Try AI APIs: Groq first, then Gemini
+    // Try AI APIs with retries: Groq first, then Gemini
         let response = null;
+    let lastError = null;
         
         // Try Groq API first (faster and more reliable)
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
         try {
+            console.log(`🤖 Groq API attempt ${attempt}/${MAX_RETRIES}...`);
             response = await callGroqAPI(prompt);
             if (response) {
                 console.log('✅ AI response from Groq');
+                break;
             }
         } catch (groqError) {
-            console.warn('⚠️ Groq API failed:', groqError.message);
+            lastError = groqError;
+            console.warn(`⚠️ Groq API attempt ${attempt} failed:`, groqError.message);
+            if (attempt < MAX_RETRIES) {
+                await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+            }
+        }
         }
         
-        // If Groq fails, try Gemini
+    // If Groq fails, try Gemini with retries
         if (!response) {
+        for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
             try {
+                console.log(`🤖 Gemini API attempt ${attempt}/${MAX_RETRIES}...`);
                 response = await callGeminiAPI(prompt);
                 if (response) {
                     console.log('✅ AI response from Gemini');
+                    break;
                 }
             } catch (geminiError) {
-                console.warn('⚠️ Gemini API failed:', geminiError.message);
+                lastError = geminiError;
+                console.warn(`⚠️ Gemini API attempt ${attempt} failed:`, geminiError.message);
+                if (attempt < MAX_RETRIES) {
+                    await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+                }
+            }
             }
         }
         
+    // NO FALLBACK - AI must work
         if (!response) {
-            console.warn('⚠️ All AI APIs failed, using intelligent fallback');
-            return generateFallbackRecommendation(studentData, universities);
+        console.error('❌ All AI APIs failed after retries');
+        throw new Error('Yapay zeka servisi şu anda kullanılamıyor. Lütfen birkaç dakika sonra tekrar deneyin.');
         }
         
-        // Parse and return the response
-        return parseAIResponse(response, studentData, universities);
+    // Parse and validate the response
+    const result = parseAIResponse(response, studentData, universities);
         
-    } catch (error) {
-        console.error('AI analysis error:', error);
-        // Fallback to rule-based recommendation WITH REAL UNIVERSITY DATA
-        return generateFallbackRecommendation(studentData, universities);
-    }
+    // Validate that AI response matches user's country preferences AND partner list
+    const validatedResult = await validateAndFixCountries(result, studentData, universities);
+    
+    // Override prep school decision for Canadian diploma holders
+    const finalResult = applyCanadianDiplomaRules(validatedResult, studentData);
+    
+    return finalResult;
 }
 
 /**
@@ -171,17 +198,20 @@ function buildAnalysisPrompt(studentData, universities, prepSchools) {
         'Austria': 'Avusturya',
         'UK': 'İngiltere',
         'Poland': 'Polonya',
-        'Hungary': 'Macaristan'
+        'Hungary': 'Macaristan',
+        'Netherlands': 'Hollanda'
     };
 
     const educationLevel = studentData.education_level === 'bachelor' ? 'Lisans' : 'Yüksek Lisans';
     const programFilter = studentData.education_level === 'bachelor' ? 'bachelor' : 'master';
+    const hasCanadianDiploma = studentData.canadian_diploma === 'yes';
     
     // Build student profile section
     let studentProfile = `
 ## ÖĞRENCİ PROFİLİ
 
 **Hedef Eğitim Seviyesi:** ${educationLevel}
+**Kanada Lise Diploması:** ${hasCanadianDiploma ? '✅ EVET - 12. sınıfta Kanada\'da lise diploması almış (WCEP veya benzeri program)' : '❌ HAYIR - Türk lise diploması'}
 **İngilizce Seviyesi:** ${studentData.english_level}
 **İngilizce Sınav:** ${studentData.english_exam_type || 'Henüz yok'} ${studentData.english_exam_score ? `(${studentData.english_exam_score} puan)` : ''}
 `;
@@ -257,9 +287,65 @@ function buildAnalysisPrompt(studentData, universities, prepSchools) {
         prepSchoolsSection += `- ${prep.name} (${prep.country}${prep.city ? ', ' + prep.city : ''}) - ${prep.prep_type} - ${prep.estimated_cost || 'Fiyat değişken'}\n`;
     });
 
+    // Kanada diploması avantajları bilgisi
+    let canadianDiplomaSection = '';
+    if (hasCanadianDiploma) {
+        canadianDiplomaSection = `
+## 🍁 KANADA LİSE DİPLOMASI AVANTAJLARI (ÖĞRENCİ BU DİPLOMAYA SAHİP!)
+
+Bu öğrenci 12. sınıfı Kanada'da tamamlamış ve Kanada lise diploması almıştır. Bu diploma Avrupa'da büyük avantajlar sağlar:
+
+### ÜLKE BAZLI MUAFİYETLER:
+- **ALMANYA:** Studienkolleg (hazırlık yılı) ATLANIR! Direkt üniversiteye başvurabilir. Türk diploması ile en az 4 AP kursu gerekirken, Kanada diploması ile bu şart ortadan kalkar.
+- **İNGİLTERE:** Foundation Year (hazırlık yılı) ATLANIR! Direkt lisans programlarına kabul edilir.
+- **ÇEK CUMHURİYETİ:** Charles University Tıp ve Diş Hekimliği fakültelerine SINAVSIZ kabul imkanı! (2. Tıp Fakültesi)
+- **AVUSTURYA:** Vorstudienlehrgang (hazırlık) muafiyeti. Direkt üniversite başvurusu.
+- **İTALYA:** Türk diploması için gereken ek sınavlardan muafiyet. Daha kolay kabul süreci.
+- **POLONYA:** Öncelikli değerlendirme ve hazırlık programı muafiyeti.
+- **MACARİSTAN:** Direkt kabul imkanı, hazırlık şartı yok.
+- **HOLLANDA:** Research University'ler (WO) için AP şartı KALKAR! University of Applied Sciences (HBO) ve Research University (WO) dahil TÜM üniversitelere direkt başvuru yapabilir.
+
+⭐ WCEP (Worldwide Cultural Exchange Program) ortaklığımız sayesinde öğrencilerimiz Kanada'nın prestijli okullarında 12. sınıfı tamamlayarak bu avantajlardan yararlanmaktadır.
+
+ÖNEMLİ: Bu öğrenci için önerilerde Kanada diploması avantajlarını MUTLAKA belirt!
+`;
+    }
+
+    // Hollanda için Türk lise diploması kuralları (sadece Kanada diploması OLMAYANLAR için)
+    let turkishDiplomaNetherlandsSection = '';
+    if (!hasCanadianDiploma && studentData.country_preferences?.includes('Netherlands')) {
+        turkishDiplomaNetherlandsSection = `
+## 🇳🇱 HOLLANDA ÜNİVERSİTELERİ - TÜRK LİSE DİPLOMASI KURALLARI
+
+Hollanda'da iki tür üniversite bulunmaktadır ve Türk lise diploması ile kabul şartları farklıdır:
+
+### 1. UYGULAMALI BİLİMLER ÜNİVERSİTELERİ (HBO - Hogeschool / University of Applied Sciences)
+✅ Türk lise diploması ile DOĞRUDAN KABUL EDİLİRSİNİZ!
+- The Hague University of Applied Sciences
+- Amsterdam University of Applied Sciences
+- Ve diğer "University of Applied Sciences" isimleri içeren üniversiteler
+
+### 2. ARAŞTIRMA ÜNİVERSİTELERİ (WO - Research University)
+⚠️ Türk lise diploması için EK ŞARTLAR GEREKLİDİR:
+- University of Amsterdam, Utrecht University, Leiden University, TU Delft, Radboud University, University of Groningen, VU Amsterdam gibi prestijli araştırma üniversiteleri
+- Bu üniversitelere başvurabilmek için iki seçenek vardır:
+  1. Lisede en az 4 AP (Advanced Placement) dersi almış olmak
+  2. VEYA Hollanda'da bir University of Applied Sciences'ta 1 yıl eğitim almış olmak
+
+⚠️ ÖNEMLİ: Bu öğrenci TÜRK LİSE DİPLOMASINA sahip. Hollanda'dan Research University önerirsen bu uyarıyı MUTLAKA belirt!
+✅ University of Applied Sciences önerirsen bu uyarıya GEREK YOK, direkt kabul mümkün.
+`;
+    }
+
     return `Sen Venture Global için çalışan deneyimli bir eğitim danışmanısın. Aşağıdaki öğrenci profiline göre en uygun üniversite ve program önerisi yapacaksın.
 
-ÖNEMLİ: Sadece verilen PARTNER ÜNİVERSİTELERİ listesinden öneri yapmalısın. Listede olmayan üniversite önerme!
+⚠️ KRİTİK KURAL: ÖĞRENCİNİN TERCİH ETTİĞİ ÜLKELERDEN ÖNERİ YAP! 
+Öğrenci "${studentData.country_preferences?.join(', ') || 'belirtmedi'}" ülkelerini tercih etmiş. 
+İLK ÖNERİ MUTLAKA 1. TERCİH ÜLKESİNDEN, İKİNCİ ÖNERİ 2. TERCİH ÜLKESİNDEN OLMALIDIR!
+Tercih edilen ülkeler dışından öneri YAPMA!
+
+${canadianDiplomaSection}
+${turkishDiplomaNetherlandsSection}
 
 ${studentProfile}
 
@@ -273,9 +359,11 @@ ${prepSchoolsSection}
 - İngilizce B2+ ve sınav skoru yok: Belki gerekli, sınav gerekebilir
 - IELTS < 5.5 veya TOEFL < 70: Dil hazırlığı gerekli
 - Lise notu < 60/100: Akademik hazırlık (Foundation) önerilir
+${hasCanadianDiploma ? '- ⭐ KANADA DİPLOMASI VAR: Çoğu hazırlık programı muafiyeti mevcut!' : ''}
 
 ## GÖREV
 Öğrenciye partner listesindeki üniversitelerden İKİ farklı öneri sun. Her öneri için detaylı ve kapsamlı bilgi ver.
+${hasCanadianDiploma ? '⭐ Kanada diploması avantajlarını her öneride mutlaka vurgula!' : ''}
 
 SADECE aşağıdaki JSON formatında yanıt ver, başka açıklama ekleme:
 
@@ -286,43 +374,51 @@ SADECE aşağıdaki JSON formatında yanıt ver, başka açıklama ekleme:
     "prep_school_reason": "Neden hazırlık gerekli/gerekli değil - en az 2 cümle detaylı açıklama",
     
     "recommendation_1": {
-        "university_name": "Birinci öneri üniversite adı (PARTNER LİSTESİNDEN)",
+        "university_name": "Birinci öneri üniversite adı (PARTNER LİSTESİNDEN - 1. TERCİH ÜLKESİNDEN)",
         "program_name": "Önerilen bölüm/program adı (LİSTEDEN)",
-        "country": "Ülke adı (İngilizce - Germany, Italy, Czech Republic vb.)",
+        "country": "Ülke adı (İngilizce - ÖĞRENCİNİN 1. TERCİHİ: ${studentData.country_preferences?.[0] || 'Czech Republic'})",
         "city": "Şehir adı",
         "tuition": "Yıllık ücret (EUR cinsinden, programdan al)",
         "why_this_university": "Bu üniversitenin neden önerildiğine dair EN AZ 4-5 cümlelik detaylı açıklama. Üniversitenin güçlü yönleri, akademik kalitesi, öğrenciye uygunluğu.",
         "why_this_program": "Bu programın/bölümün neden uygun olduğuna dair EN AZ 3-4 cümlelik açıklama. Öğrencinin ilgi alanlarıyla eşleşme.",
         "country_info": "Bu ülkede eğitim almanın avantajları hakkında EN AZ 4-5 cümlelik kapsamlı bilgi. Eğitim sistemi, dil, vize süreci, çalışma izni.",
         "city_info": "Şehir hakkında EN AZ 4-5 cümlelik detaylı bilgi. Yaşam maliyeti (kira, yemek, ulaşım yaklaşık fiyatları), öğrenci hayatı, iklim.",
-        "career_prospects": "Mezuniyet sonrası kariyer fırsatları hakkında EN AZ 3-4 cümlelik bilgi."
+        "career_prospects": "Mezuniyet sonrası kariyer fırsatları hakkında EN AZ 3-4 cümlelik bilgi."${hasCanadianDiploma ? `,
+        "canadian_diploma_advantage": "Bu ülkede Kanada lise diplomasının sağladığı AVANTAJLAR: muafiyetler, sınavsız kabul imkanları vb. EN AZ 3-4 cümle."` : ''}${!hasCanadianDiploma && studentData.country_preferences?.includes('Netherlands') ? `,
+        "netherlands_diploma_warning": "EĞER bu öneri Hollanda'dan bir Research University (WO) ise: Türk lise diploması ile bu üniversiteye kabul için ek şartları açıkla (4 AP dersi veya 1 yıl HBO). EĞER University of Applied Sciences (HBO) ise bu alanı boş bırak veya 'Uygulamalı Bilimler Üniversitesi olduğu için Türk lise diploması ile doğrudan kabul edilebilirsiniz.' yaz."` : ''}
     },
     
     "recommendation_2": {
-        "university_name": "İkinci öneri üniversite adı (FARKLI BİR ÜNİVERSİTE - PARTNER LİSTESİNDEN)",
+        "university_name": "İkinci öneri üniversite adı (FARKLI BİR ÜNİVERSİTE - 2. TERCİH ÜLKESİNDEN: ${studentData.country_preferences?.[1] || 'Italy'})",
         "program_name": "Önerilen bölüm/program adı (LİSTEDEN)",
-        "country": "Ülke adı (İngilizce)",
+        "country": "Ülke adı (ÖĞRENCİNİN 2. TERCİHİ: ${studentData.country_preferences?.[1] || 'Italy'})",
         "city": "Şehir adı",
         "tuition": "Yıllık ücret",
         "why_this_university": "Bu üniversitenin neden alternatif olarak önerildiğine dair EN AZ 4-5 cümlelik detaylı açıklama.",
         "why_this_program": "Bu programın neden uygun olduğuna dair EN AZ 3-4 cümlelik açıklama.",
         "country_info": "Bu ülkede eğitim almanın avantajları hakkında EN AZ 4-5 cümlelik kapsamlı bilgi.",
         "city_info": "Şehir hakkında EN AZ 4-5 cümlelik detaylı bilgi.",
-        "career_prospects": "Mezuniyet sonrası kariyer fırsatları hakkında EN AZ 3-4 cümlelik bilgi."
+        "career_prospects": "Mezuniyet sonrası kariyer fırsatları hakkında EN AZ 3-4 cümlelik bilgi."${hasCanadianDiploma ? `,
+        "canadian_diploma_advantage": "Bu ülkede Kanada lise diplomasının sağladığı AVANTAJLAR: muafiyetler, sınavsız kabul imkanları vb. EN AZ 3-4 cümle."` : ''}${!hasCanadianDiploma && studentData.country_preferences?.includes('Netherlands') ? `,
+        "netherlands_diploma_warning": "EĞER bu öneri Hollanda'dan bir Research University (WO) ise: Türk lise diploması ile bu üniversiteye kabul için ek şartları açıkla (4 AP dersi veya 1 yıl HBO). EĞER University of Applied Sciences (HBO) ise bu alanı boş bırak veya 'Uygulamalı Bilimler Üniversitesi olduğu için Türk lise diploması ile doğrudan kabul edilebilirsiniz.' yaz."` : ''}
     },
     
     "comparison": "İki öneri arasındaki farkları ve hangisinin hangi durumda daha uygun olacağını açıklayan EN AZ 3-4 cümlelik karşılaştırma.",
     
-    "overall_advice": "Öğrenciye genel tavsiyeler - EN AZ 3-4 cümle. Başvuru süreci, hazırlık önerileri, dikkat edilmesi gerekenler."
+    "overall_advice": "Öğrenciye genel tavsiyeler - EN AZ 3-4 cümle. Başvuru süreci, hazırlık önerileri, dikkat edilmesi gerekenler."${hasCanadianDiploma ? `,
+    
+    "wcep_advantage_summary": "WCEP (Worldwide Cultural Exchange Program) ortaklığımız sayesinde Kanada lise diploması alan öğrencilerin Avrupa'daki avantajlarının özeti. Öğrenciyi tebrik et ve bu avantajdan yararlanmasını öner. EN AZ 3-4 cümle."` : ''}
 }
 
 KURALLAR:
 1. SADECE JSON formatında yanıt ver
 2. İki öneri FARKLI üniversitelerden olsun
-3. Mümkünse öğrencinin tercih ettiği ülkelerden öner
+3. ⚠️ KRİTİK: İLK ÖNERİ 1. TERCİH ÜLKESİNDEN (${studentData.country_preferences?.[0] || 'Czech Republic'}), İKİNCİ ÖNERİ 2. TERCİH ÜLKESİNDEN (${studentData.country_preferences?.[1] || 'Italy'}) OLMALI!
 4. Tüm açıklamalar Türkçe olsun
 5. Fiyatlar listeden alınsın ve EUR cinsinden olsun
-6. İlgi alanlarına uygun programlar öner`;
+6. İlgi alanlarına uygun programlar öner
+${hasCanadianDiploma ? '7. ⭐ Kanada diploması avantajlarını her fırsatta vurgula ve WCEP ortaklığımızı öv!' : ''}
+${!hasCanadianDiploma && studentData.country_preferences?.includes('Netherlands') ? '8. 🇳🇱 HOLLANDA: Research University (WO) önerirsen Türk diploma uyarısını MUTLAKA ekle! University of Applied Sciences (HBO) önerirsen uyarıya gerek yok.' : ''}`;
 }
 
 /**
@@ -413,33 +509,33 @@ async function callGeminiAPI(prompt) {
     console.log('🤖 Calling Gemini API (fallback)...');
 
     try {
-        const response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                contents: [{
-                    parts: [{
-                        text: prompt
-                    }]
-                }],
-                generationConfig: {
-                    temperature: 0.7,
-                    topK: 40,
-                    topP: 0.95,
-                    maxOutputTokens: 4096
-                }
-            })
-        });
+    const response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            contents: [{
+                parts: [{
+                    text: prompt
+                }]
+            }],
+            generationConfig: {
+                temperature: 0.7,
+                topK: 40,
+                topP: 0.95,
+                maxOutputTokens: 4096
+            }
+        })
+    });
 
-        if (!response.ok) {
+    if (!response.ok) {
             const errorText = await response.text();
             console.error('❌ Gemini API error:', response.status);
-            throw new Error(`Gemini API error: ${response.status}`);
-        }
+        throw new Error(`Gemini API error: ${response.status}`);
+    }
 
-        const data = await response.json();
+    const data = await response.json();
         const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || null;
         
         if (!responseText) {
@@ -457,6 +553,7 @@ async function callGeminiAPI(prompt) {
 
 /**
  * Parse AI response (works for both Groq and Gemini)
+ * NO FALLBACK - throws error if parsing fails
  */
 function parseAIResponse(responseText, studentData, universities) {
     try {
@@ -473,6 +570,8 @@ function parseAIResponse(responseText, studentData, universities) {
         
         console.log('✅ Successfully parsed AI response');
         
+        const hasCanadianDiploma = studentData.canadian_diploma === 'yes';
+        
         // New format with two recommendations
         return {
             success: true,
@@ -482,6 +581,10 @@ function parseAIResponse(responseText, studentData, universities) {
                 prep_school_suggestion: parsed.prep_school_name ? 
                     `${parsed.prep_school_name}: ${parsed.prep_school_reason}` : 
                     (parsed.prep_school_reason || null),
+                
+                // Canadian diploma info
+                has_canadian_diploma: hasCanadianDiploma,
+                wcep_advantage_summary: parsed.wcep_advantage_summary || null,
                 
                 // First recommendation (primary)
                 recommendation_1: parsed.recommendation_1 || {
@@ -494,7 +597,8 @@ function parseAIResponse(responseText, studentData, universities) {
                     why_this_program: '',
                     country_info: '',
                     city_info: parsed.city_info,
-                    career_prospects: parsed.career_prospects
+                    career_prospects: parsed.career_prospects,
+                    canadian_diploma_advantage: parsed.recommendation_1?.canadian_diploma_advantage || null
                 },
                 
                 // Second recommendation (alternative)
@@ -516,8 +620,264 @@ function parseAIResponse(responseText, studentData, universities) {
     } catch (error) {
         console.error('❌ Error parsing AI response:', error.message);
         console.log('Raw response (first 500 chars):', responseText?.substring(0, 500));
-        return generateFallbackRecommendation(studentData, universities);
+        // NO FALLBACK - throw error
+        throw new Error('Yapay zeka yanıtı işlenemedi. Lütfen tekrar deneyin.');
     }
+}
+
+/**
+ * Validate and fix AI recommendations
+ * - Ensures universities are from our partner list
+ * - Ensures countries match user preferences
+ * - Handles both bachelor and master programs
+ */
+async function validateAndFixCountries(result, studentData, universities) {
+    const preferredCountries = studentData.country_preferences || [];
+    const educationLevel = studentData.education_level || 'bachelor';
+    const partnerUnis = universities || [];
+    
+    if (preferredCountries.length === 0) {
+        console.log('ℹ️ No country preferences specified, skipping validation');
+        return result;
+    }
+    
+    if (partnerUnis.length === 0) {
+        console.warn('⚠️ No partner universities available for validation');
+        return result;
+    }
+    
+    console.log(`🔍 Validating recommendations for ${educationLevel} level`);
+    console.log(`📍 Preferred countries: ${preferredCountries.join(', ')}`);
+    
+    // Normalize country names for comparison
+    const normalizeCountry = (country) => {
+        const countryMap = {
+            'holland': 'Netherlands', 'hollanda': 'Netherlands', 'the netherlands': 'Netherlands',
+            'çekya': 'Czech Republic', 'czechia': 'Czech Republic',
+            'almanya': 'Germany', 'ingiltere': 'UK', 'england': 'UK', 'united kingdom': 'UK',
+            'italya': 'Italy', 'avusturya': 'Austria', 'polonya': 'Poland', 'macaristan': 'Hungary'
+        };
+        return countryMap[country?.toLowerCase()] || country;
+    };
+    
+    // Get programs based on education level
+    const getPrograms = (uni) => {
+        return educationLevel === 'master' ? (uni.master_programs || []) : (uni.bachelor_programs || []);
+    };
+    
+    // Find matching partner university by name (fuzzy match)
+    const findPartnerUni = (uniName) => {
+        if (!uniName) return null;
+        const nameLower = uniName.toLowerCase().trim();
+        
+        // Exact match first
+        let match = partnerUnis.find(u => u.name.toLowerCase() === nameLower);
+        if (match) return match;
+        
+        // Partial match
+        match = partnerUnis.find(u => 
+            u.name.toLowerCase().includes(nameLower) || 
+            nameLower.includes(u.name.toLowerCase())
+        );
+        if (match) return match;
+        
+        // Word-based match (at least 2 significant words match)
+        const words = nameLower.split(/\s+/).filter(w => w.length > 3);
+        match = partnerUnis.find(u => {
+            const uniWords = u.name.toLowerCase().split(/\s+/).filter(w => w.length > 3);
+            const matchCount = words.filter(w => uniWords.some(uw => uw.includes(w) || w.includes(uw))).length;
+            return matchCount >= 2;
+        });
+        
+        return match || null;
+    };
+    
+    // Find best university for a country
+    const findBestUniversity = (targetCountry, excludeNames = [], interests = []) => {
+        const normalizedCountry = normalizeCountry(targetCountry);
+        
+        // Filter universities by country and exclude already used ones
+        let candidates = partnerUnis.filter(u => {
+            const uniCountry = normalizeCountry(u.country);
+            const hasPrograms = getPrograms(u).length > 0;
+            const notExcluded = !excludeNames.includes(u.name);
+            return uniCountry === normalizedCountry && hasPrograms && notExcluded;
+        });
+        
+        if (candidates.length === 0) {
+            console.warn(`⚠️ No partner universities found for ${normalizedCountry}`);
+            return null;
+        }
+        
+        // Sort by world ranking (if available) and featured status
+        candidates.sort((a, b) => {
+            if (a.is_featured && !b.is_featured) return -1;
+            if (!a.is_featured && b.is_featured) return 1;
+            return (a.world_ranking || 999) - (b.world_ranking || 999);
+        });
+        
+        return candidates[0];
+    };
+    
+    // Find best program based on student interests
+    const findBestProgram = (uni, interests = []) => {
+        const programs = getPrograms(uni);
+        if (programs.length === 0) return null;
+        
+        if (interests.length > 0) {
+            // Try to match interests
+            const interestLower = interests.map(i => i.toLowerCase());
+            const matched = programs.find(p => 
+                interestLower.some(int => 
+                    p.name_tr?.toLowerCase().includes(int) || 
+                    p.name_en?.toLowerCase().includes(int)
+                )
+            );
+            if (matched) return matched;
+        }
+        
+        return programs[0];
+    };
+    
+    // Update recommendation with valid partner university
+    const updateRecommendation = (rec, validUni, program, reason = '') => {
+        if (!validUni) return false;
+        
+        rec.university_name = validUni.name;
+        rec.country = validUni.country;
+        rec.city = validUni.city;
+        
+        if (program) {
+            rec.program_name = program.name_tr || program.name_en || 'Program';
+            rec.tuition = program.price ? `${program.price} EUR` : 'Değişken';
+        }
+        
+        // Enhance the reasoning
+        const ranking = validUni.world_ranking ? ` Dünya sıralamasında ${validUni.world_ranking}. sırada.` : '';
+        rec.why_this_university = `${validUni.name}, Venture Global'ın resmi partner üniversitesidir.${ranking} ${rec.why_this_university || reason}`.trim();
+        
+        return true;
+    };
+    
+    // Validate Recommendation 1
+    if (result.data.recommendation_1) {
+        const rec1 = result.data.recommendation_1;
+        const rec1Country = normalizeCountry(rec1.country);
+        const isCountryValid = preferredCountries.map(normalizeCountry).includes(rec1Country);
+        const partnerMatch = findPartnerUni(rec1.university_name);
+        
+        if (!isCountryValid || !partnerMatch) {
+            const reason = !isCountryValid 
+                ? `Ülke tercihiniz (${preferredCountries[0]}) doğrultusunda öneri yapılmıştır.`
+                : 'Partner üniversitelerimizden öneri yapılmıştır.';
+            
+            console.warn(`⚠️ Rec1: Country valid=${isCountryValid}, Partner match=${!!partnerMatch}`);
+            
+            const targetCountry = isCountryValid ? rec1Country : preferredCountries[0];
+            const validUni = findBestUniversity(targetCountry, [], studentData.interests);
+            const program = validUni ? findBestProgram(validUni, studentData.interests) : null;
+            
+            if (validUni) {
+                updateRecommendation(rec1, validUni, program, reason);
+                console.log(`✅ Rec1 fixed: ${validUni.name} (${validUni.country})`);
+            }
+        } else {
+            console.log(`✅ Rec1 valid: ${rec1.university_name} (${rec1Country})`);
+        }
+    }
+    
+    // Validate Recommendation 2
+    if (result.data.recommendation_2) {
+        const rec2 = result.data.recommendation_2;
+        const rec2Country = normalizeCountry(rec2.country);
+        const rec1UniName = result.data.recommendation_1?.university_name;
+        const isCountryValid = preferredCountries.map(normalizeCountry).includes(rec2Country);
+        const partnerMatch = findPartnerUni(rec2.university_name);
+        const isDuplicate = rec2.university_name === rec1UniName;
+        
+        if (!isCountryValid || !partnerMatch || isDuplicate) {
+            const reason = isDuplicate 
+                ? 'Alternatif bir partner üniversitemizden öneri yapılmıştır.'
+                : !isCountryValid 
+                    ? `Ülke tercihiniz doğrultusunda öneri yapılmıştır.`
+                    : 'Partner üniversitelerimizden öneri yapılmıştır.';
+            
+            console.warn(`⚠️ Rec2: Country valid=${isCountryValid}, Partner match=${!!partnerMatch}, Duplicate=${isDuplicate}`);
+            
+            const targetCountry = preferredCountries[1] || preferredCountries[0];
+            const validUni = findBestUniversity(targetCountry, [rec1UniName], studentData.interests);
+            const program = validUni ? findBestProgram(validUni, studentData.interests) : null;
+            
+            if (validUni) {
+                updateRecommendation(rec2, validUni, program, reason);
+                console.log(`✅ Rec2 fixed: ${validUni.name} (${validUni.country})`);
+            }
+        } else {
+            console.log(`✅ Rec2 valid: ${rec2.university_name} (${rec2Country})`);
+        }
+    }
+    
+    // Update legacy fields for compatibility
+    if (result.data.recommendation_1) {
+        result.data.recommended_country = result.data.recommendation_1.country;
+        result.data.recommended_university_name = result.data.recommendation_1.university_name;
+        result.data.recommended_program_name = result.data.recommendation_1.program_name;
+        result.data.recommended_city = result.data.recommendation_1.city;
+        result.data.recommended_tuition = result.data.recommendation_1.tuition;
+    }
+    
+    return result;
+}
+
+/**
+ * Apply Canadian diploma rules - override prep school decision
+ * If student has Canadian diploma, prep school is NOT needed
+ */
+function applyCanadianDiplomaRules(result, studentData) {
+    const hasCanadianDiploma = studentData.canadian_diploma === 'yes';
+    
+    if (!hasCanadianDiploma) {
+        return result;
+    }
+    
+    console.log('🍁 Applying Canadian diploma rules...');
+    
+    // FORCE prep_school_needed to false for Canadian diploma holders
+    if (result.data.prep_school_needed === true) {
+        console.log('⚠️ AI suggested prep school but student has Canadian diploma - OVERRIDING to false');
+        result.data.prep_school_needed = false;
+        result.data.prep_school_type = null;
+        result.data.prep_school_suggestion = '🍁 Kanada lise diplomanız sayesinde hazırlık programlarından muafsınız! Bu büyük bir avantajdır.';
+    }
+    
+    // Ensure Canadian diploma advantages are highlighted
+    if (!result.data.wcep_advantage_summary) {
+        result.data.wcep_advantage_summary = 'Tebrikler! 🍁 WCEP ortaklığımız kapsamında aldığınız Kanada lise diploması, Avrupa üniversitelerinde size büyük avantajlar sağlıyor. Hazırlık programlarından muafiyet, sınavsız kabul imkanları ve öncelikli değerlendirme gibi ayrıcalıklardan yararlanabilirsiniz.';
+    }
+    
+    // Add Canadian diploma advantage info to recommendations if missing
+    const canadianDiplomaAdvantages = {
+        'Germany': 'Almanya\'da Studienkolleg (hazırlık yılı) atlanır! Direkt üniversiteye başvurabilirsiniz.',
+        'UK': 'İngiltere\'de Foundation Year atlanır! Direkt lisans programlarına kabul edilirsiniz.',
+        'Czech Republic': 'Charles University Tıp ve Diş Hekimliği fakültelerine sınavsız kabul imkanı!',
+        'Austria': 'Vorstudienlehrgang muafiyeti! Direkt üniversite başvurusu yapabilirsiniz.',
+        'Italy': 'Ek sınavlardan muafiyet ve hızlı kabul süreci.',
+        'Poland': 'Öncelikli değerlendirme ve hazırlık muafiyeti.',
+        'Hungary': 'Direkt kabul imkanı, hazırlık şartı yok.',
+        'Netherlands': 'Hollanda\'da Research University\'ler için gereken AP şartı kalkar! Tüm üniversitelere direkt başvuru yapabilirsiniz.'
+    };
+    
+    if (result.data.recommendation_1 && !result.data.recommendation_1.canadian_diploma_advantage) {
+        const country = result.data.recommendation_1.country;
+        result.data.recommendation_1.canadian_diploma_advantage = canadianDiplomaAdvantages[country] || 'Kanada lise diplomanız bu ülkede size avantaj sağlamaktadır.';
+    }
+    
+    if (result.data.recommendation_2 && !result.data.recommendation_2.canadian_diploma_advantage) {
+        const country = result.data.recommendation_2.country;
+        result.data.recommendation_2.canadian_diploma_advantage = canadianDiplomaAdvantages[country] || 'Kanada lise diplomanız bu ülkede size avantaj sağlamaktadır.';
+    }
+    
+    return result;
 }
 
 /**
@@ -528,8 +888,10 @@ function generateFallbackRecommendation(studentData, universities = []) {
     
     // Determine if prep is needed
     const englishLevel = studentData.english_level;
-    const needsPrep = ['A1', 'A2', 'B1'].includes(englishLevel);
-    const needsAcademicPrep = studentData.high_school_gpa && studentData.high_school_gpa < 60;
+    const hasCanadianDiploma = studentData.canadian_diploma === 'yes';
+    // Kanada diploması varsa hazırlık gerekliliği azalır
+    const needsPrep = !hasCanadianDiploma && ['A1', 'A2', 'B1'].includes(englishLevel);
+    const needsAcademicPrep = !hasCanadianDiploma && studentData.high_school_gpa && studentData.high_school_gpa < 60;
     
     // Get preferred countries
     const preferredCountries = studentData.country_preferences || ['Czech Republic', 'Italy'];
@@ -728,10 +1090,23 @@ function generateFallbackRecommendation(studentData, universities = []) {
         'Austria': 'University of Vienna Prep',
         'UK': 'Kaplan International Pathways',
         'Poland': 'Warsaw University Prep Course',
-        'Hungary': 'Budapest Prep Academy'
+        'Hungary': 'Budapest Prep Academy',
+        'Netherlands': 'Holland International Study Centre'
     };
     
     const prepSchool = prepSchools[uni1Country] || 'Charles University Language Center';
+    
+    // Kanada diploması avantaj bilgileri (ülke bazlı)
+    const canadianDiplomaAdvantages = {
+        'Germany': 'Almanya\'da Kanada lise diploması ile Studienkolleg (hazırlık yılı) atlanır! Türk diploması ile en az 4 AP kursu gerekirken, Kanada diploması ile direkt üniversiteye başvurabilirsiniz.',
+        'UK': 'İngiltere\'de Kanada lise diploması ile Foundation Year (hazırlık yılı) atlanır! Direkt lisans programlarına kabul edilirsiniz.',
+        'Czech Republic': 'Çek Cumhuriyeti\'nde Kanada lise diploması büyük avantaj sağlar! Charles University Tıp ve Diş Hekimliği fakültelerine sınavsız kabul imkanı (2. Tıp Fakültesi). Diğer fakültelerde de öncelikli değerlendirme.',
+        'Austria': 'Avusturya\'da Kanada lise diploması ile Vorstudienlehrgang (hazırlık) muafiyeti! Direkt üniversite başvurusu yapabilirsiniz.',
+        'Italy': 'İtalya\'da Kanada lise diploması ile Türk diploması için gereken ek sınavlardan muafiyet. Daha kolay ve hızlı kabul süreci.',
+        'Poland': 'Polonya\'da Kanada lise diploması ile öncelikli değerlendirme ve hazırlık programı muafiyeti.',
+        'Hungary': 'Macaristan\'da Kanada lise diploması ile direkt kabul imkanı, hazırlık şartı yok.',
+        'Netherlands': 'Hollanda\'da Kanada lise diploması ile Research University\'ler (WO) için gereken AP şartı ortadan kalkar! University of Applied Sciences (HBO) ve Research University (WO) dahil TÜM üniversitelere direkt başvuru yapabilirsiniz. Türk lise diploması sahiplerine göre büyük avantaj!'
+    };
     
     return {
         success: true,
@@ -739,7 +1114,13 @@ function generateFallbackRecommendation(studentData, universities = []) {
             prep_school_needed: needsPrep || needsAcademicPrep,
             prep_school_type: needsPrep && needsAcademicPrep ? 'both' : (needsPrep ? 'language' : (needsAcademicPrep ? 'academic' : null)),
             prep_school_suggestion: (needsPrep || needsAcademicPrep) ? 
-                `${prepSchool} - ${needsPrep ? 'İngilizce seviyenizi geliştirmek için dil hazırlığı öneriyoruz.' : ''} ${needsAcademicPrep ? 'Akademik hazırlık programı da faydalı olabilir.' : ''}` : null,
+                `${prepSchool} - ${needsPrep ? 'İngilizce seviyenizi geliştirmek için dil hazırlığı öneriyoruz.' : ''} ${needsAcademicPrep ? 'Akademik hazırlık programı da faydalı olabilir.' : ''}` : 
+                (hasCanadianDiploma ? 'Kanada lise diplomanız sayesinde çoğu hazırlık programından muafsınız! 🎉' : null),
+            
+            // Kanada diploması bilgisi
+            has_canadian_diploma: hasCanadianDiploma,
+            wcep_advantage_summary: hasCanadianDiploma ? 
+                `Tebrikler! 🍁 WCEP (Worldwide Cultural Exchange Program) ortaklığımız kapsamında aldığınız Kanada lise diploması, Avrupa üniversitelerinde size büyük avantajlar sağlıyor. Hazırlık programlarından muafiyet, sınavsız kabul imkanları ve öncelikli değerlendirme gibi ayrıcalıklardan yararlanabilirsiniz. Venture Global danışmanlarınız bu avantajları en iyi şekilde değerlendirmenize yardımcı olacaktır.` : null,
             
             recommendation_1: {
                 university_name: uni1Name,
@@ -751,7 +1132,8 @@ function generateFallbackRecommendation(studentData, universities = []) {
                 why_this_program: `${prog1Name} programı, ilgi alanlarınız (${interests.join(', ')}) göz önüne alınarak seçilmiştir. Bu program hem teorik bilgi hem de pratik deneyim kazandırmaktadır. Mezuniyet sonrası geniş kariyer fırsatları sunmaktadır.`,
                 country_info: `${uni1Country}, Avrupa'da eğitim almak isteyen Türk öğrenciler için popüler bir destinasyondur. Eğitim kalitesi yüksek ve yaşam maliyetleri görece makuldür. Schengen bölgesinde olması seyahat kolaylığı sağlamaktadır. Mezuniyet sonrası çalışma izni alma imkanları mevcuttur.`,
                 city_info: `${uni1City}, öğrenci dostu bir şehirdir. Aylık yaşam maliyeti yaklaşık 600-1000 EUR arasındadır (kira dahil). Toplu taşıma gelişmiştir ve öğrenci indirimleri mevcuttur. Zengin kültürel hayatı ve aktif sosyal ortamıyla öne çıkmaktadır.`,
-                career_prospects: `${prog1Name} mezunları için geniş iş olanakları bulunmaktadır. Avrupa genelinde geçerli diploma ile farklı ülkelerde de iş bulma şansınız yüksektir. Ortalama başlangıç maaşları 30.000-50.000 EUR arasındadır.`
+                career_prospects: `${prog1Name} mezunları için geniş iş olanakları bulunmaktadır. Avrupa genelinde geçerli diploma ile farklı ülkelerde de iş bulma şansınız yüksektir. Ortalama başlangıç maaşları 30.000-50.000 EUR arasındadır.`,
+                canadian_diploma_advantage: hasCanadianDiploma ? canadianDiplomaAdvantages[uni1Country] || 'Kanada lise diplomanız bu ülkede size avantaj sağlamaktadır.' : null
             },
             
             recommendation_2: {
@@ -764,12 +1146,13 @@ function generateFallbackRecommendation(studentData, universities = []) {
                 why_this_program: `Bu üniversitedeki ${prog2Name} programı da ilgi alanlarınıza uygundur. Farklı bir perspektif ve akademik yaklaşım sunmaktadır. Erasmus değişim programları ile diğer Avrupa ülkelerinde de deneyim kazanabilirsiniz.`,
                 country_info: `${uni2Country}, Avrupa'nın merkezinde konumuyla stratejik bir avantaj sunar. Eğitim sistemi köklü ve uluslararası standartlardadır. Yaşam maliyetleri ve eğitim ücretleri makul seviyelerdedir.`,
                 city_info: `${uni2City}, tarihi dokusu ve modern yaşamı bir arada sunan canlı bir şehirdir. Aylık yaşam maliyeti yaklaşık 500-900 EUR arasındadır. Öğrenci toplulukları aktiftir ve sosyalleşme olanakları boldur.`,
-                career_prospects: `${uni2Country}'de mezuniyet sonrası çalışma olanakları mevcuttur. Avrupa genelinde geçerli diploma ile farklı ülkelerde de iş bulma şansınız yüksektir. Özellikle uluslararası şirketlerde fırsatlar artmaktadır.`
+                career_prospects: `${uni2Country}'de mezuniyet sonrası çalışma olanakları mevcuttur. Avrupa genelinde geçerli diploma ile farklı ülkelerde de iş bulma şansınız yüksektir. Özellikle uluslararası şirketlerde fırsatlar artmaktadır.`,
+                canadian_diploma_advantage: hasCanadianDiploma ? canadianDiplomaAdvantages[uni2Country] || 'Kanada lise diplomanız bu ülkede size avantaj sağlamaktadır.' : null
             },
             
-            comparison: `İlk önerimiz (${uni1Name}) tercih ettiğiniz ülkeler arasında olması nedeniyle öne çıkmaktadır. İkinci önerimiz (${uni2Name}) ise farklı bir alternatif sunarak seçeneklerinizi genişletmektedir. Bütçeniz ve kariyer hedeflerinize göre her iki seçenek de değerlendirilebilir.`,
+            comparison: `İlk önerimiz (${uni1Name}) tercih ettiğiniz ülkeler arasında olması nedeniyle öne çıkmaktadır. İkinci önerimiz (${uni2Name}) ise farklı bir alternatif sunarak seçeneklerinizi genişletmektedir. ${hasCanadianDiploma ? 'Her iki ülkede de Kanada lise diplomanız size önemli avantajlar sağlamaktadır!' : ''} Bütçeniz ve kariyer hedeflerinize göre her iki seçenek de değerlendirilebilir.`,
             
-            overall_advice: `Başvuru sürecine en az 6 ay önceden başlamanızı öneririz. ${needsPrep ? 'Öncelikle İngilizce seviyenizi geliştirmeniz önemlidir.' : ''} Gerekli belgeleri (transkript, dil sertifikası, motivasyon mektubu) önceden hazırlayın. Her iki üniversiteye de başvuru yaparak şansınızı artırabilirsiniz. Venture Global danışmanlarınız tüm süreçte size yardımcı olacaktır.`,
+            overall_advice: `Başvuru sürecine en az 6 ay önceden başlamanızı öneririz. ${hasCanadianDiploma ? '🍁 Kanada lise diplomanız sayesinde hazırlık programlarından muaf olabilirsiniz - bu büyük bir avantaj!' : (needsPrep ? 'Öncelikle İngilizce seviyenizi geliştirmeniz önemlidir.' : '')} Gerekli belgeleri (transkript, dil sertifikası, motivasyon mektubu) önceden hazırlayın. Her iki üniversiteye de başvuru yaparak şansınızı artırabilirsiniz. Venture Global danışmanlarınız tüm süreçte size yardımcı olacaktır.`,
             
             // Legacy fields
             recommended_university_name: uni1Name,
@@ -777,7 +1160,7 @@ function generateFallbackRecommendation(studentData, universities = []) {
             recommended_country: uni1Country,
             recommended_city: uni1City,
             recommended_tuition: prog1Price,
-            ai_reasoning: `İngilizce seviyeniz (${englishLevel}) ve tercih ettiğiniz ülkeler (${preferredCountries.join(', ')}) dikkate alınarak bu öneri yapılmıştır.`,
+            ai_reasoning: `İngilizce seviyeniz (${englishLevel}) ve tercih ettiğiniz ülkeler (${preferredCountries.join(', ')}) dikkate alınarak bu öneri yapılmıştır.${hasCanadianDiploma ? ' Kanada lise diplomanız size önemli avantajlar sağlamaktadır!' : ''}`,
             is_fallback: true
         }
     };
@@ -795,7 +1178,9 @@ async function saveRecommendation(userId, studentData, aiResult) {
             comparison: aiResult.data.comparison,
             overall_advice: aiResult.data.overall_advice,
             prep_school_needed: aiResult.data.prep_school_needed,
-            prep_school_suggestion: aiResult.data.prep_school_suggestion
+            prep_school_suggestion: aiResult.data.prep_school_suggestion,
+            has_canadian_diploma: aiResult.data.has_canadian_diploma || (studentData.canadian_diploma === 'yes'),
+            wcep_advantage_summary: aiResult.data.wcep_advantage_summary || null
         });
         
         const result = await pool.query(`
@@ -886,9 +1271,12 @@ async function getUserRecommendation(userId) {
                 rec.recommendation_2 = fullData.recommendation_2;
                 rec.comparison = fullData.comparison;
                 rec.overall_advice = fullData.overall_advice;
+                rec.has_canadian_diploma = fullData.has_canadian_diploma || false;
+                rec.wcep_advantage_summary = fullData.wcep_advantage_summary || null;
             } catch (e) {
                 // JSON değilse eski format - ai_reasoning düz metin olarak kalır
                 console.log('ai_reasoning is not JSON, using as plain text');
+                rec.has_canadian_diploma = false;
             }
         }
         

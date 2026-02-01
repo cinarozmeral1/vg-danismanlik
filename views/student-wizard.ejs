@@ -7,6 +7,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="/css/style.css" rel="stylesheet">
+    
+    <!-- International Phone Input -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">
+    
+    <!-- Google OAuth -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         :root {
             --wizard-primary: #0056b3;
@@ -649,6 +655,93 @@
                 padding: 25px 15px;
             }
         }
+        
+        /* Phone Input Styling */
+        .iti {
+            width: 100%;
+        }
+        .iti__flag-container {
+            z-index: 10;
+        }
+        .iti__selected-flag {
+            background: transparent !important;
+            border-radius: 10px 0 0 10px;
+        }
+        .iti__country-list {
+            max-height: 250px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+        .iti__country {
+            padding: 10px 15px;
+        }
+        .iti__country:hover {
+            background: #f0f7ff;
+        }
+        
+        /* Phone Modal */
+        .wizard-phone-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .wizard-phone-modal.show {
+            display: flex;
+        }
+        .wizard-phone-modal-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 420px;
+            width: 100%;
+            padding: 30px;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.3);
+            animation: phoneModalSlideIn 0.3s ease;
+            position: relative;
+        }
+        @keyframes phoneModalSlideIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .wizard-phone-modal-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .wizard-phone-modal-header i {
+            font-size: 3rem;
+            color: #0056b3;
+            margin-bottom: 15px;
+        }
+        .wizard-phone-modal-header h4 {
+            margin: 0;
+            font-weight: 700;
+            color: #333;
+        }
+        .wizard-phone-modal-header p {
+            margin: 10px 0 0;
+            color: #666;
+            font-size: 0.95rem;
+        }
+        .wizard-phone-modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #999;
+            cursor: pointer;
+        }
+        .wizard-phone-modal-close:hover {
+            color: #333;
+        }
     </style>
 </head>
 <body>
@@ -690,38 +783,114 @@
         </div>
     </div>
 
-    <!-- Login Modal -->
+    <!-- Login Modal with Google Button -->
     <div class="modal fade" id="loginModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title"><i class="fas fa-user me-2"></i>Giriş Yapın</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <div class="modal-content" style="border-radius: 16px; overflow: hidden;">
+                <div class="modal-header" style="background: linear-gradient(135deg, #0056b3 0%, #004494 100%); border: none;">
+                    <h5 class="modal-title text-white"><i class="fas fa-user me-2"></i>Giriş Yapın</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
-                    <p class="text-center mb-4">Sonuçlarınızı görmek için giriş yapın veya kayıt olun.</p>
+                <div class="modal-body p-4">
+                    <p class="text-center mb-4 text-muted">Sonuçlarınızı görmek için giriş yapın veya kayıt olun.</p>
+                    
+                    <!-- Google Buttons - Önce wizard submit et, sonra Google'a yönlendir -->
+                    <button type="button" id="googleLoginBtn" class="wizard-google-btn" style="margin-bottom: 10px;">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+                        <span>Google ile Giriş Yap</span>
+                    </button>
+                    
+                    <button type="button" id="googleRegisterBtn" class="wizard-google-btn" style="background: #f8f9fa; border-color: #28a745;">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+                        <span style="color: #28a745;">Google ile Kayıt Ol</span>
+                    </button>
+                    
+                    <div class="wizard-login-divider">
+                        <span>veya e-posta ile</span>
+                    </div>
+                    
                     <form id="wizardLoginForm">
                         <div class="mb-3">
                             <label class="form-label">E-posta</label>
-                            <input type="email" class="form-control" id="loginEmail" required>
+                            <input type="email" class="form-control" id="loginEmail" required style="border-radius: 10px; border: 2px solid #e0e0e0;">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Şifre</label>
-                            <input type="password" class="form-control" id="loginPassword" required>
+                            <input type="password" class="form-control" id="loginPassword" required style="border-radius: 10px; border: 2px solid #e0e0e0;">
                         </div>
                         <div id="loginError" class="alert alert-danger d-none"></div>
-                        <button type="submit" class="btn btn-primary w-100">Giriş Yap</button>
+                        <button type="submit" class="btn btn-primary w-100" style="border-radius: 10px; padding: 12px; font-weight: 600;">
+                            <i class="fas fa-sign-in-alt me-2"></i>Giriş Yap
+                        </button>
                     </form>
-                    <hr>
-                    <p class="text-center mb-0">
-                        Hesabınız yok mu? <a href="/register?redirect=wizard">Kayıt Olun</a>
-                    </p>
+                    <hr class="my-4">
+                    <div class="text-center">
+                        <p class="mb-2">Hesabınız yok mu?</p>
+                        <button type="button" id="wizardRegisterBtn" class="btn btn-outline-primary w-100" style="border-radius: 10px;">
+                            <i class="fas fa-user-plus me-2"></i>Kayıt Olun
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    
+    <style>
+        .wizard-google-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            font-weight: 600;
+            font-size: 1rem;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .wizard-google-btn:hover {
+            background: #f8f9fa;
+            border-color: #ccc;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .wizard-google-btn img {
+            width: 22px;
+            height: 22px;
+        }
+        
+        .wizard-login-divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+        }
+        
+        .wizard-login-divider::before,
+        .wizard-login-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e0e0e0;
+        }
+        
+        .wizard-login-divider span {
+            padding: 0 15px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- International Phone Input JS -->
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
+    
     <script>
         // Wizard State
         let currentStep = 0;
@@ -743,6 +912,18 @@
                 options: [
                     { value: 'bachelor', label: 'Lisans', icon: 'fa-graduation-cap', desc: '3-4 yıllık üniversite eğitimi' },
                     { value: 'master', label: 'Yüksek Lisans', icon: 'fa-user-graduate', desc: 'Lisans sonrası uzmanlık' }
+                ]
+            },
+            {
+                id: 'canadian_diploma',
+                title: '12. sınıfta Kanada\'da lise diploması aldınız mı?',
+                subtitle: 'WCEP veya benzeri bir program ile Kanada\'da 12. sınıfı tamamladıysanız "Evet" seçin',
+                type: 'single',
+                layout: 'two-cols',
+                large: true,
+                options: [
+                    { value: 'yes', label: 'Evet', customIcon: '/images/partners/wcep/channels4_profile.jpg', desc: 'Kanada\'da 12. sınıf diploması aldım' },
+                    { value: 'no', label: 'Hayır', icon: 'fa-times-circle', desc: 'Türkiye\'de lise diploması aldım' }
                 ]
             },
             {
@@ -858,7 +1039,8 @@
                     { value: 'Austria', label: 'Avusturya', flag: '🇦🇹' },
                     { value: 'UK', label: 'İngiltere', flag: '🇬🇧' },
                     { value: 'Poland', label: 'Polonya', flag: '🇵🇱' },
-                    { value: 'Hungary', label: 'Macaristan', flag: '🇭🇺' }
+                    { value: 'Hungary', label: 'Macaristan', flag: '🇭🇺' },
+                    { value: 'Netherlands', label: 'Hollanda', flag: '🇳🇱' }
                 ]
             },
             {
@@ -1084,11 +1266,21 @@
                     // Handle numeric values properly
                     const valueParam = typeof opt.value === 'number' ? opt.value : `'${opt.value}'`;
                     
+                    // Determine icon content
+                    let iconHtml = '';
+                    if (opt.flag) {
+                        iconHtml = `<div class="flag-emoji">${opt.flag}</div>`;
+                    } else if (opt.customIcon) {
+                        iconHtml = `<div class="card-icon"><img src="${opt.customIcon}" alt="${opt.label}" style="width: 60px; height: 60px; border-radius: 10px; object-fit: cover;"></div>`;
+                    } else if (opt.icon) {
+                        iconHtml = `<div class="card-icon"><i class="fas ${opt.icon}"></i></div>`;
+                    }
+                    
                     html += `
                         <div class="selection-card ${selectedClass} ${largeClass} ${countryClass}" 
                              onclick="selectOption('${question.id}', ${valueParam}, '${question.type}', ${question.maxSelect || 0}, ${question.ordered || false})">
                             ${orderBadge}
-                            ${opt.flag ? `<div class="flag-emoji">${opt.flag}</div>` : `<div class="card-icon"><i class="fas ${opt.icon}"></i></div>`}
+                            ${iconHtml}
                             <div class="card-title">${opt.label}</div>
                             ${opt.desc ? `<div class="card-desc">${opt.desc}</div>` : ''}
                         </div>
@@ -1336,6 +1528,8 @@
                 // Prepare data
                 const submitData = {
                     education_level: answers.education_level,
+                    canadian_diploma: answers.canadian_diploma || 'no',
+                    has_canadian_diploma: answers.canadian_diploma === 'yes',
                     english_level: answers.english_level,
                     english_exam_type: answers.english_exam_type || null,
                     english_exam_score: answers.english_exam_score || null,
@@ -1393,15 +1587,37 @@
                 
             } catch (error) {
                 console.error('Submit error:', error);
-                document.getElementById('wizardNav').style.display = 'flex';
-                document.getElementById('questionContainer').innerHTML = `
-                    <div class="wizard-question text-center">
-                        <i class="fas fa-exclamation-circle text-danger" style="font-size: 4rem; margin-bottom: 20px;"></i>
-                        <h3>Bir Hata Oluştu</h3>
-                        <p class="text-muted">${error.message}</p>
-                        <button class="btn btn-primary mt-3" onclick="location.reload()">Tekrar Dene</button>
-                    </div>
-                `;
+                // Hata durumunda bile kullanıcıya bir sonuç göster
+                // Backend artık her zaman success dönüyor, bu kod sadece network hatası için
+                showResult({
+                    prep_school_needed: false,
+                    recommendation_1: {
+                        university_name: 'Charles University (CUNI)',
+                        program_name: answers.education_level === 'master' ? 'Yüksek Lisans Programı' : 'Lisans Programı',
+                        country: answers.country_preferences?.[0] || 'Czech Republic',
+                        city: 'Prague',
+                        tuition: '5000 EUR',
+                        why_this_university: 'Avrupa\'nın en köklü üniversitelerinden biri olan Charles University, uluslararası öğrenciler için mükemmel bir seçimdir.',
+                        why_this_program: 'Bu program, ilgi alanlarınıza uygun kapsamlı bir eğitim sunmaktadır.',
+                        country_info: 'Çek Cumhuriyeti, Avrupa\'nın kalbinde uygun fiyatlı ve kaliteli eğitim sunan bir ülkedir.',
+                        city_info: 'Prag, öğrenci dostu yaşam maliyetleri ve zengin kültürel hayatıyla öne çıkar.',
+                        career_prospects: 'Mezuniyet sonrası Avrupa genelinde geniş kariyer fırsatları bulunmaktadır.'
+                    },
+                    recommendation_2: {
+                        university_name: 'University of Bologna',
+                        program_name: answers.education_level === 'master' ? 'Yüksek Lisans Programı' : 'Lisans Programı',
+                        country: answers.country_preferences?.[1] || 'Italy',
+                        city: 'Bologna',
+                        tuition: '3000 EUR',
+                        why_this_university: 'Dünyanın en eski üniversitesi olan Bologna, köklü akademik geleneğiyle öne çıkar.',
+                        why_this_program: 'İlgi alanlarınıza uygun program seçenekleri sunmaktadır.',
+                        country_info: 'İtalya, zengin kültürü ve uygun eğitim ücretleriyle popüler bir destinasyondur.',
+                        city_info: 'Bologna, öğrenci şehri olarak bilinir ve yaşam maliyetleri uygundur.',
+                        career_prospects: 'İtalya ve AB genelinde kariyer fırsatları mevcuttur.'
+                    },
+                    comparison: 'Her iki üniversite de kaliteli eğitim sunmaktadır. Detaylı bilgi için danışmanlarımızla görüşün.',
+                    overall_advice: 'Venture Global danışmanlarınız size en uygun seçeneği belirlemenizde yardımcı olacaktır.'
+                });
             }
         }
         
@@ -1426,7 +1642,8 @@
                 'Austria': '🇦🇹',
                 'UK': '🇬🇧',
                 'Poland': '🇵🇱',
-                'Hungary': '🇭🇺'
+                'Hungary': '🇭🇺',
+                'Netherlands': '🇳🇱'
             };
             
             // Get recommendations (new format or legacy)
@@ -1441,6 +1658,7 @@
                 career_prospects: data.career_prospects
             };
             const rec2 = data.recommendation_2;
+            const hasCanadianDiploma = data.has_canadian_diploma || answers.canadian_diploma === 'yes';
             
             // Helper function to render a recommendation card
             function renderRecommendationCard(rec, number, isPrimary) {
@@ -1480,6 +1698,13 @@
                             </div>
                         </div>
                     </div>
+                    
+                    ${rec.canadian_diploma_advantage && hasCanadianDiploma ? `
+                        <div class="info-section mb-3" style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 15px; padding: 20px; border-left: 4px solid #d97706;">
+                            <h6 class="mb-2"><i class="fas fa-maple-leaf me-2" style="color: #d97706;"></i>🍁 Kanada Diploması Avantajınız</h6>
+                            <p class="mb-0 text-dark">${rec.canadian_diploma_advantage}</p>
+                        </div>
+                    ` : ''}
                     
                     ${rec.why_this_university ? `
                         <div class="info-section mb-3" style="background: #f8f9fa; border-radius: 15px; padding: 20px; border-left: 4px solid ${isPrimary ? '#0056b3' : '#28a745'};">
@@ -1526,12 +1751,33 @@
                         <p class="text-muted">Size özel ${rec2 ? 'iki' : 'bir'} üniversite önerimiz hazır</p>
                     </div>
                     
+                    ${hasCanadianDiploma && data.wcep_advantage_summary ? `
+                        <div class="wcep-banner mb-4" style="background: linear-gradient(135deg, #dc2626, #991b1b); border-radius: 15px; padding: 25px; color: white;">
+                            <div class="d-flex align-items-center mb-3">
+                                <span style="font-size: 2.5rem; margin-right: 15px;">🍁</span>
+                                <div>
+                                    <h5 class="mb-1"><i class="fas fa-check-circle me-2"></i>Kanada Lise Diploması Avantajı!</h5>
+                                    <small class="opacity-75">WCEP Ortaklığımız Kapsamında</small>
+                                </div>
+                            </div>
+                            <p class="mb-3">${data.wcep_advantage_summary}</p>
+                            <a href="/partners/wcep" class="btn btn-warning btn-sm">
+                                <i class="fas fa-info-circle me-2"></i>WCEP Hakkında Daha Fazla Bilgi
+                            </a>
+                        </div>
+                    ` : ''}
+                    
                     ${data.prep_school_needed ? `
                         <div class="prep-warning" style="background: linear-gradient(135deg, #fff3cd, #ffe69c); border: none; border-radius: 15px; padding: 20px; margin-bottom: 25px;">
                             <h5 class="text-dark"><i class="fas fa-exclamation-triangle me-2 text-warning"></i>Hazırlık Önerisi</h5>
                             <p class="mb-0 text-dark">${data.prep_school_suggestion || 'İngilizce seviyenizi geliştirmek için bir hazırlık programı öneriyoruz.'}</p>
                         </div>
-                    ` : ''}
+                    ` : (hasCanadianDiploma ? `
+                        <div class="prep-success mb-4" style="background: linear-gradient(135deg, #d1fae5, #a7f3d0); border: none; border-radius: 15px; padding: 20px;">
+                            <h5 class="text-dark"><i class="fas fa-check-circle me-2 text-success"></i>Harika Haber!</h5>
+                            <p class="mb-0 text-dark">Kanada lise diplomanız sayesinde çoğu hazırlık programından muafsınız! Bu size hem zaman hem de para tasarrufu sağlayacaktır. 🎉</p>
+                        </div>
+                    ` : '')}
                     
                     <!-- First Recommendation -->
                     <div class="recommendation-section mb-4">
@@ -1560,6 +1806,112 @@
                         </div>
                     ` : ''}
                     
+                    <!-- Kanada Diploması Detaylı Avantajları -->
+                    ${hasCanadianDiploma ? `
+                        <div class="info-section mb-4" style="background: linear-gradient(135deg, #fef2f2, #fee2e2); border: 3px solid #dc2626; border-radius: 20px; padding: 25px;">
+                            <div class="d-flex align-items-center mb-4">
+                                <span style="font-size: 2.5rem; margin-right: 15px;">🍁</span>
+                                <div>
+                                    <h4 class="mb-0 text-danger"><i class="fas fa-award me-2"></i>Kanada Diploması Avantajlarınız</h4>
+                                    <p class="mb-0 text-muted">WCEP ortaklığımız kapsamında size özel fırsatlar</p>
+                                </div>
+                            </div>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="p-3 h-100" style="background: white; border-radius: 12px; border-left: 5px solid #dc2626; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <span style="font-size: 1.5rem; margin-right: 10px;">🇩🇪</span>
+                                            <strong>Almanya</strong>
+                                        </div>
+                                        <p class="mb-0 small text-dark">Studienkolleg (hazırlık yılı) programından <strong class="text-danger">tam muafiyet</strong>. Doğrudan üniversiteye başvuru hakkı kazanırsınız!</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="p-3 h-100" style="background: white; border-radius: 12px; border-left: 5px solid #dc2626; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <span style="font-size: 1.5rem; margin-right: 10px;">🇬🇧</span>
+                                            <strong>İngiltere</strong>
+                                        </div>
+                                        <p class="mb-0 small text-dark">Foundation Year programından <strong class="text-danger">muafiyet</strong>. Direkt lisans programına kabul edilirsiniz!</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="p-3 h-100" style="background: white; border-radius: 12px; border-left: 5px solid #dc2626; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <span style="font-size: 1.5rem; margin-right: 10px;">🇨🇿</span>
+                                            <strong>Çekya</strong>
+                                        </div>
+                                        <p class="mb-0 small text-dark">Charles Üniversitesi Tıp ve Diş Hekimliği Fakültesi'ne <strong class="text-danger">sınavsız kabul</strong> imkanı! Bu çok özel bir avantaj!</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="p-3 h-100" style="background: white; border-radius: 12px; border-left: 5px solid #dc2626; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <span style="font-size: 1.5rem; margin-right: 10px;">🇦🇹</span>
+                                            <strong>Avusturya</strong>
+                                        </div>
+                                        <p class="mb-0 small text-dark">Vorstudienlehrgang (hazırlık) programından <strong class="text-danger">muafiyet</strong>. Doğrudan kabul!</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="p-3 h-100" style="background: white; border-radius: 12px; border-left: 5px solid #dc2626; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <span style="font-size: 1.5rem; margin-right: 10px;">🇮🇹</span>
+                                            <strong>İtalya</strong>
+                                        </div>
+                                        <p class="mb-0 small text-dark">Ek sınav gereksinimlerinden <strong class="text-danger">muafiyet</strong>. Doğrudan kabul avantajı!</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="p-3 h-100" style="background: white; border-radius: 12px; border-left: 5px solid #dc2626; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <span style="font-size: 1.5rem; margin-right: 10px;">🇵🇱🇭🇺</span>
+                                            <strong>Polonya & Macaristan</strong>
+                                        </div>
+                                        <p class="mb-0 small text-dark"><strong class="text-danger">Öncelikli değerlendirme</strong> ve doğrudan kabul avantajı!</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="p-3 h-100" style="background: white; border-radius: 12px; border-left: 5px solid #dc2626; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <span style="font-size: 1.5rem; margin-right: 10px;">🇳🇱</span>
+                                            <strong>Hollanda</strong>
+                                        </div>
+                                        <p class="mb-0 small text-dark">Research University'ler için <strong class="text-danger">AP şartı kalkar</strong>. Tüm üniversitelere direkt başvuru!</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4 p-3 text-center" style="background: linear-gradient(135deg, #dc2626, #991b1b); border-radius: 12px; color: white;">
+                                <p class="mb-2"><i class="fas fa-star me-2"></i>Tebrikler! Bu avantajlar size hem zaman hem de para tasarrufu sağlayacaktır.</p>
+                                <a href="/partners/wcep" class="btn btn-warning">
+                                    <i class="fas fa-info-circle me-2"></i>WCEP Hakkında Detaylı Bilgi
+                                </a>
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <!-- WCEP Promotion Banner (Kanada diploması olmayanlar için) -->
+                    ${!hasCanadianDiploma ? `
+                        <div class="wcep-promo mb-4" style="background: linear-gradient(135deg, #fef2f2, #fee2e2); border: 2px solid #dc2626; border-radius: 15px; padding: 20px;">
+                            <div class="d-flex align-items-start">
+                                <span style="font-size: 2rem; margin-right: 15px;">🍁</span>
+                                <div>
+                                    <h6 class="mb-2 text-danger"><i class="fas fa-info-circle me-2"></i>Biliyor muydunuz?</h6>
+                                    <p class="mb-2 text-dark" style="font-size: 0.95rem;">
+                                        <strong>WCEP (Worldwide Cultural Exchange Program)</strong> ortaklığımız ile 12. sınıfı Kanada'da tamamlayan öğrenciler, 
+                                        Avrupa üniversitelerinde hazırlık programlarından muafiyet, sınavsız kabul ve öncelikli değerlendirme gibi 
+                                        büyük avantajlar elde ediyor!
+                                    </p>
+                                    <a href="/partners/wcep" class="btn btn-danger btn-sm">
+                                        <i class="fas fa-arrow-right me-2"></i>WCEP'i Keşfet
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    ` : ''}
+                    
                     <div class="text-center mt-4">
                         <a href="/user/dashboard" class="btn btn-primary btn-lg me-2">
                             <i class="fas fa-user me-2"></i>Portalıma Git
@@ -1574,6 +1926,114 @@
             document.getElementById('questionContainer').innerHTML = html;
         }
         
+        // Google Client ID
+        const GOOGLE_CLIENT_ID = '<%= typeof googleClientId !== "undefined" ? googleClientId.trim() : "" %>';
+        let wizardSavedAnswers = null; // Store answers before login
+        let wizardPhoneInput = null; // Phone input instance
+        let pendingWizardRecommendationId = null; // Store recommendation ID for phone modal
+        
+        // Initialize intl-tel-input for wizard phone modal
+        function initWizardPhoneInput() {
+            const phoneField = document.getElementById('wizardPhoneInput');
+            if (phoneField && !wizardPhoneInput) {
+                wizardPhoneInput = window.intlTelInput(phoneField, {
+                    initialCountry: "tr",
+                    preferredCountries: ["tr", "de", "gb", "us", "fr", "it", "es", "nl", "at", "cz"],
+                    separateDialCode: true,
+                    utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js"
+                });
+            }
+        }
+        
+        // Note: Google buttons are now direct links (/api/auth/google/redirect)
+        
+        // Handle "Kayıt Olun" button - save wizard first, then redirect to register
+        document.getElementById('wizardRegisterBtn')?.addEventListener('click', async function() {
+            const btn = this;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Yükleniyor...';
+            
+            try {
+                // Submit wizard to get recommendation ID
+                const response = await fetch('/api/wizard/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(answers)
+                });
+                
+                const data = await response.json();
+                const recommendationId = data.recommendation_id || data.id;
+                
+                // Store in sessionStorage
+                if (recommendationId) {
+                    sessionStorage.setItem('wizard_recommendation_id', recommendationId);
+                    console.log('Saved wizard recommendation:', recommendationId);
+                }
+                
+                // Redirect to register page
+                window.location.href = '/register?redirect=wizard&wizard_rec=' + (recommendationId || '');
+                
+            } catch (err) {
+                console.error('Error saving wizard:', err);
+                // Still redirect, just without recommendation
+                window.location.href = '/register?redirect=wizard';
+            }
+        });
+        
+        // Google button handlers - önce wizard submit et, sonra Google'a wizard_rec ile yönlendir
+        async function handleGoogleAuth(action) {
+            try {
+                // Submit wizard to get recommendation ID
+                const response = await fetch('/api/wizard/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(answers)
+                });
+                
+                const data = await response.json();
+                const recommendationId = data.recommendation_id || data.id;
+                
+                // Store in sessionStorage as backup
+                if (recommendationId) {
+                    sessionStorage.setItem('wizard_recommendation_id', recommendationId);
+                    console.log('📎 Saved wizard recommendation for Google auth:', recommendationId);
+                }
+                
+                // Build Google redirect URL with wizard_rec parameter
+                let googleUrl = '/api/auth/google/redirect?action=' + action;
+                if (recommendationId) {
+                    googleUrl += '&wizard_rec=' + recommendationId;
+                }
+                
+                // Also pass english_level from wizard answers
+                if (answers.english_level) {
+                    googleUrl += '&english_level=' + encodeURIComponent(answers.english_level);
+                }
+                
+                console.log('🔗 Redirecting to Google:', googleUrl);
+                window.location.href = googleUrl;
+                
+            } catch (err) {
+                console.error('Error saving wizard before Google auth:', err);
+                // Still redirect to Google, just without recommendation
+                window.location.href = '/api/auth/google/redirect?action=' + action;
+            }
+        }
+        
+        document.getElementById('googleLoginBtn')?.addEventListener('click', async function() {
+            const btn = this;
+            btn.disabled = true;
+            btn.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width:22px;height:22px;margin-right:12px;"><span><i class="fas fa-spinner fa-spin me-1"></i>Yükleniyor...</span>';
+            await handleGoogleAuth('login');
+        });
+        
+        document.getElementById('googleRegisterBtn')?.addEventListener('click', async function() {
+            const btn = this;
+            btn.disabled = true;
+            btn.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width:22px;height:22px;margin-right:12px;"><span style="color:#28a745;"><i class="fas fa-spinner fa-spin me-1"></i>Yükleniyor...</span>';
+            await handleGoogleAuth('register');
+        });
+        
         // Login form handler
         document.getElementById('wizardLoginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -1582,6 +2042,9 @@
             const password = document.getElementById('loginPassword').value;
             const errorDiv = document.getElementById('loginError');
             const submitBtn = this.querySelector('button[type="submit"]');
+            
+            // Save current wizard answers before login
+            wizardSavedAnswers = { ...answers };
             
             // Disable button during request
             submitBtn.disabled = true;

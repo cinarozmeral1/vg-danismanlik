@@ -35,6 +35,10 @@
                 <i class="fas fa-database"></i>
                 <span>Yedekleme</span>
             </a>
+            <a href="/admin/admins" class="nav-item">
+                <i class="fas fa-user-shield"></i>
+                <span>Adminler</span>
+            </a>
         </nav>
     </div>
 
@@ -306,10 +310,10 @@
         `;
         alertArea.appendChild(alert);
         
-        // Auto dismiss after 5 seconds
+        // Auto dismiss after 10 seconds
         setTimeout(() => {
             alert.remove();
-        }, 5000);
+        }, 10000);
     }
 
     async function triggerBackup() {

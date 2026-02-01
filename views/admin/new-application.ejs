@@ -20,6 +20,7 @@
                 <span>Başvurular</span>
                 <span class="badge bg-success ms-auto"><%= applicationCount %></span>
             </a>
+            <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
             <a href="/admin/partners" class="nav-item">
                 <i class="fas fa-handshake"></i>
                 <span>Partnerler</span>
@@ -27,14 +28,21 @@
                     <span class="badge bg-info ms-auto"><%= partnerCount %></span>
                 <% } %>
             </a>
+            <% } %>
             <a href="/admin/universities" class="nav-item">
                 <i class="fas fa-university"></i>
                 <span>Üniversiteler</span>
             </a>
+            <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
             <a href="/admin/backups" class="nav-item">
                 <i class="fas fa-database"></i>
                 <span>Yedekleme</span>
             </a>
+            <a href="/admin/admins" class="nav-item">
+                <i class="fas fa-user-shield"></i>
+                <span>Adminler</span>
+            </a>
+            <% } %>
         </nav>
     </div>
 
@@ -97,13 +105,25 @@
                                         <option value="UK">İngiltere</option>
                                         <option value="Poland">Polonya</option>
                                         <option value="Hungary">Macaristan</option>
+                                        <option value="Netherlands">Hollanda</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="university" class="form-label">Üniversite</label>
-                                    <input type="text" class="form-control" id="university" name="university" placeholder="Hedef üniversite adı">
+                                    <label for="universitySelect" class="form-label">Üniversite</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                        <input type="text" class="form-control" id="universitySearchInput" placeholder="Üniversite ara...">
+                                    </div>
+                                    <select class="form-select mt-2" id="universitySelect">
+                                        <option value="">Üniversite Seçin</option>
+                                        <option value="__custom__">-- Listede Yok (Manuel Giriş) --</option>
+                                    </select>
+                                    <input type="hidden" id="university" name="university">
+                                    <div id="customUniversityContainer" class="mt-2" style="display: none;">
+                                        <input type="text" class="form-control" id="customUniversity" placeholder="Üniversite adını manuel girin...">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -147,10 +167,16 @@
 </div>
 
 <script>
+    // Universities data cache
+    let universitiesData = [];
+    
     // Event listeners
     document.addEventListener('DOMContentLoaded', function() {
         // Go back button
         document.getElementById('goBackBtn').addEventListener('click', goBack);
+        
+        // Load universities from API
+        loadUniversities();
         
         // Sayfa yüklendiğinde URL'den userId parametresini kontrol et
         const urlParams = new URLSearchParams(window.location.search);
@@ -185,7 +211,205 @@
                 document.getElementById('selectedUserInfo').textContent = 'Henüz öğrenci seçilmedi';
             }
         });
+        
+        // Üniversite arama fonksiyonu
+        document.getElementById('universitySearchInput').addEventListener('input', function() {
+            filterUniversitiesBySearch(this.value);
+        });
+        
+        // Üniversite seçimi değiştiğinde
+        document.getElementById('universitySelect').addEventListener('change', function() {
+            handleUniversitySelection(this.value);
+        });
+        
+        // Manuel üniversite girişi değiştiğinde
+        document.getElementById('customUniversity').addEventListener('input', function() {
+            document.getElementById('university').value = this.value;
+        });
+        
+        // Ülke seçimi değiştiğinde üniversiteleri filtrele
+        document.getElementById('country').addEventListener('change', function() {
+            filterUniversitiesByCountry(this.value);
+        });
     });
+    
+    // Üniversiteleri API'den yükle
+    async function loadUniversities() {
+        try {
+            const response = await fetch('/api/admin/universities-for-selection', { credentials: 'include' });
+            const data = await response.json();
+            
+            if (data.success && data.universities) {
+                universitiesData = data.universities;
+                populateUniversityDropdown(data.universities);
+            }
+        } catch (error) {
+            console.error('Üniversiteler yüklenemedi:', error);
+        }
+    }
+    
+    // Üniversite dropdown'unu doldur
+    function populateUniversityDropdown(universities) {
+        const select = document.getElementById('universitySelect');
+        
+        // Mevcut seçenekleri temizle (ilk 2'si hariç)
+        while (select.options.length > 2) {
+            select.remove(2);
+        }
+        
+        // Üniversiteleri ekle
+        universities.forEach(uni => {
+            const option = document.createElement('option');
+            option.value = uni.id;
+            option.textContent = `${uni.name} (${uni.city}, ${uni.country})`;
+            option.setAttribute('data-name', uni.name);
+            option.setAttribute('data-country', uni.country);
+            option.setAttribute('data-city', uni.city);
+            select.appendChild(option);
+        });
+    }
+    
+    // Ülke eşleştirme tablosu (veritabanındaki ülke adı -> form değeri)
+    const countryMapping = {
+        'Germany': 'Germany', 'Almanya': 'Germany',
+        'Czech Republic': 'Czech Republic', 'Czechia': 'Czech Republic',
+        'Italy': 'Italy', 'İtalya': 'Italy',
+        'Austria': 'Austria', 'Avusturya': 'Austria',
+        'United Kingdom': 'UK', 'UK': 'UK', 'England': 'UK',
+        'Poland': 'Poland', 'Polonya': 'Poland',
+        'Hungary': 'Hungary', 'Macaristan': 'Hungary',
+        'Netherlands': 'Netherlands', 'Hollanda': 'Netherlands'
+    };
+    
+    // Ülkeye göre üniversiteleri filtrele
+    function filterUniversitiesByCountry(selectedCountry) {
+        const select = document.getElementById('universitySelect');
+        
+        // Dropdown'u sıfırla
+        select.value = '';
+        document.getElementById('university').value = '';
+        document.getElementById('customUniversityContainer').style.display = 'none';
+        document.getElementById('universitySearchInput').value = '';
+        
+        // Mevcut seçenekleri temizle (ilk 2'si hariç)
+        while (select.options.length > 2) {
+            select.remove(2);
+        }
+        
+        if (!selectedCountry) {
+            // Ülke seçilmediyse tüm üniversiteleri göster
+            populateUniversityDropdown(universitiesData);
+            return;
+        }
+        
+        // Seçilen ülkeye göre filtrele
+        const filteredUniversities = universitiesData.filter(uni => {
+            const uniCountryMapped = countryMapping[uni.country] || uni.country;
+            return uniCountryMapped === selectedCountry;
+        });
+        
+        // Filtrelenmiş üniversiteleri dropdown'a ekle
+        filteredUniversities.forEach(uni => {
+            const option = document.createElement('option');
+            option.value = uni.id;
+            option.textContent = `${uni.name} (${uni.city})`;
+            option.setAttribute('data-name', uni.name);
+            option.setAttribute('data-country', uni.country);
+            option.setAttribute('data-city', uni.city);
+            select.appendChild(option);
+        });
+    }
+    
+    // Üniversite arama fonksiyonu (metin bazlı)
+    function filterUniversitiesBySearch(searchTerm) {
+        const select = document.getElementById('universitySelect');
+        const options = select.querySelectorAll('option');
+        const term = searchTerm.toLowerCase().trim();
+        
+        if (term === '') {
+            options.forEach(option => {
+                option.style.display = '';
+            });
+            return;
+        }
+        
+        options.forEach(option => {
+            if (option.value === '' || option.value === '__custom__') {
+                option.style.display = '';
+                return;
+            }
+            
+            const name = option.getAttribute('data-name') || '';
+            const country = option.getAttribute('data-country') || '';
+            const city = option.getAttribute('data-city') || '';
+            const text = option.textContent.toLowerCase();
+            
+            if (name.toLowerCase().includes(term) || 
+                country.toLowerCase().includes(term) || 
+                city.toLowerCase().includes(term) ||
+                text.includes(term)) {
+                option.style.display = '';
+            } else {
+                option.style.display = 'none';
+            }
+        });
+    }
+    
+    // Üniversite seçimi işlemi
+    function handleUniversitySelection(value) {
+        const customContainer = document.getElementById('customUniversityContainer');
+        const universityInput = document.getElementById('university');
+        const countrySelect = document.getElementById('country');
+        
+        if (value === '__custom__') {
+            // Manuel giriş göster
+            customContainer.style.display = 'block';
+            universityInput.value = '';
+            document.getElementById('customUniversity').value = '';
+            document.getElementById('customUniversity').focus();
+        } else if (value) {
+            // Veritabanından seçildi
+            customContainer.style.display = 'none';
+            const selectedOption = document.getElementById('universitySelect').selectedOptions[0];
+            const uniName = selectedOption.getAttribute('data-name');
+            const uniCountry = selectedOption.getAttribute('data-country');
+            
+            universityInput.value = uniName;
+            
+            // Ülkeyi otomatik ayarla
+            if (uniCountry) {
+                const countryMapping = {
+                    'Germany': 'Germany',
+                    'Almanya': 'Germany',
+                    'Czech Republic': 'Czech Republic',
+                    'Czechia': 'Czech Republic',
+                    'Çek Cumhuriyeti': 'Czech Republic',
+                    'Italy': 'Italy',
+                    'İtalya': 'Italy',
+                    'Austria': 'Austria',
+                    'Avusturya': 'Austria',
+                    'United Kingdom': 'UK',
+                    'UK': 'UK',
+                    'İngiltere': 'UK',
+                    'Poland': 'Poland',
+                    'Polonya': 'Poland',
+                    'Hungary': 'Hungary',
+                    'Macaristan': 'Hungary',
+                    'Netherlands': 'Netherlands',
+                    'Hollanda': 'Netherlands'
+                };
+                
+                const mappedCountry = countryMapping[uniCountry] || uniCountry;
+                if (countrySelect.querySelector(`option[value="${mappedCountry}"]`)) {
+                    countrySelect.value = mappedCountry;
+                }
+            }
+        } else {
+            // Seçim kaldırıldı
+            customContainer.style.display = 'none';
+            universityInput.value = '';
+        }
+    }
 
     // Öğrenci arama fonksiyonu
     function filterUsers(searchTerm) {

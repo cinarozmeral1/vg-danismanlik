@@ -3,10 +3,716 @@ const bcrypt = require('bcryptjs');
 const pool = require('../config/database');
 const { generateUserToken, generatePartnerToken } = require('../middleware/auth');
 const { sendVerificationEmail, sendPasswordResetEmail, sendPartnerVerificationEmail, generateVerificationToken, generateResetToken } = require('../services/emailService');
+const { handleGoogleAuth } = require('../services/googleAuthService');
 
 const router = express.Router();
 
-// User Registration
+// Google OAuth Configuration
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID ? process.env.GOOGLE_CLIENT_ID.trim() : '';
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET ? process.env.GOOGLE_CLIENT_SECRET.trim() : '';
+// Hardcoded redirect URI to avoid NODE_ENV issues
+const GOOGLE_REDIRECT_URI = 'https://vgdanismanlik.com/api/auth/google/callback';
+
+// =====================================================
+// GOOGLE OAUTH - SERVER-SIDE REDIRECT FLOW
+// =====================================================
+// Helper function to format phone number with space after country code
+function formatPhoneNumber(phone) {
+    if (!phone) return null;
+    
+    // Tüm boşlukları kaldır
+    const cleaned = phone.replace(/\s+/g, '');
+    
+    if (!cleaned.startsWith('+')) {
+        return phone;
+    }
+    
+    // Bilinen ülke kodları (uzundan kısaya sıralı - önce 3 haneli, sonra 2, sonra 1)
+    const countryCodes = [
+        '+420', // Çekya
+        '+380', // Ukrayna
+        '+371', // Letonya
+        '+370', // Litvanya
+        '+372', // Estonya
+        '+90',  // Türkiye
+        '+49',  // Almanya
+        '+44',  // İngiltere
+        '+43',  // Avusturya
+        '+39',  // İtalya
+        '+48',  // Polonya
+        '+36',  // Macaristan
+        '+31',  // Hollanda
+        '+33',  // Fransa
+        '+34',  // İspanya
+        '+41',  // İsviçre
+        '+32',  // Belçika
+        '+30',  // Yunanistan
+        '+45',  // Danimarka
+        '+46',  // İsveç
+        '+47',  // Norveç
+        '+351', // Portekiz
+        '+352', // Lüksemburg
+        '+353', // İrlanda
+        '+358', // Finlandiya
+        '+1',   // ABD/Kanada
+        '+7',   // Rusya
+    ];
+    
+    // Bilinen ülke kodlarını kontrol et
+    for (const code of countryCodes) {
+        if (cleaned.startsWith(code)) {
+            const number = cleaned.substring(code.length);
+            return code + ' ' + number;
+        }
+    }
+    
+    // Bilinmeyen ülke kodu - 2 hane varsay (çoğu ülke 2 haneli)
+    const match = cleaned.match(/^(\+\d{2})(\d+)$/);
+        if (match) {
+            return match[1] + ' ' + match[2];
+        }
+    
+    return phone;
+}
+
+router.get('/google/redirect', (req, res) => {
+    const { action = 'login', wizard_rec, phone, english_level, first_name, last_name, tc_number } = req.query;
+    
+    // Store action in cookie for callback
+    res.cookie('google_auth_action', action, { 
+        maxAge: 10 * 60 * 1000,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax'
+    });
+    
+    // Store first_name if provided
+    if (first_name) {
+        res.cookie('google_auth_first_name', first_name, { 
+            maxAge: 10 * 60 * 1000,
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax'
+        });
+        console.log('👤 Storing first_name for registration:', first_name);
+    }
+    
+    // Store last_name if provided
+    if (last_name) {
+        res.cookie('google_auth_last_name', last_name, { 
+            maxAge: 10 * 60 * 1000,
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax'
+        });
+        console.log('👤 Storing last_name for registration:', last_name);
+    }
+    
+    // Store tc_number if provided
+    if (tc_number) {
+        res.cookie('google_auth_tc_number', tc_number, { 
+            maxAge: 10 * 60 * 1000,
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax'
+        });
+        console.log('🆔 Storing tc_number for registration:', tc_number);
+    }
+    
+    // Store wizard recommendation ID if provided
+    if (wizard_rec) {
+        res.cookie('wizard_recommendation_id', wizard_rec, { 
+            maxAge: 10 * 60 * 1000,
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax'
+        });
+        console.log('📎 Storing wizard recommendation:', wizard_rec);
+    }
+    
+    // Store phone number if provided (for Google registration)
+    if (phone) {
+        const formattedPhone = formatPhoneNumber(phone);
+        res.cookie('google_auth_phone', formattedPhone, { 
+            maxAge: 10 * 60 * 1000,
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax'
+        });
+        console.log('📱 Storing phone for registration:', formattedPhone);
+    }
+    
+    // Store english level if provided
+    if (english_level) {
+        res.cookie('google_auth_english_level', english_level, { 
+            maxAge: 10 * 60 * 1000,
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax'
+        });
+        console.log('📚 Storing english level for registration:', english_level);
+    }
+    
+    const googleAuthUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
+    googleAuthUrl.searchParams.set('client_id', GOOGLE_CLIENT_ID);
+    googleAuthUrl.searchParams.set('redirect_uri', GOOGLE_REDIRECT_URI);
+    googleAuthUrl.searchParams.set('response_type', 'code');
+    googleAuthUrl.searchParams.set('scope', 'openid email profile');
+    googleAuthUrl.searchParams.set('access_type', 'offline');
+    googleAuthUrl.searchParams.set('prompt', 'consent');
+    
+    console.log('🔗 Google OAuth Debug:');
+    console.log('   Client ID:', GOOGLE_CLIENT_ID.substring(0, 30) + '...');
+    console.log('   Redirect URI:', GOOGLE_REDIRECT_URI);
+    console.log('   Full URL:', googleAuthUrl.toString());
+    res.redirect(googleAuthUrl.toString());
+});
+
+// Google OAuth Callback
+router.get('/google/callback', async (req, res) => {
+    const language = req.cookies.language || 'tr';
+    
+    try {
+        const { code, error, error_description } = req.query;
+        const action = req.cookies.google_auth_action || 'login';
+        const wizardRecommendationId = req.cookies.wizard_recommendation_id || null;
+        const phoneNumber = req.cookies.google_auth_phone || null;
+        const englishLevel = req.cookies.google_auth_english_level || null;
+        const firstName = req.cookies.google_auth_first_name || null;
+        const lastName = req.cookies.google_auth_last_name || null;
+        const tcNumber = req.cookies.google_auth_tc_number || null;
+        
+        console.log('📥 Google callback received');
+        console.log('   Code:', code ? 'present' : 'missing');
+        console.log('   Error:', error || 'none');
+        console.log('   Action:', action);
+        console.log('   Wizard Rec:', wizardRecommendationId || 'none');
+        console.log('   First Name:', firstName || 'none');
+        console.log('   Last Name:', lastName || 'none');
+        console.log('   TC Number:', tcNumber || 'none');
+        console.log('   Phone:', phoneNumber || 'none');
+        console.log('   English Level:', englishLevel || 'none');
+        
+        // Clear cookies
+        res.clearCookie('google_auth_action');
+        res.clearCookie('wizard_recommendation_id');
+        res.clearCookie('google_auth_phone');
+        res.clearCookie('google_auth_english_level');
+        res.clearCookie('google_auth_first_name');
+        res.clearCookie('google_auth_last_name');
+        res.clearCookie('google_auth_tc_number');
+        
+        if (error) {
+            console.error('Google OAuth error:', error, error_description);
+            return res.redirect(`/login?error=${encodeURIComponent(error_description || error)}`);
+        }
+        
+        if (!code) {
+            console.error('No code received');
+            return res.redirect(`/login?error=${encodeURIComponent(language === 'tr' ? 'Yetkilendirme kodu alınamadı' : 'Authorization code not received')}`);
+        }
+        
+        console.log('🔄 Exchanging code for tokens...');
+        
+        // Exchange code for tokens
+        const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+                code,
+                client_id: GOOGLE_CLIENT_ID,
+                client_secret: GOOGLE_CLIENT_SECRET,
+                redirect_uri: GOOGLE_REDIRECT_URI,
+                grant_type: 'authorization_code'
+            })
+        });
+        
+        const tokenData = await tokenResponse.json();
+        
+        if (tokenData.error) {
+            console.error('❌ Token exchange error:', tokenData);
+            return res.redirect(`/login?error=${encodeURIComponent(tokenData.error_description || tokenData.error)}`);
+        }
+        
+        console.log('✅ Got access token');
+        
+        // Get user info from Google
+        const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+            headers: { Authorization: `Bearer ${tokenData.access_token}` }
+        });
+        
+        const googleUser = await userInfoResponse.json();
+        console.log('👤 Google user:', googleUser.email);
+        
+        // Check if user exists
+        const existingUser = await pool.query(
+            'SELECT * FROM users WHERE email = $1 OR google_id = $2',
+            [googleUser.email, googleUser.id]
+        );
+        
+        let user;
+        let isNewUser = false;
+        
+        if (existingUser.rows.length > 0) {
+            // Existing user - update google_id if needed and login
+            user = existingUser.rows[0];
+            
+            // Update google_id and last_login_at
+            await pool.query(
+                'UPDATE users SET google_id = COALESCE(google_id, $1), last_login_at = NOW() WHERE id = $2',
+                [googleUser.id, user.id]
+            );
+            
+            console.log('✅ Existing user logged in:', user.email);
+            
+            // Link wizard recommendation if exists
+            if (wizardRecommendationId) {
+                try {
+                    await pool.query(
+                        'UPDATE ai_recommendations SET user_id = $1 WHERE id = $2 AND user_id IS NULL',
+                        [user.id, wizardRecommendationId]
+                    );
+                    console.log('📎 Linked wizard recommendation', wizardRecommendationId, 'to user', user.id);
+                } catch (linkErr) {
+                    console.error('Failed to link wizard recommendation:', linkErr.message);
+                }
+            }
+            
+            // Generate JWT token (same as normal login)
+            const token = generateUserToken(user.id);
+            
+            // Set cookie - SAME AS NORMAL LOGIN
+            res.cookie('userToken', token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                maxAge: 7 * 24 * 60 * 60 * 1000
+            });
+            
+            console.log('✅ Google login complete for:', user.email);
+            return res.redirect('/user/dashboard');
+        } else {
+            // NEW USER - Redirect to complete registration page
+            console.log('🆕 New Google user detected, redirecting to complete registration');
+            console.log('   Email:', googleUser.email);
+            console.log('   Google ID:', googleUser.id);
+            
+            // Store Google user info in cookies for registration page
+            res.cookie('google_pending_email', googleUser.email, {
+                maxAge: 30 * 60 * 1000, // 30 minutes
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax'
+            });
+            res.cookie('google_pending_id', googleUser.id, {
+                maxAge: 30 * 60 * 1000,
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax'
+            });
+            res.cookie('google_pending_name', googleUser.name || '', {
+                maxAge: 30 * 60 * 1000,
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax'
+            });
+            
+            // Store wizard recommendation ID if exists
+            if (wizardRecommendationId) {
+                res.cookie('google_pending_wizard_rec', wizardRecommendationId, {
+                    maxAge: 30 * 60 * 1000,
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: 'lax'
+                });
+            }
+            
+            return res.redirect('/complete-google-registration');
+        }
+        
+    } catch (error) {
+        console.error('❌ Google callback error:', error);
+        res.redirect(`/login?error=${encodeURIComponent(language === 'tr' ? 'Google girişi başarısız: ' + error.message : 'Google sign-in failed: ' + error.message)}`);
+    }
+});
+
+// =====================================================
+// COMPLETE GOOGLE REGISTRATION
+// Called from complete-google-registration page
+// =====================================================
+router.post('/complete-google-registration', async (req, res) => {
+    const language = req.cookies.language || 'tr';
+    
+    try {
+        const { first_name, last_name, tc_number, phone, english_level } = req.body;
+        
+        // Get pending Google info from cookies
+        const googleEmail = req.cookies.google_pending_email;
+        const googleId = req.cookies.google_pending_id;
+        const wizardRecommendationId = req.cookies.google_pending_wizard_rec;
+        
+        if (!googleEmail || !googleId) {
+            return res.status(400).json({
+                success: false,
+                message: language === 'tr' ? 'Google oturum bilgisi bulunamadı. Lütfen tekrar deneyin.' : 'Google session not found. Please try again.'
+            });
+        }
+        
+        // Validate required fields
+        if (!first_name || !last_name || !tc_number || !phone || !english_level) {
+            return res.status(400).json({
+                success: false,
+                message: language === 'tr' ? 'Tüm alanları doldurun' : 'Please fill all fields'
+            });
+        }
+        
+        // Validate TC number
+        if (!/^\d{11}$/.test(tc_number)) {
+            return res.status(400).json({
+                success: false,
+                message: language === 'tr' ? 'TC kimlik numarası 11 haneli olmalıdır' : 'TC ID number must be 11 digits'
+            });
+        }
+        
+        // Check if user already exists (double check)
+        const existingUser = await pool.query(
+            'SELECT id FROM users WHERE email = $1 OR google_id = $2',
+            [googleEmail, googleId]
+        );
+        
+        if (existingUser.rows.length > 0) {
+            // Clear pending cookies
+            res.clearCookie('google_pending_email');
+            res.clearCookie('google_pending_id');
+            res.clearCookie('google_pending_name');
+            res.clearCookie('google_pending_wizard_rec');
+            
+            return res.status(400).json({
+                success: false,
+                message: language === 'tr' ? 'Bu e-posta ile zaten bir hesap mevcut' : 'An account already exists with this email'
+            });
+        }
+        
+        // Format phone number
+        const formattedPhone = formatPhoneNumber(phone);
+        
+        // Create new user
+        const result = await pool.query(`
+            INSERT INTO users (
+                google_id, email, first_name, last_name, tc_number, phone, password_hash,
+                english_level, high_school_graduation_date, birth_date,
+                email_verified, registered_via, personal_info_completed, created_at
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, NOW())
+            RETURNING *
+        `, [
+            googleId,
+            googleEmail,
+            first_name,
+            last_name,
+            tc_number,
+            formattedPhone,
+            'GOOGLE_AUTH_NO_PASSWORD',
+            english_level,
+            null,
+            null,
+            true, // email_verified
+            'google',
+            true // personal_info_completed
+        ]);
+        
+        const user = result.rows[0];
+        console.log('✅ New user created via Google registration:', user.email);
+        
+        // Create default checklist for new user
+        const defaultChecklistItems = [
+            'Her okul için niyet mektubu hazırlandı ve sisteme yüklendi.',
+            'CV düzenlendi ve sisteme yüklendi.',
+            'Referans mektupları alındı ve sisteme yüklendi.'
+        ];
+        for (const item of defaultChecklistItems) {
+            await pool.query(
+                'INSERT INTO checklist_items (user_id, item_name, is_completed) VALUES ($1, $2, false)',
+                [user.id, item]
+            );
+        }
+        
+        // Link wizard recommendation if exists
+        if (wizardRecommendationId) {
+            try {
+                await pool.query(
+                    'UPDATE ai_recommendations SET user_id = $1 WHERE id = $2 AND user_id IS NULL',
+                    [user.id, wizardRecommendationId]
+                );
+                console.log('📎 Linked wizard recommendation', wizardRecommendationId, 'to user', user.id);
+            } catch (linkErr) {
+                console.error('Failed to link wizard recommendation:', linkErr.message);
+            }
+        }
+        
+        // Generate JWT token
+        const token = generateUserToken(user.id);
+        
+        // Set user token cookie
+        res.cookie('userToken', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        });
+        
+        // Clear pending Google cookies
+        res.clearCookie('google_pending_email');
+        res.clearCookie('google_pending_id');
+        res.clearCookie('google_pending_name');
+        res.clearCookie('google_pending_wizard_rec');
+        
+        res.json({
+            success: true,
+            message: language === 'tr' ? 'Kayıt başarılı! Yönlendiriliyorsunuz...' : 'Registration successful! Redirecting...',
+            redirect: '/user/dashboard'
+        });
+        
+    } catch (error) {
+        console.error('❌ Complete Google registration error:', error);
+        
+        // Kullanıcı dostu hata mesajları
+        let userMessage;
+        if (error.message.includes('users_tc_number_key') || error.message.includes('tc_number')) {
+            userMessage = language === 'tr' 
+                ? 'Bu TC Kimlik Numarası ile zaten bir hesap mevcut. Lütfen giriş yapın veya farklı bir TC Kimlik No kullanın.' 
+                : 'An account already exists with this TC ID number. Please login or use a different TC ID.';
+        } else if (error.message.includes('users_email_key') || error.message.includes('email')) {
+            userMessage = language === 'tr' 
+                ? 'Bu e-posta adresi ile zaten bir hesap mevcut. Lütfen giriş yapın.' 
+                : 'An account already exists with this email. Please login.';
+        } else if (error.message.includes('users_phone_key') || error.message.includes('phone')) {
+            userMessage = language === 'tr' 
+                ? 'Bu telefon numarası ile zaten bir hesap mevcut.' 
+                : 'An account already exists with this phone number.';
+        } else {
+            userMessage = language === 'tr' 
+                ? 'Kayıt sırasında bir hata oluştu. Lütfen tekrar deneyin.' 
+                : 'An error occurred during registration. Please try again.';
+        }
+        
+        res.status(500).json({
+            success: false,
+            message: userMessage
+        });
+    }
+});
+
+// =====================================================
+// GOOGLE OAUTH ENDPOINT (ID Token method)
+// Smart logic: If user exists -> Login, If not -> Register
+// =====================================================
+router.post('/google', async (req, res) => {
+    try {
+        const { credential, wizard_recommendation_id, language = 'tr' } = req.body;
+        
+        if (!credential) {
+            return res.status(400).json({
+                success: false,
+                message: language === 'tr' ? 'Google kimlik bilgisi gerekli' : 'Google credential required'
+            });
+        }
+        
+        // Handle Google authentication (smart login/register)
+        const result = await handleGoogleAuth(credential, {
+            language,
+            wizard_recommendation_id
+        });
+        
+        if (!result.success) {
+            return res.status(401).json(result);
+        }
+        
+        // Set cookie
+        res.cookie('userToken', result.token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        });
+        
+        res.json({
+            success: true,
+            message: result.message,
+            user: result.user,
+            token: result.token,
+            is_new_user: result.is_new_user,
+            needs_personal_info: result.needs_personal_info,
+            redirect: result.needs_personal_info ? '/user/dashboard?complete_profile=1' : '/user/dashboard'
+        });
+        
+    } catch (error) {
+        console.error('Google auth route error:', error);
+        res.status(500).json({
+            success: false,
+            message: req.body.language === 'tr' ? 'Bir hata oluştu' : 'An error occurred',
+            error_detail: error.message,
+            error_code: error.code
+        });
+    }
+});
+
+// =====================================================
+// GOOGLE OAUTH2 ENDPOINT (Access Token method - fallback)
+// For browsers that block One Tap
+// =====================================================
+router.post('/google-oauth2', async (req, res) => {
+    try {
+        const { access_token, user_data, wizard_recommendation_id, language = 'tr' } = req.body;
+        
+        if (!access_token || !user_data || !user_data.email) {
+            return res.status(400).json({
+                success: false,
+                message: language === 'tr' ? 'Google bilgileri eksik' : 'Google data missing'
+            });
+        }
+        
+        console.log('📧 Google OAuth2 login attempt:', user_data.email);
+        
+        // Check if user exists
+        const existingUser = await pool.query(
+            'SELECT * FROM users WHERE google_id = $1 OR email = $2 LIMIT 1',
+            [user_data.sub, user_data.email]
+        );
+        
+        let user;
+        let isNewUser = false;
+        
+        if (existingUser.rows.length > 0) {
+            // User exists - update google_id if not set and login
+            user = existingUser.rows[0];
+            
+            // Update google_id if user registered via email but now using Google
+            if (!user.google_id) {
+                await pool.query(
+                    'UPDATE users SET google_id = $1 WHERE id = $2',
+                    [user_data.sub, user.id]
+                );
+            }
+            
+            // Update last login
+            await pool.query('UPDATE users SET last_login_at = NOW() WHERE id = $1', [user.id]);
+            
+        } else {
+            // New user - create account
+            isNewUser = true;
+            
+            // Generate placeholder values for required fields (user will fill later)
+            // Use unique values to avoid constraint violations
+            const randomNum = Math.floor(Math.random() * 90000000000) + 10000000000;
+            const uniqueTc = randomNum.toString().slice(0, 11);
+            const uniquePhone = '5' + Math.floor(Math.random() * 900000000 + 100000000).toString();
+            const placeholderDate = '2000-01-01';
+            
+            const result = await pool.query(`
+                INSERT INTO users (
+                    google_id,
+                    email,
+                    first_name,
+                    last_name,
+                    tc_number,
+                    phone,
+                    password_hash,
+                    english_level,
+                    high_school_graduation_date,
+                    birth_date,
+                    email_verified,
+                    registered_via,
+                    personal_info_completed,
+                    created_at
+                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, NOW())
+                RETURNING *
+            `, [
+                user_data.sub,
+                user_data.email,
+                '', // Will be filled later by user - not auto-filled from Google
+                '', // Will be filled later by user - not auto-filled from Google
+                uniqueTc, // Placeholder tc_number - user will fill later
+                uniquePhone, // Placeholder phone - user will fill later  
+                'GOOGLE_AUTH_NO_PASSWORD', // Marker for Google users
+                'Belirtilmedi', // Placeholder english_level
+                placeholderDate, // Placeholder graduation date
+                placeholderDate, // Placeholder birth date
+                1, // Google users are automatically verified
+                'google',
+                false // Personal info not completed yet
+            ]);
+            
+            user = result.rows[0];
+            
+            // Initialize default checklist for new user
+            const defaultChecklistItems = [
+                'Her okul için niyet mektubu hazırlandı ve sisteme yüklendi.',
+                'CV düzenlendi ve sisteme yüklendi.',
+                'Referans mektupları alındı ve sisteme yüklendi.',
+                'Danışmanlık Ücreti ödendi.',
+                'Üniversite kayıt ücretleri ödendi.'
+            ];
+            
+            for (const item of defaultChecklistItems) {
+                await pool.query(
+                    `INSERT INTO checklist_items (user_id, item_name, is_completed) VALUES ($1, $2, false)`,
+                    [user.id, item]
+                );
+            }
+        }
+        
+        // If there's a wizard recommendation, link it to this user
+        if (wizard_recommendation_id) {
+            try {
+                await pool.query(
+                    'UPDATE ai_recommendations SET user_id = $1 WHERE id = $2 AND user_id IS NULL',
+                    [user.id, wizard_recommendation_id]
+                );
+                console.log(`📎 Linked wizard recommendation ${wizard_recommendation_id} to user ${user.id}`);
+            } catch (err) {
+                console.warn('Could not link wizard recommendation:', err.message);
+            }
+        }
+        
+        // Generate JWT token
+        const token = generateUserToken(user.id);
+        
+        // Set cookie
+        res.cookie('userToken', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        });
+        
+        res.json({
+            success: true,
+            message: isNewUser 
+                ? (language === 'tr' ? 'Kayıt başarılı! Hoş geldiniz.' : 'Registration successful! Welcome.')
+                : (language === 'tr' ? 'Giriş başarılı!' : 'Login successful!'),
+            user: {
+                id: user.id,
+                email: user.email,
+                first_name: user.first_name,
+                last_name: user.last_name,
+                is_admin: user.is_admin || false,
+                email_verified: user.email_verified,
+                personal_info_completed: user.personal_info_completed || false
+            },
+            token,
+            is_new_user: isNewUser,
+            needs_personal_info: !user.personal_info_completed,
+            redirect: !user.personal_info_completed ? '/user/dashboard?complete_profile=1' : '/user/dashboard'
+        });
+        
+    } catch (error) {
+        console.error('Google OAuth2 route error:', error);
+        res.status(500).json({
+            success: false,
+            message: req.body.language === 'tr' ? 'Bir hata oluştu' : 'An error occurred',
+            error_detail: error.message,
+            error_code: error.code
+        });
+    }
+});
+
+// User Registration (Simplified - only email and password required)
 router.post('/register', async (req, res) => {
     try {
         const {
@@ -26,16 +732,24 @@ router.post('/register', async (req, res) => {
             language = 'tr'
         } = req.body;
 
-        // Validation
-        if (!first_name || !last_name || !email || !tc_number || !phone || !password) {
+        // Full validation - all required fields must be provided
+        if (!email || !password || !first_name || !last_name || !tc_number || !phone || !english_level) {
             return res.status(400).json({
                 success: false,
-                message: language === 'tr' ? 'Tüm zorunlu alanları doldurun' : 'Please fill all required fields'
+                message: language === 'tr' ? 'Tüm zorunlu alanlar doldurulmalıdır' : 'All required fields must be filled'
             });
         }
 
-        // TC Number validation (11 digits)
-        if (!/^\d{11}$/.test(tc_number)) {
+        // Password validation
+        if (password.length < 6) {
+            return res.status(400).json({
+                success: false,
+                message: language === 'tr' ? 'Şifre en az 6 karakter olmalıdır' : 'Password must be at least 6 characters'
+            });
+        }
+
+        // TC Number validation - required and must be 11 digits
+        if (!tc_number || !/^\d{11}$/.test(tc_number)) {
             return res.status(400).json({
                 success: false,
                 message: language === 'tr' ? 'TC kimlik numarası 11 haneli olmalıdır' : 'TC number must be 11 digits'
@@ -51,10 +765,11 @@ router.post('/register', async (req, res) => {
             });
         }
 
-        // Check if user already exists
+        // Check if user already exists - only check email for simplified registration
+        // tc_number and phone are placeholders, so don't check them
         const existingUser = await pool.query(
-            'SELECT id FROM users WHERE email = $1 OR tc_number = $2 OR phone = $3',
-            [email, tc_number, phone]
+            'SELECT id FROM users WHERE email = $1',
+            [email]
         );
 
         if (existingUser.rows.length > 0) {
@@ -74,7 +789,14 @@ router.post('/register', async (req, res) => {
         // Generate verification token
         const verificationToken = generateVerificationToken();
 
-        // Insert user
+        // Personal info is complete at registration since all required fields are now mandatory
+        const isPersonalInfoComplete = !!(first_name && last_name && tc_number && phone && english_level);
+
+        // Format phone number with space after country code
+        const formattedPhone = formatPhoneNumber(phone);
+        
+        // Insert user with NULL for optional fields - user will fill them later
+        // Email, password, phone (if provided), and english_level (if provided) are stored at registration
         const result = await pool.query(`
             INSERT INTO users (
                 first_name,
@@ -90,24 +812,30 @@ router.post('/register', async (req, res) => {
                 passport_number,
                 desired_country,
                 active_class,
-                verification_token
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+                verification_token,
+                registered_via,
+                personal_info_completed,
+                email_verified
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
             RETURNING id, first_name, email
         `, [
-            first_name,
-            last_name,
+            first_name || '', // Will be filled later by user in settings
+            last_name || '', // Will be filled later by user in settings
             email,
-            tc_number,
-            phone,
+            null, // tc_number - user fills later
+            formattedPhone || null, // phone - from form if provided, formatted with space
             passwordHash,
-            english_level,
-            high_school_graduation_date,
-            birth_date,
-            passport_type,
-            passport_number,
-            desired_country,
-            active_class,
-            verificationToken
+            english_level || null, // english_level - from form if provided
+            null, // high_school_graduation_date - user fills later
+            null, // birth_date - user fills later
+            null, // passport_type
+            null, // passport_number
+            null, // desired_country
+            null, // active_class
+            verificationToken,
+            'email',
+            isPersonalInfoComplete,
+            false // email_verified - must verify via email
         ]);
 
         const user = result.rows[0];
@@ -135,8 +863,13 @@ router.post('/register', async (req, res) => {
             );
         }
 
-        // Send verification email
-        await sendVerificationEmail(email, first_name, verificationToken, language);
+        // Send verification email (non-blocking) - use user.first_name from DB result
+        sendVerificationEmail(email, user.first_name, verificationToken, language)
+            .then(() => console.log('✅ Verification email sent to:', email))
+            .catch(err => {
+                console.error('⚠️ Email send error:', err.message);
+                console.error('⚠️ Email send error details:', err);
+            });
 
         res.status(201).json({
             success: true,
@@ -152,9 +885,30 @@ router.post('/register', async (req, res) => {
 
     } catch (error) {
         console.error('Registration error:', error);
+        
+        // Kullanıcı dostu hata mesajları
+        let userMessage;
+        if (error.message && (error.message.includes('users_tc_number_key') || error.message.includes('tc_number'))) {
+            userMessage = language === 'tr' 
+                ? 'Bu TC Kimlik Numarası ile zaten bir hesap mevcut. Lütfen giriş yapın.' 
+                : 'An account already exists with this TC ID number. Please login.';
+        } else if (error.message && (error.message.includes('users_email_key') || error.message.includes('email'))) {
+            userMessage = language === 'tr' 
+                ? 'Bu e-posta adresi ile zaten bir hesap mevcut. Lütfen giriş yapın.' 
+                : 'An account already exists with this email. Please login.';
+        } else if (error.message && (error.message.includes('users_phone_key') || error.message.includes('phone'))) {
+            userMessage = language === 'tr' 
+                ? 'Bu telefon numarası ile zaten bir hesap mevcut.' 
+                : 'An account already exists with this phone number.';
+        } else {
+            userMessage = language === 'tr' 
+                ? 'Kayıt sırasında bir hata oluştu. Lütfen tekrar deneyin.' 
+                : 'An error occurred during registration. Please try again.';
+        }
+        
         res.status(500).json({
             success: false,
-            message: language === 'tr' ? 'Kayıt sırasında bir hata oluştu' : 'An error occurred during registration'
+            message: userMessage
         });
     }
 });
@@ -214,6 +968,9 @@ router.get('/verify-email', async (req, res) => {
         const { token } = req.query;
         const language = req.query.lang || 'tr';
 
+        console.log('📧 Email verification request received');
+        console.log('   Token:', token ? token.substring(0, 20) + '...' : 'missing');
+
         if (!token) {
             return res.status(400).render('verification-error', { 
                 title: 'Doğrulama Hatası',
@@ -222,48 +979,46 @@ router.get('/verify-email', async (req, res) => {
             });
         }
 
-        // Find user with this token
+        // Find user with this token (check both boolean false and integer 0)
         const result = await pool.query(
-            'SELECT id, first_name, email FROM users WHERE verification_token = $1 AND email_verified = 0',
+            `SELECT id, first_name, email, email_verified, verification_token 
+             FROM users 
+             WHERE verification_token = $1 
+             AND (email_verified = false OR email_verified = 0 OR email_verified IS NULL)`,
             [token]
         );
 
+        console.log('   Found users with token:', result.rows.length);
+
         if (result.rows.length === 0) {
-            const fallback = await pool.query(
-                'SELECT id, first_name, email FROM users WHERE verification_token IS NULL AND email_verified = 0 ORDER BY created_at DESC LIMIT 1'
+            // Check if token was already used (user verified)
+            const alreadyVerified = await pool.query(
+                `SELECT id, email, email_verified FROM users 
+                 WHERE verification_token IS NULL 
+                 AND (email_verified = true OR email_verified = 1)
+                 ORDER BY created_at DESC LIMIT 5`
             );
 
-            if (fallback.rows.length === 0) {
+            console.log('   Already verified users:', alreadyVerified.rows.length);
+            
+            // Token doesn't exist - might be already used or invalid
                 return res.status(400).render('verification-error', { 
                     title: 'Doğrulama Hatası',
-                    message: language === 'tr' ? 'Geçersiz veya kullanılmış doğrulama tokeni' : 'Invalid or used verification token',
-                    language 
-                });
-            }
-
-            const user = fallback.rows[0];
-            const newToken = generateVerificationToken();
-            await pool.query(
-                'UPDATE users SET verification_token = $1 WHERE id = $2',
-                [newToken, user.id]
-            );
-
-            await sendVerificationEmail(user.email, user.first_name, newToken, language);
-
-            return res.render('verification-error', { 
-                title: 'Doğrulama Hatası',
-                message: language === 'tr' ? 'Link süresi dolmuş. Yeni doğrulama e-postası gönderildi.' : 'Link expired. A new verification email has been sent.',
+                message: language === 'tr' ? 'Geçersiz veya kullanılmış doğrulama tokeni. E-postanız zaten doğrulanmış olabilir.' : 'Invalid or used verification token. Your email may already be verified.',
                 language 
             });
         }
 
         const user = result.rows[0];
+        console.log('   Verifying user:', user.email);
 
-        // Update user as verified
+        // Update user as verified (use boolean true for consistency)
         await pool.query(
-            'UPDATE users SET email_verified = 1, verification_token = NULL WHERE id = $1',
+            'UPDATE users SET email_verified = true, verification_token = NULL WHERE id = $1',
             [user.id]
         );
+        
+        console.log('   ✅ User email verified successfully:', user.email);
 
         res.render('verification-success', { 
             title: 'E-posta Doğrulandı',

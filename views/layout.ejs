@@ -351,13 +351,8 @@
                             <li><a class="dropdown-item" href="/about-us"><i class="fas fa-info-circle me-2"></i><%= (typeof t !== 'undefined' && t.nav) ? t.nav.aboutUs : 'Tanışalım' %></a></li>
                             <li><a class="dropdown-item" href="/media"><i class="fas fa-bullhorn me-2"></i><%= (typeof t !== 'undefined' && t.nav) ? t.nav.media : 'Medyada Biz' %></a></li>
                             <li><a class="dropdown-item" href="/blog"><i class="fas fa-blog me-2"></i><%= (typeof t !== 'undefined' && t.nav) ? (t.nav.blog || 'Blog') : 'Blog' %></a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <%= (typeof t !== 'undefined' && t.nav) ? (t.nav.partners || 'Çözüm Ortaklarımız') : 'Çözüm Ortaklarımız' %>
-                        </a>
-                        <ul class="dropdown-menu">
+                            <li><hr class="dropdown-divider"></li>
+                            <li class="dropdown-header"><i class="fas fa-handshake me-2"></i><%= (typeof t !== 'undefined' && t.nav) ? (t.nav.partners || 'Çözüm Ortaklarımız') : 'Çözüm Ortaklarımız' %></li>
                             <li><a class="dropdown-item d-flex align-items-center" href="/partners/wcep">
                                 <img src="/images/partners/wcep/wcep-logo.png" alt="WCEP" style="height: 20px; width: auto; margin-right: 10px;">
                                 WCEP
@@ -498,11 +493,11 @@
                     <img src="/images/logos/venture-global-logo.png" alt="Venture Global" style="height: 28px; width: auto; display:block;">
                 </span>
                 <div>
-                    <h5 class="offcanvas-title mb-0" id="mobileNavLabel" style="font-weight: 700; color:#000000; font-size: 1.1rem;">Venture Global</h5>
-                    <small style="opacity: 1; color:#000000; font-weight: 600; font-size: 0.85rem;">Eğitim Danışmanlığı</small>
+                    <h5 class="offcanvas-title mb-0" id="mobileNavLabel" style="font-weight: 700; color:#ffffff; font-size: 1.1rem;">Venture Global</h5>
+                    <small style="opacity: 1; color:#ffffff; font-weight: 600; font-size: 0.85rem;">Eğitim Danışmanlığı</small>
                 </div>
             </div>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close" style="color: #000000; font-size: 1.5rem; font-weight: bold; background: none; border: none; padding: 0.5rem;">✕</button>
+            <button type="button" class="mobile-close-btn" data-bs-dismiss="offcanvas" aria-label="Close" style="background: transparent; border: none; color: #ffffff; font-size: 1.8rem; line-height: 1; padding: 0; cursor: pointer; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">×</button>
         </div>
         
         <div class="offcanvas-body p-0" style="background: #ffffff !important; background-color: #ffffff !important; background-image: none !important;">
@@ -706,6 +701,30 @@
                                 <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.nav) ? (t.nav.blog || 'Blog') : 'Blog' %></span>
                             </a>
                         </li>
+                        <!-- Çözüm Ortakları - Tanışalım altında -->
+                        <li style="border-top: 1px solid var(--gray-200); margin-top: 0.5rem; padding-top: 0.5rem;">
+                            <small style="color: var(--gray-500); font-weight: 600; font-size: 0.7rem; padding: 0.5rem 1.25rem; display: block;">
+                                <i class="fas fa-handshake" style="margin-right: 6px;"></i>Çözüm Ortaklarımız
+                            </small>
+                        </li>
+                        <li>
+                            <a href="/partners/wcep" style="display: flex; align-items: center; padding: 0.75rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                <img src="/images/partners/wcep/wcep-logo.png" alt="WCEP" style="height: 18px; width: auto; margin-right: 12px; object-fit: contain;">
+                                <span style="font-size: 0.85rem; font-weight: 500;">WCEP</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/partners/kanpus" style="display: flex; align-items: center; padding: 0.75rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                <img src="/images/partners/kanpus/kanpus-logo.webp" alt="Kanpus" style="height: 18px; width: auto; margin-right: 12px; object-fit: contain;">
+                                <span style="font-size: 0.85rem; font-weight: 500;">Kanpus</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/partners/medczech" style="display: flex; align-items: center; padding: 0.75rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                <img src="/images/partners/medczech/medczech-logo.png" alt="MedCzech" style="height: 18px; width: auto; margin-right: 12px; object-fit: contain;">
+                                <span style="font-size: 0.85rem; font-weight: 500;">MedCzech</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
 
@@ -768,34 +787,6 @@
                     </ul>
                         </div>
 
-                <!-- Partners Section -->
-                <div style="border-bottom: 1px solid var(--gray-200);">
-                    <div style="background: var(--gray-50); padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--gray-200);">
-                        <small style="color: var(--gray-600); font-weight: 600; text-transform: uppercase; font-size: 0.75rem;">
-                            <i class="fas fa-handshake" style="margin-right: 6px;"></i>Çözüm Ortaklarımız
-                        </small>
-                    </div>
-                    <ul style="list-style: none; margin: 0; padding: 0;">
-                        <li>
-                            <a href="/partners/wcep" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                <img src="/images/partners/wcep/wcep-logo.png" alt="WCEP" style="height: 20px; width: auto; margin-right: 12px; object-fit: contain;">
-                                <span style="font-size: 0.9rem; font-weight: 500;">WCEP</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/partners/kanpus" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                <img src="/images/partners/kanpus/kanpus-logo.webp" alt="Kanpus" style="height: 20px; width: auto; margin-right: 12px; object-fit: contain;">
-                                <span style="font-size: 0.9rem; font-weight: 500;">Kanpus</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/partners/medczech" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                <img src="/images/partners/medczech/medczech-logo.png" alt="MedCzech" style="height: 20px; width: auto; margin-right: 12px; object-fit: contain;">
-                                <span style="font-size: 0.9rem; font-weight: 500;">MedCzech</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
 
                 <!-- User Panel Section (if logged in) -->
                 <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn === true) { %>
@@ -923,6 +914,7 @@
         </ul>
     </div>
 
+    <% if (typeof isAdminPage === 'undefined' || !isAdminPage) { %>
     <!-- Professional Footer -->
     <footer class="footer bg-primary text-white py-5 mt-5">
         <div class="container">
@@ -1046,6 +1038,7 @@
             </div>
         </div>
     </footer>
+    <% } %>
 
     <!-- Swiper Slider JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
@@ -1193,6 +1186,8 @@
                 newMobileNav.addEventListener('show.bs.offcanvas', function() {
                     // Force show class for CSS animation
                     this.classList.add('show');
+                    // Lock body scroll when menu opens
+                    document.body.classList.add('offcanvas-open');
                 });
                 
                 newMobileNav.addEventListener('hidden.bs.offcanvas', function() {
@@ -1340,8 +1335,9 @@
                                 closeMobileMenu();
                             });
                             
-                            // Prevent body scroll
+                            // Prevent body scroll and add class
                             document.body.style.overflow = 'hidden';
+                            document.body.classList.add('offcanvas-open');
                         }, 10);
                     }
                     

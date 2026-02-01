@@ -31,6 +31,61 @@
                 </div>
 
                 <div class="col-lg-9" id="studentMainContent">
+                    <!-- Email Doğrulama Uyarısı -->
+                    <% if (typeof profile !== 'undefined' && profile && (profile.email_verified === false || profile.email_verified === 0 || profile.email_verified === null)) { %>
+                    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert" id="emailVerificationAlert" style="border-radius: 12px; border-left: 5px solid #dc3545;">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-envelope-open me-3" style="font-size: 1.5rem; color: #721c24;"></i>
+                            <div class="flex-grow-1">
+                                <h5 class="alert-heading mb-2">E-posta Adresinizi Doğrulayın</h5>
+                                <p class="mb-2">Hesabınızı aktif hale getirmek için e-posta adresinizi doğrulamanız gerekmektedir.</p>
+                                <small class="text-muted d-block mb-3"><%= profile.email %> adresine gönderilen doğrulama linkine tıklayın.</small>
+                                <button type="button" class="btn btn-sm btn-outline-danger" id="resendVerificationBtn" onclick="resendVerificationEmail()">
+                                    <i class="fas fa-paper-plane me-1"></i>Doğrulama Mailini Tekrar Gönder
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+                    
+                    <!-- Eksik Bilgi Uyarısı -->
+                    <% 
+                        const hasIncompleteInfo = typeof profile !== 'undefined' && profile && (
+                            !profile.first_name || profile.first_name === '' ||
+                            !profile.last_name || profile.last_name === '' ||
+                            !profile.tc_number || profile.tc_number === '' ||
+                            !profile.phone || profile.phone === '' ||
+                            !profile.birth_date
+                        );
+                    %>
+                    <% if (hasIncompleteInfo) { %>
+                    <div class="alert alert-info fade show mb-4" role="alert" style="border-radius: 12px; border-left: 5px solid #0d6efd; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);">
+                        <div class="d-flex align-items-start">
+                            <div class="me-3">
+                                <i class="fas fa-clock text-primary" style="font-size: 2rem;"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between align-items-start flex-wrap">
+                                    <div>
+                                        <h5 class="alert-heading mb-1">
+                                            <i class="fas fa-clipboard-list me-2"></i>Kişisel Bilgilerinizi Tamamlayın
+                                        </h5>
+                                        <p class="mb-2">Danışmanlık hizmetlerimizden tam olarak faydalanabilmek için lütfen profilinizi tamamlayın.</p>
+                                    </div>
+                                    <a href="#profileForm" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-edit me-1"></i>Hemen Doldur
+                                    </a>
+                                </div>
+                                <hr class="my-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Zorunlu alanlar: <strong>Ad, Soyad, TC Kimlik No, Telefon, Doğum Tarihi</strong>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+                    
                     <!-- AI Öneri Kartı -->
                     <div id="aiRecommendationCard" class="card shadow-sm mb-4" style="display: none;">
                         <div class="card-header text-white" style="background: linear-gradient(135deg, #0056b3, #28a745);">
@@ -161,6 +216,54 @@
                 window.location.href = '/';
             });
         }
+        
+        // Resend verification email function
+        function resendVerificationEmail() {
+            const btn = document.getElementById('resendVerificationBtn');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Gönderiliyor...';
+            
+            fetch('/api/auth/resend-verification', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: '<%= typeof profile !== "undefined" && profile ? profile.email : "" %>',
+                    language: 'tr'
+                }),
+                credentials: 'include'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    btn.innerHTML = '<i class="fas fa-check me-1"></i>Mail Gönderildi!';
+                    btn.classList.remove('btn-outline-danger');
+                    btn.classList.add('btn-success');
+                    setTimeout(() => {
+                        btn.innerHTML = originalText;
+                        btn.classList.remove('btn-success');
+                        btn.classList.add('btn-outline-danger');
+                        btn.disabled = false;
+                    }, 5000);
+                } else {
+                    btn.innerHTML = '<i class="fas fa-times me-1"></i>' + (data.message || 'Hata!');
+                    setTimeout(() => {
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    }, 3000);
+                }
+            })
+            .catch(error => {
+                console.error('Error resending verification:', error);
+                btn.innerHTML = '<i class="fas fa-times me-1"></i>Hata oluştu';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }, 3000);
+            });
+        }
 
         // Profile form submission
         document.getElementById('profileForm').addEventListener('submit', function(e) {
@@ -286,10 +389,10 @@
             `;
             alertContainer.appendChild(alert);
             
-            // Auto remove after 5 seconds
+            // Auto remove after 10 seconds
             setTimeout(() => {
                 alert.remove();
-            }, 5000);
+            }, 10000);
         }
 
         // Language change function
@@ -365,7 +468,27 @@
                         'Austria': '🇦🇹',
                         'UK': '🇬🇧',
                         'Poland': '🇵🇱',
-                        'Hungary': '🇭🇺'
+                        'Hungary': '🇭🇺',
+                        'Netherlands': '🇳🇱',
+                        'Holland': '🇳🇱',
+                        'Hollanda': '🇳🇱'
+                    };
+                    
+                    // Fix country names - normalize variations
+                    const normalizeCountry = (country) => {
+                        const countryMap = {
+                            'Holland': 'Netherlands',
+                            'Hollanda': 'Netherlands',
+                            'The Netherlands': 'Netherlands',
+                            'Çekya': 'Czech Republic',
+                            'Almanya': 'Germany',
+                            'İngiltere': 'UK',
+                            'İtalya': 'Italy',
+                            'Avusturya': 'Austria',
+                            'Polonya': 'Poland',
+                            'Macaristan': 'Hungary'
+                        };
+                        return countryMap[country] || country;
                     };
                     
                     // Parse recommendation data (new format or legacy)
@@ -380,8 +503,25 @@
                         career_prospects: rec.career_prospects
                     };
                     const rec2 = rec.recommendation_2;
+                    const hasCanadianDiploma = rec.has_canadian_diploma;
                     
                     let html = '';
+                    
+                    // Kanada diploması avantaj banner'ı
+                    if (hasCanadianDiploma) {
+                        html += `
+                            <div class="alert mb-3" style="background: linear-gradient(135deg, #dc2626, #991b1b); border: none; color: white; border-radius: 12px;">
+                                <div class="d-flex align-items-start">
+                                    <span style="font-size: 2rem; margin-right: 12px;">🍁</span>
+                                    <div>
+                                        <h6 class="alert-heading mb-1"><i class="fas fa-check-circle me-2"></i>Kanada Lise Diploması Avantajı!</h6>
+                                        <p class="mb-2" style="font-size: 0.9rem;">${rec.wcep_advantage_summary || 'Kanada lise diplomanız sayesinde Avrupa üniversitelerinde özel avantajlardan yararlanabilirsiniz!'}</p>
+                                        <a href="/partners/wcep" class="btn btn-warning btn-sm"><i class="fas fa-info-circle me-1"></i>WCEP Hakkında</a>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
                     
                     // Hazırlık uyarısı
                     if (rec.prep_school_needed) {
@@ -389,6 +529,13 @@
                             <div class="alert alert-warning mb-3">
                                 <h6 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i>Hazırlık Önerisi</h6>
                                 <p class="mb-0">${rec.prep_school_suggestion || 'İngilizce seviyenizi geliştirmek için bir hazırlık programı öneriyoruz.'}</p>
+                            </div>
+                        `;
+                    } else if (hasCanadianDiploma) {
+                        html += `
+                            <div class="alert alert-success mb-3">
+                                <h6 class="alert-heading"><i class="fas fa-check-circle me-2"></i>Harika Haber!</h6>
+                                <p class="mb-0">Kanada lise diplomanız sayesinde çoğu hazırlık programından muafsınız! 🎉</p>
                             </div>
                         `;
                     }
@@ -421,6 +568,13 @@
                             <!-- First Recommendation Details -->
                             <div class="mb-4" style="background: linear-gradient(135deg, #e3f2fd, #e8f5e9); border-radius: 15px; padding: 20px;">
                                 <h5 class="text-primary mb-3"><i class="fas fa-star me-2"></i>1. Öneri: ${rec1.university_name}</h5>
+                                
+                                ${rec1.canadian_diploma_advantage && hasCanadianDiploma ? `
+                                    <div class="mb-3 p-3" style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 10px;">
+                                        <strong><i class="fas fa-maple-leaf me-2" style="color: #d97706;"></i>🍁 Kanada Diploması Avantajınız</strong>
+                                        <p class="mt-2 mb-0">${rec1.canadian_diploma_advantage}</p>
+                                    </div>
+                                ` : ''}
                                 
                                 ${rec1.why_this_university ? `
                                     <div class="mb-3">
@@ -482,6 +636,13 @@
                                         </div>
                                     </div>
                                     
+                                    ${rec2.canadian_diploma_advantage && hasCanadianDiploma ? `
+                                        <div class="mb-3 p-3" style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 10px;">
+                                            <strong><i class="fas fa-maple-leaf me-2" style="color: #d97706;"></i>🍁 Kanada Diploması Avantajınız</strong>
+                                            <p class="mt-2 mb-0">${rec2.canadian_diploma_advantage}</p>
+                                        </div>
+                                    ` : ''}
+                                    
                                     ${rec2.why_this_university ? `
                                         <div class="mb-3">
                                             <strong><i class="fas fa-university me-2 text-primary"></i>Neden Bu Üniversite?</strong>
@@ -520,9 +681,73 @@
                             ` : ''}
                             
                             ${rec.overall_advice ? `
-                                <div class="mb-0" style="background: #e8f5e9; border-radius: 10px; padding: 15px;">
+                                <div class="mb-3" style="background: #e8f5e9; border-radius: 10px; padding: 15px;">
                                     <strong><i class="fas fa-lightbulb me-2 text-success"></i>Genel Tavsiyeler</strong>
                                     <p class="mt-2 mb-0">${rec.overall_advice}</p>
+                                </div>
+                            ` : ''}
+                            
+                            ${hasCanadianDiploma ? `
+                                <!-- Detaylı Kanada Diploması Avantajları -->
+                                <div class="mb-0" style="background: linear-gradient(135deg, #fef2f2, #fee2e2); border: 2px solid #dc2626; border-radius: 15px; padding: 20px;">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <span style="font-size: 2rem; margin-right: 12px;">🍁</span>
+                                        <div>
+                                            <h5 class="mb-0 text-danger"><i class="fas fa-award me-2"></i>Kanada Diploması Avantajlarınız</h5>
+                                            <small class="text-muted">WCEP ortaklığımız kapsamında size özel fırsatlar</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <div class="p-3" style="background: white; border-radius: 10px; border-left: 4px solid #dc2626;">
+                                                <strong>🇩🇪 Almanya</strong>
+                                                <p class="mb-0 mt-1 small">Studienkolleg (hazırlık yılı) programından <strong>muafiyet</strong>. Doğrudan üniversiteye başvuru hakkı.</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="p-3" style="background: white; border-radius: 10px; border-left: 4px solid #dc2626;">
+                                                <strong>🇬🇧 İngiltere</strong>
+                                                <p class="mb-0 mt-1 small">Foundation Year programından <strong>muafiyet</strong>. Direkt lisans programına kabul.</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="p-3" style="background: white; border-radius: 10px; border-left: 4px solid #dc2626;">
+                                                <strong>🇨🇿 Çekya</strong>
+                                                <p class="mb-0 mt-1 small">Charles Üniversitesi Tıp ve Diş Hekimliği Fakültesi'ne <strong>sınavsız kabul</strong> imkanı!</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="p-3" style="background: white; border-radius: 10px; border-left: 4px solid #dc2626;">
+                                                <strong>🇦🇹 Avusturya</strong>
+                                                <p class="mb-0 mt-1 small">Vorstudienlehrgang (hazırlık) programından <strong>muafiyet</strong>.</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="p-3" style="background: white; border-radius: 10px; border-left: 4px solid #dc2626;">
+                                                <strong>🇮🇹 İtalya</strong>
+                                                <p class="mb-0 mt-1 small">Ek sınav gereksinimlerinden <strong>muafiyet</strong>. Doğrudan kabul.</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="p-3" style="background: white; border-radius: 10px; border-left: 4px solid #dc2626;">
+                                                <strong>🇵🇱 Polonya & 🇭🇺 Macaristan</strong>
+                                                <p class="mb-0 mt-1 small"><strong>Öncelikli değerlendirme</strong> ve doğrudan kabul avantajı.</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="p-3" style="background: white; border-radius: 10px; border-left: 4px solid #dc2626;">
+                                                <strong>🇳🇱 Hollanda</strong>
+                                                <p class="mb-0 mt-1 small">Research University'ler için <strong>AP şartı kalkar</strong>. Tüm üniversitelere direkt başvuru.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-3 text-center">
+                                        <a href="/partners/wcep" class="btn btn-danger">
+                                            <i class="fas fa-info-circle me-2"></i>WCEP Hakkında Detaylı Bilgi
+                                        </a>
+                                    </div>
                                 </div>
                             ` : ''}
                         </div>

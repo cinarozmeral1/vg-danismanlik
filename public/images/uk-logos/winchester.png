@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en-GB" prefix="og: http://ogp.me/ns#"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang="en-GB" prefix="og: http://ogp.me/ns#"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang="en-GB" prefix="og: http://ogp.me/ns#"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en-GB" prefix="og: http://ogp.me/ns#"> <!--<![endif]-->
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>404 - University of Winchester</title>
+        <!-- <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+ -->
+        <link rel="shortcut icon" href="/media/Site-assets/favicon.ico" type="image/x-icon" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+         
+      	<!-- Open Graph -->
+      	<meta property="og:title" content="404 - University of Winchester" />
+      	<meta property="og:url" content="/404/" />
+      	<meta property="og:site_name" content="University of Winchester" />
+
+        <!-- Twitter Card -->
+        <meta name="twitter:title" content="404 - University of Winchester" />
+      	<meta name="twitter:card" content="summary" />
+      	<meta name="twitter:site" content="@_uow" />
+      	<meta name="twitter:url" content="/404/" />
+
+      	<!-- UOW -->
+      	<meta name="uow:type" content="page" />
+      	<meta name="uow:breadcrumb" content="Home &gt; 404" />
+        <meta property="fb:admins" content="00010239181529"/>
+      
+				
+
+				
+
+
+
+
+        <meta name="author" content="University of Winchester ">
+
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+       
+
+ 
+        <link rel="stylesheet" type="text/css" media="" href="/media/Site-assets/CSS/fonts.min.css" /><!-- fonts.min.css -->
+        <link rel="stylesheet" type="text/css" media="" href="/media/Site-assets/CSS/app.min.css" /><!-- app.min.css -->
+       <link rel="stylesheet" type="text/css" media="" href="/media/Site-assets/CSS/winchester.css" /><!-- winchester.css -->
+          
+          <!-- 2023 updates -->
+          <!-- Fonts -->
+        <link rel="stylesheet" href="https://use.typekit.net/zpa6glb.css">
+
+        <!-- Font Awesome -->
+        <script src="https://kit.fontawesome.com/f23ffc1fcc.js" crossorigin="anonymous"></script>
+
+        <!-- Add the slick-theme.css if you want default styling -->
+        <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick.css"/>
+        <!-- Add the slick-theme.css if you want default styling -->
+        <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick-theme.css"/>
+          <link rel="stylesheet" type="text/css" media="" href="/media/Site-assets/CSS/app-new.min.css.css" /><!-- app.men-new.css -->
+          <!-- End 2023 updates -->
+          
+          
+          
+        <link rel="stylesheet"   href="/media/Site-assets/CSS/t4-updates.css" /><!-- t4 updates -->
+        <!--[if lt IE 9]>
+            <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+            <script type="text/javascript" src="/media/Site-assets/JS/ie8-plugins.min.js"></script>
+        <![endif]-->
+      
+      
+      <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-W3W53B5');</script>
+<!-- End Google Tag Manager -->
+      
+    </head>
+    <body class="home">
+           
+      
+      <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W3W53B5"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<div class="uow-navigation">
+    
+    <div class="uow-navigation__inner">
+        <div class="uow-navigation__logo-container">
+            
+            <div class="uow-navigation__logo">
+                <a href="/" class="logo">
+  <picture class="">
+    <img src='/media/Site-assets/img/image/logo/logo-black.svg' alt="The University of Winchester">			
+  </picture>
+</a><!-- Global Black Logo --!><!-- black logo -->
+            </div>
+        
+        </div>
+        
+        <div class="uow-navigation__list-container">
+            
+            <nav class="uow-navigation__top-links">
+                <ul>
+                    <li><a href="/News-and-Events/">News &amp; Events</a></li><li><a href="https://unimailwinchesterac.omniacloud.net/start">Staff</a></li><li><a href="https://unimailwinchesterac.omniacloud.net/start">Students</a></li><li><a href="/About-Us/Alumni/" target="_blank">Alumni</a></li><li><a href="/Contact-us/">Contact</a></li> <!-- Quick links menu -->
+                </ul>
+            </nav>
+            
+            <nav id="nav-primary-winchester">
+                <div tabindex="0" aria-label="focus navigation toggle" class="close-main-nav">
+                    focus hamburger toggle
+                </div>
+                <ul>
+                    
+                    <li>
+<a href="/study/">Study</a>
+<ul>
+<li><a href="/study/">Study</a>&nbsp;
+<ul>
+<li><a href="/study/subjects/">Subjects</a></li>
+<li><a href="/study/find-your-course/">Find your course</a></li>
+<li><a href="/study/how-to-apply/">How to apply</a></li>
+<li><a href="/study/Prospectus/">Order a prospectus</a></li>
+<li><a href="/News-and-Events/On-Campus-Events/">Open Days</a></li>
+<li><a href="/study/Mature-Students/">Information for mature learners</a></li>
+<li><a href="/study/Ask-a-question/">Ask a question</a></li>
+</ul>
+</li>
+<li><a href="/study/undergraduate/">Undergraduate</a>
+<ul>
+<li><a href="/study/undergraduate/Courses/">Browse Undergraduate Degrees</a></li>
+<li><a href="/News-and-Events/On-Campus-Events/Open-Days-/">Open Days</a></li>
+<li><a href="/News-and-Events/On-Campus-Events/Experience-Winchester-Day/">Applicant Experience Winchester Day</a></li>
+<li><a href="/Landing-Pages/Pathways-programmes/">Academic Pathways Programme</a></li>
+<li><a href="https://www.winchester.ac.uk/study/Top-up-Degrees/">Top-up Degrees</a></li>
+</ul>
+</li>
+<li><a href="/study/Postgraduate/">Postgraduate</a>
+<ul>
+<li><a href="/study/Postgraduate/Courses/">Browse Postgraduate Degrees</a></li>
+<li><a href="/Landing-Pages/Conversion/">Conversion Courses</a></li>
+</ul>
+</li>
+<li><a href="/study/foundation-year/">Foundation Year</a>&nbsp;
+<ul>
+<li><a href="/study/foundation-year/Courses/">Browse Foundation Year courses</a></li>
+<li><a href="/study/foundation-year/What-is-a-Foundation-Year-/">What is a Foundation Year</a></li>
+<li><a href="/study/foundation-year/Meet-our-Foundation-Year-students/">Meet our Foundation Year Students</a></li>
+</ul>
+</li>
+<li><a href="/study/research-degrees/">Research degrees</a>
+<ul>
+<li><a href="/study/research-degrees/Courses/">Browse Research Degrees</a></li>
+<li><a href="/study/research-degrees/Research-Degrees-at-Winchester/">About our Research Degrees</a></li>
+</ul>
+</li>
+<li><a href="/study/Apprenticeships/">Apprenticeships</a><br />
+<ul>
+<li><a href="/study/Apprenticeships/Degree-Apprenticeship-Programmes/">Browse Degree Apprenticeships</a></li>
+<li><a href="/study/Apprenticeships/What-are-Degree-Apprenticeships/">What are degree apprenticeships?</a></li>
+<li><a href="/study/Apprenticeships/Business-and-Digital-Technologies-Partnerships/">Professional partnerships</a></li>
+<li><a href="/study/Apprenticeships/Information-for-learners/">Information for students</a></li>
+<li><a href="/study/Apprenticeships/Information-for-employers/">Information for Employers</a></li>
+<li><a href="/study/Apprenticeships/Health-and-Social-Work-partnerships/">Health and Social Work Partnerships</a></li>
+</ul>
+</li>
+<li><a href="/study/further-study-options/">Further study options</a>
+<ul>
+<li><a href="/study/further-study-options/Distance-and-flexible-learning/">Distance and Flexible Learning</a></li>
+<li><a href="/study/further-study-options/Study-abroad/">Study Abroad</a></li>
+</ul>
+</li>
+<li><a href="/study/Short-courses/">Short Courses</a></li>
+</ul>
+</li> 
+
+<li><a href="/international/">International</a><ul>
+<li><a href="/international/">International Welcome and Arrival</a></li>
+<li><a href="/international/why-winchester/">Why Winchester</a></li>
+<li><a href="/international/International-Entry-Requirements/">International entry requirements</a></li>
+<li><a href="/international/visa-information/">Visa Information</a></li>
+<li><a href="/international/Meet-our-students/">Meet Our Students</a></li>
+</ul></li>
+
+
+<li><a href="/student-life/">Student Life</a><ul>
+<li><a href="/student-life/">Student life</a>
+<ul>
+<li><a href="/student-life/Our-campus/">Our Campus</a></li>
+<li><a href="/About-Us/Conferencing-and-Facilities/Sport/">Sports and gym</a></li>
+<li><a href="/About-Us/Conferencing-and-Facilities/library/">Library</a></li>
+<li><a href="/About-Us/Conferencing-and-Facilities/Food-on-Campus/">Food on campus</a></li>
+<li><a href="/Winchester-City/">Winchester City</a></li>
+<li><a href="/student-life/UWin-Student-Blog/">Student blog</a></li>
+<li><a href="/student-life/Spirituality/">Spirituality</a></li>
+</ul>
+</li>
+<li><a href="/student-life/Accommodation/">Accommodation</a><br />
+<ul>
+<li><a href="/student-life/Accommodation/Our-guarantee/">Our Accommodation Guarantee</a></li>
+<li><a href="https://www.winchester.ac.uk/student-life/Accommodation/Costs/">Accommodation costs</a></li>
+<li><a href="/student-life/Accommodation/How-to-apply/">How to apply for accommodation</a></li>
+<li><a href="https://www.winchester.ac.uk/student-life/Accommodation/catered-accommodation/">Catered accommodation</a></li>
+<li><a href="/student-life/Accommodation/burma-road-student-village/">Burma Road Student Village</a></li>
+<li><a href="/student-life/Accommodation/Queens-Road-Student-Village/">Queen's Road Student Village</a></li>
+<li><a href="/student-life/Accommodation/west-downs-student-village/">West Downs Student Village</a></li>
+</ul>
+</li>
+<li><a href="https://www.winchester.ac.uk/Winchester-Student-Union/">Students' Union</a>
+<ul>
+<li><a href="https://events.winchesterstudents.co.uk/">Events at the SU</a></li>
+<li><a href="https://www.winchesterstudents.co.uk/societies">Societies</a></li>
+<li><a href="https://www.winchesterstudents.co.uk/sport">Sports teams</a></li>
+<li><a href="https://www.winchesterstudents.co.uk/networks">Representational networks</a></li>
+<li><a href="https://www.winchesterstudents.co.uk/take-part-get-involved/raising-giving-rag?parent_link=take-part-menu-wrapper">Raising and giving</a></li>
+<li><a href="https://www.winchesterstudents.co.uk/advice">Advice Centre at the SU</a></li>
+</ul>
+</li>
+<li><a href="/student-life/Student-Support/">Student support</a>
+<ul>
+<li><a href="/student-life/Student-Support/Academic-Success/">Academic skills</a>&nbsp;</li>
+<li><a href="/student-life/Student-Support/Wellbeing/">Student wellbeing</a>&nbsp;</li>
+<li><a href="/student-life/Careers-Support-and-Advice/">Careers support and advice</a></li>
+</ul>
+</li>
+<li><a href="/student-life/Students-and-money/">Students and Money</a>
+<ul>
+<li><a href="/student-life/Scholarships-bursaries-and-awards/">Scholarships, Bursaries, Awards</a></li>
+<li><a href="/student-life/Students-and-money/Online-Payments/">Make a payment</a></li>
+<li><a title="Winchester Online Store" href="https://store.winchester.ac.uk/">Winchester Online Store</a></li>
+</ul>
+</li>
+<li><a href="https://www.winchester.ac.uk/search">Useful info and search</a>
+<ul>
+<li><a href="/study/Parents-and-Supporters/">Information for parents and supporters</a></li>
+<li><a href="https://www.winchester.ac.uk/parentsignup">Sign-up for parent and supporter updates</a></li>
+<li><a href="/About-Us/Term-Dates/">Term dates</a></li>
+</ul>
+</li>
+</ul></li>
+
+
+
+<li><a href="/collaborate/">Collaborate</a><ul>
+<li><a href="/collaborate/">Collaborate</a>
+<ul>
+<li><a href="/collaborate/Our-Services-Facilities-and-Expertise/">Services and expertise</a></li>
+<li><a href="/research/Research-Facilities/">Facilities</a></li>
+<li><a href="/collaborate/Case-Studies/">Case Studies</a></li>
+</ul>
+</li>
+<li><a href="/collaborate/Schools-and-colleges/">Schools and Colleges</a>
+<ul>
+<li><a href="/collaborate/Schools-and-colleges/Schools-and-Colleges-Talks-and-workshops/">Schools and Colleges Talks and workshops</a></li>
+<li><a href="/collaborate/Schools-and-colleges/Academic-Talks-and-Workshops-/">Academic Talks and Workshops&nbsp;</a></li>
+<li><a href="/collaborate/Schools-and-colleges/Discover-Winchester-Scheme/">Discover Winchester Scheme</a></li>
+<li><a href="/collaborate/Schools-and-colleges/Channel-Islands/">Channel Islands</a></li>
+<li><a href="/collaborate/Schools-and-colleges/Academy-Trust/">Academy Trust</a></li>
+<li><a href="/collaborate/Schools-and-colleges/CPD/">CPD</a></li>
+<li><a href="/collaborate/Schools-and-colleges/Teachers-and-advisers/">Teachers and advisers</a></li>
+</ul>
+</li>
+<li><a href="/collaborate/Widening-Participation/">Widening Participation</a></li>
+<li><a href="/About-Us/Conferencing-and-Facilities/">Conferencing and Facilities</a></li>
+</ul></li> 
+
+
+<li><a href="/research/">Research</a><ul>
+<li><a href="/research/">Research</a>
+<ul>
+<li><a href="/research/Public-engagement-with-Research/">Public Engagement with Research</a></li>
+<li><a href="/research/Research-Facilities/">Research Facilities</a></li>
+<li><a href="/research/Research-Environment/">Research Environment</a></li>
+<li><a href="/study/research-degrees/">Research Degrees</a></li>
+<li><a href="/research/Research-Excellence-Framework/">Research Excellence Framework</a></li>
+</ul>
+</li>
+<li><a href="/research/Our-impactful-research/">Our Impactful Research</a>
+<ul>
+<li><a href="/research/Our-impactful-research/Research-in-Business-and-Digital-Technologies/">Research in Business and Digital Technologies</a></li>
+<li><a href="/research/Our-impactful-research/Research-in-Education-and-the-Arts/">Research in Education and the Arts</a></li>
+<li><a href="/research/Our-impactful-research/Research-and-Knowledge-Exchange-in-Health-and-Wellbeing-/">Research and Knowledge Exchange in Health and Wellbeing </a></li>
+<li><a href="/research/Our-impactful-research/Research-in-Humanities-and-Social-Sciences/">Research in Humanities and Social Sciences</a></li>
+<li><a href="/research/Our-impactful-research/Research-in-Law-Crime-and-Justice/">Research in Law, Crime and Justice</a></li>
+</ul>
+</li>
+<li><a href="/research/Winchester-University-Press/">Winchester University Press</a></li>
+<li>HR Excellence in Research Award</li>
+</ul></li> 
+
+<li><a href="/About-Us/">About Us</a><ul>
+<li><a href="/About-Us/">About us</a>
+<ul>
+<li><a href="/About-Us/Our-values/">Our Values</a></li>
+<li><a href="/About-Us/Our-history/">Our History</a></li>
+<li><a href="/About-Us/Work-with-us/">Working with us</a></li>
+</ul>
+</li>
+<li><a href="/About-Us/Leadership-and-governance/">Leadership &amp; governance</a>
+<ul>
+<li><a href="/About-Us/Leadership-and-governance/">Senior management &amp; Governors</a></li>
+<li><a href="/About-Us/Academic-excellence/">Academic excellence</a></li>
+<li><a href="/About-Us/Academic-excellence/Teaching-Excellence-Framework/">Teaching excellence framework</a></li>
+<li><a href="/About-Us/Academic-excellence/Learning-and-teaching-development/">Learning &amp; teaching development</a></li>
+<li><a href="/About-Us/Academic-excellence/A-Quality-Culture/">A quality culture</a></li>
+<li><a href="/About-Us/Leadership-and-governance/Staff-Directory/">Staff directory</a></li>
+</ul>
+</li>
+<li><a href="/About-Us/Leadership-and-governance/Our-faculties/">Our Faculties</a>
+<ul>
+<li><a href="/About-Us/Leadership-and-governance/Our-faculties/ea/">Faculty of Education and the Arts</a></li>
+<li><a href="/About-Us/Leadership-and-governance/Our-faculties/bdt/">Faculty of Business and Digital Technologies</a></li>
+<li><a href="/About-Us/Leadership-and-governance/Our-faculties/hss/">Faculty of Humanities and Social Sciences</a></li>
+<li><a href="/About-Us/Leadership-and-governance/Our-faculties/hwb/">Faculty of Health and Wellbeing</a></li>
+<li><a href="/About-Us/Leadership-and-governance/Our-faculties/LCJ/">Faculty of Law, Crime and Justice</a></li>
+</ul>
+</li>
+<li><a href="/About-Us/Corporate-Information/">Corporate Information</a>
+<ul>
+<li><a href="/About-Us/Our-future/Financial-Information/">Financial Information</a></li>
+<li><a href="/About-Us/Corporate-Information/Remuneration-Committee/">Remuneration committee</a></li>
+<li><a href="/About-Us/Leadership-and-governance/Charitable-Status/">Charitable status</a></li>
+<li><a href="/About-Us/Leadership-and-governance/Policies-and-Regulations/">Policies&nbsp;and regulations</a></li>
+<li><a href="/About-Us/Leadership-and-governance/termsandconditions/">Terms and conditions</a></li>
+<li><a href="/About-Us/Corporate-Information/Gender-Pay-Gap-Report/">Gender pay gap</a></li>
+</ul>
+</li>
+<li><a href="/About-Us/Alumni/">Alumni</a>
+<ul>
+<li><a href="/About-Us/Alumni/Alumni-News-and-Stories/">Alumni news &amp; stories</a></li>
+<li><a href="/News-and-Events/">Events</a></li>
+<li><a href="/About-Us/Alumni/Our-alumni-community/">Our alumni community</a></li>
+<li><a href="/About-Us/Alumni/Benefits-and-Replacement-Certificates/">Benefits, discounts &amp; merchandise</a></li>
+<li><a href="/About-Us/Alumni/Update-Details-and-Alumni-Data-Privacy-Notice/">Update details</a></li>
+<li><a href="/About-Us/Alumni/Get-Involved/">Get involved</a></li>
+<li><a href="/About-Us/Donating-to-the-University/">Donating to the University</a></li>
+</ul>
+</li>
+<li><a href="/About-Us/Conferencing-and-Facilities/">Venue hire &amp; Facilities</a>
+<ul>
+<li><a href="/About-Us/Conferencing-and-Facilities/Conferences-and-Meetings/">Conference &amp; events booking</a></li>
+<li><a href="/About-Us/Conferencing-and-Facilities/Celebrations-Weddings-and-Private-Dinners/">Wedding &amp; functions</a></li>
+<li><a href="/About-Us/Conferencing-and-Facilities/Stay-with-Us/">Private letting</a></li>
+<li><a href="/About-Us/Conferencing-and-Facilities/Sport/">Sport and gym</a></li>
+<li><a href="/About-Us/Conferencing-and-Facilities/library/">Library</a></li>
+</ul>
+</li>
+</ul></li>
+
+<li><a href="/News-and-Events/On-Campus-Events/">Open Days &amp; Events</a><ul>
+<li><a href="https://winchester.ac.uk/News-and-Events/On-Campus-Events/Open-Days-/">Undergraduate Open Days&nbsp;</a></li>
+<li><a href="/News-and-Events/On-Campus-Events/Campus-Tours/">Campus Tours</a></li>
+<li><a href="/Landing-Pages/Pathways-programmes/">Academic Pathways Programme Sessions</a>&nbsp;</li>
+<li><a href="/News-and-Events/On-Campus-Events/Postgraduate-Events/">Postgraduate Events</a></li>
+</ul></li> 
+
+ <!-- mega menu -->
+                    
+                    <li class="uow-navigation__search-icon">
+                        <a href="#" class="has-subnav" aria-label="Search Winchester.ac.uk">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </a>
+                        <ul class="search-modal">
+                            <li class="inner">
+                                <div class="course-search">
+                                    <div id="site-search-uow">
+                                        <div id="site-search-uow">
+               <!-- <span class="close-site-search" id="site-search-close">Close x</span>-->
+                <form action="/search/">
+                    <img class="search-icon" src="/media/Site-assets/img/image/search-large-white.svg" />
+                    <div>
+                        <label for="course-search" class="uow-navigation__menu-search-label">Search</label>
+                        <input name="query" class="site-search-input uow-navigation__menu-search" type="text" placeholder="Search">
+                    </div>
+                    <button type="submit" class="search-button">All results<span></span></button>
+                </form>
+</div>
+<!-- END .site-search -->
+                                        <!--<form action="https://devcms.winchester.ac.uk/terminalfour/preview/1/en/323">
+                                            <img class="search-icon" src="https://devcms.winchester.ac.uk/terminalfour/SiteManager?ctfn=download&fnno=60&ceid=60877a22e8c1cfbc68d08679266fec81b0e3d4f1"/>
+                                            <div>
+                                                <label for="course-search" class="uow-navigation__menu-search-label">Search</label>
+                                                <input id="course-search" name="query" class="site-search-input uow-navigation__menu-search" type="text" placeholder="Search for a subject area or course"/>
+                                            </div>
+                                            <button type="submit" class="search-button">All results<span></span>
+                                            </button>
+                                        </form>-->
+                                    </div>
+                                    <!-- END .site-search -->
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+    <!-- END header -->
+
+    <main id="main-content">
+
+        <nav class="breadcrumbs">
+    <ul>
+        <li><a href="javascript:void(0):">Home</a></li>
+        <li><a href="javascript:void(0):">Level 1</a></li>
+        <li><a href="javascript:void(0):">Level 2</a></li>
+    </ul>
+</nav>
+     <!-- /404/redirect-update.csv --><span id="d.en.247175"></span>
+
+<div class="rich-text">
+    <h2>OOOPS, PAGE NOT FOUND</h2>
+        
+    <p>We have recently updated our website and we may have missed a page.</p>
+<h2>WHAT TO DO NEXT?</h2>
+<ul>
+<li>Use our&nbsp;search function in the top right-hand corner</li>
+<li>Go to our <a href="/">homepage</a></li>
+<li>You could call us +44 (0) 1962 841515</li>
+</ul>
+<p>&nbsp;</p>
+</div><!-- New PHP Redirects --> </main>
+        <!-- END main -->
+
+        <footer id="footer"><!-- 2023 Footer -->
+							<div class="uow-footer">
+	<div class="uow-footer__inner">
+		<div class="uow-footer__logo">
+			<a href="/" aria-label="Return to the University of Winchester homepage">
+				<img src="/media/Site-assets/img/image/logo/logo-white.svg" alt="" style="    " />
+			</a>
+		</div>
+		<div class="uow-footer__contact">
+			<h3>Contact Us</h3>
+      <ul>
+			<p>University of Winchester
+Sparkford Road,
+Winchester.
+Hampshire.
+SO22 4NR.
+</p>
+
+<br>
+<p><a  href="tel:44 (0) 1962 841515 
+ " onClick="gtag('event', 'click', { event_category: 'event', event_label: 'Contact us telephone'});" style="color:white;">Tel: +44 (0) 1962 841515 
+ </a></p>
+
+
+
+<p><a href="mailto:enquiries@winchester.ac.uk" onClick="gtag('event', 'click', { event_category: 'event', event_label: 'Contact us email'});" style="color:white;">enquiries@winchester.ac.uk
+</a></p>
+
+      </ul>
+		</div>
+		<div class="uow-footer__quick-links">
+			<h3>Quick Links</h3>
+      <ul style="margin-bottom:30px;">
+			<li><a href="/study/">Study</a></li><li><a href="/international/">International</a></li><li><a href="/student-life/">Student Life</a></li><li><a href="/collaborate/">Collaborate</a></li><li><a href="/research/">Research</a></li><li><a href="/About-Us/">About Us</a></li><li><a href="http://store.winchester.ac.uk/">Online store</a></li><li><a href="https://www.winchester.ac.uk/student-life/Students-and-money/Online-Payments/">Payment Portal</a></li><li><a href="https://www.winchester.ac.uk/About-Us/Corporate-Information/">Corporate and Statutory Information</a></li>
+      </ul>
+      <ul>
+        <li><a href="/About-Us/Alumni/">Alumni</a></li><li><a href="https://unimailwinchesterac.omniacloud.net/start" target="_blank">Current Students</a></li><li><a href="https://unimailwinchesterac.omniacloud.net/start" target="_blank">Staff</a></li>
+      </ul>
+		</div>
+		<div class="uow-footer__policies">
+			<h3>Policies</h3>
+      <ul>
+        <li><a href="/About-Us/Leadership-and-governance/Disclaimer/">Disclaimer</a></li><li><a href="/About-Us/Leadership-and-governance/Privacy-and-cookie-policy/">Privacy and cookie policy</a></li><li><a href="/About-Us/Leadership-and-governance/Freedom-of-information/">Freedom of Information</a></li><li><a href="/About-Us/Sustainable-Campus-and-Community/Modern-slavery/">Modern Slavery Statement</a></li><li><a href="/Accessibility/">Accessibility</a></li><li><a href="/About-Us/Freedom-of-Speech-and-Academic-Freedom/">Freedom of Speech</a></li>
+      </ul>
+		</div>
+		<div class="uow-footer__social">
+			<h3>Follow Us</h3>
+			<a href="https://www.facebook.com/UniversityofWinchester/" aria-label="Follow us on Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+
+<a href="https://twitter.com/_UoW" aria-label="Follow us on Twitter"><i class="fa-brands fa-twitter"></i></a>
+
+<a href="https://www.instagram.com/uniwinchester" aria-label="Follow us on Instagram"><i class="fa-brands fa-instagram"></i></a>
+
+<a href="https://www.youtube.com/user/UniofWinchester" aria-label="Follow us on YouTube"><i class="fa-brands fa-youtube"></i></a>
+
+<a href="https://www.linkedin.com/edu/school?id=12734" aria-label="Follow us on LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+
+
+
+
+ 
+		</div>
+	</div>
+	<div class="uow-footer__accreditations">
+		<div class="logo"><a href="https://www.armedforcescovenant.gov.uk/"><img src="/media/Site-assets/img/image/logo/Armed-Forces-Covenant-Silver.jpg.jpeg" alt="Armed Forces logo"></a></div>
+
+<div class="logo"><a href="https://disabilityconfident.campaign.gov.uk/"><img src="/media/Site-assets/img/image/logo/Disability-web-version.jpg" alt="Disability Confident Employer logo"></a></div>
+
+<div class="logo"><a href="https://ecochurch.arocha.org.uk/"><img src="/media/Site-assets/img/image/logo/eco-award-2021-gold.jpg" alt="Eco Church Gold Award 2020 logo"></a></div>
+
+<div class="logo"><a href="https://www.winchester.ac.uk/news-and-events/press-centre/media-articles/outstanding-ofsted-for-teacher-training-at-university-of-winchester.php"><img src="/media/Site-assets/img/image/logo/logo-ofsted.jpg" alt="Ofsted Outstanding Provider logo"></a></div>
+
+<div class="logo"><a href="https://www.qaa.ac.uk/en"><img src="/media/Site-assets/img/image/logo/logo-qaa.jpg" alt="QAA UK Quality Assured logo"></a></div>
+
+<div class="logo"><a href="https://sustainability.nus.org.uk/responsible-futures"><img src="/media/Site-assets/img/image/logo/NUS-accredited-RF-colour.jpg" alt="NUS Responsible Futures logo"></a></div>
+
+<div class="logo"><a href="https://www.unprme.org/"><img src="/media/Site-assets/img/image/logo/PRME-Champions-logo_176x41.png" alt="Principles for Responsible Management Education Champions 2018-2019 logo"></a></div>
+
+<div class="logo"><a href="https://www.unsdsn.org/"><img src="/media/Site-assets/img/image/logo/sdsn.png" alt="Sustainable Development Goals logo"></a></div>
+
+<div class="logo"><a href="http://www.stonewall.org.uk/"><img src="/media/Site-assets/img/image/logo/stonewall-diversity-champion.jpg" alt="Stonewall Diversity Champion logo"></a></div>
+
+<div class="logo"><a href="https://www.bqf.org.uk/uk-excellence-award-2018/"><img src="/media/Site-assets/img/image/logo/UK-Excellence-Award---coloured.jpeg" alt="UK Excellence Award Logo"></a></div>
+
+
+
+
+	</div>
+</div>
+					<!-- End 2023 Footer -->
+        </footer>
+        <!-- END footer -->
+
+<div class="cookie-policy">
+
+<p>This website uses cookies to improve user experience. By using our website, you consent to all cookies in accordance with our <a href="/privacy-and-cookie-policy/">Cookie Policy</a>. <a class="btn" href="#cookie-continue">I agree</a>
+</p>
+</div>
+
+				<!-- Site Alerts -->
+				
+				
+				<!-- End Site Alerts -->
+
+				<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-106986799-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-106986799-1');
+</script>
+
+<script type="text/javascript">
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+            m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-15819991-3', 'youtube.com');
+        ga('send', 'pageview');
+
+    </script>
+
+    <script type="text/javascript">  	var _gaq = _gaq || [];
+	  	_gaq.push(['_setAccount', 'UA-15819991-2']);
+	  	_gaq.push(['_setDomainName', '.winchester.ac.uk']);
+	  	_gaq.push(['_setAllowHash', false]);
+	  	_gaq.push(['_trackPageview']); 
+	  	_gaq.push(['_trackPageLoadTime']);
+
+		(function() {
+	  		var ga = document.createElement('script'); 
+			ga.type = 'text/javascript'; 
+			ga.async = true;
+		    	ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://') + 'stats.g.doubleclick.net/dc.js';
+	   		var s = document.getElementsByTagName('script')[0]; 
+			s.parentNode.insertBefore(ga, s);
+	 	 })();
+
+	</script> 
+
+
+<!-- Google Code for Remarketing Tag -->
+<!--------------------------------------------------
+Remarketing tags may not be associated with personally identifiable information or placed on pages related to sensitive categories. See more information and instructions on how to setup the tag on: http://google.com/ads/remarketingsetup
+--------------------------------------------------->
+<script type="text/javascript">
+/* <![CDATA[ */
+var google_conversion_id = 845905054;
+var google_custom_params = window.google_tag_params;
+var google_remarketing_only = true;
+/* ]]> */
+</script>
+<script type="text/javascript" src="//www.googleadservices.com/pagead/conversion.js">
+</script>
+<noscript>
+<div style="display:inline;">
+<img height="1" width="1" style="border-style:none;" alt="" src="//googleads.g.doubleclick.net/pagead/viewthroughconversion/845905054/?guid=ON&script=0"/>
+</div>
+</noscript>
+
+
+
+
+        <!--[if gte IE 9]><!-->
+            <!-- Using version 1 for consistency with IE8 version in <head> -->
+            <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <!--<![endif]-->
+
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBCJmT_-7mZHmYqGTSAVIEwy0-AyXxQCm4" type="text/javascript"></script>
+
+    
+
+				<script type="text/javascript" src="/media/Site-assets/JS/plugins.min.js"></script><!-- plugins.js -->
+				<script type="text/javascript" src="/media/Site-assets/JS/main.min.js"></script><!-- main.js -->
+
+
+        <!-- Go to www.addthis.com/dashboard to customize your tools -->
+        <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-53710434170c1543"></script>
+<!--Start Cookie Script-->
+<!-- <script type="text/javascript" charset="UTF-8" src="//cookie-script.com/s/96272cb8991beca790fd1add32664059.js"></script> -->
+<!--End Cookie Script-->
+<!-- div class="pubble-app" data-app-id="45482" data-app-identifier="45482"></div -->
+<!-- script type="text/javascript" src="https://cdn.pubble.io/javascript/loader.js" defer></script -->
+
+				<!-- 2023 updates -->
+          <!-- app-new.min.js 2023 -->
+					<script type="text/javascript" src="/media/Site-assets/JS/app.js"></script>
+<script type="text/javascript">window.GeckoChatSettings={widgetId:"21AC0000sxpeq50051tnivj2vx-01JXHX7RM1WZ50FBB69F3EFYSY",accountName:"uow",};</script><script type="text/javascript" src=https://chat-widget.geckoengage.com></script>
+</body>
+</html>

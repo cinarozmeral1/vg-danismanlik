@@ -1,23 +1,52 @@
 // Vercel Cron Job - Generate Blog Post Every 3 Days
 // Schedule: "0 9 */3 * *" (Every 3 days at 09:00 UTC)
+// 
+// Bu endpoint external cron service (cron-job.org veya GitHub Actions) tarafından çağrılabilir
+// Güvenlik için CRON_SECRET gereklidir
 
 const { generateBlogPost } = require('../../services/blogAIService');
 
-module.exports = async function handler(req, res) {
-    // Verify this is a legitimate cron request
-    const authHeader = req.headers.authorization;
+// CRON_SECRET for secure external access
+const CRON_SECRET = process.env.CRON_SECRET;
+
+module.exports = async (req, res) => {
+    console.log('🔔🔔🔔 CRON ENDPOINT CALLED 🔔🔔🔔');
+    console.log('⏰ Timestamp:', new Date().toISOString());
+    console.log('📡 Method:', req.method);
     
-    // Check for Vercel cron secret (optional but recommended)
-    if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-        // Also allow direct calls for testing
-        if (req.query.secret !== process.env.CRON_SECRET && !req.query.test) {
-            console.log('⚠️ Unauthorized cron attempt');
-            return res.status(401).json({ error: 'Unauthorized' });
-        }
+    // Check authorization
+    const isVercelCron = !!req.headers['x-vercel-cron'];
+    const providedSecret = req.query.secret || req.headers['x-cron-secret'] || req.headers['authorization']?.replace('Bearer ', '');
+    const isAuthorized = isVercelCron || (CRON_SECRET && providedSecret === CRON_SECRET);
+    
+    console.log('🔐 Authorization check:', {
+        isVercelCron,
+        hasSecret: !!CRON_SECRET,
+        secretProvided: !!providedSecret,
+        isAuthorized
+    });
+    
+    // Allow GET for health check, POST for actual generation
+    if (req.method === 'GET' && !providedSecret && !isVercelCron) {
+        return res.status(200).json({
+            success: true,
+            message: 'Blog cron endpoint is active',
+            timestamp: new Date().toISOString(),
+            hint: 'Use POST with ?secret=YOUR_CRON_SECRET to generate a blog post'
+        });
+    }
+    
+    // Verify authorization for blog generation
+    if (!isAuthorized) {
+        console.warn('⛔ Unauthorized cron request');
+        return res.status(401).json({
+            success: false,
+            error: 'Unauthorized. Provide valid CRON_SECRET.',
+            timestamp: new Date().toISOString()
+        });
     }
     
     console.log('📝 Starting scheduled blog generation...');
-    console.log('⏰ Timestamp:', new Date().toISOString());
     
     try {
         const startTime = Date.now();
@@ -42,7 +71,8 @@ module.exports = async function handler(req, res) {
                 url: `/blog/${post.slug}`
             },
             duration: `${duration}s`,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            source: isVercelCron ? 'vercel-cron' : 'external-cron'
         });
         
     } catch (error) {

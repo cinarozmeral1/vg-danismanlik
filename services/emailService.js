@@ -1,6 +1,38 @@
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 
+// Professional Email Signature HTML
+const getEmailSignature = () => {
+    return `
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+            <p style="margin: 0 0 15px 0; color: #333; font-style: italic; font-weight: 500;">Kind Regards,</p>
+            
+            <p style="margin: 0 0 3px 0; color: #1a365d; font-weight: bold; font-size: 16px; font-style: italic;">Çınar Özmeral</p>
+            <p style="margin: 0 0 3px 0; color: #1a365d; font-weight: bold; font-style: italic;">Senior Consultant</p>
+            <p style="margin: 0 0 15px 0; color: #1a365d; font-weight: bold; font-style: italic;">Vg Consultancy</p>
+            
+            <p style="margin: 0 0 3px 0;">
+                <a href="https://vgdanismanlik.com" style="color: #2563eb; text-decoration: underline; font-weight: bold; font-style: italic;">vgdanismanlik.com</a>
+            </p>
+            <p style="margin: 0 0 3px 0; color: #1a365d; font-weight: bold; font-style: italic;">CZ: +420 776 791 541</p>
+            <p style="margin: 0 0 20px 0; color: #1a365d; font-weight: bold; font-style: italic;">TR: +90 539 927 30 08</p>
+            
+            <table cellpadding="0" cellspacing="0" border="0" style="margin-top: 15px;">
+                <tr>
+                    <td style="vertical-align: middle; padding-right: 15px;">
+                        <img src="https://vgdanismanlik.com/images/logos/venture-global-logo.png" alt="Venture Global" style="height: 80px; width: auto;">
+                    </td>
+                    <td style="vertical-align: middle;">
+                        <p style="margin: 0; color: #1e40af; font-size: 18px; font-weight: bold;">VENTURE GLOBAL <sup style="font-size: 10px;">®</sup></p>
+                        <p style="margin: 0; color: #3b82f6; font-size: 14px; font-weight: 600;">YURT DIŞI EĞİTİM</p>
+                        <p style="margin: 0; color: #3b82f6; font-size: 14px; font-weight: 600;">DANIŞMANLIĞI</p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    `;
+};
+
 // Email configuration
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -104,9 +136,7 @@ const sendVerificationEmail = async (email, firstName, verificationToken, langua
                         
                         <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
                         
-                        <p style="color: #999; font-size: 12px; text-align: center;">
-                            Venture Global - Avrupa Üniversite ve Dil Okulu Danışmanlığı
-                        </p>
+                        ${getEmailSignature()}
                     </div>
                 </div>
             `
@@ -139,9 +169,7 @@ const sendVerificationEmail = async (email, firstName, verificationToken, langua
                         
                         <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
                         
-                        <p style="color: #999; font-size: 12px; text-align: center;">
-                            Venture Global - European University and Language School Consultancy
-                        </p>
+                        ${getEmailSignature()}
                     </div>
                 </div>
             `
@@ -151,7 +179,7 @@ const sendVerificationEmail = async (email, firstName, verificationToken, langua
     const content = emailContent[language] || emailContent.tr;
     
     const mailOptions = {
-        from: process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com',
+        from: `"Venture Global" <${process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com'}>`,
         to: email,
         subject: content.subject,
         html: content.html
@@ -219,11 +247,7 @@ const sendPasswordResetEmail = async (email, firstName, resetToken, language = '
                             Bu e-postayı siz talep etmediyseniz, lütfen dikkate almayın.
                         </p>
                         
-                        <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
-                        
-                        <p style="color: #999; font-size: 12px; text-align: center;">
-                            Venture Global - Avrupa Üniversite ve Dil Okulu Danışmanlığı
-                        </p>
+                        ${getEmailSignature()}
                     </div>
                 </div>
             `
@@ -254,11 +278,7 @@ const sendPasswordResetEmail = async (email, firstName, resetToken, language = '
                             If you didn't request this email, please ignore it.
                         </p>
                         
-                        <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
-                        
-                        <p style="color: #999; font-size: 12px; text-align: center;">
-                            Venture Global - European University and Language School Consultancy
-                        </p>
+                        ${getEmailSignature()}
                     </div>
                 </div>
             `
@@ -268,7 +288,7 @@ const sendPasswordResetEmail = async (email, firstName, resetToken, language = '
     const content = emailContent[language] || emailContent.tr;
     
     const mailOptions = {
-        from: process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com',
+        from: `"Venture Global" <${process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com'}>`,
         to: email,
         subject: content.subject,
         html: content.html
@@ -329,11 +349,7 @@ const sendApplicationCreationEmail = async (email, firstName, lastName, universi
                             </a>
                         </div>
                         
-                        <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
-                        
-                        <p style="color: #999; font-size: 12px; text-align: center;">
-                            Venture Global - Avrupa Üniversite ve Dil Okulu Danışmanlığı
-                        </p>
+                        ${getEmailSignature()}
                     </div>
                 </div>
             `
@@ -376,11 +392,7 @@ const sendApplicationCreationEmail = async (email, firstName, lastName, universi
                             </a>
                         </div>
                         
-                        <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
-                        
-                        <p style="color: #999; font-size: 12px; text-align: center;">
-                            Venture Global - European University and Language School Consultancy
-                        </p>
+                        ${getEmailSignature()}
                     </div>
                 </div>
             `
@@ -390,7 +402,7 @@ const sendApplicationCreationEmail = async (email, firstName, lastName, universi
     const content = emailContent[language] || emailContent.tr;
     
     const mailOptions = {
-        from: process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com',
+        from: `"Venture Global" <${process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com'}>`,
         to: email,
         subject: content.subject,
         html: content.html
@@ -471,11 +483,7 @@ const sendApplicationStatusEmail = async (email, firstName, lastName, university
                         </p>
                         
                         
-                        <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
-                        
-                        <p style="color: #999; font-size: 12px; text-align: center;">
-                            Venture Global - Avrupa Üniversite ve Dil Okulu Danışmanlığı
-                        </p>
+                        ${getEmailSignature()}
                     </div>
                 </div>
             `
@@ -517,11 +525,7 @@ const sendApplicationStatusEmail = async (email, firstName, lastName, university
                         </p>
                         
                         
-                        <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
-                        
-                        <p style="color: #999; font-size: 12px; text-align: center;">
-                            Venture Global - European University and Language School Consultancy
-                        </p>
+                        ${getEmailSignature()}
                     </div>
                 </div>
             `
@@ -531,7 +535,7 @@ const sendApplicationStatusEmail = async (email, firstName, lastName, university
     const content = emailContent[language] || emailContent.tr;
     
     const mailOptions = {
-        from: process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com',
+        from: `"Venture Global" <${process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com'}>`,
         to: email,
         subject: content.subject,
         html: content.html
@@ -609,11 +613,7 @@ const sendPartnerVerificationEmail = async (email, name, verificationToken, lang
                             Bu e-postayı siz talep etmediyseniz, lütfen dikkate almayın.
                         </p>
                         
-                        <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
-                        
-                        <p style="color: #999; font-size: 12px; text-align: center;">
-                            Venture Global - Avrupa Üniversite ve Dil Okulu Danışmanlığı
-                        </p>
+                        ${getEmailSignature()}
                     </div>
                 </div>
             `
@@ -653,11 +653,7 @@ const sendPartnerVerificationEmail = async (email, name, verificationToken, lang
                             If you didn't request this email, please ignore it.
                         </p>
                         
-                        <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
-                        
-                        <p style="color: #999; font-size: 12px; text-align: center;">
-                            Venture Global - European University and Language School Consultancy
-                        </p>
+                        ${getEmailSignature()}
                     </div>
                 </div>
             `
@@ -667,7 +663,7 @@ const sendPartnerVerificationEmail = async (email, name, verificationToken, lang
     const content = emailContent[language] || emailContent.tr;
     
     const mailOptions = {
-        from: process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com',
+        from: `"Venture Global" <${process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com'}>`,
         to: email,
         subject: content.subject,
         html: content.html
@@ -696,7 +692,8 @@ const sendVisaApplicationEmail = async (user, country, consulateCity, status) =>
         'Austria': 'Avusturya',
         'UK': 'İngiltere',
         'Poland': 'Polonya',
-        'Hungary': 'Macaristan'
+        'Hungary': 'Macaristan',
+        'Netherlands': 'Hollanda'
     };
     
     const statusMessages = {
@@ -753,18 +750,13 @@ const sendVisaApplicationEmail = async (user, country, consulateCity, status) =>
                     Herhangi bir sorunuz varsa bizimle iletişime geçmekten çekinmeyin.
                 </p>
                 
-                <hr style="border: none; border-top: 1px solid #dee2e6; margin: 25px 0;">
-                
-                <div style="text-align: center;">
+                <div style="text-align: center; margin-bottom: 20px;">
                     <a href="https://vgdanismanlik.com/login" style="background: #0078D7; color: white; padding: 12px 25px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
                         Hesabıma Git
                     </a>
                 </div>
-            </div>
-            
-            <div style="text-align: center; color: #999; font-size: 12px; margin-top: 20px;">
-                <p>© 2024 Venture Global - Eğitim Danışmanlığı</p>
-                <p>info@vgdanismanlik.com | +90 539 927 30 08</p>
+                
+                ${getEmailSignature()}
             </div>
         </div>
     `;

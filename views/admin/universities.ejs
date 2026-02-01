@@ -20,6 +20,7 @@
                 <span>Başvurular</span>
                 <span class="badge bg-success ms-auto"><%= applicationCount %></span>
             </a>
+            <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
             <a href="/admin/partners" class="nav-item">
                 <i class="fas fa-handshake"></i>
                 <span>Partnerler</span>
@@ -27,14 +28,21 @@
                     <span class="badge bg-info ms-auto"><%= partnerCount %></span>
                 <% } %>
             </a>
+            <% } %>
             <a href="/admin/universities" class="nav-item active">
                 <i class="fas fa-university"></i>
                 <span>Üniversiteler</span>
             </a>
+            <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
             <a href="/admin/backups" class="nav-item">
                 <i class="fas fa-database"></i>
                 <span>Yedekleme</span>
             </a>
+            <a href="/admin/admins" class="nav-item">
+                <i class="fas fa-user-shield"></i>
+                <span>Adminler</span>
+            </a>
+            <% } %>
         </nav>
     </div>
 
@@ -46,19 +54,57 @@
             <p class="text-muted">Üniversite bilgilerini yönetin</p>
         </div>
 
+        <!-- Filter and Controls -->
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold"><i class="fas fa-filter me-2"></i>Ülke Filtresi</label>
+                        <select class="form-select" id="countryFilter" onchange="filterByCountry()">
+                            <option value="">Tüm Ülkeler</option>
+                            <% if (typeof countries !== 'undefined' && countries.length > 0) { %>
+                                <% countries.forEach(country => { %>
+                                    <option value="<%= country %>"><%= country %></option>
+                                <% }); %>
+                            <% } %>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold"><i class="fas fa-sort me-2"></i>Sıralama Modu</label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="sortModeToggle" onchange="toggleSortMode()">
+                            <label class="form-check-label" for="sortModeToggle">Sürükle-Bırak Sıralama</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <button class="btn btn-success" id="saveSortOrderBtn" style="display: none;" onclick="saveSortOrder()">
+                            <i class="fas fa-save me-2"></i>Sıralamayı Kaydet
+                        </button>
+                        <button class="btn btn-primary" id="createNewUniversityBtn">
+                            <i class="fas fa-plus me-2"></i>Yeni Üniversite
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Info Alert for Sorting -->
+        <div class="alert alert-info mb-3" id="sortingInfo" style="display: none;">
+            <i class="fas fa-info-circle me-2"></i>
+            Sıralama modu aktif. Satırları sürükleyerek sıralayın, ardından <strong>"Sıralamayı Kaydet"</strong> butonuna tıklayın.
+        </div>
+
         <!-- Universities Table -->
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Üniversite Listesi (<%= universities.length %>)</h5>
-                <button class="btn btn-primary btn-sm" id="createNewUniversityBtn">
-                    <i class="fas fa-plus me-2"></i>Yeni Üniversite
-                </button>
+                <h5 class="mb-0">Üniversite Listesi (<span id="universityCount"><%= universities.length %></span>)</h5>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-hover">
+                    <table class="table table-hover" id="universitiesTable">
                         <thead>
                             <tr>
+                                <th style="width: 40px;" id="dragHeader" class="d-none"><i class="fas fa-arrows-alt"></i></th>
                                 <th>Üniversite Adı</th>
                                 <th>Ülke</th>
                                 <th>Şehir</th>
@@ -67,10 +113,13 @@
                                 <th>İşlemler</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="universitiesBody">
                             <% if (universities && universities.length > 0) { %>
-                                <% universities.forEach(university => { %>
-                                <tr>
+                                <% universities.forEach((university, index) => { %>
+                                <tr data-id="<%= university.id %>" data-country="<%= university.country %>" data-sort="<%= university.sort_order || index %>">
+                                    <td class="drag-handle d-none" style="cursor: grab;">
+                                        <i class="fas fa-grip-vertical text-muted"></i>
+                                    </td>
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <% if (university.logo_url) { %>
@@ -147,7 +196,11 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <script>
+    let sortable = null;
+    let sortModeActive = false;
+    
     // Event delegation for university action buttons and create buttons
     document.addEventListener('click', function(e) {
         // Create new university buttons
@@ -197,27 +250,183 @@
         window.location.href = '/admin/universities/new';
     }
 
-    // Page load sorting
-    document.addEventListener('DOMContentLoaded', function() {
-        setupTableSorting();
-    });
-
-    function setupTableSorting() {
-        const table = document.querySelector('table');
-        if (table) {
-            const tbody = table.querySelector('tbody');
-            const rows = Array.from(tbody.querySelectorAll('tr'));
+    // Filter by country
+    function filterByCountry() {
+        const selectedCountry = document.getElementById('countryFilter').value;
+        const rows = document.querySelectorAll('#universitiesBody tr[data-id]');
+        let visibleCount = 0;
+        
+        rows.forEach(row => {
+            const country = row.getAttribute('data-country');
+            if (!selectedCountry || country === selectedCountry) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        
+        document.getElementById('universityCount').textContent = visibleCount;
+        
+        // Disable sorting mode if filter is active
+        if (selectedCountry && sortModeActive) {
+            document.getElementById('sortModeToggle').checked = false;
+            toggleSortMode();
+            alert('Ülke filtresi aktifken sıralama modu kullanılamaz. Sıralama için filtreyi temizleyin.');
+        }
+    }
+    
+    // Toggle sort mode
+    function toggleSortMode() {
+        sortModeActive = document.getElementById('sortModeToggle').checked;
+        const dragHeader = document.getElementById('dragHeader');
+        const dragHandles = document.querySelectorAll('.drag-handle');
+        const saveSortBtn = document.getElementById('saveSortOrderBtn');
+        const sortingInfo = document.getElementById('sortingInfo');
+        const countryFilter = document.getElementById('countryFilter');
+        
+        if (sortModeActive) {
+            // Check if filter is active
+            if (countryFilter.value) {
+                document.getElementById('sortModeToggle').checked = false;
+                sortModeActive = false;
+                alert('Sıralama modu için önce ülke filtresini temizleyin.');
+                return;
+            }
             
-            rows.sort((a, b) => {
-                const aFeatured = a.querySelector('.badge.bg-warning') !== null;
-                const bFeatured = b.querySelector('.badge.bg-warning') !== null;
-                
-                if (aFeatured && !bFeatured) return -1;
-                if (!aFeatured && bFeatured) return 1;
-                return 0;
+            // Show drag handles
+            dragHeader.classList.remove('d-none');
+            dragHandles.forEach(h => h.classList.remove('d-none'));
+            saveSortBtn.style.display = 'inline-block';
+            sortingInfo.style.display = 'block';
+            countryFilter.disabled = true;
+            
+            // Initialize Sortable
+            const tbody = document.getElementById('universitiesBody');
+            sortable = new Sortable(tbody, {
+                handle: '.drag-handle',
+                animation: 150,
+                ghostClass: 'bg-light',
+                chosenClass: 'bg-primary-subtle',
+                onEnd: function() {
+                    // Mark as changed
+                    saveSortBtn.classList.add('btn-warning');
+                    saveSortBtn.classList.remove('btn-success');
+                }
+            });
+        } else {
+            // Hide drag handles
+            dragHeader.classList.add('d-none');
+            dragHandles.forEach(h => h.classList.add('d-none'));
+            saveSortBtn.style.display = 'none';
+            sortingInfo.style.display = 'none';
+            countryFilter.disabled = false;
+            
+            // Destroy Sortable
+            if (sortable) {
+                sortable.destroy();
+                sortable = null;
+            }
+        }
+    }
+    
+    // Save sort order
+    async function saveSortOrder() {
+        const btn = document.getElementById('saveSortOrderBtn');
+        const originalText = btn.innerHTML;
+        
+        // Show loading state
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Kaydediliyor...';
+        
+        const rows = document.querySelectorAll('#universitiesBody tr[data-id]');
+        const order = [];
+        
+        rows.forEach((row, index) => {
+            const id = parseInt(row.getAttribute('data-id'));
+            if (!isNaN(id)) {
+                order.push(id);
+            }
+        });
+        
+        console.log('Saving order:', order);
+        
+        if (order.length === 0) {
+            alert('Sıralanacak üniversite bulunamadı!');
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+            return;
+        }
+        
+        try {
+            const response = await fetch('/admin/universities/reorder', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify({ order })
             });
             
-            rows.forEach(row => tbody.appendChild(row));
+            console.log('Response status:', response.status);
+            
+            // Handle authentication error
+            if (response.status === 401) {
+                alert('Oturum süreniz dolmuş. Lütfen sayfayı yenileyip tekrar giriş yapın.');
+                window.location.href = '/login';
+                return;
+            }
+            
+            const result = await response.json();
+            console.log('Response data:', result);
+            
+            if (result.success) {
+                btn.classList.remove('btn-warning');
+                btn.classList.add('btn-success');
+                btn.innerHTML = '<i class="fas fa-check me-2"></i>Kaydedildi!';
+                
+                // Show success notification
+                const toast = document.createElement('div');
+                toast.className = 'alert alert-success position-fixed';
+                toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; animation: fadeIn 0.3s;';
+                toast.innerHTML = '<i class="fas fa-check-circle me-2"></i>Sıralama başarıyla kaydedildi!';
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 10000);
+                
+                // Reset button after 2 seconds
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.classList.remove('btn-success');
+                    btn.classList.add('btn-warning');
+                }, 2000);
+            } else {
+                alert('Hata: ' + (result.message || 'Bilinmeyen hata'));
+                btn.innerHTML = originalText;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Bir hata oluştu: ' + error.message);
+            btn.innerHTML = originalText;
+        } finally {
+            btn.disabled = false;
         }
     }
 </script>
+
+<style>
+.drag-handle {
+    cursor: grab;
+}
+.drag-handle:active {
+    cursor: grabbing;
+}
+#universitiesBody tr {
+    transition: background-color 0.2s;
+}
+#universitiesBody tr.sortable-ghost {
+    opacity: 0.4;
+}
+#universitiesBody tr.sortable-chosen {
+    background-color: #e3f2fd !important;
+}
+</style>

@@ -1,0 +1,42 @@
+# Slider Logo Dosya İsimleri
+# Logo boyutu: 180x80 px (max), PNG/SVG/JPG formatında
+# Dosyaları bu klasöre koyun: public/images/slider-logos/
+
+1. tum.png - Technical University of Munich (TUM)
+2. edinburgh.png - University of Edinburgh
+3. manchester.png - University of Manchester
+4. kings-college.png - King's College London
+5. lse.png - London School of Economics and Political Science (LSE)
+6. delft.png - Delft University of Technology
+7. amsterdam.png - University of Amsterdam
+8. utrecht.png - Utrecht University
+9. leiden.png - Leiden University
+10. polimi.png - Politecnico di Milano (POLIMI)
+11. sapienza.png - Sapienza University of Rome
+12. bologna.png - University of Bologna
+13. groningen.png - University of Groningen
+14. ctu.png - Czech Technical University (CTU)
+15. vienna.png - University of Vienna
+16. cardiff.png - Cardiff University
+17. radboud.png - Radboud University Nijmegen
+18. charles.png - Charles University (CUNI)
+19. warsaw.png - University of Warsaw
+20. jagiellonian.png - Jagiellonian University
+21. tilburg.png - Tilburg University
+22. bsbi.png - Berlin School of Business and Innovation (BSBI)
+23. masaryk.png - Masaryk University
+24. semmelweis.png - Semmelweis University
+
+# Ekstra logolar (isteğe bağlı, slider'a eklenebilir):
+# dresden.png - Technical University of Dresden (TUD)
+# sussex.png - University of Sussex
+# padova.png - University of Padova
+# torino.png - Politecnico di Torino
+# florence.png - University of Florence
+# cattolica.png - Università Cattolica del Sacro Cuore
+# siena.png - University of Siena
+# economics-prague.png - University of Economics Prague
+# czu.png - Czech University of Life Sciences (CZU)
+# warsaw-tech.png - Warsaw University of Technology
+# agh.png - AGH University of Technology
+

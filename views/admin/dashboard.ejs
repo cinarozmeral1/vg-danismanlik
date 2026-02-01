@@ -20,6 +20,7 @@
                 <span>Başvurular</span>
                 <span class="badge bg-success ms-auto"><%= applicationCount %></span>
             </a>
+            <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
             <a href="/admin/partners" class="nav-item">
                 <i class="fas fa-handshake"></i>
                 <span>Partnerler</span>
@@ -27,14 +28,21 @@
                     <span class="badge bg-info ms-auto"><%= partnerCount %></span>
                 <% } %>
             </a>
+            <% } %>
             <a href="/admin/universities" class="nav-item">
                 <i class="fas fa-university"></i>
                 <span>Üniversiteler</span>
             </a>
+            <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
             <a href="/admin/backups" class="nav-item">
                 <i class="fas fa-database"></i>
                 <span>Yedekleme</span>
             </a>
+            <a href="/admin/admins" class="nav-item">
+                <i class="fas fa-user-shield"></i>
+                <span>Adminler</span>
+            </a>
+            <% } %>
         </nav>
     </div>
 
@@ -145,7 +153,8 @@
             </div>
         </div>
 
-        <!-- Net Profit Card -->
+        <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
+        <!-- Net Profit Card (Sadece Super Admin) -->
         <div class="row mt-4">
             <div class="col-12">
                 <div class="card financial-card profit-card" id="netProfitCard">
@@ -182,9 +191,9 @@
                                 <select class="form-select form-select-sm" id="profitPeriodFilter">
                                     <option value="7days">Son 7 Gün</option>
                                     <option value="30days">Son 30 Gün</option>
-                                    <option value="90days">Son 90 Gün</option>
+                                    <option value="90days" selected>Son 3 Ay</option>
                                     <option value="1year">Son 1 Yıl</option>
-                                    <option value="all" selected>Tüm Zamanlar</option>
+                                    <option value="all">Tüm Zamanlar</option>
                                 </select>
                             </div>
                         </div>
@@ -193,7 +202,7 @@
             </div>
         </div>
 
-        <!-- Financial Filters and Controls -->
+        <!-- Financial Filters and Controls (Sadece Super Admin) -->
         <div class="row mt-4">
             <div class="col-12">
                 <div class="card">
@@ -206,8 +215,8 @@
                                 <label class="form-label">Zaman Aralığı:</label>
                                 <select class="form-select" id="periodFilter">
                                     <option value="7days">Son 7 Gün</option>
-                                    <option value="30days" selected>Son 30 Gün</option>
-                                    <option value="90days">Son 90 Gün</option>
+                                    <option value="30days">Son 30 Gün</option>
+                                    <option value="90days" selected>Son 3 Ay</option>
                                     <option value="1year">Son 1 Yıl</option>
                                     <option value="all">Tüm Zamanlar</option>
                                 </select>
@@ -319,6 +328,7 @@
                 </div>
             </div>
         </div>
+        <% } %>
 
         <!-- Recent Activity -->
         <div class="row mt-4">

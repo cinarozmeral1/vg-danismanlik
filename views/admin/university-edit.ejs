@@ -20,6 +20,7 @@
                 <span>Başvurular</span>
                 <span class="badge bg-success ms-auto"><%= applicationCount %></span>
             </a>
+            <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
             <a href="/admin/partners" class="nav-item">
                 <i class="fas fa-handshake"></i>
                 <span>Partnerler</span>
@@ -27,14 +28,21 @@
                     <span class="badge bg-info ms-auto"><%= partnerCount %></span>
                 <% } %>
             </a>
+            <% } %>
             <a href="/admin/universities" class="nav-item active">
                 <i class="fas fa-university"></i>
                 <span>Üniversiteler</span>
             </a>
+            <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
             <a href="/admin/backups" class="nav-item">
                 <i class="fas fa-database"></i>
                 <span>Yedekleme</span>
             </a>
+            <a href="/admin/admins" class="nav-item">
+                <i class="fas fa-user-shield"></i>
+                <span>Adminler</span>
+            </a>
+            <% } %>
         </nav>
     </div>
 
@@ -47,14 +55,9 @@
                     <h2><i class="fas fa-edit me-2"></i>Üniversite Düzenle</h2>
                     <p class="text-muted"><%= university.name %></p>
                 </div>
-                <div class="btn-group">
-                    <a href="/admin/universities/<%= university.id %>" class="btn btn-secondary">
-                        <i class="fas fa-eye me-2"></i>Görüntüle
-                    </a>
-                    <a href="/admin/universities" class="btn btn-outline-secondary">
-                        <i class="fas fa-arrow-left me-2"></i>Geri Dön
-                    </a>
-                </div>
+                <a href="/admin/universities" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Geri Dön
+                </a>
             </div>
         </div>
 
@@ -90,6 +93,7 @@
                                     <option value="Czech Republic" <%= university.country === 'Czech Republic' ? 'selected' : '' %>>Çek Cumhuriyeti</option>
                                     <option value="Poland" <%= university.country === 'Poland' ? 'selected' : '' %>>Polonya</option>
                                     <option value="Hungary" <%= university.country === 'Hungary' ? 'selected' : '' %>>Macaristan</option>
+                                    <option value="Netherlands" <%= university.country === 'Netherlands' ? 'selected' : '' %>>Hollanda</option>
                                     <option value="Spain" <%= university.country === 'Spain' ? 'selected' : '' %>>İspanya</option>
                                 </select>
                             </div>
@@ -102,25 +106,30 @@
                         </div>
                     </div>
 
-                    <!-- Logo Yükleme -->
+                    <!-- Logo -->
                     <div class="row mb-4">
                         <div class="col-12">
                             <h6 class="text-primary mb-3">
                                 <i class="fas fa-image me-2"></i>Logo
                             </h6>
                         </div>
-                        <div class="col-md-12">
-                            <% if (university.logo_url) { %>
-                                <div class="alert alert-info mb-0">
-                                    <i class="fas fa-info-circle me-2"></i>
-                                    Logo yalnızca üniversite oluşturulurken eklenebilir. Mevcut logo korunacaktır.
-                                </div>
-                            <% } else { %>
-                                <div class="alert alert-warning mb-0">
-                                    <i class="fas fa-exclamation-triangle me-2"></i>
-                                    Bu üniversite oluşturulurken logo eklenmemiş.
-                                </div>
-                            <% } %>
+                        <div class="col-md-4">
+                            <div class="text-center mb-3 p-3 border rounded bg-light" id="logoPreviewContainer">
+                                <% if (university.logo_url) { %>
+                                    <img src="<%= university.logo_url %>" alt="Logo" id="logoPreview" style="max-width: 150px; max-height: 150px; object-fit: contain;">
+                                <% } else { %>
+                                    <i class="fas fa-image fa-3x text-muted" id="logoPlaceholder"></i>
+                                    <p class="text-muted mt-2 mb-0">Logo yok</p>
+                                <% } %>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label class="form-label">Logo Yükle</label>
+                                <input type="file" class="form-control" id="logo_file" accept="image/*">
+                                <small class="text-muted">PNG, JPG veya SVG formatında logo yükleyin (max 2MB)</small>
+                            </div>
+                            <input type="hidden" id="logo_url_input" name="logo_url" value="<%= university.logo_url || '' %>">
                         </div>
                     </div>
 
@@ -160,10 +169,13 @@
                             <h6 class="text-primary mb-3">
                                 <i class="fas fa-graduation-cap me-2"></i>Bölümler
                             </h6>
-                            <p class="text-muted">Bu üniversitede bulunan bölümleri düzenleyin</p>
+                            <p class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Bölümleri sürükleyerek sıralayabilirsiniz (Spotify tarzı)
+                            </p>
                         </div>
                         <div class="col-12">
-                            <div id="departmentsContainer">
+                            <div id="departmentsContainer" class="sortable-container">
                                 <!-- Bölümler buraya dinamik olarak eklenecek -->
                             </div>
                             <button type="button" class="btn btn-outline-primary btn-sm" id="addDepartmentBtn">
@@ -172,25 +184,54 @@
                         </div>
                     </div>
 
-                    <!-- Gereksinimler -->
-                    <div class="row mb-4">
-                        <div class="col-12">
-                            <h6 class="text-primary mb-3">
-                                <i class="fas fa-clipboard-list me-2"></i>Gereksinimler
-                            </h6>
-                        </div>
-                        <div class="col-12">
-                            <div class="mb-3">
-                                <label for="requirements" class="form-label">Gereksinimler</label>
-                                <textarea class="form-control" id="requirements" name="requirements" rows="4" placeholder="Üniversiteye başvuru için gerekli şartlar, belgeler, sınavlar..."><%= university.requirements || '' %></textarea>
-                                <small class="text-muted">Örnek: Lise diploması, İngilizce seviyesi, sınav sonuçları, referans mektupları</small>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- SortableJS CDN -->
+                    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+                    
+                    <style>
+                        .sortable-container {
+                            min-height: 50px;
+                        }
+                        .department-field {
+                            background: #f8f9fa;
+                            transition: all 0.2s ease;
+                            cursor: default;
+                        }
+                        .department-field:hover {
+                            background: #e9ecef;
+                        }
+                        .department-field.sortable-ghost {
+                            opacity: 0.4;
+                            background: #dee2e6;
+                        }
+                        .department-field.sortable-chosen {
+                            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+                            transform: scale(1.02);
+                        }
+                        .drag-handle {
+                            cursor: grab;
+                            color: #6c757d;
+                            padding: 8px;
+                            transition: color 0.2s;
+                        }
+                        .drag-handle:hover {
+                            color: #495057;
+                        }
+                        .drag-handle:active {
+                            cursor: grabbing;
+                        }
+                        .sort-order-badge {
+                            background: #6c757d;
+                            color: white;
+                            font-size: 0.75rem;
+                            padding: 2px 8px;
+                            border-radius: 10px;
+                            min-width: 24px;
+                            text-align: center;
+                        }
+                    </style>
 
 
-                    <!-- Hidden input for current logo URL -->
-                    <input type="hidden" name="logo_url" value="<%= university.logo_url || '' %>">
+
 
             <div class="d-flex justify-content-end">
                         <button type="submit" class="btn btn-primary" id="submitBtn">
@@ -211,14 +252,48 @@ document.addEventListener('DOMContentLoaded', function() {
     const deleteBtn = document.getElementById('deleteUniversityBtn');
     const addDepartmentBtn = document.getElementById('addDepartmentBtn');
     const departmentsContainer = document.getElementById('departmentsContainer');
+    // Logo dosya yükleme
     const logoInput = document.getElementById('logo_file');
+    const logoUrlInput = document.getElementById('logo_url_input');
+    const logoPreviewContainer = document.getElementById('logoPreviewContainer');
+    
     if (logoInput) {
-        logoInput.disabled = true;
+        logoInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            // Boyut kontrolü (2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                alert('Logo dosyası 2MB\'dan küçük olmalıdır!');
+                logoInput.value = '';
+                return;
+            }
+            
+            // Base64'e çevir
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const base64 = event.target.result;
+                logoUrlInput.value = base64;
+                
+                // Önizleme güncelle
+                logoPreviewContainer.innerHTML = `<img src="${base64}" alt="Logo" id="logoPreview" style="max-width: 150px; max-height: 150px; object-fit: contain;">`;
+            };
+            reader.readAsDataURL(file);
+        });
     }
 
-    // Mevcut bölümleri yükle
-    const existingDepartments = <%- JSON.stringify(university.departments || []) %>;
+    // Mevcut bölümleri yükle (sort_order'a göre sıralı)
+    let existingDepartments = <%- JSON.stringify((typeof departments !== 'undefined' && departments) ? departments : (university.departments || [])) %>;
     let departmentCount = 0;
+
+    // Sort_order'a göre sırala (sayısal olarak)
+    if (existingDepartments && existingDepartments.length > 0) {
+        existingDepartments.sort((a, b) => {
+            const orderA = parseInt(a.sort_order) || 9999;
+            const orderB = parseInt(b.sort_order) || 9999;
+            return orderA - orderB;
+        });
+    }
 
     // Mevcut bölümleri göster
     if (existingDepartments && existingDepartments.length > 0) {
@@ -227,21 +302,30 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Bölüm ekleme fonksiyonu
+    // Bölüm ekleme fonksiyonu - Spotify tarzı drag-drop destekli
     function addDepartmentField(name = '', price = '') {
         const departmentDiv = document.createElement('div');
         departmentDiv.className = 'department-field mb-3 p-3 border rounded';
+        departmentDiv.setAttribute('data-sort-order', departmentCount);
         departmentDiv.innerHTML = `
-            <div class="row">
-                <div class="col-md-5">
+            <div class="row align-items-center">
+                <div class="col-auto">
+                    <div class="drag-handle" title="Sıralamak için sürükle">
+                        <i class="fas fa-grip-vertical fa-lg"></i>
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <span class="sort-order-badge">${departmentCount + 1}</span>
+                </div>
+                <div class="col-md-4">
                     <label class="form-label">Bölüm Adı</label>
                     <input type="text" class="form-control department-name" name="departments[${departmentCount}][name_tr]" value="${name}" placeholder="Örn: Mühendislik">
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label class="form-label">Fiyat (€)</label>
                     <input type="number" class="form-control department-price" name="departments[${departmentCount}][price]" value="${price}" placeholder="Örn: 5000" min="0" step="0.01">
                 </div>
-                <div class="col-md-3 d-flex align-items-end">
+                <div class="col-md-2 d-flex align-items-end">
                     <button type="button" class="btn btn-outline-danger btn-sm remove-department">
                         <i class="fas fa-trash"></i> Kaldır
                     </button>
@@ -251,7 +335,33 @@ document.addEventListener('DOMContentLoaded', function() {
         
         departmentsContainer.appendChild(departmentDiv);
         departmentCount++;
+        updateSortOrderBadges();
     }
+    
+    // Sıra numaralarını güncelle
+    function updateSortOrderBadges() {
+        const departments = departmentsContainer.querySelectorAll('.department-field');
+        departments.forEach((dept, index) => {
+            const badge = dept.querySelector('.sort-order-badge');
+            if (badge) {
+                badge.textContent = index + 1;
+            }
+            dept.setAttribute('data-sort-order', index);
+        });
+    }
+    
+    // SortableJS başlat - Spotify tarzı sürükle-bırak
+    const sortable = new Sortable(departmentsContainer, {
+        handle: '.drag-handle',
+        animation: 150,
+        ghostClass: 'sortable-ghost',
+        chosenClass: 'sortable-chosen',
+        dragClass: 'sortable-drag',
+        onEnd: function(evt) {
+            updateSortOrderBadges();
+            console.log('🎵 Bölüm sıralaması güncellendi');
+        }
+    });
 
     // Bölüm ekle butonu
     addDepartmentBtn.addEventListener('click', function() {
@@ -290,19 +400,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 city: document.getElementById('city').value,
                 world_ranking: document.getElementById('world_ranking').value,
                 description: document.getElementById('description').value,
-                requirements: document.getElementById('requirements').value,
-                logo_url: (document.querySelector('input[name="logo_url"]').value || null)
+                logo_url: document.getElementById('logo_url_input').value || null
             };
 
+            // Bölümleri sırasıyla topla (Spotify tarzı sıralama)
             const departments = [];
-            document.querySelectorAll('.department-field').forEach(field => {
+            document.querySelectorAll('.department-field').forEach((field, index) => {
                 const name = field.querySelector('.department-name').value.trim();
                 const price = field.querySelector('.department-price').value;
                 if (name) {
                     departments.push({
                         name_tr: name,
                         name_en: name,
-                        price: price || 0
+                        price: price || 0,
+                        sort_order: index + 1 // Sıralama numarası
                     });
                 }
             });

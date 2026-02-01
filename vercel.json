@@ -3,7 +3,10 @@
   "builds": [
     {
       "src": "server.js",
-      "use": "@vercel/node"
+      "use": "@vercel/node",
+      "config": {
+        "maxLambdaSize": "50mb"
+      }
     },
     {
       "src": "api/cron/*.js",
@@ -13,7 +16,7 @@
   "routes": [
     {
       "src": "/api/cron/(.*)",
-      "dest": "/api/cron/$1"
+      "dest": "/api/cron/$1.js"
     },
     {
       "src": "/(.*)",

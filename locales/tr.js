@@ -10,6 +10,7 @@ module.exports = {
         universities: "Üniversiteler",
         aboutUs: "Tanışalım",
         contact: "İletişim",
+        career: "Kariyer",
         assessment: "Değerlendirme",
         profile: "Profil",
         myProfile: "Profilim",
@@ -26,7 +27,8 @@ module.exports = {
         austria: "Avusturya",
         uk: "İngiltere",
         poland: "Polonya",
-        hungary: "Macaristan"
+        hungary: "Macaristan",
+        netherlands: "Hollanda"
     },
     
     // Authentication
@@ -95,7 +97,8 @@ module.exports = {
         austria: "Avusturya'da Okumak",
         uk: "İngiltere'de Okumak",
         poland: "Polonya'da Okumak",
-        hungary: "Macaristan'da Okumak"
+        hungary: "Macaristan'da Okumak",
+        netherlands: "Hollanda'da Okumak"
     },
 
     // Student Life Page Content
@@ -128,6 +131,10 @@ module.exports = {
             poland: {
                 title: "Polonya'da Öğrenci Olmak",
                 subtitle: "Varşova ve Kraków'un tarihi atmosferinde kaliteli eğitim ve uygun yaşam maliyetleri"
+            },
+            netherlands: {
+                title: "Hollanda'da Öğrenci Olmak",
+                subtitle: "Amsterdam ve Rotterdam'ın modern atmosferinde dünya standartlarında eğitim"
             }
         },
         sections: {
@@ -183,7 +190,7 @@ module.exports = {
             },
             consulting: {
                 title: "Danışmanlık",
-                freeConsulting: "Ücretsiz Danışmanlık",
+                freeConsulting: "İletişime Geçin",
                 eligibilityTest: "Uygunluk Testi"
             }
         },
@@ -208,7 +215,8 @@ module.exports = {
             italian: "İtalyanca",
             hungarian: "Macarca",
             polish: "Lehçe",
-            turkish: "Türkçe"
+            turkish: "Türkçe",
+            dutch: "Hollandaca"
         },
         universityLanguages: {
             englishCzech: "İngilizce, Çekçe",
@@ -218,7 +226,8 @@ module.exports = {
             polishEnglish: "İngilizce, Lehçe",
             englishOnly: "İngilizce",
             germanWithNotes: "Almanca (çoğu lisans), İngilizce (bazı yüksek lisans)",
-            italianWithPrograms: "İtalyanca, İngilizce (çok sayıda program)"
+            italianWithPrograms: "İtalyanca, İngilizce (çok sayıda program)",
+            dutchEnglish: "Hollandaca, İngilizce"
         },
                 additionalTerms: {
             accommodationOptions: "Konaklama Seçenekleri",
@@ -233,6 +242,99 @@ module.exports = {
             universities: "Üniversiteler",
             consulting: "Danışmanlık",
             attention: "Dikkat"
+        },
+        diplomaWarnings: {
+            turkishWarningTitle: "Türk Öğrenciler İçin Önemli Uyarı",
+            turkishInfoTitle: "Türk Öğrenciler İçin Önemli Bilgi",
+            canadianAdvantageTitle: "Kanada Lise Diploması Avantajları",
+            diplomaRecognition: "Diploma Tanınırlığı",
+            directAdmission: "Doğrudan Kabul",
+            medicalFaculties: "Tıp ve Dişçilik Fakülteleri",
+            medicalWarning: "Tıp Fakültesi Uyarısı",
+            foundationYear: "Foundation Year Zorunluluğu",
+            studienkolleg: "Studienkolleg Zorunluluğu",
+            studienkollegWhat: "Studienkolleg Nedir?",
+            studienkollegDesc: "Almanca dil eğitimi ve akademik dersler içeren 1 yıllık hazırlık programıdır. Program sonunda yapılan Feststellungsprüfung sınavını geçmeniz gerekmektedir.",
+            foundationWhat: "Foundation Year Nedir?",
+            foundationDesc: "Üniversite öncesi 1 yıllık hazırlık programıdır. Akademik İngilizce, alan dersleri ve çalışma becerilerini kapsar. Başarılı tamamlama sonrası doğrudan lisans programlarına geçiş yapılır.",
+            bypass: "BYPASS!",
+            noExamAdmission: "SINAVSIZ KABUL!",
+            priorityEvaluation: "Öncelikli Değerlendirme!",
+            advantagePosition: "Avantajlı Konumda!",
+            internationalRecognition: "Uluslararası Tanınırlık!",
+            aboutWcep: "WCEP Hakkında Bilgi Al",
+            germany: {
+                warning: "Türk lise diploması Almanya'da doğrudan üniversiteye başvuru için yeterli kabul edilmemektedir. Alman üniversitelerine başvurabilmek için 1 yıllık Studienkolleg (üniversite hazırlık programı) tamamlanması zorunludur.",
+                advantage: "12. sınıfta WCEP ile Kanada'da on-site eğitim alıp Kanada lise diploması alan öğrenciler, Studienkolleg'e gerek kalmadan doğrudan Alman üniversitelerine başvurabilir!",
+                benefit1: "1 yıl zaman tasarrufu",
+                benefit2: "Feststellungsprüfung sınavı yok",
+                benefit3: "Tüm Alman üniversitelerine başvuru hakkı",
+                benefit4: "İngilizce programlara da başvuru imkanı"
+            },
+            uk: {
+                info: "Türk lise diploması ile İngiltere'deki üniversitelere UCAS üzerinden doğrudan başvuru yapılabilir. IELTS gibi İngilizce yeterlilik belgesi ile birlikte başvurunuz kabul edilmektedir.",
+                ucasInfo: "UCAS (Universities and Colleges Admissions Service), İngiltere üniversitelerine merkezi başvuru sistemidir. Türk öğrenciler de bu sistem üzerinden doğrudan başvuru yapabilir.",
+                advantage: "WCEP ile Kanada'da on-site eğitim alıp Kanada lise diploması alan öğrenciler, daha güçlü bir profil ile İngiliz üniversitelerine başvurabilir!",
+                benefit1: "UCAS üzerinden doğrudan başvuru hakkı",
+                benefit2: "Russell Group dahil tüm üniversitelere başvuru",
+                benefit3: "IELTS puanı ile dil yeterliliği belgelenir",
+                benefit4: "Uluslararası tanınırlıkta güçlü profil"
+            },
+            czech: {
+                info: "Türk lise diploması Çek Cumhuriyeti'ndeki çoğu üniversite tarafından doğrudan kabul edilmektedir. Ek hazırlık programı gerekmez!",
+                medicalWarning: "Tıp ve Dişçilik programları için giriş sınavı (genellikle Biyoloji, Kimya, Fizik veya Matematik) yapılmaktadır. Bu sınavlar İngilizce olarak alınabilir.",
+                advantage: "Charles University 2. Tıp Fakültesi ve Dişçilik Fakültesi, WCEP ile Kanada'da on-site Kanada lise diploması alan öğrencileri giriş sınavı olmadan kabul etmektedir!",
+                benefit1: "Charles University 2. Tıp Fakültesi - Sınavsız",
+                benefit2: "Dişçilik Fakültesi - Sınavsız",
+                benefit3: "Diğer programlarda öncelikli değerlendirme",
+                benefit4: "İngilizce yeterlilik belgesi yeterli"
+            },
+            austria: {
+                info: "Türk lise diploması Avusturya'da genel olarak kabul edilmektedir. Ancak bazı üniversitelerde ve programlarda ek sınav veya dil belgesi istenebilir.",
+                medicalWarning: "Avusturya'da tıp fakültelerine başvuru için MedAT giriş sınavı zorunludur. Bu sınav oldukça rekabetçidir ve Almanca veya İngilizce olarak alınabilir.",
+                advantage: "WCEP ile Kanada'da on-site eğitim alıp Kanada lise diploması alan öğrenciler, Avusturya üniversitelerinde ek hazırlık olmadan doğrudan kabul edilmektedir!",
+                benefit1: "Ek hazırlık programı gerekmez",
+                benefit2: "Viyana Üniversitesi dahil tüm üniversitelere başvuru",
+                benefit3: "Almanca veya İngilizce programlara başvuru imkanı",
+                benefit4: "Tıp sınavında (MedAT) avantajlı değerlendirme"
+            },
+            italy: {
+                info: "Türk lise diploması İtalya'daki üniversiteler tarafından doğrudan kabul edilmektedir. Ek hazırlık programı gerekmez!",
+                medicalWarning: "Tıp, Diş Hekimliği, Veterinerlik ve Mimarlık programları için IMAT (International Medical Admissions Test) veya benzeri giriş sınavları yapılmaktadır.",
+                advantage: "WCEP ile Kanada'da on-site eğitim alıp Kanada lise diploması alan öğrenciler, İtalyan üniversitelerinde yüksek öncelikle değerlendirilmektedir!",
+                benefit1: "Bologna, Milano dahil tüm üniversitelere başvuru",
+                benefit2: "İngilizce programlara doğrudan kabul",
+                benefit3: "İtalyanca programlar için sadece dil belgesi yeterli",
+                benefit4: "IMAT sınavında avantajlı değerlendirme"
+            },
+            hungary: {
+                info: "Türk lise diploması Macaristan'daki çoğu üniversite tarafından doğrudan kabul edilmektedir. Ek hazırlık programı gerekmez!",
+                medicalWarning: "Semmelweis Üniversitesi ve diğer tıp fakültelerinde giriş sınavı (Biyoloji, Kimya) yapılmaktadır. Sınav İngilizce olarak alınabilir.",
+                advantage: "WCEP ile Kanada'da on-site eğitim alıp Kanada lise diploması alan öğrenciler, Semmelweis ve diğer Macar üniversitelerinde öncelikli olarak değerlendirilmektedir!",
+                benefit1: "Semmelweis Üniversitesi'nde öncelikli kabul",
+                benefit2: "Tıp programlarında avantajlı değerlendirme",
+                benefit3: "Giriş sınavlarında yüksek başarı oranı",
+                benefit4: "İngilizce programlara doğrudan başvuru"
+            },
+            poland: {
+                info: "Türk lise diploması Polonya'daki çoğu üniversite programı tarafından doğrudan kabul edilmektedir. Ek hazırlık programı gerekmez!",
+                medicalWarning: "Polonya'daki tıp fakültelerine başvuru için giriş sınavı (Biyoloji, Kimya) zorunludur. Sınav İngilizce olarak alınabilir.",
+                advantage: "WCEP ile Kanada'da on-site eğitim alıp Kanada lise diploması alan öğrenciler, Polonya üniversitelerinde avantajlı konumda değerlendirilmektedir!",
+                benefit1: "Varşova, Krakow dahil tüm üniversitelere başvuru",
+                benefit2: "Tıp programlarında öncelikli değerlendirme",
+                benefit3: "Giriş sınavlarında yüksek başarı oranı",
+                benefit4: "İngilizce programlara doğrudan başvuru"
+            },
+            netherlands: {
+                woWarning: "Türk lise diploması, Hollanda'daki araştırma üniversitelerine (WO) doğrudan başvuru için tek başına yeterli kabul edilmemektedir. Bu üniversitelere başvurabilmek için en az 4 adet AP (Advanced Placement) sınavından başarılı olmak veya IB Diploması almak gerekmektedir.",
+                hboInfo: "Türk lise diploması ile Uygulamalı Bilimler Üniversitelerine (HBO) doğrudan başvuru yapılabilir. Bu okullar pratik odaklı eğitim sunmakta olup, mezunlar iş dünyasına hazır şekilde yetişmektedir.",
+                apNote: "AP sınavları lise döneminde alınabilir. Detaylı bilgi ve hangi AP derslerinin kabul edildiği konusunda danışmanlık alınız.",
+                advantage: "WCEP ile Kanada'da on-site eğitim alıp Kanada lise diploması alan öğrenciler, Hollanda'daki hem araştırma üniversitelerine (WO) hem de uygulamalı bilimler üniversitelerine (HBO) doğrudan başvuru yapabilir!",
+                benefit1: "Araştırma üniversitelerine (WO) doğrudan kabul",
+                benefit2: "AP/IB gereksinimleri ortadan kalkar",
+                benefit3: "Amsterdam, Rotterdam dahil tüm üniversitelere başvuru",
+                benefit4: "İngilizce programlara doğrudan başvuru hakkı"
+            }
         },
         countries: {
             uk: {
@@ -396,13 +498,39 @@ module.exports = {
                     tip: "Polonya'da öğrenci vizesi almak için B1 seviyesi Lehçe bilgisi gereklidir."
                 },
                 consultingText: "Polonya'da eğitim hakkında detaylı bilgi almak için bizimle iletişime geçin."
+            },
+            netherlands: {
+                description1: "Hollanda, dünya standartlarında eğitim kalitesi, İngilizce programları ve uluslararası ortamı ile öğrencilerin gözdesi haline gelmiştir.",
+                description2: "Hollanda'da üniversite eğitimi yüksek kalitede ve çoğunlukla İngilizce olarak verilmektedir. Özellikle işletme, mühendislik, tarım ve sanat alanlarında dünya çapında tanınan programlar sunulmaktadır.",
+                livingDescription: "Hollanda'da özellikle Amsterdam, Rotterdam ve Eindhoven'da öğrenci konaklama seçenekleri çeşitlidir. Bisiklet kültürü ve modern altyapı ile yaşam kalitesi yüksektir.",
+                costsDescription: "Hollanda'da eğitim maliyetleri AB standartlarına göre orta seviyededir. AB vatandaşları için düşük harçlar, AB dışı öğrenciler için rekabetçi fiyatlar sunulmaktadır.",
+                scholarships: {
+                    holland: {
+                        title: "Holland Scholarship",
+                        description: "Hollanda Hükümeti"
+                    },
+                    university: {
+                        title: "Üniversite Bursları",
+                        description: "Başarılı öğrenciler için"
+                    },
+                    orange: {
+                        title: "Orange Tulip Scholarship",
+                        description: "Türk öğrenciler için özel burs"
+                    }
+                },
+                alerts: {
+                    transportInfo: "Hollanda'da öğrenciler için OV-chipkaart ile toplu taşıma indirimleri bulunmaktadır. Bisiklet kullanımı yaygındır ve uygun maliyetlidir.",
+                    visaRequirement: "Hollanda'da öğrenci vizesi için yeterli finansal kaynak göstermeniz gerekmektedir (yaklaşık 900€/ay).",
+                    tip: "Hollanda'da çoğu program İngilizce olduğundan Hollandaca bilgisi şart değildir, ancak öğrenmek sosyal yaşam için faydalıdır."
+                },
+                consultingText: "Hollanda'da eğitim hakkında detaylı bilgi almak için bizimle iletişime geçin."
             }
         }
     },
     
     // Footer
     footer: {
-        description: "Avrupa'da eğitim hayalinizi gerçekleştirmenize yardımcı oluyoruz. 7 ülkede 50+ prestijli üniversite ile işbirliği yapıyoruz.",
+        description: "Avrupa'da eğitim hayalinizi gerçekleştirmenize yardımcı oluyoruz. 8 ülkede 50+ prestijli üniversite ile işbirliği yapıyoruz.",
         sslInfo: "SSL Sertifikası ile Güvenli Bağlantı",
         quickLinks: "Hızlı Linkler",
         services: "Hizmetlerimiz",
@@ -426,11 +554,14 @@ module.exports = {
         stats: {
             countries: "Ülke",
             universities: "Üniversite",
-            satisfaction: "Memnuniyet"
+            departments: "Bölüm",
+            satisfaction: "Memnuniyet",
+            students: "Öğrenci",
+            partners: "Çözüm Ortağı"
         },
         features: {
-            title: "Neden Venture Global®?",
-            subtitle: "Venture Global, Türkiye’deki öğrencileri Avrupa’nın en seçkin üniversitelerine yönlendiren bir eğitim danışmanlık şirketidir. Amacımız, her öğrencinin akademik ve kişisel hedeflerine uygun en doğru üniversiteyi bulmasına yardımcı olmak ve bu süreçte tüm adımlarda yanında olmaktır.",
+            title: "Venture Global®",
+            subtitle: "",
             body: [],
             network: {
                 title: "Geniş Ağ",
@@ -466,6 +597,7 @@ module.exports = {
             uk: "İngiltere",
             poland: "Polonya",
             hungary: "Macaristan",
+            netherlands: "Hollanda",
             programArea: "Program Alanı",
             engineering: "Mühendislik",
             business: "İşletme/Ekonomi",
@@ -483,6 +615,25 @@ module.exports = {
             getRecommendations: "Önerilerimi Al",
             submitting: "Gönderiliyor...",
             success: "Başarılı! Değerlendirmeniz alındı. En kısa sürede size özel önerilerimizi göndereceğiz."
+        },
+        wcepBanner: {
+            title: "12. Sınıfta Kanada'da",
+            titleHighlight: "Lise Diploması",
+            description: "WCEP ortaklığımız ile 12. sınıfı Kanada'nın prestijli okullarında tamamlayın, Kanada lise diploması alarak Avrupa üniversitelerinde öne geçin!",
+            germany: "Almanya",
+            germanyBenefit: "Studienkolleg Bypass",
+            uk: "İngiltere",
+            ukBenefit: "Foundation Year Bypass",
+            czech: "Çek Cumhuriyeti",
+            czechBenefit: "Tıp Sınavsız Kabul",
+            europe: "Tüm Avrupa",
+            europeBenefit: "Öncelikli Kabul",
+            aboutWcep: "WCEP Hakkında",
+            getInfo: "Bilgi Al",
+            videoTitle: "WCEP Tanıtım Videosu",
+            yearsExperience: "Yıllık Tecrübe",
+            successfulStudents: "Başarılı Öğrenci",
+            partnerSchools: "Partner Okul"
         },
         kanpusBanner: {
             title: "IB, AP, SAT, TOEFL & IELTS'e Erken Hazırlık",
@@ -505,11 +656,16 @@ module.exports = {
                 button: "Mesaj Gönder"
             }
         },
+        partnerUniversities: {
+            title: "Partner Üniversitelerimiz",
+            subtitle: "Avrupa'nın en prestijli üniversiteleri ile işbirliği içindeyiz",
+            button: "Üniversitelerimiz"
+        },
         seoContent: {
             mainTitle: "Venture Global - VG Danışmanlık Nedir?",
             mainSubtitle: "Yurt dışı eğitim danışmanlığında Türkiye'nin güvenilir markası",
             card1Title: "Venture Global Kimdir?",
-            card1Content: "Venture Global (VG Danışmanlık), Türkiye'deki öğrencileri Avrupa'nın en prestijli üniversitelerine yönlendiren profesyonel bir eğitim danışmanlık şirketidir. 7 ülkede 50+ üniversite ile işbirliği yaparak öğrencilerimize en iyi eğitim fırsatlarını sunuyoruz.",
+            card1Content: "Venture Global (VG Danışmanlık), Türkiye'deki öğrencileri Avrupa'nın en prestijli üniversitelerine yönlendiren profesyonel bir eğitim danışmanlık şirketidir. 8 ülkede 50+ üniversite ile işbirliği yaparak öğrencilerimize en iyi eğitim fırsatlarını sunuyoruz.",
             card2Title: "VG Danışmanlık Hizmetleri",
             card2Content: "VG Danışmanlık olarak üniversite başvurusu, vize işlemleri, konaklama ve Avrupa'ya uyum süreçlerinde kapsamlı destek veriyoruz. Venture Global ile yurt dışı eğitim hayalinizi güvenle gerçekleştirin."
         }
@@ -534,6 +690,7 @@ module.exports = {
             uk: "İngiltere",
             poland: "Polonya",
             hungary: "Macaristan",
+            netherlands: "Hollanda",
             allPrograms: "Tüm Programlar",
             engineering: "Mühendislik",
             business: "İşletme/Ekonomi",
@@ -1821,11 +1978,22 @@ module.exports = {
             learnMore: "Detaylı Bilgi",
             exclusiveOffer: "Kanpus'tan ders alanlar Venture Global'de, Venture Global'den danışmanlık alanlar Kanpus'ta ayrıcalıklı indirimlerden yararlanır!"
         },
+        wcep: {
+            title: "Kanada Lise Diploması ile Avrupa'da Öne Geçin",
+            description: "12. sınıfı Kanada'nın prestijli okullarında tamamlayarak Kanada lise diploması alın ve Avrupa üniversitelerine öncelikli kabul avantajından yararlanın.",
+            advantage1: "Almanya'da Studienkolleg'i atlama imkanı",
+            advantage2: "İngiltere'de Foundation Year bypass",
+            advantage3: "Çekya'da tıp fakültesine sınavsız kabul",
+            stat1: "Yıllık Tecrübe",
+            stat2: "Başarılı Öğrenci",
+            stat3: "Partner Okul",
+            cta: "WCEP Hakkında"
+        },
         faq: {
             title: "Sık Sorulan Sorular",
             subtitle: "En çok sorulan sorulara yanıtlar",
             question1: "Hangi ülkelerde hizmet veriyorsunuz?",
-            answer1: "Almanya, Avusturya, İngiltere, İtalya, Çek Cumhuriyeti, Polonya ve Macaristan'da hizmet veriyoruz. Bu ülkelerdeki en prestijli üniversitelerle işbirliği yapıyoruz.",
+            answer1: "Almanya, Avusturya, İngiltere, İtalya, Çek Cumhuriyeti, Polonya, Macaristan ve Hollanda'da hizmet veriyoruz. Bu ülkelerdeki en prestijli üniversitelerle işbirliği yapıyoruz.",
             question2: "Hizmet ücretleriniz nedir?",
             answer2: "Hizmet ücretlerimiz seçtiğiniz program ve ülkeye göre değişmektedir. Detaylı bilgi için bizimle iletişime geçebilirsiniz.",
             question3: "Vize başvuru süreci ne kadar sürer?",
@@ -2337,13 +2505,6 @@ module.exports = {
             videoAlt: "WCEP Tanıtım Videosu",
             officialLink: "WCEP Resmi Sitesini Ziyaret Et"
         },
-        bestschool: {
-            heroTitle: "BestSchool.cz Ortaklığı",
-            heroSubtitle: "Orta Avrupa'da üst düzey eğitim fırsatları için BestSchool.cz ile ortaklığımız",
-            whyTitle: "Neden BestSchool.cz?",
-            packagesTitle: "Öğrencilerimiz için özel fırsatlar",
-            packagesCTA: "Paket Detaylarını İsteyin"
-        },
         kanpus: {
             heroTitle: "Kanpus IB ve AP'de Başarının Anahtarı",
             heroSubtitle: "IB Diploma ve AP programları için uzman öğretmenlerle birebir dersler, SAT ve TOEFL hazırlık ile üniversite danışmanlığı",
@@ -2442,6 +2603,60 @@ module.exports = {
             ctaBody: "Kanpus ile ortaklığımız sayesinde öğrencilerimize özel indirimli paketler sunuyoruz. IB, AP, SAT veya TOEFL hazırlığınız için detaylı bilgi almak ve özel fırsatlardan yararlanmak için bizimle iletişime geçin.",
             ctaContactButton: "İletişime Geç",
             ctaWebsiteButton: "Kanpus'u Ziyaret Et"
+        }
+    },
+    
+    // Career Page
+    career: {
+        hero: {
+            title: "Kariyer Fırsatları",
+            subtitle: "Venture Global ailesine katılın, yurt dışı eğitim danışmanlığında kariyer yapın"
+        },
+        poster: {
+            placeholder: "Afiş görseli yakında eklenecek"
+        },
+        video: {
+            title: "Tanıtım Videosu",
+            placeholder: "Video yakında eklenecek"
+        },
+        info: {
+            title: "Temsilci Öğretmenler Arıyoruz",
+            description: "Venture Global büyüyor! Türkiye genelinde VG Yurt Dışı Eğitim Danışmanlık ailesini bulunduğu şehir ve okullarda temsil edecek temsilciler arıyoruz.",
+            roleDescription: "Eğitim sektörüne yakın, güçlü iletişim becerilerine sahip adaylarla uzun vadeli iş birliği hedefliyoruz.",
+            requirementsTitle: "Aranan Özellikler",
+            lookingFor: "Kimler Başvurabilir?",
+            requirement1: "PDR öğretmenleri",
+            requirement2: "İngilizce öğretmenleri",
+            requirement3: "Eğitim yöneticileri",
+            weOffer: "Ne Sunuyoruz?",
+            offer1: "Esnek ve mesaisiz çalışma modeli",
+            offer2: "Performansa dayalı yüksek kazanç",
+            offer3: "Güçlü marka ve hazır sistem desteği"
+        },
+        form: {
+            title: "Başvuru Formu",
+            firstName: "Ad",
+            firstNamePlaceholder: "Adınızı girin",
+            lastName: "Soyad",
+            lastNamePlaceholder: "Soyadınızı girin",
+            email: "E-posta",
+            emailPlaceholder: "ornek@email.com",
+            phone: "Telefon",
+            phonePlaceholder: "+90 5XX XXX XX XX",
+            description: "CV Hakkında Açıklama",
+            descriptionPlaceholder: "Hangi şehirde temsilci olmak istediğinizi, deneyimlerinizi, referanslarınızı ve neden Venture Global ekibine katılmak istediğinizi yazın...",
+            descriptionHelp: "Hangi şehirde temsilci olmak istediğinizi, varsa ilgili deneyimlerinizi ve referanslarınızı belirtin.",
+            cvFile: "CV Dosyası",
+            cvFileHelp: "PDF, DOC veya DOCX formatında",
+            compressLink: "PDF Sıkıştır",
+            fileTooLarge: "Dosya çok büyük!",
+            compressHere: "Buradan sıkıştırın",
+            selectFile: "Lütfen bir CV dosyası seçin",
+            fileTooLargeError: "Dosya boyutu çok büyük. Lütfen 3.5 MB'dan küçük bir dosya yükleyin.",
+            submit: "Başvuruyu Gönder",
+            sending: "Gönderiliyor...",
+            successMessage: "Başvurunuz başarıyla gönderildi! En kısa sürede sizinle iletişime geçeceğiz.",
+            errorMessage: "Başvuru gönderilirken bir hata oluştu. Lütfen tekrar deneyin."
         }
     }
 }; 

@@ -22,6 +22,7 @@
 			<span>Başvurular</span>
             <span class="badge bg-success ms-auto"><%= applicationCount %></span>
 		</a>
+		<% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
 		<a href="/admin/partners" class="nav-item">
 			<i class="fas fa-handshake"></i>
 			<span>Partnerler</span>
@@ -29,14 +30,21 @@
 				<span class="badge bg-info ms-auto"><%= partnerCount %></span>
 			<% } %>
 		</a>
+		<% } %>
 		<a href="/admin/universities" class="nav-item">
 			<i class="fas fa-university"></i>
 			<span>Üniversiteler</span>
 		</a>
+		<% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
 		<a href="/admin/backups" class="nav-item">
 			<i class="fas fa-database"></i>
 			<span>Yedekleme</span>
 		</a>
+		<a href="/admin/admins" class="nav-item">
+			<i class="fas fa-user-shield"></i>
+			<span>Adminler</span>
+		</a>
+		<% } %>
 	</nav>
 </div>
 

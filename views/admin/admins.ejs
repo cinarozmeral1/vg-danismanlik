@@ -1,0 +1,454 @@
+<!-- Admin Yönetimi Sayfası -->
+<div class="admin-container">
+    <!-- Sidebar -->
+    <div class="admin-sidebar">
+        <div class="sidebar-header">
+            <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Yönetim Paneli</h6>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/admin/dashboard" class="nav-item">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/admin/users" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Öğrenciler</span>
+                <span class="badge bg-primary ms-auto"><%= userCount %></span>
+            </a>
+            <a href="/admin/applications" class="nav-item">
+                <i class="fas fa-file-alt"></i>
+                <span>Başvurular</span>
+                <span class="badge bg-success ms-auto"><%= applicationCount %></span>
+            </a>
+            <a href="/admin/partners" class="nav-item">
+                <i class="fas fa-handshake"></i>
+                <span>Partnerler</span>
+                <% if (typeof partnerCount !== 'undefined' && partnerCount > 0) { %>
+                    <span class="badge bg-info ms-auto"><%= partnerCount %></span>
+                <% } %>
+            </a>
+            <a href="/admin/universities" class="nav-item">
+                <i class="fas fa-university"></i>
+                <span>Üniversiteler</span>
+            </a>
+            <a href="/admin/backups" class="nav-item">
+                <i class="fas fa-database"></i>
+                <span>Yedekleme</span>
+            </a>
+            <a href="/admin/admins" class="nav-item active">
+                <i class="fas fa-user-shield"></i>
+                <span>Adminler</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="admin-main">
+        <!-- Header -->
+        <div class="section-header">
+            <h2><i class="fas fa-user-shield me-2"></i>Adminler</h2>
+            <p class="text-muted">Yardımcı admin (co-admin) hesaplarını yönetin</p>
+        </div>
+
+        <!-- Yeni Co-Admin Ekleme Butonu -->
+        <div class="mb-4">
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addAdminModal">
+                <i class="fas fa-plus me-2"></i>Yeni Co-Admin Ekle
+            </button>
+        </div>
+
+        <!-- Co-Admin Listesi -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-users-cog me-2"></i>Co-Admin Listesi (<%= coAdmins.length %>)</h5>
+            </div>
+            <div class="card-body">
+                <% if (coAdmins.length === 0) { %>
+                    <div class="text-center py-5">
+                        <i class="fas fa-user-plus fa-4x text-muted mb-3"></i>
+                        <h5 class="text-muted">Henüz co-admin eklenmemiş</h5>
+                        <p class="text-muted">Yukarıdaki butona tıklayarak yardımcı admin ekleyebilirsiniz.</p>
+                    </div>
+                <% } else { %>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Ad Soyad</th>
+                                    <th>E-posta</th>
+                                    <th>Rol</th>
+                                    <th>Kayıt Tarihi</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% coAdmins.forEach(admin => { %>
+                                <tr>
+                                    <td><%= admin.id %></td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-sm me-2" style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center;">
+                                                <i class="fas fa-user-shield text-white"></i>
+                                            </div>
+                                            <strong><%= admin.first_name %> <%= admin.last_name %></strong>
+                                        </div>
+                                    </td>
+                                    <td><%= admin.email %></td>
+                                    <td>
+                                        <% if (admin.email === 'info@vgdanismanlik.com') { %>
+                                            <span class="badge bg-primary">Main Admin</span>
+                                        <% } else { %>
+                                            <span class="badge bg-info">Co-Admin</span>
+                                        <% } %>
+                                    </td>
+                                    <td><%= new Date(admin.created_at).toLocaleDateString('tr-TR') %></td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-sm btn-outline-primary js-edit-admin" 
+                                                    data-admin-id="<%= admin.id %>"
+                                                    data-first-name="<%= admin.first_name %>"
+                                                    data-last-name="<%= admin.last_name %>"
+                                                    data-email="<%= admin.email %>">
+                                                <i class="fas fa-edit"></i> Düzenle
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger js-delete-admin" 
+                                                    data-admin-id="<%= admin.id %>"
+                                                    data-admin-name="<%= admin.first_name %> <%= admin.last_name %>">
+                                                <i class="fas fa-trash"></i> Sil
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- Yetki Bilgilendirme Kartı -->
+        <div class="card mt-4">
+            <div class="card-header bg-info text-white">
+                <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Co-Admin Yetkileri Hakkında</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-success"><i class="fas fa-check-circle me-2"></i>Erişebilecekleri Alanlar:</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>Dashboard (Finansal bilgiler hariç)</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Öğrenciler (Hizmetler ve Partner sekmeleri hariç)</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Başvurular</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Üniversiteler</li>
+                            <li><i class="fas fa-check text-success me-2"></i>AI Önerileri</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-danger"><i class="fas fa-times-circle me-2"></i>Erişemeyecekleri Alanlar:</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-times text-danger me-2"></i>Net Kar, Alacaklar, Gelirler</li>
+                            <li><i class="fas fa-times text-danger me-2"></i>Finansal Filtreler</li>
+                            <li><i class="fas fa-times text-danger me-2"></i>Partnerler Paneli</li>
+                            <li><i class="fas fa-times text-danger me-2"></i>Öğrenci Hizmetleri ve Partner Sekmeleri</li>
+                            <li><i class="fas fa-times text-danger me-2"></i>Yedekleme Sistemi</li>
+                            <li><i class="fas fa-times text-danger me-2"></i>Bu Sayfa (Adminler)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Yeni Admin Ekleme Modal -->
+<div class="modal fade" id="addAdminModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <h5 class="modal-title text-white"><i class="fas fa-user-plus me-2"></i>Yeni Co-Admin Ekle</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addAdminForm">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Ad *</label>
+                            <input type="text" class="form-control" id="newFirstName" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Soyad *</label>
+                            <input type="text" class="form-control" id="newLastName" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">E-posta *</label>
+                        <input type="email" class="form-control" id="newEmail" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Şifre *</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="newPassword" required minlength="6">
+                            <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('newPassword', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <small class="text-muted">En az 6 karakter olmalıdır</small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-success" onclick="createAdmin()">
+                    <i class="fas fa-save me-2"></i>Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Admin Düzenleme Modal -->
+<div class="modal fade" id="editAdminModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <h5 class="modal-title text-white"><i class="fas fa-edit me-2"></i>Co-Admin Düzenle</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editAdminForm">
+                    <input type="hidden" id="editAdminId">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Ad *</label>
+                            <input type="text" class="form-control" id="editFirstName" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Soyad *</label>
+                            <input type="text" class="form-control" id="editLastName" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">E-posta *</label>
+                        <input type="email" class="form-control" id="editEmail" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Yeni Şifre (Değiştirmek istemiyorsanız boş bırakın)</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="editPassword" minlength="6">
+                            <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('editPassword', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-primary" onclick="updateAdmin()">
+                    <i class="fas fa-save me-2"></i>Güncelle
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Silme Onay Modal -->
+<div class="modal fade" id="deleteAdminModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i>Silme Onayı</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="deleteAdminId">
+                <p>Bu co-admin hesabını silmek istediğinize emin misiniz?</p>
+                <p class="fw-bold" id="deleteAdminName"></p>
+                <p class="text-danger"><i class="fas fa-warning me-2"></i>Bu işlem geri alınamaz!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-danger" onclick="deleteAdmin()">
+                    <i class="fas fa-trash me-2"></i>Sil
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.avatar-sm {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+}
+
+/* Modal düzeltmeleri */
+.modal {
+    z-index: 1060 !important;
+}
+
+.modal-backdrop {
+    z-index: 1050 !important;
+}
+
+.modal-dialog {
+    max-width: 500px;
+    margin: 1.75rem auto;
+}
+
+.modal-content {
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+@media (max-width: 576px) {
+    .modal-dialog {
+        margin: 0.5rem;
+        max-width: calc(100% - 1rem);
+    }
+}
+</style>
+
+<script>
+// Toggle password visibility
+function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const icon = btn.querySelector('i');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+    }
+}
+
+// Create new admin
+async function createAdmin() {
+    const firstName = document.getElementById('newFirstName').value.trim();
+    const lastName = document.getElementById('newLastName').value.trim();
+    const email = document.getElementById('newEmail').value.trim();
+    const password = document.getElementById('newPassword').value;
+    
+    if (!firstName || !lastName || !email || !password) {
+        alert('Lütfen tüm alanları doldurun');
+        return;
+    }
+    
+    if (password.length < 6) {
+        alert('Şifre en az 6 karakter olmalıdır');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/admin/api/admins', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ first_name: firstName, last_name: lastName, email, password })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert('Co-admin başarıyla oluşturuldu!');
+            window.location.reload();
+        } else {
+            alert('Hata: ' + result.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Bir hata oluştu');
+    }
+}
+
+// Edit admin button click
+document.querySelectorAll('.js-edit-admin').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const adminId = this.dataset.adminId;
+        const firstName = this.dataset.firstName;
+        const lastName = this.dataset.lastName;
+        const email = this.dataset.email;
+        
+        document.getElementById('editAdminId').value = adminId;
+        document.getElementById('editFirstName').value = firstName;
+        document.getElementById('editLastName').value = lastName;
+        document.getElementById('editEmail').value = email;
+        document.getElementById('editPassword').value = '';
+        
+        new bootstrap.Modal(document.getElementById('editAdminModal')).show();
+    });
+});
+
+// Update admin
+async function updateAdmin() {
+    const id = document.getElementById('editAdminId').value;
+    const firstName = document.getElementById('editFirstName').value.trim();
+    const lastName = document.getElementById('editLastName').value.trim();
+    const email = document.getElementById('editEmail').value.trim();
+    const password = document.getElementById('editPassword').value;
+    
+    if (!firstName || !lastName || !email) {
+        alert('Lütfen ad, soyad ve e-posta alanlarını doldurun');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/admin/api/admins/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ first_name: firstName, last_name: lastName, email, password })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert('Co-admin başarıyla güncellendi!');
+            window.location.reload();
+        } else {
+            alert('Hata: ' + result.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Bir hata oluştu');
+    }
+}
+
+// Delete admin button click
+document.querySelectorAll('.js-delete-admin').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const adminId = this.dataset.adminId;
+        const adminName = this.dataset.adminName;
+        
+        document.getElementById('deleteAdminId').value = adminId;
+        document.getElementById('deleteAdminName').textContent = adminName;
+        
+        new bootstrap.Modal(document.getElementById('deleteAdminModal')).show();
+    });
+});
+
+// Delete admin
+async function deleteAdmin() {
+    const id = document.getElementById('deleteAdminId').value;
+    
+    try {
+        const response = await fetch(`/admin/api/admins/${id}`, {
+            method: 'DELETE'
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert('Co-admin başarıyla silindi!');
+            window.location.reload();
+        } else {
+            alert('Hata: ' + result.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Bir hata oluştu');
+    }
+}
+</script>

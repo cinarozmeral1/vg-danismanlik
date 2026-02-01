@@ -1,123 +1,73 @@
-<!-- Login Section -->
-<section class="login-section">
-    <div class="container-fluid p-0">
-        <div class="row g-0 min-vh-100">
-            <!-- Sol Taraf - Giriş Formu -->
-            <div class="col-lg-5 col-md-6 login-form-side d-flex align-items-start justify-content-center" style="padding-top: 100px;">
-                <div class="login-form-container w-100" style="max-width: 450px; padding: 20px 30px;">
-                    <div class="card shadow-lg border-0" style="border-radius: 16px; overflow: hidden;">
-                        <div class="card-header text-white text-center py-4" style="background: linear-gradient(135deg, #0056b3 0%, #004494 100%);">
-                            <h3 class="mb-0">
-                                <i class="fas fa-sign-in-alt me-2"></i>
-                                <%= t.auth.login.title %>
-                            </h3>
-                        </div>
-                        <div class="card-body p-4">
-                            <div id="alertContainer"></div>
-                            
-                            <form id="loginForm">
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">
-                                        <i class="fas fa-envelope me-2 text-primary"></i>
-                                        <%= t.auth.login.email %>
-                                    </label>
-                                    <input type="email" class="form-control form-control-lg" id="email" name="email" autocomplete="username" required style="border-radius: 10px; border: 2px solid #e0e0e0;">
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label for="password" class="form-label">
-                                        <i class="fas fa-lock me-2 text-primary"></i>
-                                        <%= t.auth.login.password %>
-                                    </label>
-                                    <input type="password" class="form-control form-control-lg" id="password" name="password" autocomplete="current-password" required style="border-radius: 10px; border: 2px solid #e0e0e0;">
-                                </div>
-                                
-                                <div class="mb-4 form-check">
-                                    <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe">
-                                    <label class="form-check-label" for="rememberMe">
-                                        <%= t.auth.login.rememberMe %>
-                                    </label>
-                                </div>
-                                
-                                <div class="d-grid">
-                                    <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 10px; padding: 12px; font-weight: 600; background: linear-gradient(135deg, #0056b3 0%, #004494 100%); border: none;">
-                                        <i class="fas fa-sign-in-alt me-2"></i>
-                                        <%= t.auth.login.submit %>
-                                    </button>
-                                </div>
-                            </form>
-                            
-                            <hr class="my-4">
-                            
-                            <div class="text-center">
-                                <p class="mb-3"><%= t.auth.login.noAccount %></p>
-                                <a href="/forgot-password" class="text-muted">
-                                    <i class="fas fa-key me-1"></i>
-                                    <%= t.auth.login.forgotPassword %>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Sağ Taraf - Görsel Alanı -->
-            <div class="col-lg-7 col-md-6 d-none d-md-block carousel-side p-0">
-                <!-- Şimdilik statik görsel - daha sonra carousel aktif edilecek -->
-                <% const useCarousel = false; /* Carousel aktif etmek için true yapın */ %>
-                <% if (useCarousel && typeof carouselImages !== 'undefined' && carouselImages.length > 0) { %>
-                <div class="custom-carousel" id="customCarousel">
-                    <!-- Fotoğraflar -->
-                    <div class="carousel-slides">
-                        <% carouselImages.forEach((img, index) => { %>
-                        <div class="carousel-slide <%= index === 0 ? 'active' : '' %>" data-index="<%= index %>">
-                            <img src="<%= img %>" alt="Slide <%= index + 1 %>">
-                        </div>
-                        <% }); %>
-                    </div>
-                    
-                    <!-- Oklar -->
-                    <button class="carousel-arrow carousel-prev" id="carouselPrev">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <button class="carousel-arrow carousel-next" id="carouselNext">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                    
-                    <!-- Göstergeler -->
-                    <div class="carousel-dots">
-                        <% carouselImages.forEach((img, index) => { %>
-                        <span class="carousel-dot <%= index === 0 ? 'active' : '' %>" data-index="<%= index %>"></span>
-                        <% }); %>
-                    </div>
-                </div>
-                <% } else { %>
-                <!-- Statik görsel -->
-                <div class="static-image-container d-flex align-items-center justify-content-center h-100">
-                    <img src="/images/venture-global-login.png" alt="Venture Global - Student Consulting" class="static-login-image">
-                </div>
-                <% } %>
-            </div>
-        </div>
-    </div>
-</section>
+<!-- Google OAuth - Server-side flow -->
 
 <style>
     .login-section {
-        margin-top: 76px;
-        min-height: calc(100vh - 76px);
+        margin-top: 0;
+        padding-top: 30px;
+        min-height: calc(100vh - 72px);
         background: #fef6f0;
+    }
+    
+    /* Google Login Button */
+    .google-login-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        width: 100%;
+        padding: 14px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        background: white;
+        font-weight: 600;
+        font-size: 1rem;
+        color: #333;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-bottom: 0;
+    }
+    
+    .google-login-btn:hover {
+        background: #f8f9fa;
+        border-color: #ccc;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .google-login-btn img {
+        width: 22px;
+        height: 22px;
+    }
+    
+    .login-divider {
+        display: flex;
+        align-items: center;
+        margin: 20px 0;
+    }
+    
+    .login-divider::before,
+    .login-divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: #e0e0e0;
+    }
+    
+    .login-divider span {
+        padding: 0 15px;
+        color: #666;
+        font-size: 0.9rem;
     }
     
     .login-form-side {
         background: transparent;
-        min-height: calc(100vh - 76px);
+        min-height: calc(100vh - 72px);
     }
     
     .carousel-side {
         position: relative;
         background: transparent;
-        min-height: calc(100vh - 76px);
+        min-height: calc(100vh - 72px);
         overflow: hidden;
     }
     
@@ -126,7 +76,7 @@
         position: relative;
         width: 100%;
         height: 100%;
-        min-height: calc(100vh - 76px);
+        min-height: calc(100vh - 72px);
     }
     
     .carousel-slides {
@@ -254,6 +204,125 @@
     }
 </style>
 
+<!-- Login Section -->
+<section class="login-section">
+    <div class="container-fluid p-0">
+        <div class="row g-0 min-vh-100">
+            <!-- Sol Taraf - Giriş Formu -->
+            <div class="col-lg-5 col-md-6 login-form-side d-flex align-items-start justify-content-center" style="padding-top: 100px;">
+                <div class="login-form-container w-100" style="max-width: 450px; padding: 20px 30px;">
+                    <div class="card shadow-lg border-0" style="border-radius: 16px; overflow: hidden;">
+                        <div class="card-header text-white text-center py-4" style="background: linear-gradient(135deg, #0056b3 0%, #004494 100%);">
+                            <h3 class="mb-0">
+                                <i class="fas fa-sign-in-alt me-2"></i>
+                                <%= t.auth.login.title %>
+                            </h3>
+                        </div>
+                        <div class="card-body p-4">
+                            <div id="alertContainer"></div>
+                            
+                            <!-- Google Sign In Button - Direkt Google'a yönlendir -->
+                            <a href="/api/auth/google/redirect?action=login" id="googleLoginBtn" class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center gap-2" style="padding: 12px; border-radius: 8px; font-weight: 500; margin-bottom: 20px;">
+                                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width: 20px; height: 20px;">
+                                <span><%= currentLanguage === 'tr' ? 'Google ile Giriş Yap' : 'Sign in with Google' %></span>
+                            </a>
+                            
+                            <div class="login-divider">
+                                <span><%= currentLanguage === 'tr' ? 'veya e-posta ile' : 'or with email' %></span>
+                            </div>
+                            
+                            <form id="loginForm">
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">
+                                        <i class="fas fa-envelope me-2 text-primary"></i>
+                                        <%= t.auth.login.email %>
+                                    </label>
+                                    <input type="email" class="form-control form-control-lg" id="email" name="email" autocomplete="username" required style="border-radius: 10px; border: 2px solid #e0e0e0;">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">
+                                        <i class="fas fa-lock me-2 text-primary"></i>
+                                        <%= t.auth.login.password %>
+                                    </label>
+                                    <input type="password" class="form-control form-control-lg" id="password" name="password" autocomplete="current-password" required style="border-radius: 10px; border: 2px solid #e0e0e0;">
+                                </div>
+                                
+                                <div class="mb-4 form-check">
+                                    <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe">
+                                    <label class="form-check-label" for="rememberMe">
+                                        <%= t.auth.login.rememberMe %>
+                                    </label>
+                                </div>
+                                
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary btn-lg" id="loginSubmitBtn" style="border-radius: 10px; padding: 12px; font-weight: 600; background: linear-gradient(135deg, #0056b3 0%, #004494 100%); border: none;">
+                                        <i class="fas fa-sign-in-alt me-2"></i>
+                                        <%= t.auth.login.submit %>
+                                    </button>
+                                </div>
+                            </form>
+                            
+                            <hr class="my-4">
+                            
+                            <div class="text-center">
+                                <p class="mb-2">
+                                    <%= currentLanguage === 'tr' ? 'Hesabınız yok mu?' : "Don't have an account?" %>
+                                    <a href="/register" class="text-primary fw-bold">
+                                        <%= currentLanguage === 'tr' ? 'Kayıt Olun' : 'Sign Up' %>
+                                    </a>
+                                </p>
+                                <a href="/forgot-password" class="text-muted">
+                                    <i class="fas fa-key me-1"></i>
+                                    <%= t.auth.login.forgotPassword %>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sağ Taraf - Görsel Alanı -->
+            <div class="col-lg-7 col-md-6 d-none d-md-block carousel-side p-0">
+                <!-- Şimdilik statik görsel - daha sonra carousel aktif edilecek -->
+                <% const useCarousel = false; /* Carousel aktif etmek için true yapın */ %>
+                <% if (useCarousel && typeof carouselImages !== 'undefined' && carouselImages.length > 0) { %>
+                <div class="custom-carousel" id="customCarousel">
+                    <!-- Fotoğraflar -->
+                    <div class="carousel-slides">
+                        <% carouselImages.forEach((img, index) => { %>
+                        <div class="carousel-slide <%= index === 0 ? 'active' : '' %>" data-index="<%= index %>">
+                            <img src="<%= img %>" alt="Slide <%= index + 1 %>">
+                        </div>
+                        <% }); %>
+                    </div>
+                    
+                    <!-- Oklar -->
+                    <button class="carousel-arrow carousel-prev" id="carouselPrev">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="carousel-arrow carousel-next" id="carouselNext">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    
+                    <!-- Göstergeler -->
+                    <div class="carousel-dots">
+                        <% carouselImages.forEach((img, index) => { %>
+                        <span class="carousel-dot <%= index === 0 ? 'active' : '' %>" data-index="<%= index %>"></span>
+                        <% }); %>
+                    </div>
+                </div>
+                <% } else { %>
+                <!-- Statik görsel -->
+                <div class="static-image-container d-flex align-items-center justify-content-center h-100">
+                    <img src="/images/venture-global-login.png" alt="Venture Global - Student Consulting" class="static-login-image">
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</section>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Custom Carousel
@@ -267,59 +336,31 @@ document.addEventListener('DOMContentLoaded', function() {
         let autoPlayInterval;
         
         function showSlide(index) {
-            // Sınırları kontrol et
             if (index >= slides.length) index = 0;
             if (index < 0) index = slides.length - 1;
             
-            // Tüm slide'ları gizle
             slides.forEach(slide => slide.classList.remove('active'));
             dots.forEach(dot => dot.classList.remove('active'));
             
-            // Seçili slide'ı göster
             slides[index].classList.add('active');
             dots[index].classList.add('active');
             
             currentIndex = index;
         }
         
-        function nextSlide() {
-            showSlide(currentIndex + 1);
-        }
+        function nextSlide() { showSlide(currentIndex + 1); }
+        function prevSlide() { showSlide(currentIndex - 1); }
         
-        function prevSlide() {
-            showSlide(currentIndex - 1);
-        }
+        prevBtn.addEventListener('click', function() { prevSlide(); resetAutoPlay(); });
+        nextBtn.addEventListener('click', function() { nextSlide(); resetAutoPlay(); });
         
-        // Ok butonları
-        prevBtn.addEventListener('click', function() {
-            prevSlide();
-            resetAutoPlay();
-        });
-        
-        nextBtn.addEventListener('click', function() {
-            nextSlide();
-            resetAutoPlay();
-        });
-        
-        // Nokta tıklamaları
         dots.forEach((dot, index) => {
-            dot.addEventListener('click', function() {
-                showSlide(index);
-                resetAutoPlay();
-            });
+            dot.addEventListener('click', function() { showSlide(index); resetAutoPlay(); });
         });
         
-        // Otomatik geçiş
-        function startAutoPlay() {
-            autoPlayInterval = setInterval(nextSlide, 5000);
-        }
+        function startAutoPlay() { autoPlayInterval = setInterval(nextSlide, 5000); }
+        function resetAutoPlay() { clearInterval(autoPlayInterval); startAutoPlay(); }
         
-        function resetAutoPlay() {
-            clearInterval(autoPlayInterval);
-            startAutoPlay();
-        }
-        
-        // Başlat
         startAutoPlay();
     }
     
@@ -356,7 +397,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 `;
                 
                 setTimeout(() => {
-                    // Check if there's a redirect parameter
                     const urlParams = new URLSearchParams(window.location.search);
                     const redirect = urlParams.get('redirect');
                     
@@ -392,4 +432,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+function showLoginAlert(type, message) {
+    const alertContainer = document.getElementById('alertContainer');
+    alertContainer.innerHTML = `
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+}
 </script>

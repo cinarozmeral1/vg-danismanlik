@@ -66,7 +66,7 @@ const authenticateAdmin = async (req, res, next) => {
         
         // Check if user exists and is admin
         const result = await pool.query(
-            'SELECT id, first_name, last_name, email, is_admin FROM users WHERE id = $1 AND is_admin = true',
+            'SELECT id, first_name, last_name, email, is_admin, admin_role FROM users WHERE id = $1 AND is_admin = true',
             [decoded.userId]
         );
         
@@ -85,6 +85,45 @@ const authenticateAdmin = async (req, res, next) => {
         return res.status(401).json({ 
             success: false, 
             message: 'Invalid admin token' 
+        });
+    }
+};
+
+// Super Admin authentication middleware (for sensitive operations)
+const authenticateSuperAdmin = async (req, res, next) => {
+    try {
+        const token = req.cookies.userToken || req.cookies.adminToken || req.headers.authorization?.replace('Bearer ', '');
+        
+        if (!token) {
+            return res.status(401).json({ 
+                success: false, 
+                message: 'Super admin authentication required' 
+            });
+        }
+        
+        const decoded = jwt.verify(token, JWT_SECRET);
+        
+        // Check if user exists and is super_admin
+        const result = await pool.query(
+            'SELECT id, first_name, last_name, email, is_admin, admin_role FROM users WHERE id = $1 AND is_admin = true AND admin_role = $2',
+            [decoded.userId, 'super_admin']
+        );
+        
+        if (result.rows.length === 0) {
+            return res.status(403).json({ 
+                success: false, 
+                message: 'Super admin access required' 
+            });
+        }
+        
+        req.admin = result.rows[0];
+        next();
+        
+    } catch (error) {
+        console.error('Super admin authentication error:', error);
+        return res.status(401).json({ 
+            success: false, 
+            message: 'Invalid token' 
         });
     }
 };
@@ -170,6 +209,7 @@ const generatePartnerToken = (partnerId) => {
 module.exports = {
     authenticateUser,
     authenticateAdmin,
+    authenticateSuperAdmin,
     authenticatePartner,
     generateUserToken,
     generateAdminToken,

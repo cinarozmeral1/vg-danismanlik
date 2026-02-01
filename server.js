@@ -124,6 +124,27 @@ const logoUpload = multer({
     }
 });
 
+// File upload middleware for CV/Resume files
+const cvUpload = multer({
+    storage: multer.memoryStorage(), // Memory storage for email attachment
+    fileFilter: function (req, file, cb) {
+        const allowedTypes = [
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        ];
+        
+        if (allowedTypes.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Sadece PDF, DOC ve DOCX dosyaları kabul edilir!'), false);
+        }
+    },
+    limits: {
+        fileSize: 3.5 * 1024 * 1024 // 3.5MB limit
+    }
+});
+
 // Import new routes
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
@@ -280,9 +301,25 @@ app.get('/change-language/:lang', (req, res) => {
         console.log('Language changed to:', lang);
     }
     
-    // Önceki sayfaya yönlendir
+    // Referrer kontrolü - sadece kendi sitemizden geliyorsa geri yönlendir
     const referer = req.get('Referer') || '/';
-    res.redirect(referer);
+    const allowedDomains = ['vgdanismanlik.com', 'localhost', '127.0.0.1', 'vercel.app'];
+    
+    let redirectUrl = '/'; // Default: ana sayfa
+    
+    try {
+        const refererUrl = new URL(referer);
+        const isOwnSite = allowedDomains.some(domain => refererUrl.hostname.includes(domain));
+        
+        if (isOwnSite) {
+            redirectUrl = refererUrl.pathname + refererUrl.search;
+        }
+    } catch (e) {
+        // URL parse edilemezse ana sayfaya yönlendir
+        redirectUrl = '/';
+    }
+    
+    res.redirect(redirectUrl);
 });
 
 // User info middleware'ini ekle
@@ -1054,6 +1091,16 @@ app.get('/about-us', (req, res) => {
     res.render('about-us', { title: res.locals.t.nav.aboutUs });
 });
 
+// Career Page
+app.get('/career', (req, res) => {
+    res.locals.seoTitle = 'Kariyer Fırsatları - Venture Global (VG Danışmanlık) | Bölge Temsilcisi Başvurusu';
+    res.locals.seoDescription = 'Venture Global (VG Danışmanlık) ailesine katılın! Türkiye genelinde bölge temsilcisi arıyoruz. PDR öğretmenleri, İngilizce öğretmenleri ve eğitim yöneticileri için kariyer fırsatları.';
+    res.locals.seoKeywords = 'venture global kariyer, vg danışmanlık iş ilanı, bölge temsilcisi, eğitim danışmanlığı kariyer, yurt dışı eğitim danışmanlığı iş, pdr öğretmeni iş ilanı';
+    res.locals.ogTitle = 'Kariyer Fırsatları - Venture Global (VG Danışmanlık)';
+    res.locals.ogDescription = 'Venture Global ailesine katılın! Türkiye genelinde bölge temsilcisi arıyoruz.';
+    res.render('career', { title: res.locals.t.nav.career || 'Kariyer' });
+});
+
 app.get('/media', (req, res) => {
     res.locals.seoTitle = 'Medyada Biz - VG Danışmanlık | Instagram, LinkedIn & YouTube';
     res.locals.seoDescription = 'VG Danışmanlık (Venture Global) sosyal medya paylaşımları. Instagram reels, LinkedIn postları ve YouTube Shorts videolarımızı takip edin. Öğrenci hikayeleri, başarı hikayeleri ve daha fazlası.';
@@ -1072,7 +1119,8 @@ app.get('/partners/medczech', (req, res) => {
 });
 
 app.get('/partners/bestschool', (req, res) => {
-    res.render('partners/bestschool', { title: 'BestSchool.cz - Venture Global' });
+    // BestSchool sayfası mevcut değil, ana sayfaya yönlendir
+    res.redirect('/');
 });
 
 app.get('/partners/kanpus', (req, res) => {
@@ -1265,6 +1313,43 @@ app.get('/programs', async (req, res) => {
 });
 
 
+// Email test endpoint (temporary for debugging)
+app.get('/test-email-system', async (req, res) => {
+    const testEmail = req.query.email;
+    if (!testEmail) {
+        return res.json({ 
+            success: false, 
+            message: 'Email parametresi gerekli. Örnek: /test-email-system?email=test@example.com',
+            config: {
+                EMAIL_USER: process.env.EMAIL_USER ? 'SET' : 'NOT SET',
+                EMAIL_PASS: process.env.EMAIL_PASS ? 'SET' : 'NOT SET'
+            }
+        });
+    }
+    
+    try {
+        const result = await emailService.sendVerificationEmail(testEmail, 'Test User', 'test-token-12345', 'tr');
+        res.json({ 
+            success: result, 
+            message: result ? 'Email gönderildi!' : 'Email gönderilemedi',
+            config: {
+                EMAIL_USER: process.env.EMAIL_USER ? 'SET' : 'NOT SET',
+                EMAIL_PASS: process.env.EMAIL_PASS ? 'SET' : 'NOT SET'
+            }
+        });
+    } catch (error) {
+        res.json({ 
+            success: false, 
+            message: 'Hata: ' + error.message,
+            error: error.toString(),
+            config: {
+                EMAIL_USER: process.env.EMAIL_USER ? 'SET' : 'NOT SET',
+                EMAIL_PASS: process.env.EMAIL_PASS ? 'SET' : 'NOT SET'
+            }
+        });
+    }
+});
+
 // Authentication pages
 app.get('/login', (req, res) => {
     // Cloudinary URL'lerini kullan
@@ -1308,6 +1393,20 @@ app.get('/login', (req, res) => {
 
 app.get('/register', (req, res) => {
     res.render('register', { title: res.locals.t.auth.register.title });
+});
+
+// Google registration completion page
+app.get('/complete-google-registration', (req, res) => {
+    // Check if there's pending Google registration
+    const googleEmail = req.cookies.google_pending_email;
+    if (!googleEmail) {
+        return res.redirect('/register');
+    }
+    
+    res.render('complete-google-registration', { 
+        title: res.locals.t?.auth?.register?.completeTitle || 'Kaydı Tamamla',
+        googleEmail: googleEmail
+    });
 });
 
 app.get('/forgot-password', (req, res) => {
@@ -3180,6 +3279,108 @@ const sendAssessmentEmail = async (formData, language = 'tr') => {
         return false;
     }
 };
+
+// Kariyer başvuru formu API route'u
+app.post('/api/career-application', cvUpload.single('cvFile'), async (req, res) => {
+    try {
+        const { firstName, lastName, email, phone, description } = req.body;
+        const cvFile = req.file;
+        
+        // Zorunlu alanları kontrol et
+        if (!firstName || !lastName || !email || !phone || !description) {
+            return res.status(400).json({
+                success: false,
+                message: 'Tüm alanlar zorunludur'
+            });
+        }
+        
+        if (!cvFile) {
+            return res.status(400).json({
+                success: false,
+                message: 'CV dosyası zorunludur'
+            });
+        }
+        
+        console.log('=== YENİ KARİYER BAŞVURUSU ===');
+        console.log('Tarih:', new Date().toLocaleString('tr-TR'));
+        console.log('Ad Soyad:', firstName, lastName);
+        console.log('E-posta:', email);
+        console.log('Telefon:', phone);
+        console.log('CV Dosyası:', cvFile.originalname, '(' + (cvFile.size / 1024 / 1024).toFixed(2) + ' MB)');
+        console.log('================================');
+        
+        // EmailService'den transporter'ı kullan
+        const transporter = emailService.transporter;
+        
+        const currentDate = new Date().toLocaleString('tr-TR');
+        
+        const mailOptions = {
+            from: process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com',
+            to: 'info@vgdanismanlik.com',
+            subject: 'Yeni Kariyer Başvurusu - ' + firstName + ' ' + lastName,
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f5f5f5;">
+                    <div style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+                        <h1 style="margin: 0; font-size: 28px;">Venture Global</h1>
+                        <p style="margin: 10px 0 0 0; opacity: 0.9;">Yeni Kariyer Başvurusu</p>
+                    </div>
+                    
+                    <div style="background: white; padding: 30px; border-radius: 0 0 10px 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        <h2 style="color: #333; margin-top: 0; font-size: 22px;">Bölge Temsilcisi Başvurusu</h2>
+                        
+                        <div style="border-left: 4px solid #0078D7; padding-left: 15px; margin: 20px 0;">
+                            <h3 style="color: #0078D7; margin: 0 0 15px 0; font-size: 16px;">Kişisel Bilgiler</h3>
+                            <p style="margin: 8px 0; color: #333;"><strong>Ad Soyad:</strong> ${firstName} ${lastName}</p>
+                            <p style="margin: 8px 0; color: #333;"><strong>E-posta:</strong> <a href="mailto:${email}" style="color: #0078D7;">${email}</a></p>
+                            <p style="margin: 8px 0; color: #333;"><strong>Telefon:</strong> <a href="tel:${phone}" style="color: #0078D7;">${phone}</a></p>
+                        </div>
+                        
+                        <div style="border-left: 4px solid #28a745; padding-left: 15px; margin: 20px 0;">
+                            <h3 style="color: #28a745; margin: 0 0 15px 0; font-size: 16px;">CV Hakkında Açıklama</h3>
+                            <p style="margin: 8px 0; color: #333; white-space: pre-wrap;">${description}</p>
+                        </div>
+                        
+                        <div style="border-left: 4px solid #ffc107; padding-left: 15px; margin: 20px 0;">
+                            <h3 style="color: #d39e00; margin: 0 0 15px 0; font-size: 16px;">CV Dosyası</h3>
+                            <p style="margin: 8px 0; color: #333;"><strong>Dosya Adı:</strong> ${cvFile.originalname}</p>
+                            <p style="margin: 8px 0; color: #333;"><strong>Boyut:</strong> ${(cvFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                            <p style="margin: 8px 0; color: #666; font-style: italic;">CV dosyası bu e-postaya eklenmiştir.</p>
+                        </div>
+                        
+                        <div style="background: #e8f4fc; border-radius: 8px; padding: 15px; margin-top: 25px; text-align: center;">
+                            <p style="margin: 0; color: #0078D7; font-size: 14px;">
+                                Bu başvuru <a href="https://vgdanismanlik.com" style="color: #0078D7;">vgdanismanlik.com</a> kariyer sayfasından gönderilmiştir.
+                            </p>
+                            <p style="margin: 5px 0 0 0; color: #666; font-size: 12px;">Tarih: ${currentDate}</p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            attachments: [
+                {
+                    filename: cvFile.originalname,
+                    content: cvFile.buffer
+                }
+            ]
+        };
+        
+        console.log('Kariyer başvuru e-postası gönderiliyor...');
+        const info = await transporter.sendMail(mailOptions);
+        console.log('E-posta başarıyla gönderildi:', info.messageId);
+        
+        res.json({
+            success: true,
+            message: 'Başvurunuz başarıyla gönderildi!'
+        });
+        
+    } catch (error) {
+        console.error('Kariyer başvuru hatası:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Başvuru gönderilirken bir hata oluştu. Lütfen tekrar deneyin.'
+        });
+    }
+});
 
 // İletişim formu API route'u
 app.post('/api/contact', async (req, res) => {

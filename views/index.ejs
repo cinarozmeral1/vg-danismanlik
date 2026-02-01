@@ -20,13 +20,10 @@
         <div class="row align-items-center">
             <div class="col-lg-6">
                 <div class="hero-content">
-                    <h1 class="hero-title">
+                    <h1 class="hero-title animate-fade-in-up">
                         <%= t.home.hero.title %><br>
                         <span style="color: #ffffff;"><%= t.home.hero.subtitle %></span>
                     </h1>
-                    <p class="hero-subtitle">
-                        <%= t.home.hero.description %>
-                    </p>
                     <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
                         
                     </div>
@@ -106,6 +103,14 @@
             <h2 class="text-black"><%= t.home.features.title %></h2>
             <p><%= t.home.features.subtitle %></p>
         </div>
+        
+        <!-- Hero Description - Venture Global® ile sayılar arasında -->
+        <div class="row justify-content-center mb-4">
+            <div class="col-lg-10">
+                <p class="text-center text-muted" style="font-size: 1.1rem; line-height: 1.7;"><%= t.home.hero.description %></p>
+            </div>
+        </div>
+        
         <% if (Array.isArray(t.home.features.body)) { %>
             <div class="row justify-content-center mb-4 features-description">
                 <div class="col-lg-10">
@@ -132,6 +137,18 @@
                         <p class="stat-label text-muted mb-0"><%= t.home.stats.universities %></p>
                     </div>
                     <div class="stat-counter text-center">
+                        <div class="stat-number" data-target="200">
+                            <span class="counter">0</span><span class="plus">+</span>
+                        </div>
+                        <p class="stat-label text-muted mb-0"><%= t.home.stats.departments || 'BÖLÜM' %></p>
+                    </div>
+                    <div class="stat-counter text-center">
+                        <div class="stat-number" data-target="150">
+                            <span class="counter">0</span><span class="plus">+</span>
+                        </div>
+                        <p class="stat-label text-muted mb-0"><%= t.home.stats.students || 'ÖĞRENCİ' %></p>
+                    </div>
+                    <div class="stat-counter text-center">
                         <div class="stat-number" data-target="98">
                             <span class="percent">%</span><span class="counter">0</span>
                         </div>
@@ -144,7 +161,7 @@
         <!-- CTA Buttons -->
         <div class="row g-4 justify-content-center">
             <!-- WhatsApp CTA -->
-            <div class="col-lg-5 col-md-6">
+            <div class="col-lg-5 col-md-6 animate-fade-in-up animate-delay-2">
                 <a href="https://wa.me/message/O2KRAFDJAMX7F1" target="_blank" rel="noopener" class="text-decoration-none">
                     <div class="cta-card h-100 text-center p-5" style="background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); border-radius: 20px; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(37, 211, 102, 0.3);">
                         <div class="mb-4">
@@ -160,7 +177,7 @@
             </div>
 
             <!-- Instagram DM CTA -->
-            <div class="col-lg-5 col-md-6">
+            <div class="col-lg-5 col-md-6 animate-fade-in-up animate-delay-3">
                 <a href="https://ig.me/m/ventureglobal" target="_blank" rel="noopener" class="text-decoration-none">
                     <div class="cta-card h-100 text-center p-5" style="background: linear-gradient(135deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); border-radius: 20px; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(225, 48, 108, 0.3);">
                         <div class="mb-4">
@@ -223,6 +240,20 @@
             
             .stat-counter {
                 padding: 0.5rem 1rem;
+            }
+            
+            /* Mobilde istatistikleri grid olarak ortala */
+            .stats-counter-container {
+                display: grid !important;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+                justify-items: center;
+            }
+            
+            /* Son tek eleman (Memnuniyet) tam genişlikte ve ortalı */
+            .stat-counter:last-child:nth-child(odd) {
+                grid-column: 1 / -1;
+                justify-self: center;
             }
             
             .cta-card {
@@ -329,7 +360,7 @@
         
         <div class="text-center mt-5">
             <a href="/universities" class="btn btn-primary btn-lg px-5 py-3 rounded-pill fw-bold" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);">
-                <%= t.home.partnerUniversities?.button || 'Tüm Üniversiteleri Keşfet' %>
+                <%= t.home.partnerUniversities?.button || 'Üniversitelerimiz' %>
                 <i class="fas fa-arrow-right ms-2"></i>
             </a>
         </div>
@@ -344,11 +375,14 @@
         width: 100%;
         overflow: visible;
         padding: 30px 0;
+        pointer-events: none;
+        user-select: none;
     }
     
     .university-logo-slider .swiper-wrapper {
         transition-timing-function: linear !important;
         align-items: stretch;
+        pointer-events: none;
     }
     
     .university-logo-slider .swiper-slide {
@@ -358,6 +392,7 @@
         align-items: center;
         justify-content: center;
         padding: 0 20px;
+        pointer-events: none;
     }
     
     .university-logo-slider .swiper-slide .logo-card {
@@ -373,6 +408,8 @@
         width: 260px;
         transition: all 0.3s ease;
         overflow: hidden;
+        pointer-events: none; /* Tıklama slider'ı durdurmasın */
+        user-select: none;
     }
     
     .university-logo-slider .swiper-slide .logo-card:hover {
@@ -481,8 +518,14 @@
                     delay: 0,
                     disableOnInteraction: false,
                     pauseOnMouseEnter: false,
+                    stopOnLastSlide: false,
                 },
                 allowTouchMove: false,
+                simulateTouch: false,
+                preventClicks: true,
+                preventClicksPropagation: true,
+                noSwiping: true,
+                noSwipingClass: 'swiper-slide',
                 freeMode: {
                     enabled: true,
                     momentum: false,

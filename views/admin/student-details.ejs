@@ -20,6 +20,7 @@
                 <span>Başvurular</span>
                 <span class="badge bg-success ms-auto"><%= applicationCount %></span>
             </a>
+            <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
             <a href="/admin/partners" class="nav-item">
                 <i class="fas fa-handshake"></i>
                 <span>Partnerler</span>
@@ -27,14 +28,21 @@
                     <span class="badge bg-info ms-auto"><%= partnerCount %></span>
                 <% } %>
             </a>
+            <% } %>
             <a href="/admin/universities" class="nav-item">
                 <i class="fas fa-university"></i>
                 <span>Üniversiteler</span>
             </a>
+            <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
             <a href="/admin/backups" class="nav-item">
                 <i class="fas fa-database"></i>
                 <span>Yedekleme</span>
             </a>
+            <a href="/admin/admins" class="nav-item">
+                <i class="fas fa-user-shield"></i>
+                <span>Adminler</span>
+            </a>
+            <% } %>
         </nav>
     </div>
 
@@ -90,21 +98,25 @@
                                 <i class="fas fa-star me-2"></i>NOTLAR
                             </button>
                         </li>
+                        <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="services-tab" data-bs-toggle="tab" data-bs-target="#services" type="button" role="tab">
                                 <i class="fas fa-cogs me-2"></i>HİZMETLER
                             </button>
                         </li>
+                        <% } %>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="files-tab" data-bs-toggle="tab" data-bs-target="#files" type="button" role="tab">
                                 <i class="fas fa-file me-2"></i>DOSYALAR
                             </button>
                         </li>
+                        <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="partner-tab" data-bs-toggle="tab" data-bs-target="#partner" type="button" role="tab">
                                 <i class="fas fa-handshake me-2"></i>PARTNER
                             </button>
                         </li>
+                        <% } %>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="ai-recommendation-tab" data-bs-toggle="tab" data-bs-target="#ai-recommendation" type="button" role="tab" style="white-space: nowrap;">
                                 <i class="fas fa-magic me-2"></i>AI
@@ -256,7 +268,8 @@
                         </div>
                     </div>
                     
-                    <!-- Services Tab -->
+                    <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
+                    <!-- Services Tab (Sadece Super Admin) -->
                     <div class="tab-pane fade" id="services" role="tabpanel" style="overflow: visible; max-height: none;">
                         <div class="container-fluid px-0">
                             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -277,7 +290,13 @@
                                         <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label for="serviceName" class="form-label">Hizmet Adı *</label>
-                                                <input type="text" class="form-control" id="serviceName" placeholder="Örn: Vize Başvuru Ücreti" required>
+                                                <!-- Dropdown for new service, will be changed to text input when editing -->
+                                                <select class="form-select" id="serviceNameSelect" required>
+                                                    <option value="">Hizmet Seçin</option>
+                                                    <option value="Danismanlik Ucreti (Kabul Oncesi)">Danışmanlık Ücreti (Kabul Öncesi)</option>
+                                                    <option value="Danismanlik Ucreti (Kabul Sonrasi)">Danışmanlık Ücreti (Kabul Sonrası)</option>
+                                                </select>
+                                                <input type="text" class="form-control" id="serviceName" placeholder="Hizmet adını girin" style="display: none;">
                                             </div>
                                         </div>
                                         <div class="col-md-3">
@@ -301,18 +320,18 @@
                                         <div class="col-md-4">
                                             <div class="mb-3">
                                                 <label for="serviceDueDate" class="form-label">Vade Tarihi</label>
-                                                <input type="date" class="form-control" id="serviceDueDate">
+                                                <input type="text" class="form-control date-turkish" id="serviceDueDate" placeholder="GG.AA.YYYY">
                                             </div>
                                         </div>
                                         <div class="col-md-4">
-                                            <div class="mb-3">
+                                            <div class="mb-3" id="paymentDateContainer" style="display: none;">
                                                 <label for="servicePaymentDate" class="form-label">Ödeme Tarihi</label>
-                                                <input type="date" class="form-control" id="servicePaymentDate">
+                                                <input type="text" class="form-control date-turkish" id="servicePaymentDate" placeholder="GG.AA.YYYY">
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="mb-3 form-check mt-4">
-                                                <input type="checkbox" class="form-check-input" id="serviceIsPaid">
+                                                <input type="checkbox" class="form-check-input" id="serviceIsPaid" onchange="togglePaymentDate()">
                                                 <label class="form-check-label" for="serviceIsPaid">
                                                     <strong>Ödendi</strong>
                                                 </label>
@@ -345,6 +364,7 @@
                             </div>
                         </div>
                     </div>
+                    <% } %>
                     
                     <!-- Files Tab -->
                     <div class="tab-pane fade" id="files" role="tabpanel" style="overflow: visible; max-height: none;">
@@ -383,71 +403,52 @@
                         </div>
                     </div>
                     
-                    <!-- Partner Tab -->
+                    <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
+                    <!-- Partner Tab (Sadece Super Admin) -->
                     <div class="tab-pane fade" id="partner" role="tabpanel" style="overflow: visible; max-height: none;">
                         <div class="container-fluid px-0">
-                            <h5 class="mb-4 text-center"><strong>Partner Bilgileri</strong></h5>
+                            <h5 class="mb-4 text-center"><strong>Partner Kazançları</strong></h5>
+                            <p class="text-muted text-center mb-4">Bir partnere tıklayarak kazanç ekleyebilirsiniz. Birden fazla partnere kazanç atanabilir.</p>
                             
-                            <!-- Partner Assignment Card -->
-                            <div class="card mb-4">
-                                <div class="card-header text-white" style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%);">
-                                    <h6 class="mb-0"><i class="fas fa-handshake me-2"></i>Partner Atama</h6>
-                </div>
-                                <div class="card-body">
-                                    <div id="partnerInfo">
-                                        <div class="text-center py-3">
-                                            <div class="spinner-border spinner-border-sm text-primary" role="status">
-                                                <span class="visually-hidden">Yükleniyor...</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="mt-4">
-                                        <label for="partnerSelect" class="form-label fw-bold">Partner Seçin</label>
-                                        <div class="input-group mb-3">
+                            <!-- Partner Search -->
+                            <div class="mb-4">
+                                <div class="input-group">
                                             <span class="input-group-text bg-primary text-white"><i class="fas fa-search"></i></span>
                                             <input type="text" class="form-control" id="partnerSearchInput" placeholder="Partner ara...">
                                         </div>
-                                        <select class="form-select partner-select" id="partnerSelect" size="5" style="border: 2px solid #0d6efd; background-color: #f8f9ff;">
-                                            <option value="">Partner yükleniyor...</option>
-                                        </select>
-                                        <style>
-                                            .partner-select option:checked,
-                                            .partner-select option:hover {
-                                                background: linear-gradient(#0d6efd, #0d6efd) !important;
-                                                color: white !important;
-                                            }
-                                            .partner-select option {
-                                                padding: 8px 12px;
-                                            }
-                                        </style>
-                                        <div class="mt-3">
-                                            <button class="btn btn-primary" onclick="assignPartner()">
-                                                <i class="fas fa-check me-2"></i>Partner Ata
-                                            </button>
-                                            <button class="btn btn-outline-danger" onclick="removePartner()">
-                                                <i class="fas fa-times me-2"></i>Partner Kaldır
-                                            </button>
                                         </div>
+                            
+                            <!-- Partners Grid -->
+                            <div class="row g-3 mb-4" id="partnersGrid">
+                                <div class="col-12 text-center py-4">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Yükleniyor...</span>
                                     </div>
                                 </div>
                             </div>
                             
-                            <!-- Partner Earning Card -->
-                            <div class="card" id="earningCard" style="display: none;">
+                            <!-- Selected Partner Earnings Section -->
+                            <div id="selectedPartnerSection" style="display: none;">
+                                <div class="card">
                                 <div class="card-header text-white" style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%);">
-                                    <h6 class="mb-0"><i class="fas fa-money-bill-wave me-2"></i>Partner Kazançları</h6>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0"><i class="fas fa-user-tie me-2"></i><span id="selectedPartnerName">Partner</span> - Kazançlar</h6>
+                                            <button class="btn btn-sm btn-light" onclick="closePartnerSection()">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
                                 </div>
                                 <div class="card-body">
-                                    <!-- Existing Earnings Table -->
-                                    <div id="earningsTableContainer" class="mb-4">
-                                        <!-- Earnings table will be loaded here -->
+                                        <!-- Partner Earnings Table -->
+                                        <div id="partnerEarningsTable" class="mb-4">
+                                            <!-- Earnings will be loaded here -->
                                     </div>
                                     
                                     <hr>
                                     
-                                    <h6 class="mb-3"><i class="fas fa-plus-circle me-2"></i>Yeni Kazanç Ekle</h6>
+                                        <h6 class="mb-3"><i class="fas fa-plus-circle me-2 text-success"></i>Yeni Kazanç Ekle</h6>
                                     <form id="earningForm">
+                                            <input type="hidden" id="selectedPartnerId">
                                         <div class="row g-3">
                                             <div class="col-md-6">
                                                 <label for="earningAmount" class="form-label">Tutar *</label>
@@ -461,10 +462,6 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
-                                                <label for="earningDate" class="form-label">Kazanç Tarihi *</label>
-                                                <input type="date" class="form-control" id="earningDate" required>
-                                            </div>
-                                            <div class="col-md-6">
                                                 <label for="earningPaid" class="form-label">Ödeme Durumu</label>
                                                 <select class="form-select" id="earningPaid" onchange="togglePaymentDate()">
                                                     <option value="false">Ödenmedi</option>
@@ -472,8 +469,9 @@
                                                 </select>
                                             </div>
                                             <div class="col-md-6" id="paymentDateContainer" style="display: none;">
-                                                <label for="paymentDate" class="form-label">Ödeme Tarihi</label>
-                                                <input type="date" class="form-control" id="paymentDate">
+                                                <label for="earningDate" class="form-label">Ödeme Tarihi</label>
+                                                <input type="text" class="form-control" id="earningDate" placeholder="GG.AA.YYYY" readonly>
+                                                <small class="text-muted">Otomatik olarak bugünün tarihi kaydedilir</small>
                                             </div>
                                             <div class="col-12">
                                                 <label for="earningNotes" class="form-label">Notlar</label>
@@ -481,7 +479,7 @@
                                             </div>
                                         </div>
                                         <div class="mt-3">
-                                            <button type="button" class="btn btn-primary" onclick="saveEarning()">
+                                                <button type="button" class="btn btn-success" onclick="saveEarning()">
                                                 <i class="fas fa-plus me-2"></i>Kazanç Ekle
                                             </button>
                                         </div>
@@ -489,7 +487,19 @@
                                 </div>
                             </div>
                         </div>
+                            
+                            <!-- All Earnings Summary -->
+                            <div class="card mt-4" id="allEarningsSummary">
+                                <div class="card-header text-white" style="background: linear-gradient(135deg, #198754 0%, #146c43 100%);">
+                                    <h6 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Tüm Partner Kazançları Özeti</h6>
                     </div>
+                                <div class="card-body" id="allEarningsContent">
+                                    <!-- Summary will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
                     
                     <!-- AI Recommendation Tab -->
                     <div class="tab-pane fade" id="ai-recommendation" role="tabpanel" style="overflow: visible; max-height: none;">
@@ -1847,7 +1857,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (alertDiv.parentNode) {
                 alertDiv.parentNode.removeChild(alertDiv);
             }
-        }, 5000);
+        }, 10000);
     };
 
     // File Management Functions
@@ -2256,6 +2266,11 @@ document.addEventListener('DOMContentLoaded', function() {
             button.innerHTML = '<i class="fas fa-minus me-2"></i>FORMU GİZLE';
             button.classList.remove('btn-success');
             button.classList.add('btn-secondary');
+            
+            // If not editing, use dropdown
+            if (!document.getElementById('addServiceForm').getAttribute('data-edit-id')) {
+                switchToDropdown();
+            }
         } else {
             formContainer.style.display = 'none';
             button.innerHTML = '<i class="fas fa-plus me-2"></i>YENİ HİZMET EKLE';
@@ -2267,6 +2282,12 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('addServiceForm').removeAttribute('data-edit-id');
             document.querySelector('#addServiceFormContainer .card-header h6').textContent = 'Yeni Hizmet Ekle';
             document.querySelector('#addServiceForm button[onclick="addService()"]').innerHTML = '<i class="fas fa-save me-2"></i>Hizmet Ekle';
+            
+            // Switch back to dropdown for new service
+            switchToDropdown();
+            
+            // Hide payment date container
+            document.getElementById('paymentDateContainer').style.display = 'none';
         }
     };
 
@@ -2278,6 +2299,10 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('addServiceForm').removeAttribute('data-edit-id');
         document.querySelector('#addServiceFormContainer .card-header h6').textContent = 'Yeni Hizmet Ekle';
         document.querySelector('#addServiceForm button[onclick="addService()"]').innerHTML = '<i class="fas fa-save me-2"></i>Hizmet Ekle';
+        
+        // Switch back to dropdown and hide payment date
+        switchToDropdown();
+        document.getElementById('paymentDateContainer').style.display = 'none';
         
         toggleAddServiceForm();
     };
@@ -2318,6 +2343,78 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
+    // Toggle payment date visibility based on checkbox
+    window.togglePaymentDate = function() {
+        const isPaid = document.getElementById('serviceIsPaid').checked;
+        const paymentDateContainer = document.getElementById('paymentDateContainer');
+        if (isPaid) {
+            paymentDateContainer.style.display = 'block';
+            // Set today's date as default if empty
+            const paymentDateInput = document.getElementById('servicePaymentDate');
+            if (!paymentDateInput.value) {
+                const today = new Date();
+                paymentDateInput.value = formatDateTurkish(today);
+            }
+        } else {
+            paymentDateContainer.style.display = 'none';
+            document.getElementById('servicePaymentDate').value = '';
+        }
+    };
+    
+    // Format date to Turkish format (DD.MM.YYYY)
+    window.formatDateTurkish = function(date) {
+        if (!date) return '';
+        const d = new Date(date);
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const year = d.getFullYear();
+        return `${day}.${month}.${year}`;
+    };
+    
+    // Parse Turkish date format to ISO
+    window.parseTurkishDate = function(dateStr) {
+        if (!dateStr) return '';
+        // Handle DD.MM.YYYY format
+        const parts = dateStr.split('.');
+        if (parts.length === 3) {
+            return `${parts[2]}-${parts[1]}-${parts[0]}`;
+        }
+        // If already in ISO format, return as is
+        if (dateStr.includes('-')) {
+            return dateStr.split('T')[0];
+        }
+        return dateStr;
+    };
+    
+    // Convert ISO date to Turkish format
+    window.isoToTurkish = function(isoDate) {
+        if (!isoDate) return '';
+        const datePart = isoDate.includes('T') ? isoDate.split('T')[0] : isoDate;
+        const parts = datePart.split('-');
+        if (parts.length === 3) {
+            return `${parts[2]}.${parts[1]}.${parts[0]}`;
+        }
+        return isoDate;
+    };
+    
+    // Switch to text input for editing
+    window.switchToTextInput = function() {
+        document.getElementById('serviceNameSelect').style.display = 'none';
+        document.getElementById('serviceNameSelect').removeAttribute('required');
+        document.getElementById('serviceName').style.display = 'block';
+        document.getElementById('serviceName').setAttribute('required', 'required');
+    };
+    
+    // Switch to dropdown for new service
+    window.switchToDropdown = function() {
+        document.getElementById('serviceName').style.display = 'none';
+        document.getElementById('serviceName').removeAttribute('required');
+        document.getElementById('serviceName').value = '';
+        document.getElementById('serviceNameSelect').style.display = 'block';
+        document.getElementById('serviceNameSelect').setAttribute('required', 'required');
+        document.getElementById('serviceNameSelect').value = '';
+    };
+
     // Edit service
     window.editService = function(serviceId) {
         // Find the service in the current services array
@@ -2328,19 +2425,27 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        // Switch to text input for editing (allows manual entry)
+        switchToTextInput();
+
         // Fill the add service form with existing data
         document.getElementById('serviceName').value = service.service_name || '';
         document.getElementById('serviceAmount').value = service.amount || '';
         document.getElementById('serviceCurrency').value = service.currency || 'EUR';
         
-        // Format dates for input fields (YYYY-MM-DD)
-        const dueDate = service.due_date ? (service.due_date.includes('T') ? service.due_date.split('T')[0] : service.due_date) : '';
-        const paymentDate = service.payment_date ? (service.payment_date.includes('T') ? service.payment_date.split('T')[0] : service.payment_date) : '';
+        // Format dates for Turkish format (DD.MM.YYYY)
+        const dueDate = service.due_date ? isoToTurkish(service.due_date) : '';
+        const paymentDate = service.payment_date ? isoToTurkish(service.payment_date) : '';
         
         document.getElementById('serviceDueDate').value = dueDate;
         document.getElementById('servicePaymentDate').value = paymentDate;
-        document.getElementById('serviceIsPaid').checked = service.is_paid === true || service.is_paid === 1;
+        
+        const isPaid = service.is_paid === true || service.is_paid === 1;
+        document.getElementById('serviceIsPaid').checked = isPaid;
         document.getElementById('serviceNotes').value = service.notes || '';
+        
+        // Show/hide payment date based on checkbox
+        document.getElementById('paymentDateContainer').style.display = isPaid ? 'block' : 'none';
 
         // Show the form if hidden
         const formContainer = document.getElementById('addServiceFormContainer');
@@ -2506,11 +2611,26 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add/Edit service
     window.addService = async function() {
         try {
-            const serviceName = document.getElementById('serviceName').value;
+            // Get service name from dropdown or text input
+            const serviceNameSelect = document.getElementById('serviceNameSelect');
+            const serviceNameInput = document.getElementById('serviceName');
+            let serviceName = '';
+            
+            if (serviceNameSelect.style.display !== 'none') {
+                serviceName = serviceNameSelect.value;
+            } else {
+                serviceName = serviceNameInput.value;
+            }
+            
             const amount = parseFloat(document.getElementById('serviceAmount').value);
             const currency = document.getElementById('serviceCurrency').value;
-            const dueDate = document.getElementById('serviceDueDate').value || null;
-            const paymentDate = document.getElementById('servicePaymentDate').value || null;
+            
+            // Convert Turkish date format (DD.MM.YYYY) to ISO (YYYY-MM-DD)
+            const dueDateRaw = document.getElementById('serviceDueDate').value || '';
+            const paymentDateRaw = document.getElementById('servicePaymentDate').value || '';
+            const dueDate = parseTurkishDate(dueDateRaw) || null;
+            const paymentDate = parseTurkishDate(paymentDateRaw) || null;
+            
             const isPaid = document.getElementById('serviceIsPaid').checked;
             const notes = document.getElementById('serviceNotes').value;
             
@@ -3557,38 +3677,26 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // =====================================================
-// PARTNER TAB FUNCTIONS
+// PARTNER TAB FUNCTIONS (Multi-Partner Support)
 // =====================================================
 
 const studentId = <%= user.id %>;
 let allPartners = [];
-let currentPartnerInfo = null;
+let allEarnings = [];
+let selectedPartnerId = null;
+let assignedPartnerIds = []; // Multiple assigned partners
 
 // Load partner data when partner tab is clicked
 document.getElementById('partner-tab')?.addEventListener('shown.bs.tab', function() {
-    loadPartnerData();
-    loadPartnersList();
+    loadAllPartnerData();
 });
 
 // Also load on DOMContentLoaded if partner tab exists
 document.addEventListener('DOMContentLoaded', function() {
     // Load partner data initially
     setTimeout(() => {
-        loadPartnerData();
-        loadPartnersList();
+        loadAllPartnerData();
     }, 500);
-    
-    // Setup earning type change handler
-    document.getElementById('earningType')?.addEventListener('change', function() {
-        document.getElementById('percentageContainer').style.display = 
-            this.value === 'percentage' ? 'block' : 'none';
-    });
-    
-    // Setup payment status change handler
-    document.getElementById('earningPaid')?.addEventListener('change', function() {
-        document.getElementById('paymentDateContainer').style.display = 
-            this.value === 'true' ? 'block' : 'none';
-    });
     
     // Setup partner search
     document.getElementById('partnerSearchInput')?.addEventListener('input', function() {
@@ -3596,74 +3704,273 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Load student's partner data
-async function loadPartnerData() {
+// Load all partner data for this student
+async function loadAllPartnerData() {
     try {
-        const response = await fetch(`/admin/users/${studentId}/partner`, {
+        // Load all partners
+        const partnersResponse = await fetch('/admin/api/partners', {
             credentials: 'include'
         });
-        const data = await response.json();
+        const partnersData = await partnersResponse.json();
         
-        if (data.success) {
-            currentPartnerInfo = data;
-            displayPartnerInfo(data);
-            displayEarningsTable(data.earnings || []);
-            
-            // Always show earning card if has partner
-            if (data.has_partner) {
-                document.getElementById('earningCard').style.display = 'block';
-            } else {
-                document.getElementById('earningCard').style.display = 'none';
-            }
-        } else {
-            document.getElementById('partnerInfo').innerHTML = `
-                <div class="alert alert-warning">Partner bilgisi bulunamadı</div>
-            `;
+        if (partnersData.success) {
+            allPartners = partnersData.partners;
         }
+        
+        // Load student's partner info and earnings
+        const earningsResponse = await fetch(`/admin/users/${studentId}/partner`, {
+            credentials: 'include'
+        });
+        const earningsData = await earningsResponse.json();
+        
+        if (earningsData.success) {
+            allEarnings = earningsData.earnings || [];
+            assignedPartnerIds = earningsData.assigned_partner_ids || [];
+            // Fallback to legacy partner_id if no new assignments
+            if (assignedPartnerIds.length === 0 && earningsData.partner?.id) {
+                assignedPartnerIds = [earningsData.partner.id];
+            }
+        }
+        
+        // Display partners grid with earnings info
+        displayPartnersGrid();
+        displayAllEarningsSummary();
+        
     } catch (error) {
         console.error('Load partner data error:', error);
-        document.getElementById('partnerInfo').innerHTML = `
-            <div class="alert alert-warning">Partner bilgisi henüz yok</div>
+        document.getElementById('partnersGrid').innerHTML = `
+            <div class="col-12">
+                <div class="alert alert-danger">Partner verileri yüklenirken hata oluştu</div>
+            </div>
         `;
     }
 }
 
-// Display partner info
-function displayPartnerInfo(data) {
-    const container = document.getElementById('partnerInfo');
+// Display partners as clickable cards
+function displayPartnersGrid() {
+    const container = document.getElementById('partnersGrid');
     
-    if (data.has_partner && data.partner) {
+    if (!allPartners || allPartners.length === 0) {
         container.innerHTML = `
-            <div class="alert alert-success">
-                <div class="d-flex align-items-center">
-                    <i class="fas fa-handshake fa-2x me-3"></i>
-                    <div>
-                        <h6 class="mb-1"><strong>${data.partner.name}</strong></h6>
-                        <p class="mb-0">${data.partner.company_name || ''}</p>
-                        <small class="text-muted">${data.partner.email}</small>
+            <div class="col-12">
+                <div class="alert alert-warning">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Henüz partner tanımlanmamış.
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '';
+    
+    allPartners.forEach(partner => {
+        // Calculate earnings for this partner
+        const partnerEarnings = allEarnings.filter(e => e.partner_id === partner.id);
+        const totalEarnings = partnerEarnings.reduce((sum, e) => sum + parseFloat(e.amount), 0);
+        const hasEarnings = partnerEarnings.length > 0;
+        const isAssigned = assignedPartnerIds.includes(partner.id);
+        
+        // Card styling based on status
+        let cardClass = 'border-secondary';
+        let headerStyle = '';
+        if (isAssigned) {
+            cardClass = 'border-primary border-2';
+            headerStyle = 'background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);';
+        } else if (hasEarnings) {
+            cardClass = 'border-success';
+        }
+        
+        const badgeClass = hasEarnings ? 'bg-success' : 'bg-secondary';
+        
+        html += `
+            <div class="col-md-6 col-lg-4">
+                <div class="card partner-card ${cardClass}" style="transition: all 0.3s;">
+                    ${isAssigned ? `<div class="card-header text-white py-1 text-center" style="${headerStyle}"><small><i class="fas fa-check-circle me-1"></i>Atanmış Partner</small></div>` : ''}
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="avatar-circle me-3" style="width: 45px; height: 45px; border-radius: 50%; background: linear-gradient(135deg, ${isAssigned ? '#0d6efd, #0056b3' : '#667eea, #764ba2'}); display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-user-tie text-white"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0 fw-bold">${partner.first_name} ${partner.last_name}</h6>
+                                <small class="text-muted">${partner.company_name || partner.email}</small>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-2 mb-3">
+                            <span class="badge ${badgeClass}">
+                                ${hasEarnings ? partnerEarnings.length + ' Kazanç' : 'Kazanç Yok'}
+                            </span>
+                            ${hasEarnings ? `<strong class="text-success">${totalEarnings.toFixed(2)} €</strong>` : '<span class="text-muted">-</span>'}
+                        </div>
+                        <div class="d-flex gap-2">
+                            ${isAssigned 
+                                ? `<button class="btn btn-sm btn-outline-danger flex-grow-1" onclick="event.stopPropagation(); removePartnerAssignment(${partner.id})">
+                                       <i class="fas fa-times me-1"></i>Kaldır
+                                   </button>`
+                                : `<button class="btn btn-sm btn-primary flex-grow-1" onclick="event.stopPropagation(); assignPartner(${partner.id})">
+                                       <i class="fas fa-link me-1"></i>Ata
+                                   </button>`
+                            }
+                            <button class="btn btn-sm btn-outline-success flex-grow-1" onclick="event.stopPropagation(); selectPartner(${partner.id}, '${partner.first_name} ${partner.last_name}')">
+                                <i class="fas fa-plus me-1"></i>Kazanç
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         `;
-    } else {
-        container.innerHTML = `
-            <div class="alert alert-warning">
-                <i class="fas fa-info-circle me-2"></i>
-                Bu öğrenciye henüz partner atanmamış.
-            </div>
-        `;
+    });
+    
+    container.innerHTML = html;
+    
+    // Add hover effect
+    document.querySelectorAll('.partner-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-3px)';
+            this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+        });
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = 'none';
+        });
+    });
+}
+
+// Assign partner to student (without earning) - supports multiple partners
+async function assignPartner(partnerId) {
+    try {
+        const response = await fetch(`/admin/users/${studentId}/partners`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ partner_id: partnerId })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert('Partner başarıyla atandı!');
+            await loadAllPartnerData();
+        } else {
+            alert(data.message || 'Partner atanamadı!');
+        }
+    } catch (error) {
+        console.error('Assign partner error:', error);
+        alert('Partner atanırken bir hata oluştu!');
     }
 }
 
-// Display earnings table
-function displayEarningsTable(earnings) {
-    const container = document.getElementById('earningsTableContainer');
+// Remove specific partner assignment
+async function removePartnerAssignment(partnerId) {
+    if (!confirm('Bu partnerin atamasını kaldırmak istediğinizden emin misiniz?')) {
+        return;
+    }
     
-    if (!earnings || earnings.length === 0) {
+    try {
+        const response = await fetch(`/admin/users/${studentId}/partners/${partnerId}`, {
+            method: 'DELETE',
+            credentials: 'include'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert('Partner ataması kaldırıldı!');
+            await loadAllPartnerData();
+        } else {
+            alert(data.message || 'Partner kaldırılamadı!');
+        }
+    } catch (error) {
+        console.error('Remove partner error:', error);
+        alert('Partner kaldırılırken bir hata oluştu!');
+    }
+}
+
+// Filter partners by search
+function filterPartners(searchTerm) {
+    const filtered = allPartners.filter(p => {
+        const fullName = `${p.first_name} ${p.last_name}`.toLowerCase();
+        return fullName.includes(searchTerm.toLowerCase()) ||
+            (p.company_name && p.company_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            p.email.toLowerCase().includes(searchTerm.toLowerCase());
+    });
+    
+    // Temporarily replace allPartners for display
+    const originalPartners = allPartners;
+    allPartners = filtered;
+    displayPartnersGrid();
+    allPartners = originalPartners;
+}
+
+// Select a partner and show earnings section
+function selectPartner(partnerId, partnerName) {
+    selectedPartnerId = partnerId;
+    document.getElementById('selectedPartnerId').value = partnerId;
+    document.getElementById('selectedPartnerName').textContent = partnerName;
+    document.getElementById('selectedPartnerSection').style.display = 'block';
+    
+    // Scroll to the section
+    document.getElementById('selectedPartnerSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    
+    // Display earnings for this partner
+    displayPartnerEarnings(partnerId);
+    
+    // Initialize Turkish date pickers for this section
+    setTimeout(function() {
+        initializeTurkishDatePickersInSection('selectedPartnerSection');
+    }, 100);
+}
+
+// Initialize Flatpickr for date inputs in a specific section
+function initializeTurkishDatePickersInSection(sectionId) {
+    const section = document.getElementById(sectionId);
+    if (!section) return;
+    
+    const dateInputs = section.querySelectorAll('input[type="date"]');
+    
+    dateInputs.forEach(function(input) {
+        // Skip if already initialized
+        if (input._flatpickr || input.dataset.flatpickrInitialized) return;
+        
+        // Get current value if exists
+        const currentValue = input.value;
+        
+        // Mark as initialized
+        input.dataset.flatpickrInitialized = 'true';
+        
+        // Change type to text to use Flatpickr
+        input.type = 'text';
+        input.placeholder = 'GG.AA.YYYY';
+        
+        // Initialize Flatpickr with Turkish locale
+        flatpickr(input, {
+            locale: 'tr',
+            dateFormat: 'd.m.Y',
+            altInput: true,
+            altFormat: 'd.m.Y',
+            defaultDate: currentValue || null,
+            allowInput: true
+        });
+    });
+}
+
+// Close partner section
+function closePartnerSection() {
+    selectedPartnerId = null;
+    document.getElementById('selectedPartnerSection').style.display = 'none';
+}
+
+// Display earnings for selected partner
+function displayPartnerEarnings(partnerId) {
+    const container = document.getElementById('partnerEarningsTable');
+    const partnerEarnings = allEarnings.filter(e => e.partner_id === partnerId);
+    
+    if (!partnerEarnings || partnerEarnings.length === 0) {
         container.innerHTML = `
             <div class="alert alert-info">
                 <i class="fas fa-info-circle me-2"></i>
-                Bu öğrenci için henüz kazanç kaydı yok.
+                Bu partner için henüz kazanç kaydı yok.
             </div>
         `;
         return;
@@ -3672,15 +3979,16 @@ function displayEarningsTable(earnings) {
     let totalAmount = 0;
     let tableRows = '';
     
-    earnings.forEach(earning => {
+    partnerEarnings.forEach(earning => {
         totalAmount += parseFloat(earning.amount);
-        const earningDate = earning.earning_date ? new Date(earning.earning_date).toLocaleDateString('tr-TR') : '-';
-        const paymentDate = earning.payment_date ? new Date(earning.payment_date).toLocaleDateString('tr-TR') : '-';
+        // Show payment date only when paid
+        const paymentDate = (earning.is_paid && earning.earning_date) 
+            ? (() => { const d = new Date(earning.earning_date); return String(d.getUTCDate()).padStart(2,'0') + '.' + String(d.getUTCMonth()+1).padStart(2,'0') + '.' + d.getUTCFullYear(); })() 
+            : '<span class="text-muted">-</span>';
         
         tableRows += `
             <tr>
                 <td><strong>${parseFloat(earning.amount).toFixed(2)} ${earning.currency}</strong></td>
-                <td>${earningDate}</td>
                 <td>${paymentDate}</td>
                 <td>
                     ${earning.is_paid 
@@ -3703,7 +4011,6 @@ function displayEarningsTable(earnings) {
                 <thead class="table-light">
                     <tr>
                         <th>Tutar</th>
-                        <th>Kazanç Tarihi</th>
                         <th>Ödeme Tarihi</th>
                         <th>Durum</th>
                         <th>Not</th>
@@ -3713,9 +4020,9 @@ function displayEarningsTable(earnings) {
                 <tbody>
                     ${tableRows}
                 </tbody>
-                <tfoot class="table-light">
+                <tfoot class="table-success">
                     <tr>
-                        <th colspan="5">Toplam: <strong>${totalAmount.toFixed(2)} EUR</strong></th>
+                        <th colspan="5">Toplam: <strong>${totalAmount.toFixed(2)} €</strong></th>
                         <th></th>
                     </tr>
                 </tfoot>
@@ -3724,145 +4031,131 @@ function displayEarningsTable(earnings) {
     `;
 }
 
-// Load partners list
-async function loadPartnersList() {
-    try {
-        const response = await fetch('/admin/api/partners', {
-            credentials: 'include'
-        });
-        const data = await response.json();
-        
-        if (data.success) {
-            allPartners = data.partners;
-            displayPartnersList(data.partners);
+// Display all earnings summary
+function displayAllEarningsSummary() {
+    const container = document.getElementById('allEarningsContent');
+    
+    if (!allEarnings || allEarnings.length === 0) {
+        container.innerHTML = `
+            <div class="alert alert-info mb-0">
+                <i class="fas fa-info-circle me-2"></i>
+                Bu öğrenci için henüz partner kazancı kaydedilmemiş.
+            </div>
+        `;
+        return;
+    }
+    
+    // Group earnings by partner
+    const earningsByPartner = {};
+    let grandTotal = 0;
+    
+    allEarnings.forEach(earning => {
+        const partnerName = earning.partner_name || 'Bilinmeyen Partner';
+        if (!earningsByPartner[partnerName]) {
+            earningsByPartner[partnerName] = { total: 0, count: 0, paid: 0, pending: 0 };
         }
-    } catch (error) {
-        console.error('Load partners list error:', error);
+        const amount = parseFloat(earning.amount);
+        earningsByPartner[partnerName].total += amount;
+        earningsByPartner[partnerName].count++;
+        if (earning.is_paid) {
+            earningsByPartner[partnerName].paid += amount;
+        } else {
+            earningsByPartner[partnerName].pending += amount;
+        }
+        grandTotal += amount;
+    });
+    
+    let html = '<div class="table-responsive"><table class="table table-sm mb-0">';
+    html += '<thead class="table-light"><tr><th>Partner</th><th>Kazanç Sayısı</th><th>Ödenen</th><th>Bekleyen</th><th>Toplam</th></tr></thead>';
+    html += '<tbody>';
+    
+    for (const [partnerName, data] of Object.entries(earningsByPartner)) {
+        html += `
+            <tr>
+                <td><strong>${partnerName}</strong></td>
+                <td>${data.count}</td>
+                <td class="text-success">${data.paid.toFixed(2)} €</td>
+                <td class="text-warning">${data.pending.toFixed(2)} €</td>
+                <td><strong>${data.total.toFixed(2)} €</strong></td>
+            </tr>
+        `;
+    }
+    
+    html += '</tbody>';
+    html += `<tfoot class="table-success"><tr><th colspan="4">Genel Toplam</th><th><strong>${grandTotal.toFixed(2)} €</strong></th></tr></tfoot>`;
+    html += '</table></div>';
+    
+    container.innerHTML = html;
+}
+
+// Toggle payment date visibility and auto-fill today's date
+function togglePaymentDate() {
+    const isPaid = document.getElementById('earningPaid').value === 'true';
+    const container = document.getElementById('paymentDateContainer');
+    const dateInput = document.getElementById('earningDate');
+    
+    if (isPaid) {
+        container.style.display = 'block';
+        // Auto-fill with today's date in Turkish format
+        const today = new Date();
+        const day = String(today.getDate()).padStart(2, '0');
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const year = today.getFullYear();
+        dateInput.value = `${day}.${month}.${year}`;
+    } else {
+        container.style.display = 'none';
+        dateInput.value = '';
     }
 }
 
-// Display partners in select
-function displayPartnersList(partners) {
-    const select = document.getElementById('partnerSelect');
-    select.innerHTML = '<option value="">-- Partner Seçin --</option>';
-    
-    partners.forEach(partner => {
-        const option = document.createElement('option');
-        option.value = partner.id;
-        const fullName = `${partner.first_name} ${partner.last_name}`;
-        option.textContent = `${fullName}${partner.company_name ? ' (' + partner.company_name + ')' : ''} - ${partner.email}`;
-        
-        // Highlight if this is the current partner
-        if (currentPartnerInfo?.partner?.id === partner.id) {
-            option.selected = true;
-            option.textContent += ' ✓';
-        }
-        
-        select.appendChild(option);
-    });
-}
-
-// Filter partners by search
-function filterPartners(searchTerm) {
-    const filtered = allPartners.filter(p => {
-        const fullName = `${p.first_name} ${p.last_name}`.toLowerCase();
-        return fullName.includes(searchTerm.toLowerCase()) ||
-            (p.company_name && p.company_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-            p.email.toLowerCase().includes(searchTerm.toLowerCase());
-    });
-    displayPartnersList(filtered);
-}
-
-// Assign partner to student
-async function assignPartner() {
-    const partnerId = document.getElementById('partnerSelect').value;
+// Save earning for selected partner
+async function saveEarning() {
+    const partnerId = document.getElementById('selectedPartnerId').value;
     
     if (!partnerId) {
         alert('Lütfen bir partner seçin!');
         return;
     }
     
-    try {
-        const response = await fetch(`/admin/users/${studentId}/partner`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({ partner_id: parseInt(partnerId) })
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            alert('Partner başarıyla atandı!');
-            loadPartnerData();
-        } else {
-            alert(data.message || 'Partner atanamadı!');
-        }
-    } catch (error) {
-        console.error('Assign partner error:', error);
-        alert('Partner atanırken bir hata oluştu!');
-    }
-}
-
-// Remove partner from student
-async function removePartner() {
-    if (!confirm('Bu öğrenciden partner atamasını kaldırmak istediğinizden emin misiniz?')) {
-        return;
-    }
-    
-    try {
-        const response = await fetch(`/admin/users/${studentId}/partner`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({ partner_id: null })
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            alert('Partner ataması kaldırıldı!');
-            loadPartnerData();
-        } else {
-            alert(data.message || 'Partner kaldırılamadı!');
-        }
-    } catch (error) {
-        console.error('Remove partner error:', error);
-        alert('Partner kaldırılırken bir hata oluştu!');
-    }
-}
-
-// Toggle payment date visibility
-function togglePaymentDate() {
-    const isPaid = document.getElementById('earningPaid').value === 'true';
-    document.getElementById('paymentDateContainer').style.display = isPaid ? 'block' : 'none';
-}
-
-// Save earning (always creates new)
-async function saveEarning() {
-    const partnerId = currentPartnerInfo?.partner?.id;
-    
-    if (!partnerId) {
-        alert('Önce öğrenciye bir partner atayın!');
-        return;
-    }
-    
     const amount = document.getElementById('earningAmount').value;
-    const earningDate = document.getElementById('earningDate').value;
+    const isPaid = document.getElementById('earningPaid').value === 'true';
+    const earningDateInput = document.getElementById('earningDate');
+    const earningDateValue = earningDateInput.value;
     
-    if (!amount || !earningDate) {
-        alert('Tutar ve kazanç tarihi zorunludur!');
+    if (!amount) {
+        alert('Tutar zorunludur!');
         return;
+    }
+    
+    // Convert Turkish date format (DD.MM.YYYY) to ISO format (YYYY-MM-DD)
+    function convertTurkishDateToISO(dateStr) {
+        if (!dateStr) return null;
+        // Check if already in ISO format
+        if (dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) return dateStr;
+        // Convert DD.MM.YYYY to YYYY-MM-DD
+        const parts = dateStr.split('.');
+        if (parts.length === 3) {
+            return `${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`;
+        }
+        return dateStr;
+    }
+    
+    // Get today's date in ISO format for paid earnings
+    function getTodayISO() {
+        const today = new Date();
+        return today.toISOString().split('T')[0];
     }
     
     const earningData = {
-        partner_id: partnerId,
+        partner_id: parseInt(partnerId),
         user_id: studentId,
         amount: parseFloat(amount),
         currency: document.getElementById('earningCurrency').value,
-        earning_date: earningDate,
-        is_paid: document.getElementById('earningPaid').value === 'true',
-        payment_date: document.getElementById('paymentDate').value || null,
+        // Only set earning_date if paid, otherwise null
+        earning_date: isPaid ? (earningDateValue ? convertTurkishDateToISO(earningDateValue) : getTodayISO()) : null,
+        is_paid: isPaid,
+        // payment_date is same as earning_date when paid
+        payment_date: isPaid ? (earningDateValue ? convertTurkishDateToISO(earningDateValue) : getTodayISO()) : null,
         notes: document.getElementById('earningNotes').value || null
     };
     
@@ -3881,8 +4174,12 @@ async function saveEarning() {
             // Reset form
             document.getElementById('earningForm').reset();
             document.getElementById('paymentDateContainer').style.display = 'none';
-            // Reload data
-            loadPartnerData();
+            // Reload all data
+            await loadAllPartnerData();
+            // Re-display selected partner earnings
+            if (selectedPartnerId) {
+                displayPartnerEarnings(selectedPartnerId);
+            }
         } else {
             alert(data.message || 'Kazanç eklenemedi!');
         }
@@ -3908,7 +4205,11 @@ async function deleteEarning(earningId) {
         
         if (data.success) {
             alert('Kazanç kaydı silindi!');
-            loadPartnerData();
+            await loadAllPartnerData();
+            // Re-display selected partner earnings
+            if (selectedPartnerId) {
+                displayPartnerEarnings(selectedPartnerId);
+            }
         } else {
             alert(data.message || 'Kazanç silinemedi!');
         }
@@ -3968,11 +4269,12 @@ function displayAIRecommendation(rec) {
         'Austria': '🇦🇹',
         'UK': '🇬🇧',
         'Poland': '🇵🇱',
-        'Hungary': '🇭🇺'
+        'Hungary': '🇭🇺',
+        'Netherlands': '🇳🇱'
     };
     
     // Parse ai_reasoning if it's JSON (new format)
-    let rec1 = null, rec2 = null, comparison = null, overall_advice = null;
+    let rec1 = null, rec2 = null, comparison = null, overall_advice = null, hasCanadianDiploma = false, wcepSummary = null;
     
     if (rec.ai_reasoning) {
         try {
@@ -3981,6 +4283,8 @@ function displayAIRecommendation(rec) {
             rec2 = fullData.recommendation_2;
             comparison = fullData.comparison;
             overall_advice = fullData.overall_advice;
+            hasCanadianDiploma = fullData.has_canadian_diploma || false;
+            wcepSummary = fullData.wcep_advantage_summary || null;
         } catch (e) {
             // Eski format - düz metin
             console.log('Using legacy format');
@@ -4070,11 +4374,25 @@ function displayAIRecommendation(rec) {
             <div>
                 <span class="badge bg-primary me-2">${rec.education_level === 'bachelor' ? 'Lisans' : 'Yüksek Lisans'}</span>
                 <span class="badge bg-secondary">İngilizce: ${rec.english_level || '-'}</span>
+                ${hasCanadianDiploma ? '<span class="badge bg-danger ms-2">🍁 Kanada Diploması</span>' : ''}
             </div>
             <button class="btn btn-outline-danger btn-sm" onclick="deleteAIRecommendation(${rec.id})">
                 <i class="fas fa-trash me-1"></i>Sil
             </button>
         </div>
+        
+        ${hasCanadianDiploma && wcepSummary ? `
+            <div class="mb-4" style="background: linear-gradient(135deg, #dc2626, #991b1b); border-radius: 15px; padding: 20px; color: white;">
+                <div class="d-flex align-items-center mb-2">
+                    <span style="font-size: 2rem; margin-right: 12px;">🍁</span>
+                    <div>
+                        <h6 class="mb-0"><i class="fas fa-check-circle me-1"></i>Kanada Lise Diploması Avantajı!</h6>
+                        <small class="opacity-75">WCEP Ortaklığı</small>
+                    </div>
+                </div>
+                <p class="mb-0" style="font-size: 0.9rem;">${wcepSummary}</p>
+            </div>
+        ` : ''}
         
         ${rec.prep_school_needed ? `
             <div class="prep-warning mb-4" style="background: linear-gradient(135deg, #fff3cd, #ffe69c); border: none; border-radius: 15px; padding: 20px;">
@@ -4111,6 +4429,60 @@ function displayAIRecommendation(rec) {
                 <div class="info-section mb-3" style="background: linear-gradient(135deg, #d4edda, #c3e6cb); border-radius: 15px; padding: 20px;">
                     <h6 class="mb-2"><i class="fas fa-lightbulb me-2" style="color: #155724;"></i>Genel Tavsiyeler</h6>
                     <p class="mb-0 text-dark">${overall_advice}</p>
+                </div>
+            `;
+        }
+        
+        // Kanada Diploması Avantajları Detaylı Bölümü
+        if (hasCanadianDiploma) {
+            html += `
+                <div class="info-section mb-3" style="background: linear-gradient(135deg, #fef2f2, #fee2e2); border: 2px solid #dc2626; border-radius: 15px; padding: 20px;">
+                    <div class="d-flex align-items-center mb-3">
+                        <span style="font-size: 2rem; margin-right: 12px;">🍁</span>
+                        <div>
+                            <h5 class="mb-0 text-danger"><i class="fas fa-award me-2"></i>Kanada Diploması Avantajları</h5>
+                            <small class="text-muted">WCEP ortaklığı kapsamında öğrenciye sağlanan fırsatlar</small>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <div class="p-2" style="background: white; border-radius: 8px; border-left: 3px solid #dc2626;">
+                                <strong class="small">🇩🇪 Almanya</strong>
+                                <p class="mb-0 small">Studienkolleg'den <strong>muafiyet</strong></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-2" style="background: white; border-radius: 8px; border-left: 3px solid #dc2626;">
+                                <strong class="small">🇬🇧 İngiltere</strong>
+                                <p class="mb-0 small">Foundation Year'dan <strong>muafiyet</strong></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-2" style="background: white; border-radius: 8px; border-left: 3px solid #dc2626;">
+                                <strong class="small">🇨🇿 Çekya</strong>
+                                <p class="mb-0 small">Charles Üni. Tıp/Diş'e <strong>sınavsız kabul</strong></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-2" style="background: white; border-radius: 8px; border-left: 3px solid #dc2626;">
+                                <strong class="small">🇦🇹 Avusturya</strong>
+                                <p class="mb-0 small">Vorstudienlehrgang'dan <strong>muafiyet</strong></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-2" style="background: white; border-radius: 8px; border-left: 3px solid #dc2626;">
+                                <strong class="small">🇮🇹 İtalya</strong>
+                                <p class="mb-0 small">Ek sınavlardan <strong>muafiyet</strong></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-2" style="background: white; border-radius: 8px; border-left: 3px solid #dc2626;">
+                                <strong class="small">🇵🇱 🇭🇺 Polonya & Macaristan</strong>
+                                <p class="mb-0 small"><strong>Öncelikli değerlendirme</strong></p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             `;
         }

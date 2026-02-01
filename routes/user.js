@@ -9,24 +9,87 @@ const { gopayConfig, goPayService } = require('../config/gopay');
 const router = express.Router();
 
 // Configure multer for file uploads (Vercel compatible - memory storage)
+// Vercel serverless has 4.5MB body limit, so we set 4MB to be safe
 const upload = multer({
     storage: multer.memoryStorage(), // Use memory storage for Vercel
     limits: {
-        fileSize: 10 * 1024 * 1024 // 10MB limit
+        fileSize: 4 * 1024 * 1024 // 4MB limit (Vercel serverless limit)
     },
     fileFilter: (req, file, cb) => {
-        const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-        if (allowedTypes.includes(file.mimetype)) {
+        // Accept all common document and image types
+        const allowedTypes = [
+            'application/pdf', 
+            'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/heic', 'image/heif',
+            'application/msword', 
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/octet-stream' // For unknown types
+        ];
+        
+        // Also check file extension
+        const ext = file.originalname.toLowerCase().split('.').pop();
+        const allowedExts = ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'webp', 'heic', 'doc', 'docx'];
+        
+        if (allowedTypes.includes(file.mimetype) || allowedExts.includes(ext)) {
             cb(null, true);
         } else {
-            cb(new Error('Invalid file type. Only PDF, JPG, JPEG, PNG, DOC, DOCX files are allowed.'), false);
+            cb(new Error('Desteklenmeyen dosya türü.'), false);
         }
     }
 });
 
+// Multer error handling wrapper
+const handleUpload = (fieldName) => {
+    return (req, res, next) => {
+        upload.single(fieldName)(req, res, (err) => {
+            if (err) {
+                console.error('Multer error:', err);
+                if (err instanceof multer.MulterError) {
+                    if (err.code === 'LIMIT_FILE_SIZE') {
+                        return res.status(400).json({ success: false, message: 'Dosya boyutu çok büyük. Maksimum 10MB yüklenebilir.' });
+                    }
+                    return res.status(400).json({ success: false, message: 'Dosya yükleme hatası: ' + err.message });
+                }
+                return res.status(400).json({ success: false, message: err.message || 'Dosya yükleme hatası' });
+            }
+            next();
+        });
+    };
+};
+
 // Test endpoint (no auth required)
 router.get('/test', async (req, res) => {
     res.json({ success: true, message: 'User routes working!' });
+});
+
+// Test file upload endpoint (for debugging)
+router.post('/test-upload', handleUpload('file'), async (req, res) => {
+    try {
+        console.log('🧪 Test upload endpoint hit');
+        console.log('File received:', req.file ? {
+            name: req.file.originalname,
+            size: req.file.size,
+            mimetype: req.file.mimetype,
+            bufferLength: req.file.buffer?.length
+        } : 'No file');
+        console.log('Body:', req.body);
+        
+        if (!req.file) {
+            return res.status(400).json({ success: false, message: 'No file uploaded' });
+        }
+        
+        res.json({
+            success: true,
+            message: 'Test upload successful!',
+            file: {
+                name: req.file.originalname,
+                size: req.file.size,
+                mimetype: req.file.mimetype
+            }
+        });
+    } catch (error) {
+        console.error('Test upload error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
 });
 
 // Render user applications page
@@ -73,7 +136,9 @@ router.get('/dashboard', async (req, res) => {
                 passport_type,
                 passport_number,
                 desired_country,
-                active_class
+                active_class,
+                registered_via,
+                personal_info_completed
              FROM users
              WHERE id = $1`,
             [res.locals.currentUser.id]
@@ -242,6 +307,12 @@ router.put('/profile', authenticateUser, async (req, res) => {
         const normalizedHighSchoolDate = parseDate(high_school_graduation_date);
         const normalizedBirthDate = parseDate(birth_date);
 
+        // Check if all required personal info is now completed
+        const isPersonalInfoComplete = first_name && first_name.trim() !== '' &&
+                                        last_name && last_name.trim() !== '' &&
+                                        tc_number && tc_number !== '00000000000' && /^\d{11}$/.test(tc_number) &&
+                                        phone && phone !== '0000000000' && phone.trim() !== '';
+
         const result = await pool.query(
             `UPDATE users SET 
                 first_name = $1,
@@ -255,8 +326,9 @@ router.put('/profile', authenticateUser, async (req, res) => {
                 desired_country = $9,
                 active_class = $10,
                 tc_number = $11,
+                personal_info_completed = $12,
                 updated_at = CURRENT_TIMESTAMP
-             WHERE id = $12 RETURNING *
+             WHERE id = $13 RETURNING *
             `,
             [
                 first_name,
@@ -270,6 +342,7 @@ router.put('/profile', authenticateUser, async (req, res) => {
                 desired_country,
                 active_class,
                 tc_number,
+                isPersonalInfoComplete,
                 req.user.id
             ]
         );
@@ -894,49 +967,55 @@ router.get('/api/files', authenticateUser, async (req, res) => {
 });
 
 // Upload user file API
-router.post('/api/files/upload', authenticateUser, upload.single('file'), async (req, res) => {
+router.post('/api/files/upload', authenticateUser, handleUpload('file'), async (req, res) => {
     try {
         const { title, description } = req.body;
         const file = req.file;
 
         if (!file) {
-            return res.status(400).json({ success: false, message: 'No file uploaded' });
+            return res.status(400).json({ success: false, message: 'Dosya seçilmedi' });
         }
+
+        if (!title) {
+            return res.status(400).json({ success: false, message: 'Dosya başlığı gerekli' });
+        }
+
+        // Sanitize filename - remove special characters, keep only alphanumeric, dots, dashes, underscores
+        const safeFilename = file.originalname
+            .replace(/[^a-zA-Z0-9._\-\s]/g, '')
+            .replace(/\s+/g, '_')
+            .substring(0, 200);
 
         // Convert file to base64
         const fileBase64 = file.buffer.toString('base64');
 
         const result = await pool.query(
             `INSERT INTO user_documents 
-            (user_id, title, description, file_data, file_size, 
-             original_filename, mime_type)
+            (user_id, title, description, file_data, file_size, original_filename, mime_type)
             VALUES ($1, $2, $3, $4, $5, $6, $7)
             RETURNING id`,
             [
                 req.user.id,
-                title,
-                description || '',
+                title.substring(0, 250),
+                description ? description.substring(0, 1000) : null,
                 fileBase64,
                 file.size,
-                file.originalname,
-                file.mimetype
+                safeFilename || 'file',
+                file.mimetype || 'application/octet-stream'
             ]
         );
 
         res.json({
             success: true,
-            message: 'File uploaded successfully',
+            message: 'Dosya başarıyla yüklendi!',
             fileId: result.rows[0].id
         });
     } catch (error) {
-        console.error('Upload file error:', error);
+        console.error('Upload error:', error);
         res.status(500).json({ 
             success: false, 
-            message: 'Server error: ' + error.message,
-            error: error.message,
-            stack: error.stack,
-            details: error.toString(),
-            fullError: JSON.stringify(error)
+            message: 'Dosya yüklenemedi: ' + (error.message || 'Bilinmeyen hata'),
+            detail: error.detail || null
         });
     }
 });
@@ -1412,4 +1491,5 @@ router.get('/api/visa-applications', authenticateUser, async (req, res) => {
     }
 });
 
+module.exports = router; 
 module.exports = router; 

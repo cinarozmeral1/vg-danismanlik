@@ -1,0 +1,287 @@
+<!-- Hero Section -->
+<body data-page="career">
+<section class="bg-primary text-white py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="display-4 fw-bold"><%= t.career.hero.title %></h1>
+                <p class="lead"><%= t.career.hero.subtitle %></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Main Content -->
+<section class="py-5">
+    <div class="container">
+        
+        <!-- Poster + Information Section (Yan Yana) -->
+        <div class="row justify-content-center mb-5">
+            <!-- Sol: Afiş -->
+            <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
+                <div class="card shadow-lg border-0 overflow-hidden" style="border-radius: 20px;">
+                    <div id="careerPosterArea" class="text-center" style="background: linear-gradient(135deg, #1e3a5f 0%, #0d2137 100%);">
+                        <img src="/images/career/career-poster.jpg" alt="Venture Global Kariyer" class="img-fluid" style="width: 100%; height: auto; object-fit: contain; display: block;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="text-white p-5" style="display: none; flex-direction: column; align-items: center; min-height: 500px; justify-content: center;">
+                            <i class="fas fa-image fa-4x mb-3 opacity-50"></i>
+                            <p class="opacity-75"><%= t.career.poster.placeholder %></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sağ: Bilgilendirme -->
+            <div class="col-lg-7 col-md-6">
+                <div class="card shadow border-0 h-100" style="border-radius: 15px;">
+                    <div class="card-body p-4 p-lg-5">
+                        <h2 class="fw-bold mb-4" style="color: #1e3a5f;">
+                            <%= t.career.info.title %>
+                        </h2>
+                        <p class="lead text-muted mb-4"><%= t.career.info.description %></p>
+                        <p class="text-muted mb-4"><%= t.career.info.roleDescription %></p>
+                        
+                        <h5 class="fw-bold mb-3" style="color: #1e3a5f;">
+                            <%= t.career.info.lookingFor %>
+                        </h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="fas fa-check-circle me-2" style="color: #28a745;"></i>
+                                <%= t.career.info.requirement1 %>
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check-circle me-2" style="color: #28a745;"></i>
+                                <%= t.career.info.requirement2 %>
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check-circle me-2" style="color: #28a745;"></i>
+                                <%= t.career.info.requirement3 %>
+                            </li>
+                        </ul>
+                        
+                        <h5 class="fw-bold mb-3 mt-4" style="color: #1e3a5f;">
+                            <%= t.career.info.weOffer %>
+                        </h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="fas fa-check-circle me-2" style="color: #28a745;"></i>
+                                <%= t.career.info.offer1 %>
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check-circle me-2" style="color: #28a745;"></i>
+                                <%= t.career.info.offer2 %>
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check-circle me-2" style="color: #28a745;"></i>
+                                <%= t.career.info.offer3 %>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Video Section -->
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-10">
+                <div class="card shadow border-0" style="border-radius: 15px; overflow: hidden;">
+                    <div class="card-header bg-primary text-white py-3">
+                        <h4 class="mb-0">
+                            <i class="fas fa-play-circle me-2"></i>
+                            <%= t.career.video.title %>
+                        </h4>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="ratio ratio-16x9">
+                            <iframe 
+                                src="https://www.youtube.com/embed/PgzUPpGruqc" 
+                                title="Venture Global Tanıtım Videosu" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Application Form Section -->
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card shadow border-0" style="border-radius: 15px;">
+                    <div class="card-header bg-primary text-white py-3">
+                        <h4 class="mb-0">
+                            <i class="fas fa-file-alt me-2"></i>
+                            <%= t.career.form.title %>
+                        </h4>
+                    </div>
+                    <div class="card-body p-5">
+                        <form id="careerForm" enctype="multipart/form-data">
+                            <div class="row">
+                                <!-- First Name -->
+                                <div class="col-md-6 mb-4">
+                                    <label for="firstName" class="form-label fw-bold" style="color: #1e3a5f;">
+                                        <i class="fas fa-user me-1"></i>
+                                        <%= t.career.form.firstName %> *
+                                    </label>
+                                    <input type="text" class="form-control form-control-lg" id="firstName" name="firstName" required placeholder="<%= t.career.form.firstNamePlaceholder %>">
+                                </div>
+                                
+                                <!-- Last Name -->
+                                <div class="col-md-6 mb-4">
+                                    <label for="lastName" class="form-label fw-bold" style="color: #1e3a5f;">
+                                        <i class="fas fa-user me-1"></i>
+                                        <%= t.career.form.lastName %> *
+                                    </label>
+                                    <input type="text" class="form-control form-control-lg" id="lastName" name="lastName" required placeholder="<%= t.career.form.lastNamePlaceholder %>">
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <!-- Email -->
+                                <div class="col-md-6 mb-4">
+                                    <label for="email" class="form-label fw-bold" style="color: #1e3a5f;">
+                                        <i class="fas fa-envelope me-1"></i>
+                                        <%= t.career.form.email %> *
+                                    </label>
+                                    <input type="email" class="form-control form-control-lg" id="email" name="email" required placeholder="<%= t.career.form.emailPlaceholder %>">
+                                </div>
+                                
+                                <!-- Phone -->
+                                <div class="col-md-6 mb-4">
+                                    <label for="phone" class="form-label fw-bold" style="color: #1e3a5f;">
+                                        <i class="fas fa-phone me-1"></i>
+                                        <%= t.career.form.phone %> *
+                                    </label>
+                                    <input type="tel" class="form-control form-control-lg" id="phone" name="phone" required placeholder="<%= t.career.form.phonePlaceholder %>">
+                                </div>
+                            </div>
+                            
+                            <!-- Description -->
+                            <div class="mb-4">
+                                <label for="description" class="form-label fw-bold" style="color: #1e3a5f;">
+                                    <i class="fas fa-comment-alt me-1"></i>
+                                    <%= t.career.form.description %> *
+                                </label>
+                                <textarea class="form-control" id="description" name="description" rows="5" required placeholder="<%= t.career.form.descriptionPlaceholder %>"></textarea>
+                                <div class="form-text"><%= t.career.form.descriptionHelp %></div>
+                            </div>
+                            
+                            <!-- CV Upload -->
+                            <div class="mb-4">
+                                <label for="cvFile" class="form-label fw-bold" style="color: #1e3a5f;">
+                                    <i class="fas fa-file-pdf me-1"></i>
+                                    <%= t.career.form.cvFile %> *
+                                </label>
+                                <input type="file" class="form-control form-control-lg" id="cvFile" name="cvFile" accept=".pdf,.doc,.docx" required>
+                                <div class="form-text">
+                                    <%= t.career.form.cvFileHelp %> (Max: 3.5 MB) • 
+                                    <a href="https://www.ilovepdf.com/compress_pdf" target="_blank" style="color: #0078D7;"><%= t.career.form.compressLink %></a>
+                                </div>
+                                <div id="fileSizeWarning" class="alert alert-warning mt-2" style="display: none;"></div>
+                            </div>
+                            
+                            <!-- Submit Button -->
+                            <div class="text-center mt-5">
+                                <button type="submit" class="btn btn-primary btn-lg px-5 py-3" id="submitBtn">
+                                    <i class="fas fa-paper-plane me-2"></i>
+                                    <%= t.career.form.submit %>
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <!-- Alert Container -->
+                        <div id="alertContainer" class="mt-4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('careerForm');
+    const cvFileInput = document.getElementById('cvFile');
+    const fileSizeWarning = document.getElementById('fileSizeWarning');
+    const submitBtn = document.getElementById('submitBtn');
+    const alertContainer = document.getElementById('alertContainer');
+    
+    const maxSize = 3.5 * 1024 * 1024; // 3.5MB
+    
+    // File size validation
+    cvFileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file && file.size > maxSize) {
+            const sizeMB = (file.size / 1024 / 1024).toFixed(1);
+            fileSizeWarning.innerHTML = '<strong><i class="fas fa-exclamation-triangle me-2"></i><%= t.career.form.fileTooLarge %></strong> (' + sizeMB + ' MB). <a href="https://www.ilovepdf.com/compress_pdf" target="_blank" style="color: #000; text-decoration: underline; font-weight: bold;"><%= t.career.form.compressHere %></a>';
+            fileSizeWarning.style.display = 'block';
+            e.target.value = '';
+        } else {
+            fileSizeWarning.style.display = 'none';
+        }
+    });
+    
+    // Form submission
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const file = cvFileInput.files[0];
+        if (!file) {
+            showAlert('<%= t.career.form.selectFile %>', 'warning');
+            return;
+        }
+        
+        if (file.size > maxSize) {
+            showAlert('<%= t.career.form.fileTooLargeError %>', 'danger');
+            return;
+        }
+        
+        const originalText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i><%= t.career.form.sending %>';
+        
+        try {
+            const formData = new FormData(form);
+            
+            const response = await fetch('/api/career-application', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                showAlert('<%= t.career.form.successMessage %>', 'success');
+                form.reset();
+            } else {
+                showAlert(result.message || '<%= t.career.form.errorMessage %>', 'danger');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showAlert('<%= t.career.form.errorMessage %>', 'danger');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        }
+    });
+    
+    function showAlert(message, type) {
+        alertContainer.innerHTML = `
+            <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'times-circle'} me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+        
+        // Auto dismiss after 10 seconds
+        setTimeout(() => {
+            const alert = alertContainer.querySelector('.alert');
+            if (alert) alert.remove();
+        }, 10000);
+    }
+});
+</script>
+

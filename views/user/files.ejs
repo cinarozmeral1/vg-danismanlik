@@ -58,7 +58,14 @@
                                         <div class="mb-3">
                                             <label for="fileInput" class="form-label">Dosya Seç *</label>
                                             <input type="file" class="form-control" id="fileInput" name="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" required>
-                                            <div class="form-text">Desteklenen formatlar: PDF, DOC, DOCX, JPG, JPEG, PNG (Max: 10MB)</div>
+                                            <div class="form-text">
+                                                PDF, DOC, DOCX, JPG, PNG (Max: 3.5 MB) • 
+                                                <a href="https://www.ilovepdf.com/compress_pdf" target="_blank">PDF Sıkıştır</a>
+                                            </div>
+                                            <div id="compressionStatus" class="mt-2 text-primary" style="display:none;">
+                                                <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                                                <span id="compressionText">İşleniyor...</span>
+                                            </div>
                                         </div>
                                         <button type="submit" class="btn btn-primary">
                                             <i class="fas fa-upload me-2"></i>Dosya Yükle
@@ -102,15 +109,79 @@
             }
         });
 
-        // File upload form
+        // File upload form with image compression
         const uploadForm = document.getElementById('fileUploadForm');
         if (uploadForm) {
             uploadForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
-                const formData = new FormData(this);
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                const compressionStatus = document.getElementById('compressionStatus');
+                const compressionText = document.getElementById('compressionText');
+                
+                let file = document.getElementById('fileInput').files[0];
+                const title = document.getElementById('fileTitle').value;
+                const description = document.getElementById('fileDescription').value;
+                
+                if (!file) {
+                    showAlert('Lütfen bir dosya seçin', 'danger');
+                    return;
+                }
+                
+                if (!title.trim()) {
+                    showAlert('Lütfen dosya başlığı girin', 'danger');
+                    return;
+                }
+                
+                const maxSize = 3.5 * 1024 * 1024; // 3.5MB (safe for Vercel)
+                const isImage = file.type.startsWith('image/');
+                const isPDF = file.type === 'application/pdf';
+                
+                submitBtn.disabled = true;
                 
                 try {
+                    // If file is too large
+                    if (file.size > maxSize) {
+                        if (isImage) {
+                            // Compress images automatically
+                            compressionStatus.style.display = 'block';
+                            compressionText.textContent = 'Görsel sıkıştırılıyor...';
+                            
+                            // Use canvas to compress image
+                            file = await compressImageFile(file, maxSize);
+                            
+                            const newSizeMB = (file.size / 1024 / 1024).toFixed(1);
+                            compressionText.textContent = `Sıkıştırıldı: ${newSizeMB} MB`;
+                            
+                            if (file.size > 4 * 1024 * 1024) {
+                                showAlert('Görsel hala çok büyük. Lütfen daha düşük çözünürlüklü görsel seçin.', 'warning');
+                                submitBtn.disabled = false;
+                                compressionStatus.style.display = 'none';
+                                return;
+                            }
+                        } else if (isPDF) {
+                            // PDFs cannot be compressed in browser effectively
+                            const sizeMB = (file.size / 1024 / 1024).toFixed(1);
+                            showAlert(`PDF çok büyük (${sizeMB} MB). Lütfen <a href="https://www.ilovepdf.com/compress_pdf" target="_blank" style="color: #000; text-decoration: underline; font-weight: bold;">buradan sıkıştırın</a> (Max: 3.5 MB)`, 'warning');
+                            submitBtn.disabled = false;
+                            return;
+                        } else {
+                            showAlert('Dosya çok büyük! Maksimum 3.5 MB.', 'danger');
+                            submitBtn.disabled = false;
+                            return;
+                        }
+                    }
+                    
+                    compressionStatus.style.display = 'block';
+                    compressionText.textContent = 'Yükleniyor...';
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Yükleniyor...';
+                    
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('title', title);
+                    formData.append('description', description);
+                    
                     const response = await fetch('/api/user/api/files/upload', {
                         method: 'POST',
                         credentials: 'include',
@@ -124,12 +195,68 @@
                         this.reset();
                         loadFiles();
                     } else {
-                        showAlert('Hata: ' + result.message, 'danger');
+                        showAlert('Hata: ' + (result.message || 'Bilinmeyen hata'), 'danger');
                     }
                 } catch (error) {
                     console.error('Upload error:', error);
-                    showAlert('Dosya yüklenirken bir hata oluştu!', 'danger');
+                    showAlert('Yükleme hatası: ' + error.message, 'danger');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                    compressionStatus.style.display = 'none';
                 }
+            });
+        }
+        
+        // Compress image using canvas
+        async function compressImageFile(file, maxSizeBytes) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        // Scale down if very large
+                        const maxDimension = 2000;
+                        if (width > maxDimension || height > maxDimension) {
+                            if (width > height) {
+                                height = Math.round(height * maxDimension / width);
+                                width = maxDimension;
+                            } else {
+                                width = Math.round(width * maxDimension / height);
+                                height = maxDimension;
+                            }
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Try different quality levels
+                        let quality = 0.8;
+                        let blob;
+                        
+                        const tryCompress = () => {
+                            canvas.toBlob((b) => {
+                                if (b.size > maxSizeBytes && quality > 0.3) {
+                                    quality -= 0.1;
+                                    tryCompress();
+                                } else {
+                                    resolve(new File([b], file.name, { type: 'image/jpeg' }));
+                                }
+                            }, 'image/jpeg', quality);
+                        };
+                        
+                        tryCompress();
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
             });
         }
 
@@ -226,29 +353,34 @@
             return categories[category] || 'Bilinmiyor';
         }
 
-        // Download file
+        // Download file from server
         async function downloadFile(fileId) {
             try {
-                console.log('Downloading file:', fileId);
                 const response = await fetch(`/api/user/api/files/${fileId}/download`, {
                     method: 'GET',
                     credentials: 'include'
                 });
                 
                 if (response.ok) {
+                    const contentDisposition = response.headers.get('Content-Disposition');
+                    let filename = 'dosya';
+                    if (contentDisposition) {
+                        const match = contentDisposition.match(/filename="?(.+?)"?$/);
+                        if (match) filename = decodeURIComponent(match[1]);
+                    }
+                    
                     const blob = await response.blob();
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = 'file';
+                    a.download = filename;
                     document.body.appendChild(a);
                     a.click();
                     window.URL.revokeObjectURL(url);
                     document.body.removeChild(a);
-                    console.log('File downloaded successfully');
                 } else {
-                    const errorData = await response.json();
-                    showAlert('Dosya indirilemedi: ' + (errorData.message || 'Bilinmeyen hata'), 'danger');
+                    const errorData = await response.json().catch(() => ({}));
+                    showAlert('Dosya indirilemedi: ' + (errorData.message || 'Hata'), 'danger');
                 }
             } catch (error) {
                 console.error('Download error:', error);
@@ -296,7 +428,7 @@
             
             setTimeout(() => {
                 alert.remove();
-            }, 5000);
+            }, 10000);
         }
 
         // Logout function

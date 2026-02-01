@@ -130,7 +130,7 @@
                                                 <strong><%= student.first_name %> <%= student.last_name %></strong>
                                             </td>
                                             <td><%= student.email %></td>
-                                            <td><%= new Date(student.created_at).toLocaleDateString('tr-TR') %></td>
+                                            <td><%= (() => { const d = new Date(student.created_at); return String(d.getUTCDate()).padStart(2,'0') + '.' + String(d.getUTCMonth()+1).padStart(2,'0') + '.' + d.getUTCFullYear(); })() %></td>
                                             <td>
                                                 <% if (totalEarning > 0) { %>
                                                     <strong class="text-success"><%= totalEarning.toFixed(2) %> €</strong>
@@ -175,7 +175,6 @@
                                         <tr>
                                             <th>Öğrenci</th>
                                             <th>Tutar</th>
-                                            <th>Kazanç Tarihi</th>
                                             <th>Ödeme Tarihi</th>
                                             <th>Durum</th>
                                             <th>Not</th>
@@ -186,8 +185,13 @@
                                         <tr>
                                             <td><strong><%= earning.student_name %></strong></td>
                                             <td><strong class="text-success"><%= parseFloat(earning.amount).toFixed(2) %> <%= earning.currency %></strong></td>
-                                            <td><%= earning.earning_date ? new Date(earning.earning_date).toLocaleDateString('tr-TR') : '-' %></td>
-                                            <td><%= earning.payment_date ? new Date(earning.payment_date).toLocaleDateString('tr-TR') : '-' %></td>
+                                            <td>
+                                                <% if (earning.is_paid && earning.earning_date) { %>
+                                                    <%= (() => { const d = new Date(earning.earning_date); return String(d.getUTCDate()).padStart(2,'0') + '.' + String(d.getUTCMonth()+1).padStart(2,'0') + '.' + d.getUTCFullYear(); })() %>
+                                                <% } else { %>
+                                                    <span class="text-muted">-</span>
+                                                <% } %>
+                                            </td>
                                             <td>
                                                 <% if (earning.is_paid) { %>
                                                     <span class="badge bg-success"><i class="fas fa-check me-1"></i>Ödendi</span>
