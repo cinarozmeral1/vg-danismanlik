@@ -497,7 +497,7 @@
                     <small style="opacity: 1; color:#ffffff; font-weight: 600; font-size: 0.85rem;">Eğitim Danışmanlığı</small>
                 </div>
             </div>
-            <button type="button" class="mobile-close-btn" data-bs-dismiss="offcanvas" aria-label="Close" style="background: transparent; border: none; color: #ffffff; font-size: 1.8rem; line-height: 1; padding: 0; cursor: pointer; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">×</button>
+            <button type="button" class="mobile-close-btn" data-bs-dismiss="offcanvas" aria-label="Close" style="background: rgba(255,255,255,0.2); border: 2px solid #ffffff; color: #ffffff; font-size: 1.5rem; line-height: 1; padding: 0; cursor: pointer; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-weight: bold;">×</button>
         </div>
         
         <div class="offcanvas-body p-0" style="background: #ffffff !important; background-color: #ffffff !important; background-image: none !important;">
@@ -634,6 +634,65 @@
                             </div>
                         </div>
                     </div>
+                <% } %>
+
+                <!-- Yönetim Paneli Section - Admin için en üstte -->
+                <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn === true && currentUser && currentUser.is_admin) { %>
+                <div style="border-bottom: 1px solid var(--gray-200);">
+                    <div style="background: var(--primary-600); padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--primary-700);">
+                        <small style="color: #ffffff; font-weight: 600; text-transform: uppercase; font-size: 0.75rem;">
+                            <i class="fas fa-shield-alt" style="margin-right: 6px;"></i>YÖNETİM PANELİ
+                        </small>
+                    </div>
+                    <ul style="list-style: none; margin: 0; padding: 0; background: var(--primary-50);">
+                        <li>
+                            <a href="/admin/dashboard" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid var(--primary-600);">
+                                <i class="fas fa-tachometer-alt" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="font-size: 0.9rem; font-weight: 500;">Dashboard</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/admin/users" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent;">
+                                <i class="fas fa-users" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="font-size: 0.9rem; font-weight: 500;">Öğrenciler</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/admin/applications" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent;">
+                                <i class="fas fa-file-alt" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="font-size: 0.9rem; font-weight: 500;">Başvurular</span>
+                            </a>
+                        </li>
+                        <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
+                        <li>
+                            <a href="/admin/partners" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent;">
+                                <i class="fas fa-handshake" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="font-size: 0.9rem; font-weight: 500;">Partnerler</span>
+                            </a>
+                        </li>
+                        <% } %>
+                        <li>
+                            <a href="/admin/universities" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent;">
+                                <i class="fas fa-university" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="font-size: 0.9rem; font-weight: 500;">Üniversiteler</span>
+                            </a>
+                        </li>
+                        <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
+                        <li>
+                            <a href="/admin/backups" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent;">
+                                <i class="fas fa-database" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="font-size: 0.9rem; font-weight: 500;">Yedekleme</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/admin/admins" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent;">
+                                <i class="fas fa-user-shield" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="font-size: 0.9rem; font-weight: 500;">Adminler</span>
+                            </a>
+                        </li>
+                        <% } %>
+                    </ul>
+                </div>
                 <% } %>
 
                 <!-- Main Navigation -->
@@ -788,99 +847,46 @@
                         </div>
 
 
-                <!-- User Panel Section (if logged in) -->
-                <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn === true) { %>
+                <!-- Hesabım Section - sadece admin olmayan giris yapmis kullanicilar icin -->
+                <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn === true && currentUser && !currentUser.is_admin) { %>
                     <div style="border-bottom: 1px solid var(--gray-200);">
                         <div style="background: var(--gray-50); padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--gray-200);">
                             <small style="color: var(--gray-600); font-weight: 600; text-transform: uppercase; font-size: 0.75rem;">
-                                <% if (currentUser && currentUser.is_admin) { %>
-                                    <i class="fas fa-shield-alt" style="margin-right: 6px;"></i>Yönetim Paneli
-                                <% } else { %>
-                                    <i class="fas fa-user" style="margin-right: 6px;"></i>Hesabım
-                                <% } %>
+                                <i class="fas fa-user" style="margin-right: 6px;"></i>Hesabım
                             </small>
                         </div>
                         <ul style="list-style: none; margin: 0; padding: 0;">
-                            <% if (currentUser && currentUser.is_admin) { %>
-                                <li>
-                                    <a href="/admin/dashboard" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                        <i class="fas fa-tachometer-alt" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
-                                        <span style="font-size: 0.9rem; font-weight: 500;">Dashboard</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="/admin/users" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                        <i class="fas fa-users" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
-                                        <span style="font-size: 0.9rem; font-weight: 500;">Öğrenciler</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="/admin/applications" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                        <i class="fas fa-file-alt" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
-                                        <span style="font-size: 0.9rem; font-weight: 500;">Başvurular</span>
-                                    </a>
-                                </li>
-                                <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
-                                <li>
-                                    <a href="/admin/partners" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                        <i class="fas fa-handshake" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
-                                        <span style="font-size: 0.9rem; font-weight: 500;">Partnerler</span>
-                                    </a>
-                                </li>
-                                <% } %>
-                                <li>
-                                    <a href="/admin/universities" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                        <i class="fas fa-university" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
-                                        <span style="font-size: 0.9rem; font-weight: 500;">Üniversiteler</span>
-                                    </a>
-                                </li>
-                                <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
-                                <li>
-                                    <a href="/admin/backups" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                        <i class="fas fa-database" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
-                                        <span style="font-size: 0.9rem; font-weight: 500;">Yedekleme</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="/admin/admins" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                        <i class="fas fa-user-shield" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
-                                        <span style="font-size: 0.9rem; font-weight: 500;">Adminler</span>
-                                    </a>
-                                </li>
-                                <% } %>
-                            <% } else { %>
-                                <li>
-                                    <a href="/user/dashboard" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                        <i class="fas fa-user" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
-                                        <span style="font-size: 0.9rem; font-weight: 500;">Profil Bilgileri</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="/user/applications" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                        <i class="fas fa-file-alt" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
-                                        <span style="font-size: 0.9rem; font-weight: 500;">Başvurularım</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="/user/services" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                        <i class="fas fa-credit-card" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
-                                        <span style="font-size: 0.9rem; font-weight: 500;">Hizmetler & Ödemeler</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="/user/files" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                        <i class="fas fa-folder-open" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
-                                        <span style="font-size: 0.9rem; font-weight: 500;">Dosyalarım</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="/user/settings" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                        <i class="fas fa-cog" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
-                                        <span style="font-size: 0.9rem; font-weight: 500;">Ayarlar</span>
-                                    </a>
-                                </li>
-                            <% } %>
-                </ul>
+                            <li>
+                                <a href="/user/dashboard" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                    <i class="fas fa-user" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                    <span style="font-size: 0.9rem; font-weight: 500;">Profil Bilgileri</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/user/applications" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                    <i class="fas fa-file-alt" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                    <span style="font-size: 0.9rem; font-weight: 500;">Başvurularım</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/user/services" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                    <i class="fas fa-credit-card" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                    <span style="font-size: 0.9rem; font-weight: 500;">Hizmetler & Ödemeler</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/user/files" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                    <i class="fas fa-folder-open" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                    <span style="font-size: 0.9rem; font-weight: 500;">Dosyalarım</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/user/settings" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                    <i class="fas fa-cog" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                    <span style="font-size: 0.9rem; font-weight: 500;">Ayarlar</span>
+                                </a>
+                            </li>
+                        </ul>
                     </div>
                 <% } %>
 

@@ -368,20 +368,9 @@
                 flex-direction: column;
             }
             
+            /* Mobilde sidebar tamamen gizle - hamburger menuden erisim olacak */
             .admin-sidebar {
-                position: fixed !important;
-                left: -280px;
-                top: 72px;
-                width: 280px;
-                height: calc(100vh - 72px);
-                max-height: calc(100vh - 72px);
-                z-index: 1050;
-                transition: left 0.3s ease;
-                overflow-y: auto;
-            }
-            
-            .admin-sidebar.show {
-                left: 0;
+                display: none !important;
             }
             
             .admin-main {
@@ -397,20 +386,14 @@
                 grid-template-columns: 1fr;
             }
             
-            /* Sidebar backdrop */
+            /* Sidebar backdrop - artik gerekli degil */
             .admin-sidebar-backdrop {
-                position: fixed;
-                top: 72px;
-                left: 0;
-                width: 100%;
-                height: calc(100vh - 72px);
-                background: rgba(0, 0, 0, 0.5);
-                z-index: 1049;
-                display: none;
+                display: none !important;
             }
             
-            .admin-sidebar-backdrop.show {
-                display: block;
+            /* Hamburger menu toggle gizle - ana siteden kullanilacak */
+            .admin-menu-toggle {
+                display: none !important;
             }
             
             /* Hamburger button style */
