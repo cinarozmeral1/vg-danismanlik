@@ -4,10 +4,9 @@ const { authenticateAdmin } = require('../middleware/auth');
 
 const router = express.Router();
 
-// Get guardians page
+// Get guardians page (admin)
 router.get('/', authenticateAdmin, async (req, res) => {
     try {
-        // Get users for dropdown
         const usersResult = await pool.query(
             'SELECT id, first_name, last_name, email FROM users ORDER BY first_name, last_name'
         );
@@ -26,13 +25,13 @@ router.get('/', authenticateAdmin, async (req, res) => {
     }
 });
 
-// Get guardians for a specific user
+// Get guardians for a specific user (admin)
 router.get('/user/:userId', authenticateAdmin, async (req, res) => {
     try {
         const { userId } = req.params;
         
         const result = await pool.query(
-            'SELECT * FROM guardians WHERE user_id = $1 ORDER BY created_at DESC',
+            'SELECT * FROM guardians WHERE user_id = $1 ORDER BY sort_order ASC, created_at ASC',
             [userId]
         );
         
@@ -49,7 +48,7 @@ router.get('/user/:userId', authenticateAdmin, async (req, res) => {
     }
 });
 
-// Get all guardians (API)
+// Get all guardians (API) - admin
 router.get('/all', authenticateAdmin, async (req, res) => {
     try {
         const result = await pool.query(`
@@ -72,21 +71,21 @@ router.get('/all', authenticateAdmin, async (req, res) => {
     }
 });
 
-// Add new guardian
+// Add new guardian (admin)
 router.post('/add', authenticateAdmin, async (req, res) => {
     try {
         const {
             user_id,
             full_name,
             relationship,
-            email,
+            tc_number,
             phone,
+            email,
             address,
-            id_number,
-            can_be_contacted = true
+            is_required,
+            sort_order
         } = req.body;
 
-        // Validation
         if (!user_id || !full_name || !relationship) {
             return res.status(400).json({
                 success: false,
@@ -96,13 +95,13 @@ router.post('/add', authenticateAdmin, async (req, res) => {
 
         const result = await pool.query(`
             INSERT INTO guardians (
-                user_id, full_name, relationship, email, phone, 
-                address, id_number, can_be_contacted
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                user_id, full_name, relationship, tc_number, phone, 
+                email, address, is_required, sort_order
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
             RETURNING *
         `, [
-            user_id, full_name, relationship, email, phone,
-            address, id_number, can_be_contacted
+            user_id, full_name, relationship, tc_number || null, phone || null,
+            email || null, address || null, is_required || false, sort_order || 0
         ]);
 
         res.json({
@@ -119,21 +118,21 @@ router.post('/add', authenticateAdmin, async (req, res) => {
     }
 });
 
-// Update guardian
+// Update guardian (admin)
 router.put('/update/:id', authenticateAdmin, async (req, res) => {
     try {
         const { id } = req.params;
         const {
             full_name,
             relationship,
-            email,
+            tc_number,
             phone,
+            email,
             address,
-            id_number,
-            can_be_contacted
+            is_required,
+            sort_order
         } = req.body;
 
-        // Validation
         if (!full_name || !relationship) {
             return res.status(400).json({
                 success: false,
@@ -143,14 +142,14 @@ router.put('/update/:id', authenticateAdmin, async (req, res) => {
 
         const result = await pool.query(`
             UPDATE guardians SET 
-                full_name = $1, relationship = $2, email = $3, 
-                phone = $4, address = $5, id_number = $6, 
-                can_be_contacted = $7, updated_at = CURRENT_TIMESTAMP
-            WHERE id = $8
+                full_name = $1, relationship = $2, tc_number = $3, 
+                phone = $4, email = $5, address = $6, 
+                is_required = $7, sort_order = $8, updated_at = CURRENT_TIMESTAMP
+            WHERE id = $9
             RETURNING *
         `, [
-            full_name, relationship, email, phone,
-            address, id_number, can_be_contacted, id
+            full_name, relationship, tc_number || null, phone || null,
+            email || null, address || null, is_required || false, sort_order || 0, id
         ]);
 
         if (result.rows.length === 0) {
@@ -174,7 +173,7 @@ router.put('/update/:id', authenticateAdmin, async (req, res) => {
     }
 });
 
-// Delete guardian
+// Delete guardian (admin)
 router.delete('/delete/:id', authenticateAdmin, async (req, res) => {
     try {
         const { id } = req.params;
@@ -200,40 +199,6 @@ router.delete('/delete/:id', authenticateAdmin, async (req, res) => {
         res.status(500).json({ 
             success: false, 
             message: 'Veli silinirken bir hata oluştu: ' + error.message 
-        });
-    }
-});
-
-// Toggle can_be_contacted status
-router.patch('/toggle-contact/:id', authenticateAdmin, async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { can_be_contacted } = req.body;
-
-        const result = await pool.query(`
-            UPDATE guardians SET 
-                can_be_contacted = $1, updated_at = CURRENT_TIMESTAMP
-            WHERE id = $2
-            RETURNING *
-        `, [can_be_contacted, id]);
-
-        if (result.rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Veli bulunamadı.'
-            });
-        }
-
-        res.json({
-            success: true,
-            message: 'İletişim durumu güncellendi!',
-            guardian: result.rows[0]
-        });
-    } catch (error) {
-        console.error('Toggle contact error:', error);
-        res.status(500).json({ 
-            success: false, 
-            message: 'İletişim durumu güncellenirken bir hata oluştu: ' + error.message 
         });
     }
 });

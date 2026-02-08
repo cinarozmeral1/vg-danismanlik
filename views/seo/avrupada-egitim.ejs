@@ -1,0 +1,539 @@
+<!-- SEO Landing Page: Avrupa'da Eğitim -->
+
+<style>
+.europe-hero {
+    background: linear-gradient(135deg, #1e3a5f 0%, #2e5a8f 50%, #4a7ab5 100%);
+    padding: 100px 0 80px;
+    color: white;
+    position: relative;
+}
+
+.europe-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('/images/backgrounds/cambridge.jpg') center/cover;
+    opacity: 0.12;
+}
+
+.europe-hero .container {
+    position: relative;
+    z-index: 2;
+}
+
+.europe-hero h1 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+}
+
+.stat-box {
+    background: rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 25px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    display: block;
+    color: #ffd700;
+}
+
+.stat-label {
+    font-size: 0.95rem;
+    opacity: 0.9;
+}
+
+.europe-section {
+    padding: 80px 0;
+}
+
+.europe-section:nth-child(even) {
+    background: #f8f9fa;
+}
+
+.europe-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1e3a5f;
+    margin-bottom: 1.5rem;
+}
+
+.benefit-list {
+    list-style: none;
+    padding: 0;
+}
+
+.benefit-list li {
+    padding: 12px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.benefit-list li:last-child {
+    border-bottom: none;
+}
+
+.benefit-list i {
+    color: #28a745;
+    font-size: 1.1rem;
+    margin-top: 3px;
+}
+
+.university-showcase {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.uni-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    transition: transform 0.3s;
+}
+
+.uni-card:hover {
+    transform: translateY(-5px);
+}
+
+.uni-card-header {
+    background: linear-gradient(135deg, #0078D7, #00a8ff);
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+.uni-card-body {
+    padding: 25px;
+}
+
+.uni-card h4 {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+.uni-card p {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+.price-tag {
+    background: #e8f4fd;
+    color: #0078D7;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: inline-block;
+}
+
+.process-timeline {
+    position: relative;
+    padding-left: 40px;
+}
+
+.process-timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, #0078D7, #00a8ff);
+    border-radius: 3px;
+}
+
+.process-step {
+    position: relative;
+    margin-bottom: 35px;
+    padding-left: 30px;
+}
+
+.process-step::before {
+    content: attr(data-step);
+    position: absolute;
+    left: -40px;
+    top: 0;
+    width: 35px;
+    height: 35px;
+    background: #0078D7;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.process-step h4 {
+    color: #1e3a5f;
+    margin-bottom: 8px;
+}
+
+.process-step p {
+    color: #666;
+    margin: 0;
+}
+
+.cost-comparison {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.cost-comparison th {
+    background: #1e3a5f;
+    color: white;
+    padding: 18px;
+}
+
+.cost-comparison td {
+    padding: 15px 18px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.cost-comparison tr:nth-child(even) {
+    background: #f8f9fa;
+}
+
+.europe-cta {
+    background: linear-gradient(135deg, #0078D7 0%, #00a8ff 100%);
+    padding: 80px 0;
+    color: white;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .europe-hero h1 {
+        font-size: 2rem;
+    }
+    .stat-number {
+        font-size: 2rem;
+    }
+}
+</style>
+
+<!-- Hero Section -->
+<section class="europe-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <h1>Avrupa'da Eğitim<br>Hayalinizi Gerçekleştirin</h1>
+                <p class="lead mb-4">
+                    Dünya sıralamasında üst sıralarda yer alan Avrupa üniversitelerinde, uygun bütçeyle kaliteli eğitim fırsatı. VG Danışmanlık ile Avrupa'da okumak artık çok kolay!
+                </p>
+                <a href="/contact" class="btn btn-light btn-lg me-3">
+                    <i class="fas fa-graduation-cap me-2"></i>Hemen Başvur
+                </a>
+                <a href="/universities" class="btn btn-outline-light btn-lg">
+                    Üniversiteleri Keşfet
+                </a>
+            </div>
+            <div class="col-lg-5 mt-4 mt-lg-0">
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="stat-box">
+                            <span class="stat-number">8</span>
+                            <span class="stat-label">Avrupa Ülkesi</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-box">
+                            <span class="stat-number">80+</span>
+                            <span class="stat-label">Partner Üniversite</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-box">
+                            <span class="stat-number">500+</span>
+                            <span class="stat-label">Yerleştirilen Öğrenci</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-box">
+                            <span class="stat-number">%95</span>
+                            <span class="stat-label">Başarı Oranı</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Neden Avrupa -->
+<section class="europe-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h2 class="europe-title">Neden Avrupa'da Okumalısınız?</h2>
+                <p class="text-muted mb-4">
+                    Avrupa, dünya standartlarında eğitim kalitesi, uygun yaşam maliyetleri ve zengin kültürel deneyimiyle öğrenciler için ideal bir tercih.
+                </p>
+                <ul class="benefit-list">
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <strong>Dünya Çapında Geçerli Diploma</strong><br>
+                            <span class="text-muted">Bologna sistemi ile tüm AB ülkelerinde tanınan diplomalar</span>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <strong>Uygun Eğitim Maliyetleri</strong><br>
+                            <span class="text-muted">ABD ve İngiltere'ye göre çok daha uygun fiyatlar</span>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <strong>Çalışma İzni Fırsatı</strong><br>
+                            <span class="text-muted">Mezuniyet sonrası çalışma izni imkanı</span>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <strong>Çok Kültürlü Ortam</strong><br>
+                            <span class="text-muted">Dünyanın her yerinden öğrencilerle tanışma fırsatı</span>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <strong>Schengen Vizesi Avantajı</strong><br>
+                            <span class="text-muted">26 Avrupa ülkesinde serbest seyahat</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-lg-6">
+                <img src="/images/backgrounds/photo-1523050854058-8df90110c9f1.jpg" alt="Avrupa'da Eğitim" class="img-fluid rounded-4 shadow-lg" style="max-height: 500px; width: 100%; object-fit: cover;">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Eğitim Maliyetleri Karşılaştırma -->
+<section class="europe-section">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="europe-title">Yıllık Eğitim Maliyetleri Karşılaştırması</h2>
+            <p class="text-muted">Avrupa'da okumak düşündüğünüzden daha uygun!</p>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="cost-comparison">
+                    <table class="table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Ülke</th>
+                                <th class="text-center">Yıllık Harç</th>
+                                <th class="text-center">Aylık Yaşam</th>
+                                <th class="text-center">Toplam/Yıl</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="me-2">🇨🇿</span> <strong>Çek Cumhuriyeti</strong></td>
+                                <td class="text-center">€3,000 - €8,000</td>
+                                <td class="text-center">€500 - €700</td>
+                                <td class="text-center text-success fw-bold">€9,000 - €16,400</td>
+                            </tr>
+                            <tr>
+                                <td><span class="me-2">🇵🇱</span> <strong>Polonya</strong></td>
+                                <td class="text-center">€2,000 - €6,000</td>
+                                <td class="text-center">€400 - €600</td>
+                                <td class="text-center text-success fw-bold">€6,800 - €13,200</td>
+                            </tr>
+                            <tr>
+                                <td><span class="me-2">🇭🇺</span> <strong>Macaristan</strong></td>
+                                <td class="text-center">€3,000 - €8,000</td>
+                                <td class="text-center">€450 - €650</td>
+                                <td class="text-center text-success fw-bold">€8,400 - €15,800</td>
+                            </tr>
+                            <tr>
+                                <td><span class="me-2">🇮🇹</span> <strong>İtalya</strong></td>
+                                <td class="text-center">€1,000 - €4,000</td>
+                                <td class="text-center">€700 - €1,000</td>
+                                <td class="text-center text-success fw-bold">€9,400 - €16,000</td>
+                            </tr>
+                            <tr>
+                                <td><span class="me-2">🇩🇪</span> <strong>Almanya</strong></td>
+                                <td class="text-center">€0 - €500</td>
+                                <td class="text-center">€800 - €1,100</td>
+                                <td class="text-center text-success fw-bold">€9,600 - €13,700</td>
+                            </tr>
+                            <tr style="background: #fff3cd;">
+                                <td><span class="me-2">🇺🇸</span> <strong>ABD (Karşılaştırma)</strong></td>
+                                <td class="text-center">€20,000 - €50,000</td>
+                                <td class="text-center">€1,500 - €2,500</td>
+                                <td class="text-center text-danger fw-bold">€38,000 - €80,000</td>
+                            </tr>
+                            <tr style="background: #fff3cd;">
+                                <td><span class="me-2">🇬🇧</span> <strong>İngiltere (Karşılaştırma)</strong></td>
+                                <td class="text-center">€15,000 - €30,000</td>
+                                <td class="text-center">€1,200 - €1,800</td>
+                                <td class="text-center text-danger fw-bold">€29,400 - €51,600</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-center text-muted mt-3">
+                    <small>* Fiyatlar ortalama değerlerdir ve programa göre değişiklik gösterebilir.</small>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Başvuru Süreci -->
+<section class="europe-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-5">
+                <h2 class="europe-title">Avrupa'da Eğitim İçin<br>Başvuru Süreci</h2>
+                <p class="text-muted mb-4">
+                    VG Danışmanlık olarak başvuru sürecinizi adım adım yönetiyoruz. Siz sadece hayalinize odaklanın, gerisini bize bırakın.
+                </p>
+                <a href="/contact" class="btn btn-primary btn-lg">
+                    <i class="fas fa-phone me-2"></i>Ücretsiz Danışmanlık
+                </a>
+            </div>
+            <div class="col-lg-7">
+                <div class="process-timeline">
+                    <div class="process-step" data-step="1">
+                        <h4>Ücretsiz Ön Görüşme</h4>
+                        <p>Hedeflerinizi ve bütçenizi değerlendiriyoruz, size uygun ülke ve programları belirliyoruz.</p>
+                    </div>
+                    <div class="process-step" data-step="2">
+                        <h4>Üniversite Seçimi</h4>
+                        <p>Profilinize en uygun üniversiteleri belirliyor, başvuru stratejisi oluşturuyoruz.</p>
+                    </div>
+                    <div class="process-step" data-step="3">
+                        <h4>Evrak Hazırlığı</h4>
+                        <p>Motivasyon mektubu, CV ve tüm başvuru evraklarınızı profesyonelce hazırlıyoruz.</p>
+                    </div>
+                    <div class="process-step" data-step="4">
+                        <h4>Başvuru & Takip</h4>
+                        <p>Başvurularınızı yapıyor ve kabul mektubunuzu alana kadar takip ediyoruz.</p>
+                    </div>
+                    <div class="process-step" data-step="5">
+                        <h4>Vize Süreci</h4>
+                        <p>Vize başvurunuzu hazırlıyor, randevu alıyor ve sürecinizi yönetiyoruz.</p>
+                    </div>
+                    <div class="process-step" data-step="6">
+                        <h4>Yerleşim Desteği</h4>
+                        <p>Konaklama, havalimanı karşılama ve oryantasyon ile yanınızdayız.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Popüler Programlar -->
+<section class="europe-section">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="europe-title">Avrupa'da Popüler Programlar</h2>
+            <p class="text-muted">En çok tercih edilen bölümler ve üniversiteler</p>
+        </div>
+        <div class="university-showcase">
+            <div class="uni-card">
+                <div class="uni-card-header">
+                    <i class="fas fa-laptop-code fa-2x mb-2"></i>
+                    <h4 class="mb-0">Bilgisayar Mühendisliği</h4>
+                </div>
+                <div class="uni-card-body">
+                    <p>Çek Cumhuriyeti ve Almanya'da dünya standartlarında bilgisayar mühendisliği eğitimi.</p>
+                    <div class="price-tag">€3,000 - €8,000/yıl</div>
+                </div>
+            </div>
+            <div class="uni-card">
+                <div class="uni-card-header">
+                    <i class="fas fa-briefcase-medical fa-2x mb-2"></i>
+                    <h4 class="mb-0">Tıp</h4>
+                </div>
+                <div class="uni-card-body">
+                    <p>Çekya, Polonya ve Macaristan'da İngilizce tıp eğitimi. AB genelinde geçerli diploma.</p>
+                    <div class="price-tag">€10,000 - €18,000/yıl</div>
+                </div>
+            </div>
+            <div class="uni-card">
+                <div class="uni-card-header">
+                    <i class="fas fa-chart-line fa-2x mb-2"></i>
+                    <h4 class="mb-0">İşletme & Ekonomi</h4>
+                </div>
+                <div class="uni-card-body">
+                    <p>Hollanda ve İtalya'da uluslararası iş dünyasına hazırlayan programlar.</p>
+                    <div class="price-tag">€2,000 - €12,000/yıl</div>
+                </div>
+            </div>
+            <div class="uni-card">
+                <div class="uni-card-header">
+                    <i class="fas fa-cogs fa-2x mb-2"></i>
+                    <h4 class="mb-0">Mühendislik</h4>
+                </div>
+                <div class="uni-card-body">
+                    <p>Almanya'da ücretsiz mühendislik eğitimi. Makine, elektrik, inşaat ve daha fazlası.</p>
+                    <div class="price-tag">€0 - €500/yıl</div>
+                </div>
+            </div>
+            <div class="uni-card">
+                <div class="uni-card-header">
+                    <i class="fas fa-palette fa-2x mb-2"></i>
+                    <h4 class="mb-0">Sanat & Tasarım</h4>
+                </div>
+                <div class="uni-card-body">
+                    <p>İtalya'da moda, tasarım ve güzel sanatlar eğitimi. Milano ve Floransa'da prestijli okullar.</p>
+                    <div class="price-tag">€5,000 - €20,000/yıl</div>
+                </div>
+            </div>
+            <div class="uni-card">
+                <div class="uni-card-header">
+                    <i class="fas fa-balance-scale fa-2x mb-2"></i>
+                    <h4 class="mb-0">Hukuk</h4>
+                </div>
+                <div class="uni-card-body">
+                    <p>İngiltere ve Hollanda'da uluslararası hukuk programları. LLB ve LLM seçenekleri.</p>
+                    <div class="price-tag">€8,000 - €20,000/yıl</div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-5">
+            <a href="/universities" class="btn btn-primary btn-lg">
+                <i class="fas fa-search me-2"></i>Tüm Üniversiteleri Gör
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="europe-cta">
+    <div class="container">
+        <h2 class="mb-3">Avrupa'da Eğitim Hayaliniz İçin<br>İlk Adımı Atın</h2>
+        <p class="lead mb-4">Ücretsiz ön görüşme ile size özel eğitim planınızı oluşturalım</p>
+        <a href="/contact" class="btn btn-light btn-lg me-3">
+            <i class="fas fa-calendar-alt me-2"></i>Randevu Al
+        </a>
+        <a href="https://wa.me/905399273008" target="_blank" class="btn btn-outline-light btn-lg">
+            <i class="fab fa-whatsapp me-2"></i>WhatsApp ile Ulaş
+        </a>
+    </div>
+</section>
+

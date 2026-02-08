@@ -72,6 +72,16 @@
     <link rel="dns-prefetch" href="//www.googletagmanager.com">
     <link rel="dns-prefetch" href="//accounts.google.com">
     
+    <!-- Google Ads & Analytics Tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-V0JJ8G5K3J"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-V0JJ8G5K3J'); // Google Analytics 4
+        gtag('config', 'AW-17936806150'); // Google Ads
+    </script>
+    
     <!-- Google Analytics 4 - Conditional Loading Based on Cookie Consent -->
     <script>
         // GA4 will be loaded only after user accepts cookies
@@ -105,10 +115,10 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     
     <!-- Favicon -->
-    <link rel="icon" href="/favicon.png?v=6" type="image/png">
-    <link rel="shortcut icon" href="/favicon.ico?v=6" type="image/x-icon">
-    <link rel="apple-touch-icon" href="/favicon.png?v=6">
-    <meta name="msapplication-TileImage" content="/favicon.png?v=6">
+    <link rel="icon" href="/favicon.png?v=7" type="image/png">
+    <link rel="shortcut icon" href="/favicon.ico?v=7" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/favicon-192.png?v=7">
+    <meta name="msapplication-TileImage" content="/favicon-192.png?v=7">
     <meta name="msapplication-TileColor" content="#ffffff">
     
     <!-- Preload critical resources -->
@@ -487,9 +497,9 @@
 
         <!-- Clean Mobile Offcanvas Navigation -->
         <div class="offcanvas offcanvas-end" tabindex="-1" id="mobileNav" aria-labelledby="mobileNavLabel" style="width: 300px;">
-        <div class="offcanvas-header" style="background: var(--primary-600); color: white; padding: 1.25rem 1.5rem;">
-            <div class="d-flex align-items-center">
-                <span class="me-2" style="display:inline-flex; align-items:center; justify-content:center; width: 40px; height: 40px; background:#ffffff; border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.06);">
+        <div class="offcanvas-header" style="background: var(--primary-600); color: white; padding: 1.25rem 1.5rem; display: flex !important; justify-content: space-between !important; align-items: center !important;">
+            <div style="display: flex; align-items: center;">
+                <span style="display:inline-flex; align-items:center; justify-content:center; width: 40px; height: 40px; background:#ffffff; border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.06); margin-right: 10px;">
                     <img src="/images/logos/venture-global-logo.png" alt="Venture Global" style="height: 28px; width: auto; display:block;">
                 </span>
                 <div>
@@ -497,7 +507,7 @@
                     <small style="opacity: 1; color:#ffffff; font-weight: 600; font-size: 0.85rem;">Eğitim Danışmanlığı</small>
                 </div>
             </div>
-            <button type="button" class="mobile-close-btn" data-bs-dismiss="offcanvas" aria-label="Close" style="background: rgba(255,255,255,0.2); border: 2px solid #ffffff; color: #ffffff; font-size: 1.5rem; line-height: 1; padding: 0; cursor: pointer; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-weight: bold;">×</button>
+            <button type="button" data-bs-dismiss="offcanvas" aria-label="Kapat" style="background: #ffffff !important; border: 2px solid #333333 !important; color: #333333 !important; font-size: 18px !important; font-weight: bold !important; line-height: 1; padding: 0 !important; cursor: pointer !important; width: 36px !important; height: 36px !important; min-width: 36px !important; min-height: 36px !important; display: flex !important; align-items: center !important; justify-content: center !important; border-radius: 6px !important; flex-shrink: 0 !important;">✕</button>
         </div>
         
         <div class="offcanvas-body p-0" style="background: #ffffff !important; background-color: #ffffff !important; background-image: none !important;">
@@ -634,65 +644,6 @@
                             </div>
                         </div>
                     </div>
-                <% } %>
-
-                <!-- Yönetim Paneli Section - Admin için en üstte -->
-                <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn === true && currentUser && currentUser.is_admin) { %>
-                <div style="border-bottom: 1px solid var(--gray-200);">
-                    <div style="background: var(--primary-600); padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--primary-700);">
-                        <small style="color: #ffffff; font-weight: 600; text-transform: uppercase; font-size: 0.75rem;">
-                            <i class="fas fa-shield-alt" style="margin-right: 6px;"></i>YÖNETİM PANELİ
-                        </small>
-                    </div>
-                    <ul style="list-style: none; margin: 0; padding: 0; background: var(--primary-50);">
-                        <li>
-                            <a href="/admin/dashboard" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid var(--primary-600);">
-                                <i class="fas fa-tachometer-alt" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
-                                <span style="font-size: 0.9rem; font-weight: 500;">Dashboard</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/admin/users" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent;">
-                                <i class="fas fa-users" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
-                                <span style="font-size: 0.9rem; font-weight: 500;">Öğrenciler</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/admin/applications" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent;">
-                                <i class="fas fa-file-alt" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
-                                <span style="font-size: 0.9rem; font-weight: 500;">Başvurular</span>
-                            </a>
-                        </li>
-                        <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
-                        <li>
-                            <a href="/admin/partners" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent;">
-                                <i class="fas fa-handshake" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
-                                <span style="font-size: 0.9rem; font-weight: 500;">Partnerler</span>
-                            </a>
-                        </li>
-                        <% } %>
-                        <li>
-                            <a href="/admin/universities" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent;">
-                                <i class="fas fa-university" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
-                                <span style="font-size: 0.9rem; font-weight: 500;">Üniversiteler</span>
-                            </a>
-                        </li>
-                        <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
-                        <li>
-                            <a href="/admin/backups" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent;">
-                                <i class="fas fa-database" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
-                                <span style="font-size: 0.9rem; font-weight: 500;">Yedekleme</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/admin/admins" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent;">
-                                <i class="fas fa-user-shield" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
-                                <span style="font-size: 0.9rem; font-weight: 500;">Adminler</span>
-                            </a>
-                        </li>
-                        <% } %>
-                    </ul>
-                </div>
                 <% } %>
 
                 <!-- Main Navigation -->
@@ -847,46 +798,99 @@
                         </div>
 
 
-                <!-- Hesabım Section - sadece admin olmayan giris yapmis kullanicilar icin -->
-                <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn === true && currentUser && !currentUser.is_admin) { %>
+                <!-- User Panel Section (if logged in) -->
+                <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn === true) { %>
                     <div style="border-bottom: 1px solid var(--gray-200);">
                         <div style="background: var(--gray-50); padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--gray-200);">
                             <small style="color: var(--gray-600); font-weight: 600; text-transform: uppercase; font-size: 0.75rem;">
-                                <i class="fas fa-user" style="margin-right: 6px;"></i>Hesabım
+                                <% if (currentUser && currentUser.is_admin) { %>
+                                    <i class="fas fa-shield-alt" style="margin-right: 6px;"></i>Yönetim Paneli
+                                <% } else { %>
+                                    <i class="fas fa-user" style="margin-right: 6px;"></i>Hesabım
+                                <% } %>
                             </small>
                         </div>
                         <ul style="list-style: none; margin: 0; padding: 0;">
-                            <li>
-                                <a href="/user/dashboard" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                    <i class="fas fa-user" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
-                                    <span style="font-size: 0.9rem; font-weight: 500;">Profil Bilgileri</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="/user/applications" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                    <i class="fas fa-file-alt" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
-                                    <span style="font-size: 0.9rem; font-weight: 500;">Başvurularım</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="/user/services" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                    <i class="fas fa-credit-card" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
-                                    <span style="font-size: 0.9rem; font-weight: 500;">Hizmetler & Ödemeler</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="/user/files" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                    <i class="fas fa-folder-open" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
-                                    <span style="font-size: 0.9rem; font-weight: 500;">Dosyalarım</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="/user/settings" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
-                                    <i class="fas fa-cog" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
-                                    <span style="font-size: 0.9rem; font-weight: 500;">Ayarlar</span>
-                                </a>
-                            </li>
-                        </ul>
+                            <% if (currentUser && currentUser.is_admin) { %>
+                                <li>
+                                    <a href="/admin/dashboard" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                        <i class="fas fa-tachometer-alt" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 500;">Dashboard</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/admin/users" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                        <i class="fas fa-users" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 500;">Öğrenciler</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/admin/applications" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                        <i class="fas fa-file-alt" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 500;">Başvurular</span>
+                                    </a>
+                                </li>
+                                <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
+                                <li>
+                                    <a href="/admin/partners" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                        <i class="fas fa-handshake" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 500;">Partnerler</span>
+                                    </a>
+                                </li>
+                                <% } %>
+                                <li>
+                                    <a href="/admin/universities" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                        <i class="fas fa-university" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 500;">Üniversiteler</span>
+                                    </a>
+                                </li>
+                                <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
+                                <li>
+                                    <a href="/admin/backups" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                        <i class="fas fa-database" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 500;">Yedekleme</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/admin/admins" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                        <i class="fas fa-user-shield" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 500;">Adminler</span>
+                                    </a>
+                                </li>
+                                <% } %>
+                            <% } else { %>
+                                <li>
+                                    <a href="/user/dashboard" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                        <i class="fas fa-user" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 500;">Profil Bilgileri</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/user/applications" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                        <i class="fas fa-file-alt" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 500;">Başvurularım</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/user/services" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                        <i class="fas fa-credit-card" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 500;">Hizmetler & Ödemeler</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/user/files" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                        <i class="fas fa-folder-open" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 500;">Dosyalarım</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/user/settings" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                        <i class="fas fa-cog" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 500;">Ayarlar</span>
+                                    </a>
+                                </li>
+                            <% } %>
+                </ul>
                     </div>
                 <% } %>
 
@@ -1181,205 +1185,25 @@
             };
             
             function setupMobileNavEvents() {
-                const mobileNav = document.getElementById('mobileNav');
-                if (!mobileNav) return;
-                
-                // Completely remove all event listeners
-                const newMobileNav = mobileNav.cloneNode(true);
-                mobileNav.parentNode.replaceChild(newMobileNav, mobileNav);
-                
-                // Add only essential event listeners
-                newMobileNav.addEventListener('show.bs.offcanvas', function() {
-                    // Force show class for CSS animation
-                    this.classList.add('show');
-                    // Lock body scroll when menu opens
-                    document.body.classList.add('offcanvas-open');
-                });
-                
-                newMobileNav.addEventListener('hidden.bs.offcanvas', function() {
-                    // Clean up
-                    this.classList.remove('show');
-                    
-                    // Force remove ALL backdrops
-                    setTimeout(() => {
-                        const allBackdrops = document.querySelectorAll('.mobile-menu-backdrop, .offcanvas-backdrop, .modal-backdrop, [class*="backdrop"]');
-                        allBackdrops.forEach(backdrop => {
-                            if (backdrop && backdrop.parentNode) {
-                                backdrop.remove();
-                            }
-                        });
-                        
-                        // Clean up body classes and styles
-                        document.body.classList.remove('modal-open', 'offcanvas-open');
-                        document.body.style.overflow = '';
-                        document.body.style.paddingRight = '';
-                    }, 50);
-                });
+                // Bootstrap offcanvas kendi event'lerini yönetir
+                // Ek bir şey yapmaya gerek yok
             }
             
-            // MANUAL DROPDOWN HANDLER - Bypass Bootstrap's buggy implementation
+            // Bootstrap dropdown'ları kullan - manuel sistemi devre dışı bırak
             window.setupManualDropdowns = function() {
-                console.log('🔧 Setting up manual dropdowns...');
-                
-                document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
-                    const parent = toggle.closest('.dropdown');
-                    const menu = parent ? parent.querySelector('.dropdown-menu') : null;
-                    
-                    if (!menu) return;
-                    
-                    // Remove any existing listeners
-                    const newToggle = toggle.cloneNode(true);
-                    toggle.parentNode.replaceChild(newToggle, toggle);
-                    
-                    // Add click handler
-                    newToggle.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        
-                        console.log('Dropdown clicked!');
-                        
-                        // Close all other dropdowns
-                        document.querySelectorAll('.dropdown-menu.show').forEach(otherMenu => {
-                            if (otherMenu !== menu) {
-                                otherMenu.classList.remove('show');
-                            }
-                        });
-                        
-                        // Toggle this dropdown
-                        menu.classList.toggle('show');
-                        console.log('Menu toggled, now:', menu.classList.contains('show') ? 'OPEN' : 'CLOSED');
-                    });
-                });
-                
-                console.log('✅ Manual dropdowns initialized');
-            }
-            
-            // Close dropdown when clicking outside (only setup once)
-            let outsideClickSetup = false;
-            if (!outsideClickSetup) {
-                document.addEventListener('click', function(e) {
-                    if (!e.target.closest('.dropdown')) {
-                        document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
-                            menu.classList.remove('show');
-                        });
-                    }
-                });
-                outsideClickSetup = true;
+                // Bootstrap kendi dropdown'larını yönetir
+                console.log('✅ Using Bootstrap dropdowns');
             }
             
             // Initialize on DOM ready
             document.addEventListener('DOMContentLoaded', function() {
-                console.log('🎯 DOMContentLoaded - setting up manual dropdowns');
-                
-                // Use manual dropdown implementation
-                window.setupManualDropdowns();
-                
-                // Use requestAnimationFrame for better performance
+                console.log('🎯 DOMContentLoaded');
                 requestAnimationFrame(initializeMobileMenu);
             });
             
-            // ALSO initialize after everything is fully loaded
+            // Window load
             window.addEventListener('load', function() {
-                console.log('🎯 Window loaded - re-initializing dropdowns');
-                setTimeout(function() {
-                    window.setupManualDropdowns();
-                }, 200);
-            });
-                
-                // Disable Bootstrap's automatic offcanvas initialization
-                const mobileNav = document.getElementById('mobileNav');
-                if (mobileNav) {
-                    mobileNav.removeAttribute('data-bs-toggle');
-                    mobileNav.removeAttribute('data-bs-target');
-                    
-                    const toggleBtn = document.querySelector('[data-bs-target="#mobileNav"]');
-                    if (toggleBtn) {
-                        toggleBtn.addEventListener('click', function(e) {
-                            e.preventDefault();
-                            if (mobileNav.classList.contains('show')) {
-                                closeMobileMenu();
-                            } else {
-                                openMobileMenu();
-                            }
-                        });
-                    }
-                    
-                    const closeBtn = mobileNav.querySelector('.btn-close');
-                    if (closeBtn) {
-                        closeBtn.addEventListener('click', function(e) {
-                            e.preventDefault();
-                            closeMobileMenu();
-                        });
-                    }
-                    
-                    function openMobileMenu() {
-                        // First, force close any existing menu
-                        closeMobileMenu();
-                        
-                        // Wait a bit for cleanup
-                        setTimeout(() => {
-                            // Disable all transitions before showing
-                            mobileNav.style.transition = 'none';
-                            mobileNav.style.animation = 'none';
-                            
-                            mobileNav.classList.add('show');
-                            
-                            // Force remove any existing backdrops first
-                            const existingBackdrops = document.querySelectorAll('.mobile-menu-backdrop, .offcanvas-backdrop, .modal-backdrop');
-                            existingBackdrops.forEach(backdrop => backdrop.remove());
-                            
-                            // Add new backdrop for left side darkening
-                            const backdrop = document.createElement('div');
-                            backdrop.className = 'mobile-menu-backdrop';
-                            backdrop.id = 'mobileMenuBackdrop';
-                            backdrop.style.opacity = '1';
-                            backdrop.style.transition = 'none';
-                            document.body.appendChild(backdrop);
-                            
-                            // Close on backdrop click
-                            backdrop.addEventListener('click', function() {
-                                closeMobileMenu();
-                            });
-                            
-                            // Prevent body scroll and add class
-                            document.body.style.overflow = 'hidden';
-                            document.body.classList.add('offcanvas-open');
-                        }, 10);
-                    }
-                    
-                    function closeMobileMenu() {
-                        // Disable transitions before hiding
-                        mobileNav.style.transition = 'none';
-                        mobileNav.style.animation = 'none';
-                        
-                        mobileNav.classList.remove('show');
-                        
-                        // Force remove ALL backdrops
-                        const allBackdrops = document.querySelectorAll('.mobile-menu-backdrop, .offcanvas-backdrop, .modal-backdrop, [class*="backdrop"]');
-                        allBackdrops.forEach(backdrop => {
-                            if (backdrop && backdrop.parentNode) {
-                                backdrop.parentNode.removeChild(backdrop);
-                            }
-                        });
-                        
-                        // Remove any remaining backdrop classes from body
-                        document.body.classList.remove('modal-open', 'offcanvas-open');
-                        document.body.style.overflow = '';
-                        document.body.style.paddingRight = '';
-                        document.body.style.removeProperty('overflow');
-                        document.body.style.removeProperty('padding-right');
-                        
-                        // Force cleanup of any remaining backdrop elements
-                        setTimeout(() => {
-                            const remainingBackdrops = document.querySelectorAll('.mobile-menu-backdrop, .offcanvas-backdrop, .modal-backdrop');
-                            remainingBackdrops.forEach(backdrop => {
-                                if (backdrop && backdrop.parentNode) {
-                                    backdrop.parentNode.removeChild(backdrop);
-                                }
-                            });
-                        }, 10);
-                    }
-                }
+                console.log('🎯 Window loaded');
             });
             
             // Expose for global access
@@ -1766,6 +1590,32 @@
     document.addEventListener('DOMContentLoaded', function() {
         initCookiePreferences();
         showCookieConsent();
+    });
+    </script>
+
+    <!-- MOBILE MENU - BOOTSTRAP OFFCANVAS -->
+    <script>
+    // Bootstrap Offcanvas için basit ayarlar
+    document.addEventListener('DOMContentLoaded', function() {
+        var mobileNav = document.getElementById('mobileNav');
+        if (!mobileNav) return;
+        
+        // Bootstrap offcanvas instance al veya oluştur
+        var bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(mobileNav, {
+            backdrop: true,
+            keyboard: true,
+            scroll: false
+        });
+        
+        // Menü açılınca
+        mobileNav.addEventListener('show.bs.offcanvas', function() {
+            document.body.classList.add('mobile-menu-open');
+        });
+        
+        // Menü kapanınca
+        mobileNav.addEventListener('hidden.bs.offcanvas', function() {
+            document.body.classList.remove('mobile-menu-open');
+        });
     });
     </script>
 

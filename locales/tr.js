@@ -546,7 +546,7 @@ module.exports = {
     home: {
         hero: {
             title: "Venture Global | VG Danışmanlık",
-            subtitle: "Avrupa'da Eğitim Hayalinizi Gerçekleştirin",
+            subtitle: "Avrupa'da Eğitim Hayalinizi<br>Gerçekleştirin",
             description: "Venture Global (VG Danışmanlık) olarak, Avrupa'nın en prestijli üniversitelerinde eğitim almanız için size özel danışmanlık hizmeti sunuyoruz. Yurt dışı eğitim danışmanlığında güvenilir partneriniz.",
             freeAssessment: "Ücretsiz Değerlendirme",
             ourServices: "Hizmetlerimiz"

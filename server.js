@@ -631,12 +631,12 @@ app.get('/admin/universities/edit/:id', async (req, res) => {
 
         const university = universityResult.rows[0];
 
-        // Get university departments
+        // Get university departments (ordered by sort_order)
         const departmentsResult = await pool.query(`
-            SELECT id, name_tr, name_en, price, currency
+            SELECT id, name_tr, name_en, price, currency, COALESCE(sort_order, 9999) as sort_order
             FROM university_departments 
             WHERE university_id = $1 AND is_active = true
-            ORDER BY name_tr ASC
+            ORDER BY COALESCE(sort_order, 9999) ASC, name_tr ASC
         `, [universityId]);
 
         res.render('admin/university-edit', {
@@ -679,12 +679,12 @@ app.get('/c/:id', async (req, res) => {
 
         const university = universityResult.rows[0];
 
-        // Get university departments
+        // Get university departments (ordered by sort_order)
         const departmentsResult = await pool.query(`
-            SELECT id, name_tr, name_en, price, currency
+            SELECT id, name_tr, name_en, price, currency, COALESCE(sort_order, 9999) as sort_order
             FROM university_departments 
             WHERE university_id = $1 AND is_active = true
-            ORDER BY name_tr ASC
+            ORDER BY COALESCE(sort_order, 9999) ASC, name_tr ASC
         `, [universityId]);
 
         // Get university programs (empty for now)
@@ -907,6 +907,14 @@ app.get('/sitemap.xml', async (req, res) => {
         <xhtml:link rel="alternate" hreflang="en" href="${baseUrl}/change-language/en"/>
     </url>
     
+    <!-- KVKK / Terms -->
+    <url>
+        <loc>${baseUrl}/terms</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    
     <!-- Media -->
     <url>
         <loc>${baseUrl}/media</loc>
@@ -990,6 +998,12 @@ app.get('/sitemap.xml', async (req, res) => {
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
+    <url>
+        <loc>${baseUrl}/student-life/netherlands</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
     
     <!-- Partners -->
     <url>
@@ -1015,6 +1029,26 @@ app.get('/sitemap.xml', async (req, res) => {
         <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
+    </url>
+    
+    <!-- SEO Landing Pages - High Priority -->
+    <url>
+        <loc>${baseUrl}/yurtdisi-egitim-danismanligi</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.95</priority>
+    </url>
+    <url>
+        <loc>${baseUrl}/avrupada-egitim</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.95</priority>
+    </url>
+    <url>
+        <loc>${baseUrl}/en-iyi-egitim-danismanligi</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
     </url>
     
     <!-- University Detail Pages -->
@@ -1091,6 +1125,50 @@ app.get('/about-us', (req, res) => {
     res.render('about-us', { title: res.locals.t.nav.aboutUs });
 });
 
+// KVKK Aydınlatma Metni - Kullanım Şartları
+// ==================== SEO LANDING PAGES ====================
+
+// Yurt Dışı Eğitim Danışmanlığı - Ana SEO Sayfası
+app.get('/yurtdisi-egitim-danismanligi', (req, res) => {
+    res.locals.seoTitle = 'Yurt Dışı Eğitim Danışmanlığı | VG Danışmanlık - Türkiye\'nin En Güvenilir Firması';
+    res.locals.seoDescription = 'Yurt dışı eğitim danışmanlığı hizmeti. Almanya, İngiltere, İtalya, Çek Cumhuriyeti, Hollanda\'da üniversite eğitimi. %95 başarı oranı, şeffaf fiyatlar, 7/24 destek. Ücretsiz danışmanlık için hemen arayın!';
+    res.locals.seoKeywords = 'yurt dışı eğitim danışmanlığı, eğitim danışmanlığı, yurt dışı danışmanlık, üniversite danışmanlık, avrupa eğitim danışmanlığı, yurtdışı eğitim, vg danışmanlık, venture global';
+    res.render('seo/yurtdisi-egitim-danismanligi', { title: 'Yurt Dışı Eğitim Danışmanlığı - VG Danışmanlık' });
+});
+
+// Avrupa'da Eğitim
+app.get('/avrupada-egitim', (req, res) => {
+    res.locals.seoTitle = 'Avrupa\'da Eğitim | Avrupa Üniversitelerinde Okumak - VG Danışmanlık';
+    res.locals.seoDescription = 'Avrupa\'da eğitim fırsatları. Almanya, İngiltere, İtalya, Hollanda\'da üniversite eğitimi. Uygun harç ücretleri, kaliteli eğitim, Schengen vizesi avantajı. Avrupa\'da okumak için hemen başvurun!';
+    res.locals.seoKeywords = 'avrupa\'da eğitim, avrupada okumak, avrupa üniversiteleri, avrupa eğitim danışmanlığı, avrupada üniversite, avrupa\'da yüksek lisans, avrupa burs';
+    res.render('seo/avrupada-egitim', { title: 'Avrupa\'da Eğitim - VG Danışmanlık' });
+});
+
+// En İyi Eğitim Danışmanlığı Firmaları Karşılaştırma
+app.get('/en-iyi-egitim-danismanligi', (req, res) => {
+    res.locals.seoTitle = 'En İyi Yurt Dışı Eğitim Danışmanlığı Firmaları 2026 | Karşılaştırma';
+    res.locals.seoDescription = 'Türkiye\'nin en iyi yurt dışı eğitim danışmanlığı firmaları karşılaştırması. ELT, Akare, Global ve VG Danışmanlık arasındaki farklar. Hangi firma size uygun? Detaylı inceleme ve yorumlar.';
+    res.locals.seoKeywords = 'en iyi eğitim danışmanlığı, elt yurtdışı eğitim, akare eğitim, global yurtdışı, yurt dışı eğitim firmaları, eğitim danışmanlığı karşılaştırma, elt alternatifi';
+    res.render('seo/en-iyi-egitim-danismanligi', { title: 'En İyi Yurt Dışı Eğitim Danışmanlığı Firmaları 2026' });
+});
+
+// Alternatif Anahtar Kelime Sayfaları (Yönlendirmeler)
+app.get('/egitim-danismanligi', (req, res) => res.redirect(301, '/yurtdisi-egitim-danismanligi'));
+app.get('/yurtdisinda-egitim', (req, res) => res.redirect(301, '/avrupada-egitim'));
+app.get('/yurtdisinda-okumak', (req, res) => res.redirect(301, '/avrupada-egitim'));
+app.get('/avrupa-danismanligi', (req, res) => res.redirect(301, '/avrupada-egitim'));
+app.get('/elt-alternatifi', (req, res) => res.redirect(301, '/en-iyi-egitim-danismanligi'));
+app.get('/akare-alternatifi', (req, res) => res.redirect(301, '/en-iyi-egitim-danismanligi'));
+
+// ==================== END SEO LANDING PAGES ====================
+
+app.get('/terms', (req, res) => {
+    res.locals.seoTitle = 'KVKK Aydınlatma Metni - Kişisel Verilerin Korunması | Venture Global';
+    res.locals.seoDescription = '6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) kapsamında Venture Global aydınlatma metni. Kişisel verilerinizin nasıl işlendiği hakkında bilgi edinin.';
+    res.locals.seoKeywords = 'KVKK, kişisel verilerin korunması, aydınlatma metni, gizlilik politikası, Venture Global, veri güvenliği';
+    res.render('terms', { title: 'KVKK Aydınlatma Metni' });
+});
+
 // Career Page
 app.get('/career', (req, res) => {
     res.locals.seoTitle = 'Kariyer Fırsatları - Venture Global (VG Danışmanlık) | Bölge Temsilcisi Başvurusu';
@@ -1136,7 +1214,7 @@ app.get('/universities', async (req, res) => {
         res.locals.seoDescription = 'Almanya, Çekya, İtalya, Avusturya, İngiltere, Polonya ve Macaristan\'daki prestijli üniversiteleri keşfedin. Yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı ve Avrupa eğitim danışmanlığı hizmetlerimiz ile 50+ üniversite seçeneği. Size en uygun eğitim fırsatını bulun.';
         res.locals.seoKeywords = 'yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı, Avrupa eğitim danışmanlığı, avrupa üniversiteleri, almanya üniversiteleri, çekya üniversiteleri, italya üniversiteleri, avusturya üniversiteleri, ingiltere üniversiteleri, polonya üniversiteleri, macaristan üniversiteleri, yurtdışı üniversite başvurusu';
         
-        // Get all universities from database with optimized query
+        // Get all universities from database with optimized query (sorted by admin-defined order)
         const universitiesResult = await pool.query(`
             SELECT 
                 u.id,
@@ -1148,13 +1226,13 @@ app.get('/universities', async (req, res) => {
                 u.world_ranking,
                 u.is_featured,
                 u.created_at,
+                COALESCE(u.sort_order, 9999) as sort_order,
                 COUNT(ud.id) as department_count
             FROM universities u
             LEFT JOIN university_departments ud ON u.id = ud.university_id AND ud.is_active = true
             WHERE u.is_active = true
-            GROUP BY u.id, u.name, u.name_en, u.country, u.city, u.logo_url, u.world_ranking, u.is_featured, u.created_at
-            ORDER BY u.is_featured DESC, u.name ASC
-            LIMIT 50
+            GROUP BY u.id, u.name, u.name_en, u.country, u.city, u.logo_url, u.world_ranking, u.is_featured, u.created_at, u.sort_order
+            ORDER BY COALESCE(u.sort_order, 9999) ASC, u.is_featured DESC, u.name ASC
         `);
 
         res.render('universities', {
@@ -1228,12 +1306,12 @@ app.get('/university/:id', async (req, res) => {
 
         const university = universityResult.rows[0];
 
-        // Get university departments (use university.id from the found university)
+        // Get university departments (ordered by sort_order)
         const departmentsResult = await pool.query(`
-            SELECT id, name_tr, name_en, price, currency
+            SELECT id, name_tr, name_en, price, currency, COALESCE(sort_order, 9999) as sort_order
             FROM university_departments 
             WHERE university_id = $1 AND is_active = true
-            ORDER BY name_tr ASC
+            ORDER BY COALESCE(sort_order, 9999) ASC, name_tr ASC
         `, [university.id]);
 
         // Get university programs (empty for now)
@@ -2366,6 +2444,13 @@ app.get('/student-life/poland', (req, res) => {
 app.get('/student-life/hungary', (req, res) => {
     res.render('student-life-hungary', { 
         title: res.locals.t.studentLifePage.hero.hungary.title,
+        t: res.locals.t 
+    });
+});
+
+app.get('/student-life/netherlands', (req, res) => {
+    res.render('student-life-netherlands', { 
+        title: res.locals.t.studentLifePage.hero.netherlands.title,
         t: res.locals.t 
     });
 });

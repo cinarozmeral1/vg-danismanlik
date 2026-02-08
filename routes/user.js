@@ -138,13 +138,27 @@ router.get('/dashboard', async (req, res) => {
                 desired_country,
                 active_class,
                 registered_via,
-                personal_info_completed
+                personal_info_completed,
+                current_school,
+                home_address
              FROM users
              WHERE id = $1`,
             [res.locals.currentUser.id]
         );
 
         const profile = profileResult.rows[0] || null;
+
+        // Also fetch guardians
+        let guardians = [];
+        try {
+            const guardiansResult = await pool.query(
+                'SELECT * FROM guardians WHERE user_id = $1 ORDER BY sort_order ASC, created_at ASC',
+                [res.locals.currentUser.id]
+            );
+            guardians = guardiansResult.rows;
+        } catch (e) {
+            console.log('Guardians fetch skipped:', e.message);
+        }
 
         res.render('user/dashboard', { 
             title: 'Profil Bilgileri',
@@ -153,6 +167,7 @@ router.get('/dashboard', async (req, res) => {
             currentUser: res.locals.currentUser,
             user: profile,
             profile,
+            guardians,
             t: res.locals.t
         });
     } catch (error) {
@@ -246,6 +261,8 @@ router.get('/profile', authenticateUser, async (req, res) => {
                 passport_number,
                 desired_country,
                 active_class,
+                current_school,
+                home_address,
                 created_at
             FROM users 
             WHERE id = $1
@@ -286,7 +303,9 @@ router.put('/profile', authenticateUser, async (req, res) => {
             passport_number,
             desired_country,
             active_class,
-            tc_number
+            tc_number,
+            current_school,
+            home_address
         } = req.body;
 
         const parseDate = (value) => {
@@ -327,8 +346,10 @@ router.put('/profile', authenticateUser, async (req, res) => {
                 active_class = $10,
                 tc_number = $11,
                 personal_info_completed = $12,
+                current_school = $13,
+                home_address = $14,
                 updated_at = CURRENT_TIMESTAMP
-             WHERE id = $13 RETURNING *
+             WHERE id = $15 RETURNING *
             `,
             [
                 first_name,
@@ -343,6 +364,8 @@ router.put('/profile', authenticateUser, async (req, res) => {
                 active_class,
                 tc_number,
                 isPersonalInfoComplete,
+                current_school || null,
+                home_address || null,
                 req.user.id
             ]
         );
@@ -363,6 +386,91 @@ router.put('/profile', authenticateUser, async (req, res) => {
             success: false,
             message: 'Profil güncellenirken bir hata oluştu: ' + error.message
         });
+    }
+});
+
+// =====================================================
+// GUARDIAN (VELİ) ROUTES - Student access
+// =====================================================
+
+// Get guardians for current user
+router.get('/guardians', authenticateUser, async (req, res) => {
+    try {
+        const result = await pool.query(
+            'SELECT * FROM guardians WHERE user_id = $1 ORDER BY sort_order ASC, created_at ASC',
+            [req.user.id]
+        );
+        res.json({ success: true, guardians: result.rows });
+    } catch (error) {
+        console.error('Get guardians error:', error);
+        res.status(500).json({ success: false, message: 'Veli bilgileri alınırken bir hata oluştu.' });
+    }
+});
+
+// Save all guardians (bulk upsert) for current user
+router.post('/guardians/save-all', authenticateUser, async (req, res) => {
+    const client = await pool.connect();
+    try {
+        const { guardians } = req.body;
+        
+        if (!guardians || !Array.isArray(guardians)) {
+            return res.status(400).json({ success: false, message: 'Geçersiz veli verisi.' });
+        }
+
+        // Validate: at least 2 required guardians must have full_name
+        const requiredGuardians = guardians.filter(g => g.is_required);
+        const filledRequired = requiredGuardians.filter(g => g.full_name && g.full_name.trim() !== '');
+        if (filledRequired.length < 2) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'En az 2 veli bilgisi (Anne ve Baba) doldurulmalıdır.' 
+            });
+        }
+
+        await client.query('BEGIN');
+
+        // Delete existing guardians for this user
+        await client.query('DELETE FROM guardians WHERE user_id = $1', [req.user.id]);
+
+        // Insert all guardians
+        for (const g of guardians) {
+            if (!g.full_name || g.full_name.trim() === '') continue;
+            
+            await client.query(`
+                INSERT INTO guardians (user_id, full_name, relationship, tc_number, phone, email, address, is_required, sort_order)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+            `, [
+                req.user.id,
+                g.full_name.trim(),
+                g.relationship || 'Diger',
+                g.tc_number || null,
+                g.phone || null,
+                g.email || null,
+                g.address || null,
+                g.is_required || false,
+                g.sort_order || 0
+            ]);
+        }
+
+        await client.query('COMMIT');
+
+        // Fetch updated guardians
+        const result = await client.query(
+            'SELECT * FROM guardians WHERE user_id = $1 ORDER BY sort_order ASC',
+            [req.user.id]
+        );
+
+        res.json({ 
+            success: true, 
+            message: 'Veli bilgileri başarıyla kaydedildi!',
+            guardians: result.rows 
+        });
+    } catch (error) {
+        await client.query('ROLLBACK');
+        console.error('Save guardians error:', error);
+        res.status(500).json({ success: false, message: 'Veli bilgileri kaydedilirken bir hata oluştu.' });
+    } finally {
+        client.release();
     }
 });
 

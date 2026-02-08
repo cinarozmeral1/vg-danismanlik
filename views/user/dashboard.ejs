@@ -50,13 +50,17 @@
                     
                     <!-- Eksik Bilgi Uyarısı -->
                     <% 
-                        const hasIncompleteInfo = typeof profile !== 'undefined' && profile && (
+                        const hasIncompleteProfile = typeof profile !== 'undefined' && profile && (
                             !profile.first_name || profile.first_name === '' ||
                             !profile.last_name || profile.last_name === '' ||
                             !profile.tc_number || profile.tc_number === '' ||
                             !profile.phone || profile.phone === '' ||
-                            !profile.birth_date
+                            !profile.birth_date ||
+                            !profile.current_school || profile.current_school === '' ||
+                            !profile.home_address || profile.home_address === ''
                         );
+                        const hasIncompleteGuardians = typeof guardians === 'undefined' || !guardians || guardians.length < 2;
+                        const hasIncompleteInfo = hasIncompleteProfile || hasIncompleteGuardians;
                     %>
                     <% if (hasIncompleteInfo) { %>
                     <div class="alert alert-info fade show mb-4" role="alert" style="border-radius: 12px; border-left: 5px solid #0d6efd; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);">
@@ -70,7 +74,7 @@
                                         <h5 class="alert-heading mb-1">
                                             <i class="fas fa-clipboard-list me-2"></i>Kişisel Bilgilerinizi Tamamlayın
                                         </h5>
-                                        <p class="mb-2">Danışmanlık hizmetlerimizden tam olarak faydalanabilmek için lütfen profilinizi tamamlayın.</p>
+                                        <p class="mb-2">Danışmanlık hizmetlerimizden tam olarak faydalanabilmek için lütfen profilinizi ve veli bilgilerinizi tamamlayın.</p>
                                     </div>
                                     <a href="#profileForm" class="btn btn-sm btn-primary">
                                         <i class="fas fa-edit me-1"></i>Hemen Doldur
@@ -79,7 +83,7 @@
                                 <hr class="my-2">
                                 <small class="text-muted">
                                     <i class="fas fa-info-circle me-1"></i>
-                                    Zorunlu alanlar: <strong>Ad, Soyad, TC Kimlik No, Telefon, Doğum Tarihi</strong>
+                                    Zorunlu alanlar: <strong>Ad, Soyad, TC Kimlik No, Telefon, Doğum Tarihi, Okuduğu Okul, Ev Adresi, Veli Bilgileri (en az 2)</strong>
                                 </small>
                             </div>
                         </div>
@@ -169,6 +173,15 @@
                                     <label for="email" class="form-label">E-posta *</label>
                                     <input type="email" class="form-control" id="email" name="email" value="<%= user.email %>" readonly>
                                 </div>
+
+                                <div class="col-md-6">
+                                    <label for="current_school" class="form-label">Aktif Olarak Okuduğu Okul (Lise/Üniversite) *</label>
+                                    <input type="text" class="form-control" id="current_school" name="current_school" value="<%= profile ? profile.current_school || '' : '' %>" placeholder="Örn: Galatasaray Lisesi" required>
+                                </div>
+                                <div class="col-12">
+                                    <label for="home_address" class="form-label">Ev Adresi *</label>
+                                    <textarea class="form-control" id="home_address" name="home_address" rows="2" placeholder="Tam ev adresinizi giriniz" required><%= profile ? profile.home_address || '' : '' %></textarea>
+                                </div>
  
                                 <div class="col-12 text-end">
                                     <button type="submit" class="btn btn-primary">
@@ -176,6 +189,30 @@
                                     </button>
                                 </div>
                             </form>
+                        </div>
+                    </div>
+
+                    <!-- Veli Bilgileri Section -->
+                    <div class="card shadow-sm mt-4">
+                        <div class="card-header bg-primary text-white">
+                            <h4 class="mb-0"><i class="fas fa-user-friends me-2"></i>Veli Bilgileri</h4>
+                        </div>
+                        <div class="card-body">
+                            <div id="guardiansAlertContainer"></div>
+                            <p class="text-muted mb-3"><i class="fas fa-info-circle me-1"></i>En az 2 veli bilgisi (Anne ve Baba) doldurulması zorunludur. Ek veli eklemek isterseniz "Veli Ekle" butonunu kullanabilirsiniz.</p>
+                            
+                            <div id="guardiansContainer">
+                                <!-- Guardian cards will be rendered here -->
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-3">
+                                <button type="button" class="btn btn-outline-primary" id="addGuardianBtn" onclick="addGuardianCard()">
+                                    <i class="fas fa-plus me-2"></i>Veli Ekle
+                                </button>
+                                <button type="button" class="btn btn-primary" onclick="saveAllGuardians()">
+                                    <i class="fas fa-save me-2"></i>Veli Bilgilerini Kaydet
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -295,7 +332,9 @@
                 passport_number: formData.get('passport_number'),
                 desired_country: formData.get('desired_country'),
                 active_class: formData.get('active_class'),
-                tc_number: formData.get('tc_number')
+                tc_number: formData.get('tc_number'),
+                current_school: formData.get('current_school'),
+                home_address: formData.get('home_address')
             };
             
             fetch('/api/user/profile', {
@@ -358,6 +397,8 @@
             setValue('passport_number', user.passport_number);
             setValue('desired_country', user.desired_country);
             setValue('active_class', user.active_class);
+            setValue('current_school', user.current_school);
+            setValue('home_address', user.home_address);
 
             const emailField = document.getElementById('email');
             if (emailField) emailField.value = user.email;
@@ -394,6 +435,160 @@
                 alert.remove();
             }, 10000);
         }
+
+        // =====================================================
+        // GUARDIAN (VELİ) MANAGEMENT
+        // =====================================================
+        let guardianCounter = 0;
+        const relationships = ['Anne', 'Baba', 'Kardes', 'Diger'];
+        const relationshipLabels = { 'Anne': 'Anne', 'Baba': 'Baba', 'Kardes': 'Kardeş', 'Diger': 'Diğer' };
+
+        function createGuardianCardHTML(guardian, index, isRequired) {
+            const rel = guardian.relationship || (index === 0 ? 'Anne' : index === 1 ? 'Baba' : 'Diger');
+            const icon = rel === 'Anne' ? 'fa-female' : rel === 'Baba' ? 'fa-male' : 'fa-user';
+            const label = relationshipLabels[rel] || rel;
+            const requiredTag = isRequired ? '<span class="badge bg-danger ms-2">Zorunlu</span>' : '<span class="badge bg-secondary ms-2">Opsiyonel</span>';
+            const deleteBtn = !isRequired ? `<button type="button" class="btn btn-sm btn-outline-danger" onclick="removeGuardianCard(this)"><i class="fas fa-trash"></i></button>` : '';
+            
+            return `
+            <div class="card mb-3 guardian-card" data-index="${index}" data-required="${isRequired}">
+                <div class="card-header bg-primary bg-opacity-10 d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0"><i class="fas ${icon} me-2"></i>${label} Bilgileri ${requiredTag}</h6>
+                    ${deleteBtn}
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Ad Soyad ${isRequired ? '*' : ''}</label>
+                            <input type="text" class="form-control guardian-fullname" value="${guardian.full_name || ''}" placeholder="Ad Soyad" ${isRequired ? 'required' : ''}>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Yakınlık Derecesi</label>
+                            <select class="form-select guardian-relationship">
+                                ${relationships.map(r => `<option value="${r}" ${rel === r ? 'selected' : ''}>${relationshipLabels[r]}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">TC Kimlik No</label>
+                            <input type="text" class="form-control guardian-tc" value="${guardian.tc_number || ''}" maxlength="11" placeholder="TC Kimlik No" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Telefon</label>
+                            <input type="tel" class="form-control guardian-phone" value="${guardian.phone || ''}" placeholder="Örn: +90 555 123 45 67">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">E-posta</label>
+                            <input type="email" class="form-control guardian-email" value="${guardian.email || ''}" placeholder="E-posta adresi">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Ev Adresi</label>
+                            <input type="text" class="form-control guardian-address" value="${guardian.address || ''}" placeholder="Ev adresi">
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function renderGuardians(guardiansList) {
+            const container = document.getElementById('guardiansContainer');
+            container.innerHTML = '';
+            guardianCounter = 0;
+
+            // Ensure at least 2 required guardians (Anne, Baba)
+            if (!guardiansList || guardiansList.length === 0) {
+                guardiansList = [
+                    { full_name: '', relationship: 'Anne', tc_number: '', phone: '', email: '', address: '', is_required: true, sort_order: 1 },
+                    { full_name: '', relationship: 'Baba', tc_number: '', phone: '', email: '', address: '', is_required: true, sort_order: 2 }
+                ];
+            } else if (guardiansList.length === 1) {
+                guardiansList.push({ full_name: '', relationship: 'Baba', tc_number: '', phone: '', email: '', address: '', is_required: true, sort_order: 2 });
+            }
+
+            guardiansList.forEach((g, i) => {
+                const isReq = i < 2;
+                container.insertAdjacentHTML('beforeend', createGuardianCardHTML(g, guardianCounter, isReq));
+                guardianCounter++;
+            });
+        }
+
+        function addGuardianCard() {
+            const container = document.getElementById('guardiansContainer');
+            const newGuardian = { full_name: '', relationship: 'Diger', tc_number: '', phone: '', email: '', address: '' };
+            container.insertAdjacentHTML('beforeend', createGuardianCardHTML(newGuardian, guardianCounter, false));
+            guardianCounter++;
+        }
+
+        function removeGuardianCard(btn) {
+            const card = btn.closest('.guardian-card');
+            if (card && card.dataset.required !== 'true') {
+                card.remove();
+            }
+        }
+
+        function collectGuardianData() {
+            const cards = document.querySelectorAll('.guardian-card');
+            const guardians = [];
+            cards.forEach((card, i) => {
+                const fullName = card.querySelector('.guardian-fullname').value.trim();
+                guardians.push({
+                    full_name: fullName,
+                    relationship: card.querySelector('.guardian-relationship').value,
+                    tc_number: card.querySelector('.guardian-tc').value.trim(),
+                    phone: card.querySelector('.guardian-phone').value.trim(),
+                    email: card.querySelector('.guardian-email').value.trim(),
+                    address: card.querySelector('.guardian-address').value.trim(),
+                    is_required: i < 2,
+                    sort_order: i + 1
+                });
+            });
+            return guardians;
+        }
+
+        async function saveAllGuardians() {
+            const guardians = collectGuardianData();
+            
+            // Validate: first 2 must have full_name
+            const required = guardians.filter(g => g.is_required);
+            const filledRequired = required.filter(g => g.full_name !== '');
+            if (filledRequired.length < 2) {
+                showGuardianAlert('En az 2 veli bilgisi (Anne ve Baba) doldurulmalıdır.', 'danger');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/user/guardians/save-all', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ guardians })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showGuardianAlert('Veli bilgileri başarıyla kaydedildi!', 'success');
+                    renderGuardians(result.guardians);
+                } else {
+                    showGuardianAlert(result.message || 'Bir hata oluştu!', 'danger');
+                }
+            } catch (error) {
+                console.error('Save guardians error:', error);
+                showGuardianAlert('Veli bilgileri kaydedilirken bir hata oluştu.', 'danger');
+            }
+        }
+
+        function showGuardianAlert(message, type) {
+            const container = document.getElementById('guardiansAlertContainer');
+            container.innerHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>`;
+            setTimeout(() => { container.innerHTML = ''; }, 8000);
+        }
+
+        // Initialize guardians on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const initialGuardians = <%- JSON.stringify(typeof guardians !== 'undefined' ? guardians : []) %>;
+            renderGuardians(initialGuardians);
+        });
 
         // Language change function
         function changeLanguage(lang) {

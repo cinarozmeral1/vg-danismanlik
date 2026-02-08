@@ -137,6 +137,17 @@
     border-color: #0078D7;
 }
 
+.pagination-ellipsis {
+    padding: 12px 8px;
+    color: #666;
+    font-weight: 500;
+    user-select: none;
+}
+
+.pagination-info {
+    font-size: 0.9rem;
+}
+
 .empty-state {
     text-align: center;
     padding: 80px 20px;
@@ -229,24 +240,71 @@ const countryFlags = {
             
             <% if (totalPages > 1) { %>
                 <nav class="pagination-nav">
+                    <%
+                    // Dinamik sayfalama hesaplaması
+                    const maxVisiblePages = 7; // Maksimum görünür sayfa sayısı
+                    const sidePages = 2; // Mevcut sayfanın her iki yanında gösterilecek sayfa sayısı
+                    
+                    let startPage, endPage;
+                    
+                    if (totalPages <= maxVisiblePages) {
+                        // Toplam sayfa sayısı az ise hepsini göster
+                        startPage = 1;
+                        endPage = totalPages;
+                    } else {
+                        // Çok sayfa var, akıllı hesaplama yap
+                        if (currentPage <= sidePages + 2) {
+                            // Başlangıçtayız
+                            startPage = 1;
+                            endPage = maxVisiblePages - 2;
+                        } else if (currentPage >= totalPages - sidePages - 1) {
+                            // Sondayız
+                            startPage = totalPages - maxVisiblePages + 3;
+                            endPage = totalPages;
+                        } else {
+                            // Ortadayız
+                            startPage = currentPage - sidePages;
+                            endPage = currentPage + sidePages;
+                        }
+                    }
+                    %>
+                    
                     <% if (hasPrevPage) { %>
-                        <a href="/blog?page=<%= currentPage - 1 %>">
+                        <a href="/blog?page=<%= currentPage - 1 %>" title="<%= isEN ? 'Previous Page' : 'Önceki Sayfa' %>">
                             <i class="fas fa-chevron-left me-1"></i> <%= isEN ? 'Previous' : 'Önceki' %>
                         </a>
                     <% } %>
                     
-                    <% for (let i = 1; i <= Math.min(totalPages, 5); i++) { %>
+                    <% if (startPage > 1) { %>
+                        <a href="/blog?page=1">1</a>
+                        <% if (startPage > 2) { %>
+                            <span class="pagination-ellipsis">...</span>
+                        <% } %>
+                    <% } %>
+                    
+                    <% for (let i = startPage; i <= endPage; i++) { %>
                         <a href="/blog?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>">
                             <%= i %>
                         </a>
                     <% } %>
                     
+                    <% if (endPage < totalPages) { %>
+                        <% if (endPage < totalPages - 1) { %>
+                            <span class="pagination-ellipsis">...</span>
+                        <% } %>
+                        <a href="/blog?page=<%= totalPages %>"><%= totalPages %></a>
+                    <% } %>
+                    
                     <% if (hasNextPage) { %>
-                        <a href="/blog?page=<%= currentPage + 1 %>">
+                        <a href="/blog?page=<%= currentPage + 1 %>" title="<%= isEN ? 'Next Page' : 'Sonraki Sayfa' %>">
                             <%= isEN ? 'Next' : 'Sonraki' %> <i class="fas fa-chevron-right ms-1"></i>
                         </a>
                     <% } %>
                 </nav>
+                
+                <div class="pagination-info text-center mt-3 text-muted">
+                    <small><%= isEN ? 'Page' : 'Sayfa' %> <%= currentPage %> / <%= totalPages %></small>
+                </div>
             <% } %>
             
         <% } else { %>

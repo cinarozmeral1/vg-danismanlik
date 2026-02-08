@@ -16,29 +16,73 @@
         <img src="/images/backgrounds/photo-1607013407627-6ee814329547.jpg" class="hero-bg-img" alt="Yurt Dışı Danışmanlık - Venture Global">
     </div>
     
-    <div class="container position-relative" style="z-index: 3;">
-        <div class="row align-items-center">
-            <div class="col-lg-6">
-                <div class="hero-content">
-                    <h1 class="hero-title animate-fade-in-up">
-                        <%= t.home.hero.title %><br>
-                        <span style="color: #ffffff;"><%= t.home.hero.subtitle %></span>
-                    </h1>
-                    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
-                        
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="text-center">
-                    <div class="position-relative">
-                        <!-- Ana sayfadaki büyük logo görselini kaldır -->
-                    </div>
-                </div>
-            </div>
-        </div>
+    <!-- Hero Text - Responsive -->
+    <div class="hero-text-container">
+        <h1 class="hero-main-title">
+            <%= t.home.hero.title %><br>
+            <span><%- t.home.hero.subtitle %></span>
+        </h1>
     </div>
 </section>
+
+<style>
+/* MASAÜSTÜ - Sol tarafta, dikey ortada */
+.hero-text-container {
+    position: absolute;
+    top: 50%;
+    left: 120px;
+    transform: translateY(-50%);
+    z-index: 10;
+    text-align: left;
+    max-width: 700px;
+}
+
+.hero-main-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.35;
+    margin: 0;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.7), 0 0 30px rgba(0,0,0,0.5);
+}
+
+.hero-main-title span {
+    color: #ffffff;
+}
+
+/* MOBİL - Sol üst */
+@media (max-width: 991px) {
+    .hero-text-container {
+        position: absolute;
+        top: 120px;
+        bottom: auto;
+        left: 20px;
+        transform: none;
+        max-width: 450px;
+        padding: 15px;
+    }
+    
+    .hero-main-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        line-height: 1.5;
+        text-shadow: 1px 1px 4px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.5);
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-text-container {
+        top: 100px;
+        left: 15px;
+        max-width: 90%;
+        padding: 10px;
+    }
+    
+    .hero-main-title {
+        font-size: 1.2rem;
+    }
+}
+</style>
 
 <!-- Features Section -->
 <section class="section bg-light text-dark">

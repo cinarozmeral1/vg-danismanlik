@@ -56,7 +56,7 @@ function generateContractNumber(userId) {
 function generateTextOnlyPdf(data) {
     return new Promise((resolve, reject) => {
         try {
-            const { user, applications, services } = data;
+            const { user, applications, services, guardians } = data;
             const fp = findFont(FONT_PATHS), fb = findFont(FONT_BOLD_PATHS);
 
             // Margins leave room for letterhead header (~80pt top) and footer (~55pt bottom)
@@ -100,16 +100,16 @@ function generateTextOnlyPdf(data) {
             const RX = doc.page.width - 65;
             const CLR = { dk: '#1a365d', tx: '#222', mu: '#777' };
 
-            // Font sizes
-            const SZ = { title: 12, sec: 9.5, body: 8.5, field: 8, label: 8, small: 7, tiny: 6.5 };
+            // Font sizes (increased per plan)
+            const SZ = { title: 14, sec: 11, body: 10, field: 9.5, label: 9.5, small: 8.5, tiny: 8 };
 
             // ── Helpers ──
             function section(title) {
-                doc.moveDown(0.4);
+                doc.moveDown(0.5);
                 doc.font('B').fontSize(SZ.sec).fillColor(CLR.dk).text(title, ML);
-                const y = doc.y + 1;
+                const y = doc.y + 2;
                 doc.moveTo(ML, y).lineTo(RX, y).strokeColor(CLR.dk).lineWidth(0.5).stroke();
-                doc.y = y + 4;
+                doc.y = y + 5;
             }
 
             function field(label, value) {
@@ -119,15 +119,15 @@ function generateTextOnlyPdf(data) {
 
             function para(text, indent) {
                 const x = ML + (indent || 0);
-                doc.font('R').fontSize(SZ.body).fillColor(CLR.tx).text(text, x, doc.y, { width: PW - (indent || 0), lineGap: 1.5 });
+                doc.font('R').fontSize(SZ.body).fillColor(CLR.tx).text(text, x, doc.y, { width: PW - (indent || 0), lineGap: 2.5 });
             }
 
             function item(num, text) {
-                doc.font('R').fontSize(SZ.body).fillColor(CLR.tx).text(`${num} ${text}`, ML + 8, doc.y, { width: PW - 16, lineGap: 1.2 });
+                doc.font('R').fontSize(SZ.body).fillColor(CLR.tx).text(`${num} ${text}`, ML + 8, doc.y, { width: PW - 16, lineGap: 2 });
             }
 
             function bullet(text, indent) {
-                doc.font('R').fontSize(SZ.body).fillColor(CLR.tx).text(`• ${text}`, ML + (indent || 16), doc.y, { width: PW - (indent || 16) - 8, lineGap: 1 });
+                doc.font('R').fontSize(SZ.body).fillColor(CLR.tx).text(`• ${text}`, ML + (indent || 16), doc.y, { width: PW - (indent || 16) - 8, lineGap: 1.5 });
             }
 
             function checkPage(needed) {
@@ -170,13 +170,23 @@ function generateTextOnlyPdf(data) {
             doc.font('R').fontSize(SZ.small).fillColor(CLR.mu).text('(Bundan böyle "DANIŞMAN" olarak anılacaktır.)', ML + 8);
             doc.moveDown(0.25);
 
+            // Find primary guardian (prefer Baba, then Anne, then first available)
+            const primaryGuardian = (guardians || []).find(g => g.relationship === 'Baba') 
+                || (guardians || []).find(g => g.relationship === 'Anne') 
+                || (guardians || [])[0] || null;
+            const gName = primaryGuardian ? primaryGuardian.full_name : bl;
+            const gTc = primaryGuardian && primaryGuardian.tc_number ? primaryGuardian.tc_number : bl;
+            const gAddr = primaryGuardian && primaryGuardian.address ? primaryGuardian.address : bl;
+            const gPhone = primaryGuardian && primaryGuardian.phone ? primaryGuardian.phone : bl;
+            const gEmail = primaryGuardian && primaryGuardian.email ? primaryGuardian.email : bl;
+
             doc.font('B').fontSize(SZ.body).fillColor(CLR.dk).text('2. VELİ / YASAL TEMSİLCİ', ML + 4);
             doc.moveDown(0.1);
-            field('Adı Soyadı:', bl);
-            field('T.C. Kimlik No:', bl);
-            field('Adres:', bl);
-            field('Telefon:', bl);
-            field('E-posta:', bl);
+            field('Adı Soyadı:', gName);
+            field('T.C. Kimlik No:', gTc);
+            field('Adres:', gAddr);
+            field('Telefon:', gPhone);
+            field('E-posta:', gEmail);
             doc.font('R').fontSize(SZ.small).fillColor(CLR.mu).text('(Bundan böyle "VELİ" olarak anılacaktır.)', ML + 8);
             doc.moveDown(0.25);
 
@@ -392,8 +402,8 @@ function generateTextOnlyPdf(data) {
             doc.font('R').fontSize(SZ.body).fillColor(CLR.tx);
             doc.text('Venture Global', lx, sy, { width: colW });
             doc.text('Yurt Dışı Eğitim Danışmanlık', lx, doc.y, { width: colW });
-            doc.text('Adı Soyadı: ' + bl, rx, sy, { width: colW });
-            doc.text('T.C. Kimlik No: ' + bl, rx, doc.y, { width: colW });
+            doc.text('Adı Soyadı: ' + gName, rx, sy, { width: colW });
+            doc.text('T.C. Kimlik No: ' + gTc, rx, doc.y, { width: colW });
             sy = Math.max(doc.y, sy + 24) + 8;
             doc.text('İmza: ___________________', lx, sy);
             doc.text('İmza: ___________________', rx, sy);

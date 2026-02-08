@@ -1,0 +1,585 @@
+<!-- SEO Landing Page: Yurt Dışı Eğitim Danışmanlığı -->
+
+<style>
+.seo-hero {
+    background: linear-gradient(135deg, #1a365d 0%, #2d5a87 50%, #3d7ab5 100%);
+    padding: 100px 0 80px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.seo-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('/images/backgrounds/campus-location-hero.jpg') center/cover;
+    opacity: 0.15;
+}
+
+.seo-hero .container {
+    position: relative;
+    z-index: 2;
+}
+
+.seo-hero h1 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+}
+
+.seo-hero p.lead {
+    font-size: 1.25rem;
+    opacity: 0.95;
+    max-width: 700px;
+}
+
+.trust-badges {
+    display: flex;
+    gap: 30px;
+    margin-top: 40px;
+    flex-wrap: wrap;
+}
+
+.trust-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,255,255,0.1);
+    padding: 12px 20px;
+    border-radius: 50px;
+    font-size: 0.95rem;
+}
+
+.trust-badge i {
+    font-size: 1.3rem;
+    color: #ffd700;
+}
+
+.content-section {
+    padding: 80px 0;
+}
+
+.content-section:nth-child(even) {
+    background: #f8f9fa;
+}
+
+.section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: #1a365d;
+}
+
+.feature-card {
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    height: 100%;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid #e9ecef;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+}
+
+.feature-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #0078D7, #00a8ff);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.feature-icon i {
+    font-size: 1.5rem;
+    color: white;
+}
+
+.country-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.country-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    text-align: center;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.06);
+    transition: all 0.3s;
+    border: 2px solid transparent;
+}
+
+.country-card:hover {
+    border-color: #0078D7;
+    transform: scale(1.02);
+}
+
+.country-flag {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.country-name {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.country-count {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.comparison-table {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.comparison-table table {
+    width: 100%;
+    margin: 0;
+}
+
+.comparison-table th {
+    background: #1a365d;
+    color: white;
+    padding: 20px;
+    font-weight: 600;
+}
+
+.comparison-table td {
+    padding: 18px 20px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.comparison-table tr:last-child td {
+    border-bottom: none;
+}
+
+.comparison-table .check {
+    color: #28a745;
+    font-size: 1.2rem;
+}
+
+.comparison-table .cross {
+    color: #dc3545;
+    font-size: 1.2rem;
+}
+
+.testimonial-card {
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.testimonial-text {
+    font-size: 1.1rem;
+    font-style: italic;
+    color: #555;
+    margin-bottom: 20px;
+    line-height: 1.7;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.author-avatar {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #0078D7, #00a8ff);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+}
+
+.faq-item {
+    background: white;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+.faq-question {
+    padding: 20px 25px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.3s;
+}
+
+.faq-question:hover {
+    background: #f8f9fa;
+}
+
+.faq-answer {
+    padding: 0 25px 20px;
+    color: #666;
+    line-height: 1.7;
+}
+
+.cta-section {
+    background: linear-gradient(135deg, #0078D7 0%, #00a8ff 100%);
+    padding: 80px 0;
+    color: white;
+    text-align: center;
+}
+
+.cta-section h2 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.cta-section .btn-light {
+    padding: 15px 40px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 50px;
+}
+
+@media (max-width: 768px) {
+    .seo-hero h1 {
+        font-size: 2rem;
+    }
+    .trust-badges {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+</style>
+
+<!-- Hero Section -->
+<section class="seo-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1>Türkiye'nin En Güvenilir<br>Yurt Dışı Eğitim Danışmanlığı</h1>
+                <p class="lead">
+                    VG Danışmanlık olarak 2020'den bu yana yüzlerce öğrenciye Avrupa'nın en prestijli üniversitelerinde eğitim alma fırsatı sunduk. Profesyonel ekibimiz ve %95 başarı oranımızla hayallerinizi gerçeğe dönüştürüyoruz.
+                </p>
+                <div class="trust-badges">
+                    <div class="trust-badge">
+                        <i class="fas fa-award"></i>
+                        <span>%95 Başarı Oranı</span>
+                    </div>
+                    <div class="trust-badge">
+                        <i class="fas fa-users"></i>
+                        <span>500+ Mutlu Öğrenci</span>
+                    </div>
+                    <div class="trust-badge">
+                        <i class="fas fa-university"></i>
+                        <span>80+ Partner Üniversite</span>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <a href="/contact" class="btn btn-light btn-lg me-3">
+                        <i class="fas fa-phone me-2"></i>Ücretsiz Danışmanlık
+                    </a>
+                    <a href="/universities" class="btn btn-outline-light btn-lg">
+                        Üniversiteleri İncele
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Neden VG Danışmanlık -->
+<section class="content-section">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-title">Neden VG Danışmanlık?</h2>
+            <p class="text-muted">Yurt dışı eğitim danışmanlığında fark yaratan özelliklerimiz</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+                    <h4>Şeffaf Fiyatlandırma</h4>
+                    <p class="text-muted mb-0">Gizli ücret yok. Tüm masraflar önceden belirtilir. Bütçenize uygun üniversite seçenekleri sunuyoruz.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h4>7/24 Destek</h4>
+                    <p class="text-muted mb-0">Başvuru sürecinden mezuniyete kadar yanınızdayız. WhatsApp destek hattımız her zaman açık.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-passport"></i>
+                    </div>
+                    <h4>Vize Garantisi</h4>
+                    <p class="text-muted mb-0">Deneyimli ekibimizle vize sürecinizi yönetiyoruz. Vize reddi durumunda ücret iadesi.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <h4>Konaklama Desteği</h4>
+                    <p class="text-muted mb-0">Yurt, apartman ve ev arkadaşı bulma konularında tam destek sağlıyoruz.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-plane-arrival"></i>
+                    </div>
+                    <h4>Havalimanı Karşılama</h4>
+                    <p class="text-muted mb-0">Prag'a varışınızda sizi karşılıyor, yerleşiminize kadar yanınızda oluyoruz.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h4>Evrak Takibi</h4>
+                    <p class="text-muted mb-0">Tüm başvuru evraklarınızı hazırlıyor ve takibini yapıyoruz. Siz sadece imza atın.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Hizmet Verdiğimiz Ülkeler -->
+<section class="content-section">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-title">Hizmet Verdiğimiz Ülkeler</h2>
+            <p class="text-muted">Avrupa'nın en prestijli üniversitelerinde eğitim fırsatı</p>
+        </div>
+        <div class="country-grid">
+            <a href="/student-life/germany" class="country-card text-decoration-none">
+                <div class="country-flag">🇩🇪</div>
+                <div class="country-name">Almanya</div>
+                <div class="country-count">9 Üniversite</div>
+            </a>
+            <a href="/student-life/uk" class="country-card text-decoration-none">
+                <div class="country-flag">🇬🇧</div>
+                <div class="country-name">İngiltere</div>
+                <div class="country-count">17 Üniversite</div>
+            </a>
+            <a href="/student-life/italy" class="country-card text-decoration-none">
+                <div class="country-flag">🇮🇹</div>
+                <div class="country-name">İtalya</div>
+                <div class="country-count">14 Üniversite</div>
+            </a>
+            <a href="/student-life/czech" class="country-card text-decoration-none">
+                <div class="country-flag">🇨🇿</div>
+                <div class="country-name">Çek Cumhuriyeti</div>
+                <div class="country-count">10 Üniversite</div>
+            </a>
+            <a href="/student-life/netherlands" class="country-card text-decoration-none">
+                <div class="country-flag">🇳🇱</div>
+                <div class="country-name">Hollanda</div>
+                <div class="country-count">11 Üniversite</div>
+            </a>
+            <a href="/student-life/poland" class="country-card text-decoration-none">
+                <div class="country-flag">🇵🇱</div>
+                <div class="country-name">Polonya</div>
+                <div class="country-count">14 Üniversite</div>
+            </a>
+            <a href="/student-life/austria" class="country-card text-decoration-none">
+                <div class="country-flag">🇦🇹</div>
+                <div class="country-name">Avusturya</div>
+                <div class="country-count">3 Üniversite</div>
+            </a>
+            <a href="/student-life/hungary" class="country-card text-decoration-none">
+                <div class="country-flag">🇭🇺</div>
+                <div class="country-name">Macaristan</div>
+                <div class="country-count">3 Üniversite</div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- VG vs Diğerleri Karşılaştırma -->
+<section class="content-section">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-title">VG Danışmanlık vs Diğer Firmalar</h2>
+            <p class="text-muted">Neden bizi tercih etmelisiniz?</p>
+        </div>
+        <div class="comparison-table">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Özellik</th>
+                        <th class="text-center">VG Danışmanlık</th>
+                        <th class="text-center">Diğer Firmalar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Şeffaf Fiyatlandırma</strong></td>
+                        <td class="text-center"><i class="fas fa-check-circle check"></i></td>
+                        <td class="text-center"><i class="fas fa-times-circle cross"></i></td>
+                    </tr>
+                    <tr>
+                        <td><strong>7/24 WhatsApp Desteği</strong></td>
+                        <td class="text-center"><i class="fas fa-check-circle check"></i></td>
+                        <td class="text-center"><i class="fas fa-times-circle cross"></i></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Havalimanı Karşılama</strong></td>
+                        <td class="text-center"><i class="fas fa-check-circle check"></i></td>
+                        <td class="text-center"><i class="fas fa-times-circle cross"></i></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Konaklama Desteği</strong></td>
+                        <td class="text-center"><i class="fas fa-check-circle check"></i></td>
+                        <td class="text-center"><i class="fas fa-minus-circle" style="color: #ffc107;"></i></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Vize Reddi İadesi</strong></td>
+                        <td class="text-center"><i class="fas fa-check-circle check"></i></td>
+                        <td class="text-center"><i class="fas fa-times-circle cross"></i></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Banka Hesabı Açma Desteği</strong></td>
+                        <td class="text-center"><i class="fas fa-check-circle check"></i></td>
+                        <td class="text-center"><i class="fas fa-times-circle cross"></i></td>
+                    </tr>
+                    <tr>
+                        <td><strong>SIM Kart Temini</strong></td>
+                        <td class="text-center"><i class="fas fa-check-circle check"></i></td>
+                        <td class="text-center"><i class="fas fa-times-circle cross"></i></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- SSS -->
+<section class="content-section">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-title">Sıkça Sorulan Sorular</h2>
+            <p class="text-muted">Yurt dışı eğitim danışmanlığı hakkında merak edilenler</p>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Yurt dışı eğitim danışmanlığı ücreti ne kadar?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        VG Danışmanlık olarak şeffaf fiyatlandırma politikası uyguluyoruz. Danışmanlık ücretimiz hedef ülke ve programa göre değişmekle birlikte, piyasa ortalamasının altında rekabetçi fiyatlar sunuyoruz. Detaylı bilgi için ücretsiz ön görüşme talep edebilirsiniz.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Hangi ülkelere öğrenci gönderiyorsunuz?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Almanya, İngiltere, İtalya, Çek Cumhuriyeti, Hollanda, Polonya, Avusturya ve Macaristan'da 80'den fazla partner üniversitemiz bulunmaktadır. Her ülkede lisans, yüksek lisans ve dil okulu programları sunuyoruz.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Vize başvurusu için destek sağlıyor musunuz?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Evet, vize başvuru sürecinin tamamında yanınızdayız. Evrak hazırlama, randevu alma, başvuru takibi ve mülakat hazırlığı dahil tüm adımlarda profesyonel destek sağlıyoruz. Vize reddi durumunda danışmanlık ücretini iade ediyoruz.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Konaklama konusunda yardımcı oluyor musunuz?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Kesinlikle! Öğrenci yurtları, özel apartman daireleri ve ev arkadaşı bulma konularında tam destek sağlıyoruz. Ayrıca varışınızda havalimanından konaklama yerinize transfer hizmeti de sunuyoruz.
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>İngilizce bilmeden yurt dışında okuyabilir miyim?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Bazı ülkelerde (özellikle Almanya, Çekya, Polonya) İngilizce hazırlık programları ve ana dilde eğitim veren programlar mevcuttur. İngilizce seviyenize göre size uygun program önerileri sunabiliriz. Ayrıca dil okulu seçenekleri de mevcut.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+    <div class="container">
+        <h2>Hayalinizdeki Üniversiteye Başvurun</h2>
+        <p class="lead mb-4">Ücretsiz ön görüşme için hemen iletişime geçin</p>
+        <a href="/contact" class="btn btn-light btn-lg me-3">
+            <i class="fas fa-calendar-alt me-2"></i>Randevu Al
+        </a>
+        <a href="https://wa.me/905399273008" target="_blank" class="btn btn-outline-light btn-lg">
+            <i class="fab fa-whatsapp me-2"></i>WhatsApp
+        </a>
+    </div>
+</section>
+
+<script>
+// FAQ Toggle
+document.querySelectorAll('.faq-question').forEach(question => {
+    question.addEventListener('click', () => {
+        const answer = question.nextElementSibling;
+        const icon = question.querySelector('i');
+        
+        if (answer.style.display === 'block') {
+            answer.style.display = 'none';
+            icon.classList.remove('fa-chevron-up');
+            icon.classList.add('fa-chevron-down');
+        } else {
+            answer.style.display = 'block';
+            icon.classList.remove('fa-chevron-down');
+            icon.classList.add('fa-chevron-up');
+        }
+    });
+});
+
+// Initially hide all answers
+document.querySelectorAll('.faq-answer').forEach(answer => {
+    answer.style.display = 'none';
+});
+</script>
+

@@ -195,6 +195,14 @@
                                         <label for="active_class" class="form-label">Aktif Sınıf *</label>
                                         <input type="text" class="form-control" id="active_class" name="active_class" value="<%= user.active_class || '' %>" placeholder="Örn: 11" required>
                                     </div>
+                                    <div class="col-md-6">
+                                        <label for="current_school" class="form-label">Aktif Olarak Okuduğu Okul</label>
+                                        <input type="text" class="form-control" id="current_school" name="current_school" value="<%= user.current_school || '' %>" placeholder="Örn: Galatasaray Lisesi">
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="home_address" class="form-label">Ev Adresi</label>
+                                        <textarea class="form-control" id="home_address" name="home_address" rows="2" placeholder="Tam ev adresi"><%= user.home_address || '' %></textarea>
+                                    </div>
                                 </div>
 
                                 <div class="text-end mt-3">
@@ -203,6 +211,19 @@
                                     </button>
                                 </div>
                             </form>
+
+                            <!-- Inline Guardian Section -->
+                            <hr class="my-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0"><i class="fas fa-user-friends me-2"></i><strong>VELİ BİLGİLERİ</strong></h5>
+                                <button type="button" class="btn btn-sm btn-primary" onclick="showEditGuardiansModal()">
+                                    <i class="fas fa-edit me-1"></i>Düzenle
+                                </button>
+                            </div>
+                            <div id="adminGuardiansDisplay">
+                                <!-- Guardians will be rendered dynamically -->
+                                <p class="text-muted">Yükleniyor...</p>
+                            </div>
                         </div>
                     </div>
                     
@@ -1303,8 +1324,8 @@ input:checked + .slider:before {
 }
 </style>
 
-<!-- Edit Guardians Modal -->
-        <div class="modal fade" id="editGuardiansModal" tabindex="-1" aria-labelledby="editGuardiansModalLabel" aria-hidden="true">
+<!-- Edit Guardians Modal - Dynamic Card System -->
+<div class="modal fade" id="editGuardiansModal" tabindex="-1" aria-labelledby="editGuardiansModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
@@ -1314,85 +1335,20 @@ input:checked + .slider:before {
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="guardiansForm">
-                    <!-- Mother Information -->
-                    <div class="card mb-4">
-                        <div class="card-header bg-primary text-white">
-                            <h6 class="mb-0"><i class="fas fa-female me-2"></i>ANNE BİLGİLERİ</h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="motherName" class="form-label">Ad</label>
-                                        <input type="text" class="form-control" id="motherName" name="mother_name" value="<%= user.mother_name || '' %>">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="motherSurname" class="form-label">Soyad</label>
-                                        <input type="text" class="form-control" id="motherSurname" name="mother_surname" value="<%= user.mother_surname || '' %>">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="motherPhone" class="form-label">Telefon</label>
-                                        <input type="text" class="form-control" id="motherPhone" name="mother_phone" value="<%= user.mother_phone || '' %>">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="motherTc" class="form-label">TC Kimlik No</label>
-                                        <input type="text" class="form-control" id="motherTc" name="mother_tc" value="<%= user.mother_tc || '' %>">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Father Information -->
-                    <div class="card mb-4">
-                        <div class="card-header bg-primary text-white">
-                            <h6 class="mb-0"><i class="fas fa-male me-2"></i>BABA BİLGİLERİ</h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="fatherName" class="form-label">Ad</label>
-                                        <input type="text" class="form-control" id="fatherName" name="father_name" value="<%= user.father_name || '' %>">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="fatherSurname" class="form-label">Soyad</label>
-                                        <input type="text" class="form-control" id="fatherSurname" name="father_surname" value="<%= user.father_surname || '' %>">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="fatherPhone" class="form-label">Telefon</label>
-                                        <input type="text" class="form-control" id="fatherPhone" name="father_phone" value="<%= user.father_phone || '' %>">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="fatherTc" class="form-label">TC Kimlik No</label>
-                                        <input type="text" class="form-control" id="fatherTc" name="father_tc" value="<%= user.father_tc || '' %>">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
+                <div id="adminGuardiansAlertContainer"></div>
+                <p class="text-muted mb-3"><i class="fas fa-info-circle me-1"></i>En az 2 veli bilgisi (Anne ve Baba) zorunludur. Ek veli eklemek için "Veli Ekle" butonunu kullanabilirsiniz.</p>
+                <div id="adminGuardiansContainer">
+                    <!-- Guardian cards will be rendered dynamically -->
+                </div>
+                <div class="text-center mt-3">
+                    <button type="button" class="btn btn-outline-primary" onclick="adminAddGuardianCard()">
+                        <i class="fas fa-plus me-2"></i>Veli Ekle
+                    </button>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
-                <button type="button" class="btn btn-primary" onclick="saveGuardiansInfo()">
+                <button type="button" class="btn btn-primary" onclick="adminSaveGuardians()">
                     <i class="fas fa-save me-2"></i>Kaydet
                 </button>
             </div>
@@ -2932,6 +2888,8 @@ function saveStudent(){
         passport_number: document.getElementById('passport_number').value,
         desired_country: document.getElementById('desired_country').value,
         active_class: document.getElementById('active_class').value,
+        current_school: document.getElementById('current_school') ? document.getElementById('current_school').value : null,
+        home_address: document.getElementById('home_address') ? document.getElementById('home_address').value : null,
     };
 
     fetch('/api/admin/users/<%= user.id %>/details', {
@@ -3570,134 +3528,200 @@ document.addEventListener('DOMContentLoaded', function() {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
     
+    // Initialize guardians display
+    adminRenderGuardiansDisplay(adminGuardiansList);
+    
     console.log('✅ Student details page initialized successfully');
 });
 
-// Load guardians information
+// =====================================================
+// GUARDIAN (VELİ) MANAGEMENT - Admin Side
+// =====================================================
+let adminGuardianCounter = 0;
+let adminGuardiansList = <%- JSON.stringify(typeof guardians !== 'undefined' ? guardians : []) %>;
+const adminRelationships = ['Anne', 'Baba', 'Kardes', 'Diger'];
+const adminRelLabels = { 'Anne': 'Anne', 'Baba': 'Baba', 'Kardes': 'Kardeş', 'Diger': 'Diğer' };
+
+function adminCreateGuardianCardHTML(guardian, index, isRequired) {
+    const rel = guardian.relationship || (index === 0 ? 'Anne' : index === 1 ? 'Baba' : 'Diger');
+    const icon = rel === 'Anne' ? 'fa-female' : rel === 'Baba' ? 'fa-male' : 'fa-user';
+    const label = adminRelLabels[rel] || rel;
+    const requiredTag = isRequired ? '<span class="badge bg-danger ms-2">Zorunlu</span>' : '<span class="badge bg-secondary ms-2">Opsiyonel</span>';
+    const deleteBtn = !isRequired ? `<button type="button" class="btn btn-sm btn-outline-danger" onclick="adminRemoveGuardianCard(this)"><i class="fas fa-trash"></i></button>` : '';
+    
+    return `
+    <div class="card mb-3 admin-guardian-card" data-index="${index}" data-required="${isRequired}">
+        <div class="card-header bg-primary bg-opacity-10 d-flex justify-content-between align-items-center">
+            <h6 class="mb-0"><i class="fas ${icon} me-2"></i>${label} Bilgileri ${requiredTag}</h6>
+            ${deleteBtn}
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Ad Soyad ${isRequired ? '*' : ''}</label>
+                    <input type="text" class="form-control admin-g-fullname" value="${guardian.full_name || ''}" placeholder="Ad Soyad" ${isRequired ? 'required' : ''}>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Yakınlık Derecesi</label>
+                    <select class="form-select admin-g-relationship">
+                        ${adminRelationships.map(r => `<option value="${r}" ${rel === r ? 'selected' : ''}>${adminRelLabels[r]}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">TC Kimlik No</label>
+                    <input type="text" class="form-control admin-g-tc" value="${guardian.tc_number || ''}" maxlength="11" placeholder="TC Kimlik No" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Telefon</label>
+                    <input type="tel" class="form-control admin-g-phone" value="${guardian.phone || ''}" placeholder="+90 555 123 45 67">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">E-posta</label>
+                    <input type="email" class="form-control admin-g-email" value="${guardian.email || ''}" placeholder="E-posta">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Ev Adresi</label>
+                    <input type="text" class="form-control admin-g-address" value="${guardian.address || ''}" placeholder="Ev adresi">
+                </div>
+            </div>
+        </div>
+    </div>`;
+}
+
+function adminRenderGuardiansInModal(guardiansList) {
+    const container = document.getElementById('adminGuardiansContainer');
+    container.innerHTML = '';
+    adminGuardianCounter = 0;
+    
+    if (!guardiansList || guardiansList.length === 0) {
+        guardiansList = [
+            { full_name: '', relationship: 'Anne', is_required: true, sort_order: 1 },
+            { full_name: '', relationship: 'Baba', is_required: true, sort_order: 2 }
+        ];
+    } else if (guardiansList.length === 1) {
+        guardiansList.push({ full_name: '', relationship: 'Baba', is_required: true, sort_order: 2 });
+    }
+    
+    guardiansList.forEach((g, i) => {
+        const isReq = i < 2;
+        container.insertAdjacentHTML('beforeend', adminCreateGuardianCardHTML(g, adminGuardianCounter, isReq));
+        adminGuardianCounter++;
+    });
+}
+
+function adminRenderGuardiansDisplay(guardiansList) {
+    const display = document.getElementById('adminGuardiansDisplay');
+    if (!guardiansList || guardiansList.length === 0) {
+        display.innerHTML = '<p class="text-muted"><i class="fas fa-info-circle me-1"></i>Henüz veli bilgisi girilmemiş.</p>';
+        return;
+    }
+    
+    let html = '<div class="row g-3">';
+    guardiansList.forEach(g => {
+        const icon = g.relationship === 'Anne' ? 'fa-female' : g.relationship === 'Baba' ? 'fa-male' : 'fa-user';
+        const label = adminRelLabels[g.relationship] || g.relationship;
+        html += `
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header bg-primary bg-opacity-10 py-2">
+                    <h6 class="mb-0"><i class="fas ${icon} me-2"></i>${label}</h6>
+                </div>
+                <div class="card-body py-2">
+                    <p class="mb-1"><strong>Ad Soyad:</strong> ${g.full_name || 'Belirtilmemiş'}</p>
+                    <p class="mb-1"><strong>TC:</strong> ${g.tc_number || 'Belirtilmemiş'}</p>
+                    <p class="mb-1"><strong>Telefon:</strong> ${g.phone || 'Belirtilmemiş'}</p>
+                    <p class="mb-1"><strong>E-posta:</strong> ${g.email || 'Belirtilmemiş'}</p>
+                    <p class="mb-0"><strong>Adres:</strong> ${g.address || 'Belirtilmemiş'}</p>
+                </div>
+            </div>
+        </div>`;
+    });
+    html += '</div>';
+    display.innerHTML = html;
+}
+
+function adminAddGuardianCard() {
+    const container = document.getElementById('adminGuardiansContainer');
+    container.insertAdjacentHTML('beforeend', adminCreateGuardianCardHTML(
+        { full_name: '', relationship: 'Diger' }, adminGuardianCounter, false
+    ));
+    adminGuardianCounter++;
+}
+
+function adminRemoveGuardianCard(btn) {
+    const card = btn.closest('.admin-guardian-card');
+    if (card && card.dataset.required !== 'true') card.remove();
+}
+
+function adminCollectGuardianData() {
+    const cards = document.querySelectorAll('.admin-guardian-card');
+    const guardians = [];
+    cards.forEach((card, i) => {
+        guardians.push({
+            full_name: card.querySelector('.admin-g-fullname').value.trim(),
+            relationship: card.querySelector('.admin-g-relationship').value,
+            tc_number: card.querySelector('.admin-g-tc').value.trim(),
+            phone: card.querySelector('.admin-g-phone').value.trim(),
+            email: card.querySelector('.admin-g-email').value.trim(),
+            address: card.querySelector('.admin-g-address').value.trim(),
+            is_required: i < 2,
+            sort_order: i + 1
+        });
+    });
+    return guardians;
+}
+
+// Load guardians from API
 async function loadGuardians() {
     try {
         const response = await fetch(`/api/admin/users/<%= user.id %>/guardians`, {
-            method: 'GET',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            method: 'GET', credentials: 'include',
+            headers: { 'Content-Type': 'application/json' }
         });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
         const data = await response.json();
-        console.log('Guardians data:', data);
-        
         if (data.success) {
-            updateGuardiansDisplay(data.guardians);
+            adminGuardiansList = data.guardians;
+            adminRenderGuardiansDisplay(adminGuardiansList);
         }
     } catch (error) {
         console.error('Error loading guardians:', error);
     }
 }
 
-// Update guardians display
-function updateGuardiansDisplay(guardians) {
-    const motherFullName = document.getElementById('motherFullName');
-    const motherPhone = document.getElementById('motherPhone');
-    const motherTc = document.getElementById('motherTc');
-    const fatherFullName = document.getElementById('fatherFullName');
-    const fatherPhone = document.getElementById('fatherPhone');
-    const fatherTc = document.getElementById('fatherTc');
-
-    if (motherFullName) {
-        motherFullName.textContent = `${guardians.mother_name || ''} ${guardians.mother_surname || ''}`.trim() || 'Belirtilmemiş';
-        motherFullName.className = `guardian-info-value ${(guardians.mother_name || guardians.mother_surname) ? '' : 'empty'}`;
-    }
-    
-    if (motherPhone) {
-        motherPhone.textContent = guardians.mother_phone || 'Belirtilmemiş';
-        motherPhone.className = `guardian-info-value ${guardians.mother_phone ? '' : 'empty'}`;
-    }
-    
-    if (motherTc) {
-        motherTc.textContent = guardians.mother_tc || 'Belirtilmemiş';
-        motherTc.className = `guardian-info-value ${guardians.mother_tc ? '' : 'empty'}`;
-    }
-    
-    if (fatherFullName) {
-        fatherFullName.textContent = `${guardians.father_name || ''} ${guardians.father_surname || ''}`.trim() || 'Belirtilmemiş';
-        fatherFullName.className = `guardian-info-value ${(guardians.father_name || guardians.father_surname) ? '' : 'empty'}`;
-    }
-    
-    if (fatherPhone) {
-        fatherPhone.textContent = guardians.father_phone || 'Belirtilmemiş';
-        fatherPhone.className = `guardian-info-value ${guardians.father_phone ? '' : 'empty'}`;
-    }
-    
-    if (fatherTc) {
-        fatherTc.textContent = guardians.father_tc || 'Belirtilmemiş';
-        fatherTc.className = `guardian-info-value ${guardians.father_tc ? '' : 'empty'}`;
-    }
-}
-
 // Show edit guardians modal
 function showEditGuardiansModal() {
+    adminRenderGuardiansInModal(adminGuardiansList);
     const modal = new bootstrap.Modal(document.getElementById('editGuardiansModal'));
     modal.show();
 }
 
 // Save guardians information
-async function saveGuardiansInfo() {
+async function adminSaveGuardians() {
     try {
-        const form = document.getElementById('guardiansForm');
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData);
-        
-        const response = await fetch(`/admin/users/${<%= user.id %>}/guardians`, {
+        const guardians = adminCollectGuardianData();
+        const required = guardians.filter(g => g.is_required);
+        const filled = required.filter(g => g.full_name !== '');
+        if (filled.length < 2) {
+            document.getElementById('adminGuardiansAlertContainer').innerHTML = `
+                <div class="alert alert-danger">En az 2 veli bilgisi (Anne ve Baba) doldurulmalıdır.</div>`;
+            return;
+        }
+
+        const response = await fetch(`/api/admin/users/<%= user.id %>/guardians`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data)
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ guardians })
         });
         
         const result = await response.json();
         
         if (result.success) {
-            // Update the display with proper styling
-            const motherFullName = document.getElementById('motherFullName');
-            const motherPhone = document.getElementById('motherPhone');
-            const motherTc = document.getElementById('motherTc');
-            const fatherFullName = document.getElementById('fatherFullName');
-            const fatherPhone = document.getElementById('fatherPhone');
-            const fatherTc = document.getElementById('fatherTc');
+            adminGuardiansList = result.guardians;
+            adminRenderGuardiansDisplay(adminGuardiansList);
             
-            // Update mother info
-            const motherName = (data.mother_name || data.mother_surname) ? `${data.mother_name || ''} ${data.mother_surname || ''}`.trim() : 'Belirtilmemiş';
-            motherFullName.textContent = motherName;
-            motherFullName.className = `guardian-info-value ${(data.mother_name || data.mother_surname) ? '' : 'empty'}`;
-            
-            motherPhone.textContent = data.mother_phone || 'Belirtilmemiş';
-            motherPhone.className = `guardian-info-value ${data.mother_phone ? '' : 'empty'}`;
-            
-            motherTc.textContent = data.mother_tc || 'Belirtilmemiş';
-            motherTc.className = `guardian-info-value ${data.mother_tc ? '' : 'empty'}`;
-            
-            // Update father info
-            const fatherName = (data.father_name || data.father_surname) ? `${data.father_name || ''} ${data.father_surname || ''}`.trim() : 'Belirtilmemiş';
-            fatherFullName.textContent = fatherName;
-            fatherFullName.className = `guardian-info-value ${(data.father_name || data.father_surname) ? '' : 'empty'}`;
-            
-            fatherPhone.textContent = data.father_phone || 'Belirtilmemiş';
-            fatherPhone.className = `guardian-info-value ${data.father_phone ? '' : 'empty'}`;
-            
-            fatherTc.textContent = data.father_tc || 'Belirtilmemiş';
-            fatherTc.className = `guardian-info-value ${data.father_tc ? '' : 'empty'}`;
-            
-            // Close modal
             const modal = bootstrap.Modal.getInstance(document.getElementById('editGuardiansModal'));
             modal.hide();
             
-            // Show success message
             alert('Veli bilgileri başarıyla güncellendi!');
         } else {
             alert('Hata: ' + result.message);

@@ -11,9 +11,25 @@
     {
       "src": "api/cron/*.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "public/**",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
+    {
+      "src": "/googlebf24a454ad6f83f0.html",
+      "dest": "/public/googlebf24a454ad6f83f0.html"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/public/favicon.ico"
+    },
+    {
+      "src": "/favicon.png",
+      "dest": "/public/favicon.png"
+    },
     {
       "src": "/api/cron/(.*)",
       "dest": "/api/cron/$1.js"
@@ -31,6 +47,10 @@
     {
       "path": "/api/cron/backup-database",
       "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/profile-reminder",
+      "schedule": "0 */6 * * *"
     }
   ],
   "env": {

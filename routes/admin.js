@@ -728,37 +728,19 @@ router.get('/applications/new', async (req, res) => {
     }
 });
 
-// Get user guardians information
+// Get user guardians information (from guardians table)
 router.get('/users/:id/guardians', async (req, res) => {
     try {
         const { id } = req.params;
         
         const result = await pool.query(
-            `SELECT mother_name, mother_surname, mother_phone, mother_tc, 
-                    father_name, father_surname, father_phone, father_tc
-             FROM users WHERE id = $1`,
+            'SELECT * FROM guardians WHERE user_id = $1 ORDER BY sort_order ASC, created_at ASC',
             [id]
         );
         
-        if (result.rows.length === 0) {
-            return res.json({
-                success: true,
-                guardians: {
-                    mother_name: null,
-                    mother_surname: null,
-                    mother_phone: null,
-                    mother_tc: null,
-                    father_name: null,
-                    father_surname: null,
-                    father_phone: null,
-                    father_tc: null
-                }
-            });
-        }
-        
         res.json({
             success: true,
-            guardians: result.rows[0]
+            guardians: result.rows
         });
     } catch (error) {
         console.error('Get guardians error:', error);
@@ -766,30 +748,61 @@ router.get('/users/:id/guardians', async (req, res) => {
     }
 });
 
-// Update user guardians information
+// Save all guardians (bulk upsert) for a user - Admin
 router.put('/users/:id/guardians', async (req, res) => {
+    const client = await pool.connect();
     try {
         const { id } = req.params;
-        const { mother_name, mother_surname, mother_phone, mother_tc, father_name, father_surname, father_phone, father_tc } = req.body;
+        const { guardians } = req.body;
         
-        const result = await pool.query(
-             `UPDATE users 
-              SET mother_name = $1, mother_surname = $2, mother_phone = $3, mother_tc = $4,
-                  father_name = $5, father_surname = $6, father_phone = $7, father_tc = $8,
-                  updated_at = CURRENT_TIMESTAMP
-              WHERE id = $9 RETURNING mother_name, mother_surname, mother_phone, mother_tc, father_name, father_surname, father_phone, father_tc`,
-             [mother_name, mother_surname, mother_phone, mother_tc, 
-              father_name, father_surname, father_phone, father_tc, id]
-         );
- 
-         res.json({
-             success: true,
-             message: 'Veli bilgileri başarıyla güncellendi',
-             guardians: result.rows[0]
-         });
+        if (!guardians || !Array.isArray(guardians)) {
+            return res.status(400).json({ success: false, message: 'Geçersiz veli verisi.' });
+        }
+
+        await client.query('BEGIN');
+
+        // Delete existing guardians for this user
+        await client.query('DELETE FROM guardians WHERE user_id = $1', [id]);
+
+        // Insert all guardians
+        for (const g of guardians) {
+            if (!g.full_name || g.full_name.trim() === '') continue;
+            
+            await client.query(`
+                INSERT INTO guardians (user_id, full_name, relationship, tc_number, phone, email, address, is_required, sort_order)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+            `, [
+                id,
+                g.full_name.trim(),
+                g.relationship || 'Diger',
+                g.tc_number || null,
+                g.phone || null,
+                g.email || null,
+                g.address || null,
+                g.is_required || false,
+                g.sort_order || 0
+            ]);
+        }
+
+        await client.query('COMMIT');
+
+        // Fetch updated guardians
+        const result = await client.query(
+            'SELECT * FROM guardians WHERE user_id = $1 ORDER BY sort_order ASC',
+            [id]
+        );
+
+        res.json({ 
+            success: true, 
+            message: 'Veli bilgileri başarıyla güncellendi',
+            guardians: result.rows 
+        });
     } catch (error) {
+        await client.query('ROLLBACK');
         console.error('Update guardians error:', error);
         res.status(500).json({ success: false, message: 'Server error' });
+    } finally {
+        client.release();
     }
 });
 
@@ -823,8 +836,7 @@ router.get('/users/:id/details', async (req, res) => {
             `SELECT id, first_name, last_name, email, phone, english_level, 
                     high_school_graduation_date, birth_date, tc_number,
                     passport_type, passport_number, desired_country, active_class,
-                    mother_name, mother_surname, mother_phone, mother_tc,
-                    father_name, father_surname, father_phone, father_tc,
+                    current_school, home_address,
                     avatar_url, created_at, is_admin
               FROM users WHERE id = $1`,
             [id]
@@ -839,6 +851,18 @@ router.get('/users/:id/details', async (req, res) => {
 
         const user = userResult.rows[0];
 
+        // Get guardians
+        let guardians = [];
+        try {
+            const guardiansResult = await pool.query(
+                'SELECT * FROM guardians WHERE user_id = $1 ORDER BY sort_order ASC, created_at ASC',
+                [id]
+            );
+            guardians = guardiansResult.rows;
+        } catch (e) {
+            console.log('Guardians fetch skipped:', e.message);
+        }
+
         // Get sidebar counts
         const sidebarCounts = await getAdminSidebarCounts();
 
@@ -846,6 +870,7 @@ router.get('/users/:id/details', async (req, res) => {
             title: `${user.first_name} ${user.last_name} - Öğrenci Detayları`,
             activePage: 'users',
             user: user,
+            guardians: guardians,
             ...sidebarCounts
         });
     } catch (error) {
@@ -870,7 +895,9 @@ router.put('/users/:id/details', async (req, res) => {
             passport_number,
             passport_type,
             desired_country,
-            active_class
+            active_class,
+            current_school,
+            home_address
         } = req.body;
 
         // Allow any passport type text input
@@ -890,8 +917,10 @@ router.put('/users/:id/details', async (req, res) => {
                 passport_type = $10,
                 desired_country = $11,
                 active_class = $12,
+                current_school = $13,
+                home_address = $14,
                 updated_at = CURRENT_TIMESTAMP
-             WHERE id = $13 RETURNING *`,
+             WHERE id = $15 RETURNING *`,
             [
                 first_name,
                 last_name,
@@ -905,6 +934,8 @@ router.put('/users/:id/details', async (req, res) => {
                 passportTypeFinal,
                 desired_country,
                 active_class,
+                current_school || null,
+                home_address || null,
                 id
             ]
         );
@@ -3555,8 +3586,7 @@ router.post('/users/:userId/generate-contract', async (req, res) => {
             `SELECT id, first_name, last_name, email, phone, english_level, 
                     high_school_graduation_date, birth_date, tc_number,
                     passport_type, passport_number, desired_country, active_class,
-                    mother_name, mother_surname, mother_phone, mother_tc,
-                    father_name, father_surname, father_phone, father_tc
+                    current_school, home_address
              FROM users WHERE id = $1`,
             [userId]
         );
@@ -3566,6 +3596,18 @@ router.post('/users/:userId/generate-contract', async (req, res) => {
         }
         
         const user = userResult.rows[0];
+        
+        // 1b. Get guardians
+        let guardians = [];
+        try {
+            const guardiansResult = await pool.query(
+                'SELECT * FROM guardians WHERE user_id = $1 ORDER BY sort_order ASC',
+                [userId]
+            );
+            guardians = guardiansResult.rows;
+        } catch (err) {
+            console.log('ℹ️ No guardians found:', err.message);
+        }
         
         // 2. Get applications
         let applications = [];
@@ -3614,7 +3656,8 @@ router.post('/users/:userId/generate-contract', async (req, res) => {
         const pdfBuffer = await generateContractPDF({
             user,
             applications,
-            services
+            services,
+            guardians
         });
         
         console.log('✅ Contract PDF generated, size:', pdfBuffer.length);

@@ -779,6 +779,77 @@ const sendVisaApplicationEmail = async (user, country, consulateCity, status) =>
     }
 };
 
+// =====================================================
+// PROFILE REMINDER EMAIL
+// =====================================================
+const sendProfileReminderEmail = async (user) => {
+    const html = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f0f4f8;">
+            <div style="background: linear-gradient(135deg, #0056b3, #003d82); padding: 30px 20px; text-align: center; border-radius: 8px 8px 0 0;">
+                <img src="https://vgdanismanlik.com/images/logos/venture-global-logo.png" alt="Venture Global" style="height: 60px; margin-bottom: 10px;">
+                <h1 style="color: white; margin: 0; font-size: 22px;">Profilinizi Tamamlayın</h1>
+            </div>
+            <div style="background: white; padding: 30px; border-radius: 0 0 8px 8px;">
+                <p style="color: #333; line-height: 1.6; font-size: 16px;">
+                    Merhaba <strong>${user.first_name || 'Değerli Öğrencimiz'}</strong>,
+                </p>
+                
+                <p style="color: #333; line-height: 1.6;">
+                    Venture Global ailesine hoş geldiniz! 🎓
+                </p>
+                
+                <div style="background: linear-gradient(135deg, #fff3cd, #ffeeba); border: 1px solid #ffc107; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                    <h3 style="color: #856404; margin: 0 0 10px 0;">
+                        <span style="font-size: 20px;">⚠️</span> Profil Bilgileriniz Eksik
+                    </h3>
+                    <p style="color: #856404; margin: 0; line-height: 1.5;">
+                        Danışmanlık hizmetlerimizden tam olarak faydalanabilmeniz için lütfen profil bilgilerinizi ve veli bilgilerinizi tamamlayın.
+                    </p>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                    <h4 style="color: #333; margin: 0 0 10px 0;">Tamamlamanız Gereken Bilgiler:</h4>
+                    <ul style="color: #555; line-height: 2; padding-left: 20px;">
+                        <li>Kişisel Bilgiler (Ad, Soyad, TC Kimlik No, Telefon)</li>
+                        <li>Doğum Tarihi ve Pasaport Bilgileri</li>
+                        <li>Aktif Olarak Okuduğu Okul</li>
+                        <li>Ev Adresi</li>
+                        <li>Veli Bilgileri (Anne ve Baba - en az 2 zorunlu)</li>
+                    </ul>
+                </div>
+
+                <div style="text-align: center; margin: 25px 0;">
+                    <a href="https://vgdanismanlik.com/user/dashboard" style="background: linear-gradient(135deg, #0056b3, #003d82); color: white; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block; font-size: 16px;">
+                        Profilimi Tamamla
+                    </a>
+                </div>
+                
+                <p style="color: #666; line-height: 1.6; font-size: 14px;">
+                    Profil bilgileriniz, sözleşme oluşturma ve başvuru süreçleri için kritik öneme sahiptir.
+                    Herhangi bir sorunuz varsa bizimle iletişime geçmekten çekinmeyin.
+                </p>
+                
+                ${getEmailSignature()}
+            </div>
+        </div>
+    `;
+    
+    try {
+        const result = await transporter.sendMail({
+            from: `"Venture Global" <${process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com'}>`,
+            to: user.email,
+            subject: '⚠️ Venture Global - Profil Bilgilerinizi Tamamlayın',
+            html: html
+        });
+        
+        console.log('✅ Profile reminder email sent successfully to:', user.email);
+        return true;
+    } catch (error) {
+        console.error('❌ Profile reminder email sending failed:', error);
+        return false;
+    }
+};
+
 module.exports = {
     transporter,
     sendVerificationEmail,
@@ -787,6 +858,7 @@ module.exports = {
     sendApplicationStatusEmail,
     sendPartnerVerificationEmail,
     sendVisaApplicationEmail,
+    sendProfileReminderEmail,
     generateVerificationToken,
     generateResetToken
 }; 

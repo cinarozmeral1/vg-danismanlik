@@ -186,7 +186,7 @@ async function generateBlogPost() {
         excerptEN,
         `${dept.university_name} ${dept.name_tr} - ${countryTR}`.substring(0, 155),
         `${dept.university_name} ${dept.name_en || dept.name_tr} - ${countryEN}`.substring(0, 155),
-        `Venture Global, ${dept.university_name}, ${countryTR}, yurtdışı eğitim`,
+        `Venture Global, VG Danışmanlık, vgdanismanlik, ${dept.university_name}, ${countryTR}, yurtdışı eğitim, eğitim danışmanlığı, yurt dışı eğitim danışmanlığı`,
         'department',
         dept.university_id,
         dept.country,
@@ -231,9 +231,14 @@ KURALLAR:
 1. 500-700 kelime
 2. Bu LİSANS programının ne öğrettiğini ve kariyer fırsatlarını anlat
 3. ${countryName}'de lisans eğitimi almanın avantajlarını anlat
-4. "Venture Global" ismini 2-3 kez doğal şekilde kullan
-5. Son paragrafta "Venture Global ile iletişime geçebilirsiniz" de
+4. Her yazıda "Venture Global" VE "VG Danışmanlık" isimlerini KARIŞIK kullan (toplam 4-5 kez)
+   - Bazen "Venture Global eğitim danışmanlığı"
+   - Bazen "VG Danışmanlık"
+   - Bazen "Venture Global (VG Danışmanlık)"
+   - Bazen sadece "VG"
+5. Son paragrafta "Venture Global (VG Danışmanlık) ile iletişime geçebilirsiniz" de
 6. Bu bir UNDERGRADUATE / LİSANS programıdır, yüksek lisans değil
+7. "yurt dışı eğitim danışmanlığı", "eğitim danışmanlığı", "yurtdışında eğitim" gibi anahtar kelimeleri doğal şekilde kullan
 
 FORMAT: Sadece HTML tagleri kullan. Başlıklar için <h2> ve <h3>, paragraflar için <p>, listeler için <ul><li> kullan. Markdown (## veya **) KULLANMA. Kod bloğu EKLEME.`
         : `Write a blog article in English about the ${deptName} BACHELOR'S / UNDERGRADUATE program at ${dept.university_name}.
@@ -249,9 +254,13 @@ RULES:
 1. 500-700 words
 2. Explain what this UNDERGRADUATE program teaches and career opportunities
 3. Mention advantages of pursuing a bachelor's degree in ${countryName}
-4. Naturally mention "Venture Global" 2-3 times
-5. End with "Contact Venture Global for more information"
+4. Naturally mention "Venture Global" AND "VG Danışmanlık" (use BOTH names, total 4-5 times mixed)
+   - Sometimes "Venture Global education consultancy"
+   - Sometimes "VG Danışmanlık"
+   - Sometimes "Venture Global (VG Danışmanlık)"
+5. End with "Contact Venture Global (VG Danışmanlık) for more information"
 6. This is a BACHELOR'S / UNDERGRADUATE program, NOT a master's degree
+7. Naturally include keywords like "study abroad", "education consulting", "overseas education"
 
 FORMAT: Use only HTML tags. Use <h2> and <h3> for headings, <p> for paragraphs, <ul><li> for lists. DO NOT use Markdown (## or **). NO code blocks.`;
 
@@ -273,8 +282,8 @@ FORMAT: Use only HTML tags. Use <h2> and <h3> for headings, <p> for paragraphs, 
                     { 
                         role: 'system', 
                         content: lang === 'tr' 
-                            ? 'Sen Venture Global Eğitim Danışmanlığı için blog yazarısın. SADECE h2, h3, p, ul, li tagleri kullan. html, head, body, title tagleri KULLANMA. Düz içerik yaz.'
-                            : 'You are a blog writer for Venture Global Education Consultancy. Use ONLY h2, h3, p, ul, li tags. DO NOT use html, head, body, title tags. Write plain content only.'
+                            ? 'Sen Venture Global (VG Danışmanlık) Eğitim Danışmanlığı için blog yazarısın. Şirketin iki ismi var: "Venture Global" ve "VG Danışmanlık" - ikisini de KARIŞIK kullan. SADECE h2, h3, p, ul, li tagleri kullan. html, head, body, title tagleri KULLANMA. Düz içerik yaz.'
+                            : 'You are a blog writer for Venture Global (also known as VG Danışmanlık) Education Consultancy. The company has two names: "Venture Global" and "VG Danışmanlık" - use BOTH names throughout. Use ONLY h2, h3, p, ul, li tags. DO NOT use html, head, body, title tags. Write plain content only.'
                     },
                     { role: 'user', content: prompt }
                 ],

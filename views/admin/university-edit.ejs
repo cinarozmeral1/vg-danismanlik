@@ -87,7 +87,7 @@
                                 <select class="form-select" id="country" name="country" required>
                                     <option value="">Seçiniz</option>
                                     <option value="Germany" <%= university.country === 'Germany' ? 'selected' : '' %>>Almanya</option>
-                                    <option value="UK" <%= university.country === 'UK' ? 'selected' : '' %>>İngiltere</option>
+                                    <option value="UK" <%= (university.country === 'UK' || university.country === 'United Kingdom') ? 'selected' : '' %>>İngiltere</option>
                                     <option value="Austria" <%= university.country === 'Austria' ? 'selected' : '' %>>Avusturya</option>
                                     <option value="Italy" <%= university.country === 'Italy' ? 'selected' : '' %>>İtalya</option>
                                     <option value="Czech Republic" <%= university.country === 'Czech Republic' ? 'selected' : '' %>>Çek Cumhuriyeti</option>

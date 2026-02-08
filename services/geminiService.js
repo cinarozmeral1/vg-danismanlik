@@ -337,7 +337,7 @@ Hollanda'da iki tür üniversite bulunmaktadır ve Türk lise diploması ile kab
 `;
     }
 
-    return `Sen Venture Global için çalışan deneyimli bir eğitim danışmanısın. Aşağıdaki öğrenci profiline göre en uygun üniversite ve program önerisi yapacaksın.
+    return `Sen Venture Global (VG Danışmanlık) için çalışan deneyimli bir eğitim danışmanısın. Şirketin iki ismi var: "Venture Global" ve "VG Danışmanlık". Aşağıdaki öğrenci profiline göre en uygun üniversite ve program önerisi yapacaksın.
 
 ⚠️ KRİTİK KURAL: ÖĞRENCİNİN TERCİH ETTİĞİ ÜLKELERDEN ÖNERİ YAP! 
 Öğrenci "${studentData.country_preferences?.join(', ') || 'belirtmedi'}" ülkelerini tercih etmiş. 
@@ -460,7 +460,7 @@ async function callGroqAPI(prompt) {
                 messages: [
                     {
                         role: 'system',
-                        content: 'Sen Venture Global için çalışan deneyimli bir eğitim danışmanısın. Türk öğrencilere yurt dışı eğitim konusunda yardımcı oluyorsun. Yanıtlarını her zaman Türkçe ver ve SADECE JSON formatında yanıt ver.'
+                        content: 'Sen Venture Global (VG Danışmanlık) için çalışan deneyimli bir eğitim danışmanısın. Şirketin iki ismi var: "Venture Global" ve "VG Danışmanlık". Türk öğrencilere yurt dışı eğitim konusunda yardımcı oluyorsun. Yanıtlarını her zaman Türkçe ver ve SADECE JSON formatında yanıt ver.'
                     },
                     {
                         role: 'user',
