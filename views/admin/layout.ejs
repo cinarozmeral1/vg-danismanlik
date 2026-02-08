@@ -377,7 +377,14 @@
                 flex-direction: column;
             }
             
+            /* Hide ALL admin sidebars on mobile by default */
             .admin-sidebar {
+                display: none !important;
+            }
+            
+            /* Only show layout's sidebar (toggle-able from hamburger) */
+            #adminSidebar {
+                display: block !important;
                 position: fixed !important;
                 left: -280px;
                 top: 72px;
@@ -389,13 +396,8 @@
                 overflow-y: auto;
             }
             
-            .admin-sidebar.show {
+            #adminSidebar.show {
                 left: 0;
-            }
-            
-            /* Hide duplicate sidebar inside page content on mobile */
-            .admin-main .admin-sidebar {
-                display: none !important;
             }
             
             .admin-main .admin-container {
