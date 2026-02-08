@@ -13,6 +13,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const { sendApplicationCreationEmail, sendApplicationStatusEmail, sendPartnerVerificationEmail, sendVisaApplicationEmail, generateVerificationToken } = require('../services/emailService');
+const { generateContractPDF, generateContractNumber } = require('../services/contractService');
 const { DateTime } = require('luxon');
 
 // File upload middleware for university logos
@@ -1390,11 +1391,12 @@ router.get('/universities', async (req, res) => {
                     u.is_active,
                     u.is_featured,
                     u.created_at,
+                    COALESCE(u.sort_order, 9999) as sort_order,
                     COUNT(ud.id) as department_count
                 FROM universities u
                 LEFT JOIN university_departments ud ON u.id = ud.university_id AND ud.is_active = true
-                GROUP BY u.id, u.name, u.name_en, u.country, u.city, u.logo_url, u.world_ranking, u.is_active, u.is_featured, u.created_at
-                ORDER BY u.is_featured DESC, u.name ASC
+                GROUP BY u.id, u.name, u.name_en, u.country, u.city, u.logo_url, u.world_ranking, u.is_active, u.is_featured, u.created_at, u.sort_order
+                ORDER BY COALESCE(u.sort_order, 9999) ASC, u.is_featured DESC, u.name ASC
             `);
             universities = result.rows;
             console.log('✅ Universities query successful, found:', universities.length, 'universities');
@@ -1463,25 +1465,30 @@ router.get('/universities/:id/edit', async (req, res) => {
         const { id } = req.params;
         console.log('🎯 Get university edit page for ID:', id);
         
-        // Get university details with departments
+        // Get university details with departments (ordered by sort_order)
         const universityResult = await pool.query(`
             SELECT 
                 u.*,
                 COALESCE(
-                    json_agg(
-                        json_build_object(
-                            'id', ud.id,
-                            'name_tr', ud.name_tr,
-                            'name_en', ud.name_en,
-                            'price', ud.price
-                        )
-                    ) FILTER (WHERE ud.id IS NOT NULL),
+                    (
+                        SELECT json_agg(dept_ordered ORDER BY dept_ordered->>'sort_order')
+                        FROM (
+                            SELECT json_build_object(
+                                'id', ud.id,
+                                'name_tr', ud.name_tr,
+                                'name_en', ud.name_en,
+                                'price', ud.price,
+                                'sort_order', COALESCE(ud.sort_order, 9999)
+                            ) as dept_ordered
+                            FROM university_departments ud 
+                            WHERE ud.university_id = u.id AND ud.is_active = true
+                            ORDER BY COALESCE(ud.sort_order, 9999) ASC
+                        ) sub
+                    ),
                     '[]'::json
                 ) as departments
             FROM universities u
-            LEFT JOIN university_departments ud ON u.id = ud.university_id AND ud.is_active = true
             WHERE u.id = $1
-            GROUP BY u.id
         `, [id]);
         
         if (universityResult.rows.length === 0) {
@@ -1514,8 +1521,64 @@ router.get('/universities/:id/edit', async (req, res) => {
 });
 
 
+// Reorder universities (MUST be before :id route)
+router.put('/universities/reorder', async (req, res) => {
+    try {
+        const { order } = req.body;
+        
+        console.log('📝 Reorder universities request:', order);
+        
+        if (!order || !Array.isArray(order) || order.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Geçersiz sıralama verisi'
+            });
+        }
+        
+        // Check if sort_order column exists, if not add it
+        try {
+            await pool.query(`
+                ALTER TABLE universities 
+                ADD COLUMN IF NOT EXISTS sort_order INTEGER DEFAULT 0
+            `);
+            console.log('✅ sort_order column checked/added');
+        } catch (alterError) {
+            console.log('⚠️ Column might already exist:', alterError.message);
+        }
+        
+        // Update sort_order for each university
+        for (let i = 0; i < order.length; i++) {
+            const universityId = order[i];
+            const sortOrder = i + 1;
+            
+            await pool.query(
+                'UPDATE universities SET sort_order = $1 WHERE id = $2',
+                [sortOrder, universityId]
+            );
+        }
+        
+        console.log('✅ Universities reordered successfully');
+        
+        res.json({
+            success: true,
+            message: 'Sıralama başarıyla kaydedildi',
+            count: order.length
+        });
+    } catch (error) {
+        console.error('❌ Reorder universities error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Sıralama kaydedilirken hata oluştu: ' + error.message
+        });
+    }
+});
+
+
 // Update university with logo upload support
 router.put('/universities/:id', async (req, res) => {
+    console.log('🔴 HIT: /universities/:id route with id:', req.params.id);
+    console.log('🔴 Full URL:', req.originalUrl);
+    console.log('🔴 Body keys:', Object.keys(req.body));
     try {
         const { id } = req.params;
         const name = req.body.name;
@@ -1599,21 +1662,24 @@ router.put('/universities/:id', async (req, res) => {
                 await pool.query('DELETE FROM university_departments WHERE university_id = $1', [id]);
                 console.log('✅ Existing departments deleted');
                 
-                // Add new departments
-                for (const dept of departments) {
+                // Add new departments with sort_order
+                for (let i = 0; i < departments.length; i++) {
+                    const dept = departments[i];
                     if (dept.name_tr && dept.name_en) {
+                        const sortOrder = dept.sort_order || (i + 1);
                         await pool.query(
-                            `INSERT INTO university_departments (university_id, name_tr, name_en, price, currency) 
-                             VALUES ($1, $2, $3, $4, $5)`,
+                            `INSERT INTO university_departments (university_id, name_tr, name_en, price, currency, sort_order) 
+                             VALUES ($1, $2, $3, $4, $5, $6)`,
                             [
                                 id,
                                 dept.name_tr,
                                 dept.name_en,
                                 dept.price ? parseFloat(dept.price) : null,
-                                'EUR'
+                                'EUR',
+                                sortOrder
                             ]
                         );
-                        console.log(`✅ Department updated: ${dept.name_tr}`);
+                        console.log(`✅ Department updated: ${dept.name_tr} (sort_order: ${sortOrder})`);
                     }
                 }
             } catch (deptError) {
@@ -1880,23 +1946,27 @@ router.post('/universities', async (req, res) => {
         const university = universityResult.rows[0];
         console.log('✅ University created:', university);
 
-        // Add departments if provided
+        // Add departments if provided (with sort_order support)
         if (departments && typeof departments === 'object') {
             console.log('📝 Adding departments:', departments);
-            for (const [key, dept] of Object.entries(departments)) {
+            const deptEntries = Object.entries(departments);
+            for (let i = 0; i < deptEntries.length; i++) {
+                const [key, dept] = deptEntries[i];
                 if (dept.name_tr && dept.name_en) {
+                    const sortOrder = dept.sort_order || (i + 1);
                     await pool.query(
-                        `INSERT INTO university_departments (university_id, name_tr, name_en, price, currency) 
-                         VALUES ($1, $2, $3, $4, $5)`,
+                        `INSERT INTO university_departments (university_id, name_tr, name_en, price, currency, sort_order) 
+                         VALUES ($1, $2, $3, $4, $5, $6)`,
                         [
                             university.id,
                             dept.name_tr,
                             dept.name_en,
                             dept.price ? parseFloat(dept.price) : null,
-                            'EUR'
+                            'EUR',
+                            sortOrder
                         ]
                     );
-                    console.log(`✅ Department added: ${dept.name_tr}`);
+                    console.log(`✅ Department added: ${dept.name_tr} (sort_order: ${sortOrder})`);
                 }
             }
         }
@@ -3469,6 +3539,120 @@ router.get('/users/:userId/file-categories', async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Dosya kategorileri yüklenirken hata oluştu'
+        });
+    }
+});
+
+// Generate contract PDF for a student
+router.post('/users/:userId/generate-contract', async (req, res) => {
+    try {
+        const { userId } = req.params;
+        
+        console.log('📄 Generating contract for user:', userId);
+        
+        // 1. Get student info
+        const userResult = await pool.query(
+            `SELECT id, first_name, last_name, email, phone, english_level, 
+                    high_school_graduation_date, birth_date, tc_number,
+                    passport_type, passport_number, desired_country, active_class,
+                    mother_name, mother_surname, mother_phone, mother_tc,
+                    father_name, father_surname, father_phone, father_tc
+             FROM users WHERE id = $1`,
+            [userId]
+        );
+        
+        if (userResult.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Öğrenci bulunamadı' });
+        }
+        
+        const user = userResult.rows[0];
+        
+        // 2. Get applications
+        let applications = [];
+        try {
+            const appResult = await pool.query(
+                `SELECT id, university_name, program_name, country, status 
+                 FROM applications WHERE user_id = $1 
+                 ORDER BY created_at DESC`,
+                [userId]
+            );
+            applications = appResult.rows;
+        } catch (err) {
+            console.log('ℹ️ No applications found:', err.message);
+        }
+        
+        // 3. Get services with installments
+        let services = [];
+        try {
+            const servicesResult = await pool.query(`
+                SELECT s.*, 
+                       COALESCE(
+                           JSON_AGG(
+                               JSON_BUILD_OBJECT(
+                                   'id', i.id,
+                                   'installment_number', i.installment_number,
+                                   'amount', i.amount,
+                                   'due_date', i.due_date,
+                                   'payment_date', i.payment_date,
+                                   'is_paid', i.is_paid
+                               )
+                           ) FILTER (WHERE i.id IS NOT NULL), 
+                           '[]'::json
+                       ) as installments
+                FROM services s
+                LEFT JOIN installments i ON s.id = i.service_id
+                WHERE s.user_id = $1
+                GROUP BY s.id
+                ORDER BY s.created_at DESC
+            `, [userId]);
+            services = servicesResult.rows;
+        } catch (err) {
+            console.log('ℹ️ No services found:', err.message);
+        }
+        
+        // 4. Generate PDF
+        const pdfBuffer = await generateContractPDF({
+            user,
+            applications,
+            services
+        });
+        
+        console.log('✅ Contract PDF generated, size:', pdfBuffer.length);
+        
+        // 5. Convert to Base64 and save to user_documents
+        const base64Data = pdfBuffer.toString('base64');
+        const contractNo = generateContractNumber(userId);
+        const fileName = `Sozlesme_${user.first_name}_${user.last_name}_${contractNo}.pdf`;
+        const title = `Danışmanlık Sözleşmesi - ${contractNo}`;
+        
+        const docResult = await pool.query(`
+            INSERT INTO user_documents (user_id, title, category, description, file_data, original_filename, file_size, mime_type)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            RETURNING id, title, original_filename, file_size, created_at
+        `, [
+            userId,
+            title,
+            'other',
+            `${user.first_name} ${user.last_name} için otomatik oluşturulan danışmanlık sözleşmesi`,
+            base64Data,
+            fileName,
+            pdfBuffer.length,
+            'application/pdf'
+        ]);
+        
+        console.log('✅ Contract saved to user_documents:', docResult.rows[0].id);
+        
+        res.json({
+            success: true,
+            message: 'Sözleşme başarıyla oluşturuldu!',
+            document: docResult.rows[0]
+        });
+        
+    } catch (error) {
+        console.error('❌ Contract generation error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Sözleşme oluşturulurken hata oluştu: ' + error.message
         });
     }
 });

@@ -388,6 +388,27 @@
                                     </div>
                                 </div>
                                 
+                                <!-- Contract Generation -->
+                                <div class="card mb-4">
+                                    <div class="card-header text-white" style="background: linear-gradient(135deg, #1a365d 0%, #2563eb 100%) !important;">
+                                        <h6 class="mb-0" style="color: white !important;"><i class="fas fa-file-contract me-2"></i>Sözleşme Oluştur</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="text-muted mb-3">Öğrencinin mevcut bilgileri kullanılarak otomatik danışmanlık sözleşmesi PDF'i oluşturulur ve dosyalara eklenir.</p>
+                                        <button type="button" class="btn btn-primary btn-lg w-100" id="generateContractBtn" onclick="generateContract()">
+                                            <i class="fas fa-file-pdf me-2"></i>Danışmanlık Sözleşmesi Oluştur
+                                        </button>
+                                        <div id="contractProgress" style="display: none;" class="mt-3">
+                                            <div class="d-flex align-items-center justify-content-center">
+                                                <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
+                                                    <span class="visually-hidden">Oluşturuluyor...</span>
+                                                </div>
+                                                <span class="text-muted">Sözleşme oluşturuluyor, lütfen bekleyin...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <!-- File List -->
                                 <div class="card">
                                     <div class="card-header bg-primary text-white" style="background-color: #2563eb !important; color: white !important; background: #2563eb !important;">
@@ -1862,8 +1883,44 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // File Management Functions
 
-
-
+    // Contract Generation
+    window.generateContract = async function() {
+        const btn = document.getElementById('generateContractBtn');
+        const progress = document.getElementById('contractProgress');
+        
+        try {
+            // Show loading state
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Oluşturuluyor...';
+            if (progress) progress.style.display = 'block';
+            
+            const response = await fetch('/api/admin/users/<%= user.id %>/generate-contract', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                showAlert('success', '<i class="fas fa-check-circle me-2"></i>Sözleşme başarıyla oluşturuldu ve dosyalara eklendi!');
+                // Reload file list to show the new contract
+                loadFiles();
+            } else {
+                throw new Error(data.message || 'Sözleşme oluşturulamadı');
+            }
+        } catch (error) {
+            console.error('Contract generation error:', error);
+            showAlert('danger', '<i class="fas fa-exclamation-circle me-2"></i>Sözleşme oluşturulurken hata: ' + error.message);
+        } finally {
+            // Reset button state
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-file-pdf me-2"></i>Danışmanlık Sözleşmesi Oluştur';
+            if (progress) progress.style.display = 'none';
+        }
+    };
 
     async function loadFiles() {
         try {
