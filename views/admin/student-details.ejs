@@ -1325,18 +1325,18 @@ input:checked + .slider:before {
 </style>
 
 <!-- Edit Guardians Modal - Dynamic Card System -->
-<div class="modal fade" id="editGuardiansModal" tabindex="-1" aria-labelledby="editGuardiansModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-scrollable" style="margin-top: 30px;">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="editGuardiansModalLabel">
+<div class="modal fade" id="editGuardiansModal" tabindex="-1" aria-labelledby="editGuardiansModalLabel" aria-hidden="true" style="z-index: 1070;">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable" style="margin-top: 10px; margin-bottom: 10px;">
+        <div class="modal-content" style="max-height: calc(100vh - 20px);">
+            <div class="modal-header bg-primary text-white py-2">
+                <h6 class="modal-title mb-0" id="editGuardiansModalLabel">
                     Veli Bilgilerini Düzenle
-                </h5>
+                </h6>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" style="max-height: calc(100vh - 160px); overflow-y: auto;">
+            <div class="modal-body py-2" style="overflow-y: auto;">
                 <div id="adminGuardiansAlertContainer"></div>
-                <p class="text-muted mb-3"><i class="fas fa-info-circle me-1"></i>En az 2 veli bilgisi (Anne ve Baba) zorunludur. Ek veli eklemek için "Veli Ekle" butonunu kullanabilirsiniz.</p>
+                <p class="text-muted mb-2 small"><i class="fas fa-info-circle me-1"></i>En az 2 veli zorunludur. Ek veli eklemek için "Veli Ekle" butonunu kullanın.</p>
                 <div id="adminGuardiansContainer">
                     <!-- Guardian cards will be rendered dynamically -->
                 </div>
@@ -1346,10 +1346,10 @@ input:checked + .slider:before {
                     </button>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
-                <button type="button" class="btn btn-primary" onclick="adminSaveGuardians()">
-                    <i class="fas fa-save me-2"></i>Kaydet
+            <div class="modal-footer py-2">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-sm btn-primary" onclick="adminSaveGuardians()">
+                    <i class="fas fa-save me-1"></i>Kaydet
                 </button>
             </div>
         </div>
@@ -3549,38 +3549,38 @@ function adminCreateGuardianCardHTML(guardian, index, isRequired) {
     const deleteBtn = !isRequired ? `<button type="button" class="btn btn-sm btn-outline-light" onclick="adminRemoveGuardianCard(this)"><i class="fas fa-trash"></i></button>` : '';
     
     return `
-    <div class="card mb-3 admin-guardian-card" data-index="${index}" data-required="${isRequired}">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #0056b3, #003d82) !important;">
-            <h6 class="mb-0 text-white">${veliNo}. Veli ${requiredTag}</h6>
+    <div class="card mb-2 admin-guardian-card" data-index="${index}" data-required="${isRequired}">
+        <div class="card-header py-1 px-3 bg-primary text-white d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #0056b3, #003d82) !important; min-height: 36px;">
+            <small class="mb-0 text-white fw-bold">${veliNo}. Veli ${requiredTag}</small>
             ${deleteBtn}
         </div>
-        <div class="card-body">
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label class="form-label">Ad Soyad ${isRequired ? '*' : ''}</label>
-                    <input type="text" class="form-control admin-g-fullname" value="${guardian.full_name || ''}" placeholder="Ad Soyad" ${isRequired ? 'required' : ''}>
+        <div class="card-body py-2 px-3">
+            <div class="row g-2">
+                <div class="col-md-4">
+                    <label class="form-label mb-0 small">Ad Soyad ${isRequired ? '*' : ''}</label>
+                    <input type="text" class="form-control form-control-sm admin-g-fullname" value="${guardian.full_name || ''}" placeholder="Ad Soyad" ${isRequired ? 'required' : ''}>
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">Yakınlık Derecesi</label>
-                    <select class="form-select admin-g-relationship">
+                <div class="col-md-4">
+                    <label class="form-label mb-0 small">Yakınlık Derecesi</label>
+                    <select class="form-select form-select-sm admin-g-relationship">
                         ${adminRelationships.map(r => `<option value="${r}" ${rel === r ? 'selected' : ''}>${adminRelLabels[r]}</option>`).join('')}
                     </select>
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">TC Kimlik No</label>
-                    <input type="text" class="form-control admin-g-tc" value="${guardian.tc_number || ''}" maxlength="11" placeholder="TC Kimlik No" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                <div class="col-md-4">
+                    <label class="form-label mb-0 small">TC Kimlik No</label>
+                    <input type="text" class="form-control form-control-sm admin-g-tc" value="${guardian.tc_number || ''}" maxlength="11" placeholder="TC Kimlik No" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">Telefon</label>
-                    <input type="tel" class="form-control admin-g-phone" value="${guardian.phone || ''}" placeholder="+90 555 123 45 67">
+                <div class="col-md-4">
+                    <label class="form-label mb-0 small">Telefon</label>
+                    <input type="tel" class="form-control form-control-sm admin-g-phone" value="${guardian.phone || ''}" placeholder="+90 555 123 45 67">
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">E-posta</label>
-                    <input type="email" class="form-control admin-g-email" value="${guardian.email || ''}" placeholder="E-posta">
+                <div class="col-md-4">
+                    <label class="form-label mb-0 small">E-posta</label>
+                    <input type="email" class="form-control form-control-sm admin-g-email" value="${guardian.email || ''}" placeholder="E-posta">
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">Ev Adresi</label>
-                    <input type="text" class="form-control admin-g-address" value="${guardian.address || ''}" placeholder="Ev adresi">
+                <div class="col-md-4">
+                    <label class="form-label mb-0 small">Ev Adresi</label>
+                    <input type="text" class="form-control form-control-sm admin-g-address" value="${guardian.address || ''}" placeholder="Ev adresi">
                 </div>
             </div>
         </div>
@@ -3690,8 +3690,14 @@ async function loadGuardians() {
 // Show edit guardians modal
 function showEditGuardiansModal() {
     adminRenderGuardiansInModal(adminGuardiansList);
-    const modal = new bootstrap.Modal(document.getElementById('editGuardiansModal'));
+    const modalEl = document.getElementById('editGuardiansModal');
+    const modal = new bootstrap.Modal(modalEl);
     modal.show();
+    // Ensure backdrop is above navbar (z-index 1060)
+    modalEl.addEventListener('shown.bs.modal', function () {
+        const backdrop = document.querySelector('.modal-backdrop');
+        if (backdrop) backdrop.style.zIndex = '1065';
+    }, { once: true });
 }
 
 // Save guardians information
