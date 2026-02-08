@@ -425,10 +425,8 @@ function generateTextOnlyPdf(data) {
 
             doc.font('R').fontSize(SZ.body).fillColor(CLR.tx);
             doc.text(`${paid1 ? '☑' : '☐'} 1. Taksit Ödendi    Tarih: ${pd1}    Tutar: ${inst1}`);
-            doc.text('   Ödeme Şekli: ☐ Havale/EFT   ☐ Nakit       Dekont/Makbuz No: _____________________');
             doc.moveDown(0.25);
             doc.text(`${paid2 ? '☑' : '☐'} 2. Taksit Ödendi    Tarih: ${pd2}    Tutar: ${inst2}`);
-            doc.text('   Ödeme Şekli: ☐ Havale/EFT   ☐ Nakit       Dekont/Makbuz No: _____________________');
 
             doc.moveDown(0.5);
             doc.moveTo(ML, doc.y).lineTo(RX, doc.y).strokeColor(CLR.dk).lineWidth(0.4).stroke();
