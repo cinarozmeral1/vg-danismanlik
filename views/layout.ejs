@@ -1609,6 +1609,8 @@
         var mobileNav = document.getElementById('mobileNav');
         if (!mobileNav) return;
         
+        var savedScrollY = 0;
+        
         // Bootstrap offcanvas instance al veya oluştur
         var bsOffcanvas = bootstrap.Offcanvas.getOrCreateInstance(mobileNav, {
             backdrop: true,
@@ -1616,14 +1618,22 @@
             scroll: false
         });
         
-        // Menü açılınca
+        // Menü açılınca - scroll pozisyonunu kaydet
         mobileNav.addEventListener('show.bs.offcanvas', function() {
+            savedScrollY = window.scrollY;
+            document.body.style.top = '-' + savedScrollY + 'px';
+            document.body.style.position = 'fixed';
+            document.body.style.width = '100%';
             document.body.classList.add('mobile-menu-open');
         });
         
-        // Menü kapanınca
+        // Menü kapanınca - scroll pozisyonunu geri yükle
         mobileNav.addEventListener('hidden.bs.offcanvas', function() {
             document.body.classList.remove('mobile-menu-open');
+            document.body.style.position = '';
+            document.body.style.top = '';
+            document.body.style.width = '';
+            window.scrollTo(0, savedScrollY);
         });
     });
     </script>
