@@ -1735,9 +1735,7 @@ body {
 
 @media (max-width: 767px) {
   .admin-sidebar {
-    width: 100%;
-    position: relative;
-    height: auto;
+    display: none !important;
   }
   
   .admin-main {
@@ -1745,7 +1743,7 @@ body {
     padding: var(--space-4);
   }
   
-.admin-container {
+  .admin-container {
     flex-direction: column;
   }
   
