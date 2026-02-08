@@ -3628,7 +3628,7 @@ router.post('/users/:userId/generate-contract', async (req, res) => {
         const docResult = await pool.query(`
             INSERT INTO user_documents (user_id, title, category, description, file_data, original_filename, file_size, mime_type)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-            RETURNING id, title, original_filename, file_size, created_at
+            RETURNING id, title, original_filename, file_size, uploaded_at
         `, [
             userId,
             title,
