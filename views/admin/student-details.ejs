@@ -3668,8 +3668,8 @@ function adminCollectGuardianData() {
         });
     });
     return guardians;
-}
-
+    }
+    
 // Load guardians from API
 async function loadGuardians() {
     try {
@@ -3711,7 +3711,7 @@ async function adminSaveGuardians() {
                 <div class="alert alert-danger">En az 2 veli bilgisi (Anne ve Baba) doldurulmalıdır.</div>`;
             return;
         }
-
+        
         const response = await fetch(`/api/admin/users/<%= user.id %>/guardians`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
