@@ -16,7 +16,19 @@ module.exports = {
         myProfile: "Profilim",
         dashboard: "Dashboard",
         logout: "Çıkış",
-        partners: "Çözüm Ortaklarımız"
+        partners: "Çözüm Ortaklarımız",
+        // Mobile menu
+        educationConsultancy: "Eğitim Danışmanlığı",
+        login: "Giriş Yap",
+        register: "Kayıt Ol",
+        languageSelection: "Dil Seçimi",
+        mainMenu: "Ana Menü",
+        student: "Öğrenci",
+        user: "Kullanıcı",
+        adminPanel: "Admin Paneli",
+        partnerPanel: "Partner Paneli",
+        signOut: "ÇIKIŞ YAP",
+        solutionPartners: "Çözüm Ortaklarımız"
     },
     
     // Countries

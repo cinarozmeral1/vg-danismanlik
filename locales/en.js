@@ -16,7 +16,19 @@ module.exports = {
         myProfile: "My Profile",
         dashboard: "Dashboard",
         logout: "Logout",
-        partners: "Our Partners"
+        partners: "Our Partners",
+        // Mobile menu
+        educationConsultancy: "Education Consultancy",
+        login: "Login",
+        register: "Register",
+        languageSelection: "Language",
+        mainMenu: "Main Menu",
+        student: "Student",
+        user: "User",
+        adminPanel: "Admin Panel",
+        partnerPanel: "Partner Panel",
+        signOut: "SIGN OUT",
+        solutionPartners: "Our Solution Partners"
     },
     
     // Countries
