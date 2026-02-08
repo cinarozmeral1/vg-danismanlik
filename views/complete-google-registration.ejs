@@ -318,6 +318,15 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (data.success) {
                 showAlert('success', data.message);
+                
+                // Google Ads Conversion Tracking - Google Registration Complete
+                if (typeof gtag === 'function') {
+                    gtag('event', 'conversion', {
+                        'send_to': 'AW-17936806150/cH8RCI-Vj_UbEIbi9-hC',
+                        'transaction_id': ''
+                    });
+                }
+                
                 setTimeout(() => {
                     window.location.href = '/user/dashboard';
                 }, 1500);

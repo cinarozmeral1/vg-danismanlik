@@ -523,6 +523,14 @@
                     if (result.success) {
                         showAlert('success', '<%= t.auth.register.success %>');
                         
+                        // Google Ads Conversion Tracking - Manual Registration
+                        if (typeof gtag === 'function') {
+                            gtag('event', 'conversion', {
+                                'send_to': 'AW-17936806150/cH8RCI-Vj_UbEIbi9-hC',
+                                'transaction_id': ''
+                            });
+                        }
+                        
                         // Store wizard recommendation if exists
                         if (wizardRecommendationId) {
                             sessionStorage.setItem('wizard_recommendation_id', wizardRecommendationId);
@@ -611,7 +619,8 @@
                     // Google Ads Conversion Tracking - Registration
                     if (typeof gtag === 'function') {
                         gtag('event', 'conversion', {
-                            'send_to': 'AW-17936806150/HJn9CM6p8vQbEIbi9-hC'
+                            'send_to': 'AW-17936806150/cH8RCI-Vj_UbEIbi9-hC',
+                            'transaction_id': ''
                         });
                     }
                     
