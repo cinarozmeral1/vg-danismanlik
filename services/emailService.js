@@ -7,10 +7,6 @@ const getEmailSignature = () => {
         <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
             <p style="margin: 0 0 15px 0; color: #333; font-style: italic; font-weight: 500;">Kind Regards,</p>
             
-            <p style="margin: 0 0 3px 0; color: #1a365d; font-weight: bold; font-size: 16px; font-style: italic;">Çınar Özmeral</p>
-            <p style="margin: 0 0 3px 0; color: #1a365d; font-weight: bold; font-style: italic;">Senior Consultant</p>
-            <p style="margin: 0 0 15px 0; color: #1a365d; font-weight: bold; font-style: italic;">Vg Consultancy</p>
-            
             <p style="margin: 0 0 3px 0;">
                 <a href="https://vgdanismanlik.com" style="color: #2563eb; text-decoration: underline; font-weight: bold; font-style: italic;">vgdanismanlik.com</a>
             </p>
@@ -786,8 +782,10 @@ const sendProfileReminderEmail = async (user) => {
     const html = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f0f4f8;">
             <div style="background: linear-gradient(135deg, #0056b3, #003d82); padding: 30px 20px; text-align: center; border-radius: 8px 8px 0 0;">
-                <img src="https://vgdanismanlik.com/images/logos/venture-global-logo.png" alt="Venture Global" style="height: 60px; margin-bottom: 10px;">
-                <h1 style="color: white; margin: 0; font-size: 22px;">Profilinizi Tamamlayın</h1>
+                <div style="display: inline-block; background: white; border-radius: 50%; padding: 10px; margin-bottom: 12px;">
+                    <img src="https://vgdanismanlik.com/images/logos/venture-global-logo.png" alt="Venture Global" style="height: 55px; width: auto; display: block;">
+                </div>
+                <h1 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: bold;">Profilinizi Tamamlayın</h1>
             </div>
             <div style="background: white; padding: 30px; border-radius: 0 0 8px 8px;">
                 <p style="color: #333; line-height: 1.6; font-size: 16px;">
@@ -795,14 +793,14 @@ const sendProfileReminderEmail = async (user) => {
                 </p>
                 
                 <p style="color: #333; line-height: 1.6;">
-                    Venture Global ailesine hoş geldiniz! 🎓
+                    Venture Global ailesine hoş geldiniz!
                 </p>
                 
                 <div style="background: linear-gradient(135deg, #fff3cd, #ffeeba); border: 1px solid #ffc107; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                    <h3 style="color: #856404; margin: 0 0 10px 0;">
-                        <span style="font-size: 20px;">⚠️</span> Profil Bilgileriniz Eksik
+                    <h3 style="color: #1a1a1a; margin: 0 0 10px 0; font-weight: bold;">
+                        ⚠️ Profil Bilgileriniz Eksik
                     </h3>
-                    <p style="color: #856404; margin: 0; line-height: 1.5;">
+                    <p style="color: #333333; margin: 0; line-height: 1.5;">
                         Danışmanlık hizmetlerimizden tam olarak faydalanabilmeniz için lütfen profil bilgilerinizi ve veli bilgilerinizi tamamlayın.
                     </p>
                 </div>
