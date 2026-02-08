@@ -1326,11 +1326,11 @@ input:checked + .slider:before {
 
 <!-- Edit Guardians Modal - Dynamic Card System -->
 <div class="modal fade" id="editGuardiansModal" tabindex="-1" aria-labelledby="editGuardiansModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title" id="editGuardiansModalLabel">
-                    <i class="fas fa-user-friends me-2"></i>Veli Bilgilerini Düzenle
+                    Veli Bilgilerini Düzenle
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -3544,15 +3544,14 @@ const adminRelLabels = { 'Anne': 'Anne', 'Baba': 'Baba', 'Kardes': 'Kardeş', 'D
 
 function adminCreateGuardianCardHTML(guardian, index, isRequired) {
     const rel = guardian.relationship || (index === 0 ? 'Anne' : index === 1 ? 'Baba' : 'Diger');
-    const icon = rel === 'Anne' ? 'fa-female' : rel === 'Baba' ? 'fa-male' : 'fa-user';
-    const label = adminRelLabels[rel] || rel;
-    const requiredTag = isRequired ? '<span class="badge bg-danger ms-2">Zorunlu</span>' : '<span class="badge bg-secondary ms-2">Opsiyonel</span>';
-    const deleteBtn = !isRequired ? `<button type="button" class="btn btn-sm btn-outline-danger" onclick="adminRemoveGuardianCard(this)"><i class="fas fa-trash"></i></button>` : '';
+    const veliNo = index + 1;
+    const requiredTag = isRequired ? '<span class="badge bg-danger ms-2">Zorunlu</span>' : '';
+    const deleteBtn = !isRequired ? `<button type="button" class="btn btn-sm btn-outline-light" onclick="adminRemoveGuardianCard(this)"><i class="fas fa-trash"></i></button>` : '';
     
     return `
     <div class="card mb-3 admin-guardian-card" data-index="${index}" data-required="${isRequired}">
-        <div class="card-header bg-primary bg-opacity-10 d-flex justify-content-between align-items-center">
-            <h6 class="mb-0"><i class="fas ${icon} me-2"></i>${label} Bilgileri ${requiredTag}</h6>
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #0056b3, #003d82) !important;">
+            <h6 class="mb-0 text-white">${veliNo}. Veli ${requiredTag}</h6>
             ${deleteBtn}
         </div>
         <div class="card-body">
@@ -3617,14 +3616,14 @@ function adminRenderGuardiansDisplay(guardiansList) {
     }
     
     let html = '<div class="row g-3">';
-    guardiansList.forEach(g => {
-        const icon = g.relationship === 'Anne' ? 'fa-female' : g.relationship === 'Baba' ? 'fa-male' : 'fa-user';
-        const label = adminRelLabels[g.relationship] || g.relationship;
+    guardiansList.forEach((g, idx) => {
+        const veliNo = idx + 1;
+        const relLabel = adminRelLabels[g.relationship] || g.relationship;
         html += `
         <div class="col-md-6">
             <div class="card h-100">
-                <div class="card-header bg-primary bg-opacity-10 py-2">
-                    <h6 class="mb-0"><i class="fas ${icon} me-2"></i>${label}</h6>
+                <div class="card-header bg-primary text-white py-2" style="background: linear-gradient(135deg, #0056b3, #003d82) !important;">
+                    <h6 class="mb-0 text-white">${veliNo}. Veli (${relLabel})</h6>
                 </div>
                 <div class="card-body py-2">
                     <p class="mb-1"><strong>Ad Soyad:</strong> ${g.full_name || 'Belirtilmemiş'}</p>

@@ -445,15 +445,14 @@
 
         function createGuardianCardHTML(guardian, index, isRequired) {
             const rel = guardian.relationship || (index === 0 ? 'Anne' : index === 1 ? 'Baba' : 'Diger');
-            const icon = rel === 'Anne' ? 'fa-female' : rel === 'Baba' ? 'fa-male' : 'fa-user';
-            const label = relationshipLabels[rel] || rel;
-            const requiredTag = isRequired ? '<span class="badge bg-danger ms-2">Zorunlu</span>' : '<span class="badge bg-secondary ms-2">Opsiyonel</span>';
-            const deleteBtn = !isRequired ? `<button type="button" class="btn btn-sm btn-outline-danger" onclick="removeGuardianCard(this)"><i class="fas fa-trash"></i></button>` : '';
+            const veliNo = index + 1;
+            const requiredTag = isRequired ? '<span class="badge bg-danger ms-2">Zorunlu</span>' : '';
+            const deleteBtn = !isRequired ? `<button type="button" class="btn btn-sm btn-outline-light" onclick="removeGuardianCard(this)"><i class="fas fa-trash"></i></button>` : '';
             
             return `
             <div class="card mb-3 guardian-card" data-index="${index}" data-required="${isRequired}">
-                <div class="card-header bg-primary bg-opacity-10 d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0"><i class="fas ${icon} me-2"></i>${label} Bilgileri ${requiredTag}</h6>
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #0056b3, #003d82) !important;">
+                    <h6 class="mb-0 text-white">${veliNo}. Veli ${requiredTag}</h6>
                     ${deleteBtn}
                 </div>
                 <div class="card-body">
