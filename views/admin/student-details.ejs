@@ -429,7 +429,7 @@
                                         </div>
                                     </div>
                                 </div>
-
+                                
                                 <!-- File List -->
                                 <div class="card">
                                     <div class="card-header bg-primary text-white" style="background-color: #2563eb !important; color: white !important; background: #2563eb !important;">
@@ -1326,8 +1326,8 @@ input:checked + .slider:before {
 
 <!-- Edit Guardians Modal - Dynamic Card System -->
 <div class="modal fade" id="editGuardiansModal" tabindex="-1" aria-labelledby="editGuardiansModalLabel" aria-hidden="true" style="z-index: 1070;">
-    <div class="modal-dialog modal-xl modal-dialog-scrollable" style="margin-top: 10px; margin-bottom: 10px;">
-        <div class="modal-content" style="max-height: calc(100vh - 20px);">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" style="max-height: 85vh;">
             <div class="modal-header bg-primary text-white py-2">
                 <h6 class="modal-title mb-0" id="editGuardiansModalLabel">
                     Veli Bilgilerini Düzenle
@@ -1339,13 +1339,13 @@ input:checked + .slider:before {
                 <p class="text-muted mb-2 small"><i class="fas fa-info-circle me-1"></i>En az 2 veli zorunludur. Ek veli eklemek için "Veli Ekle" butonunu kullanın.</p>
                 <div id="adminGuardiansContainer">
                     <!-- Guardian cards will be rendered dynamically -->
-                </div>
+                        </div>
                 <div class="text-center mt-3">
                     <button type="button" class="btn btn-outline-primary" onclick="adminAddGuardianCard()">
                         <i class="fas fa-plus me-2"></i>Veli Ekle
                     </button>
-                </div>
-            </div>
+                                    </div>
+                                </div>
             <div class="modal-footer py-2">
                 <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">İptal</button>
                 <button type="button" class="btn btn-sm btn-primary" onclick="adminSaveGuardians()">
