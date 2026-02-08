@@ -1326,7 +1326,7 @@ input:checked + .slider:before {
 
 <!-- Edit Guardians Modal - Dynamic Card System -->
 <div class="modal fade" id="editGuardiansModal" tabindex="-1" aria-labelledby="editGuardiansModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable" style="margin-top: 30px;">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title" id="editGuardiansModalLabel">
@@ -1334,7 +1334,7 @@ input:checked + .slider:before {
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="max-height: calc(100vh - 160px); overflow-y: auto;">
                 <div id="adminGuardiansAlertContainer"></div>
                 <p class="text-muted mb-3"><i class="fas fa-info-circle me-1"></i>En az 2 veli bilgisi (Anne ve Baba) zorunludur. Ek veli eklemek için "Veli Ekle" butonunu kullanabilirsiniz.</p>
                 <div id="adminGuardiansContainer">
