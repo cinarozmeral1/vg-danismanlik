@@ -17,3 +17,4 @@ CREATE INDEX IF NOT EXISTS idx_universities_sort_order
 ON universities(sort_order);
 
 
+

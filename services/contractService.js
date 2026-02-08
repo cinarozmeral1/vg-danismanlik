@@ -100,34 +100,34 @@ function generateTextOnlyPdf(data) {
             const RX = doc.page.width - 65;
             const CLR = { dk: '#1a365d', tx: '#222', mu: '#777' };
 
-            // Font sizes (increased per plan)
-            const SZ = { title: 14, sec: 11, body: 10, field: 9.5, label: 9.5, small: 8.5, tiny: 8 };
+            // Font sizes – larger for readability
+            const SZ = { title: 17, sec: 14, body: 12, field: 11.5, label: 11.5, small: 10.5, tiny: 9.5 };
 
             // ── Helpers ──
             function section(title) {
-                doc.moveDown(0.5);
+                doc.moveDown(0.7);
                 doc.font('B').fontSize(SZ.sec).fillColor(CLR.dk).text(title, ML);
-                const y = doc.y + 2;
+                const y = doc.y + 3;
                 doc.moveTo(ML, y).lineTo(RX, y).strokeColor(CLR.dk).lineWidth(0.5).stroke();
-                doc.y = y + 5;
+                doc.y = y + 7;
             }
 
             function field(label, value) {
-                doc.font('B').fontSize(SZ.field).fillColor('#444').text(label, ML + 8, doc.y, { continued: true, width: PW - 16 });
-                doc.font('R').fontSize(SZ.field).fillColor(CLR.tx).text(' ' + value, { width: PW - 16 });
+                doc.font('B').fontSize(SZ.field).fillColor('#444').text(label, ML, doc.y, { continued: true, width: PW });
+                doc.font('R').fontSize(SZ.field).fillColor(CLR.tx).text(' ' + value, { width: PW });
+                doc.moveDown(0.1);
             }
 
-            function para(text, indent) {
-                const x = ML + (indent || 0);
-                doc.font('R').fontSize(SZ.body).fillColor(CLR.tx).text(text, x, doc.y, { width: PW - (indent || 0), lineGap: 2.5 });
+            function para(text) {
+                doc.font('R').fontSize(SZ.body).fillColor(CLR.tx).text(text, ML, doc.y, { width: PW, lineGap: 4.5, align: 'left' });
             }
 
             function item(num, text) {
-                doc.font('R').fontSize(SZ.body).fillColor(CLR.tx).text(`${num} ${text}`, ML + 8, doc.y, { width: PW - 16, lineGap: 2 });
+                doc.font('R').fontSize(SZ.body).fillColor(CLR.tx).text(`${num} ${text}`, ML, doc.y, { width: PW, lineGap: 4, align: 'left' });
             }
 
-            function bullet(text, indent) {
-                doc.font('R').fontSize(SZ.body).fillColor(CLR.tx).text(`• ${text}`, ML + (indent || 16), doc.y, { width: PW - (indent || 16) - 8, lineGap: 1.5 });
+            function bullet(text) {
+                doc.font('R').fontSize(SZ.body).fillColor(CLR.tx).text(`• ${text}`, ML, doc.y, { width: PW, lineGap: 3.5, align: 'left' });
             }
 
             function checkPage(needed) {
@@ -158,8 +158,8 @@ function generateTextOnlyPdf(data) {
             // ── TARAFLAR ──
             section('TARAFLAR');
 
-            doc.font('B').fontSize(SZ.body).fillColor(CLR.dk).text('1. DANIŞMAN', ML + 4);
-            doc.moveDown(0.1);
+            doc.font('B').fontSize(SZ.body).fillColor(CLR.dk).text('1. DANIŞMAN', ML);
+            doc.moveDown(0.15);
             field('Unvan:', 'Venture Global Yurt Dışı Eğitim Danışmanlık');
             field('Adres:', 'İstanbul, Türkiye');
             field('Telefon:', '+90 539 927 30 08');
@@ -167,8 +167,8 @@ function generateTextOnlyPdf(data) {
             field('Web:', 'www.vgdanismanlik.com');
             field('TL IBAN:', 'TR56 0006 4000 0011 2120 9085 60');
             field('EUR IBAN:', 'TR56 0006 4000 0011 2120 9085 60');
-            doc.font('R').fontSize(SZ.small).fillColor(CLR.mu).text('(Bundan böyle "DANIŞMAN" olarak anılacaktır.)', ML + 8);
-            doc.moveDown(0.25);
+            doc.font('R').fontSize(SZ.small).fillColor(CLR.mu).text('(Bundan böyle "DANIŞMAN" olarak anılacaktır.)', ML);
+            doc.moveDown(0.35);
 
             // Find primary guardian (prefer Baba, then Anne, then first available)
             const primaryGuardian = (guardians || []).find(g => g.relationship === 'Baba') 
@@ -180,39 +180,39 @@ function generateTextOnlyPdf(data) {
             const gPhone = primaryGuardian && primaryGuardian.phone ? primaryGuardian.phone : bl;
             const gEmail = primaryGuardian && primaryGuardian.email ? primaryGuardian.email : bl;
 
-            doc.font('B').fontSize(SZ.body).fillColor(CLR.dk).text('2. VELİ / YASAL TEMSİLCİ', ML + 4);
-            doc.moveDown(0.1);
+            doc.font('B').fontSize(SZ.body).fillColor(CLR.dk).text('2. VELİ / YASAL TEMSİLCİ', ML);
+            doc.moveDown(0.15);
             field('Adı Soyadı:', gName);
             field('T.C. Kimlik No:', gTc);
             field('Adres:', gAddr);
             field('Telefon:', gPhone);
             field('E-posta:', gEmail);
-            doc.font('R').fontSize(SZ.small).fillColor(CLR.mu).text('(Bundan böyle "VELİ" olarak anılacaktır.)', ML + 8);
-            doc.moveDown(0.25);
+            doc.font('R').fontSize(SZ.small).fillColor(CLR.mu).text('(Bundan böyle "VELİ" olarak anılacaktır.)', ML);
+            doc.moveDown(0.35);
 
-            doc.font('B').fontSize(SZ.body).fillColor(CLR.dk).text('3. ÖĞRENCİ (Hizmetten Faydalanacak Kişi)', ML + 4);
-            doc.moveDown(0.1);
+            doc.font('B').fontSize(SZ.body).fillColor(CLR.dk).text('3. ÖĞRENCİ (Hizmetten Faydalanacak Kişi)', ML);
+            doc.moveDown(0.15);
             field('Adı Soyadı:', sn);
             field('T.C. Kimlik No:', tc);
             field('Doğum Tarihi:', bd);
             field('Pasaport No:', pp);
-            doc.font('R').fontSize(SZ.small).fillColor(CLR.mu).text('(Bundan böyle "ÖĞRENCİ" olarak anılacaktır.)', ML + 8);
+            doc.font('R').fontSize(SZ.small).fillColor(CLR.mu).text('(Bundan böyle "ÖĞRENCİ" olarak anılacaktır.)', ML);
 
             // ── MADDE 1 ──
-            checkPage(70);
+            checkPage(90);
             section('MADDE 1 – SÖZLEŞMENİN KONUSU');
             para('İşbu sözleşme, DANIŞMAN\'ın ÖĞRENCİ\'ye yurt dışında yükseköğretim eğitimi alabilmesi için danışmanlık hizmeti vermesine ilişkin tarafların karşılıklı hak ve yükümlülüklerini düzenlemektedir.');
-            doc.moveDown(0.15);
+            doc.moveDown(0.25);
             field('Hedef Ülke/Ülkeler:', country);
             field('Hedef Program:', program);
             const yr = new Date().getFullYear();
             field('Hedef Dönem:', `${yr}-${yr + 1}`);
 
             // ── MADDE 2 ──
-            checkPage(80);
+            checkPage(100);
             section('MADDE 2 – DANIŞMANLIK HİZMETLERİ (DAHİL OLAN)');
             para('DANIŞMAN, işbu sözleşme kapsamında aşağıdaki hizmetleri sunmayı taahhüt eder:');
-            doc.moveDown(0.15);
+            doc.moveDown(0.25);
 
             const svcList = [
                 ['2.1. Öğrenci Profili ve İhtiyaç Analizi', ['Öğrencinin akademik geçmişi, ilgi alanları ve hedeflerine yönelik ayrıntılı analiz ve değerlendirme']],
@@ -227,17 +227,18 @@ function generateTextOnlyPdf(data) {
             ];
 
             for (const [title, items] of svcList) {
-                checkPage(20 + items.length * 12);
-                doc.font('B').fontSize(SZ.body).fillColor(CLR.dk).text(title, ML + 8, doc.y, { width: PW - 16 });
-                for (const it of items) { bullet(it, 20); }
+                checkPage(30 + items.length * 18);
+                doc.font('B').fontSize(SZ.body).fillColor(CLR.dk).text(title, ML, doc.y, { width: PW });
                 doc.moveDown(0.1);
+                for (const it of items) { bullet(it); }
+                doc.moveDown(0.2);
             }
 
             // ── MADDE 3 ──
-            checkPage(90);
+            checkPage(110);
             section('MADDE 3 – DAHİL OLMAYAN HİZMETLER VE MASRAFLAR');
             para('Aşağıdaki masraflar işbu sözleşme kapsamı dışındadır ve VELİ/ÖĞRENCİ tarafından ayrıca karşılanacaktır:');
-            doc.moveDown(0.1);
+            doc.moveDown(0.2);
             const excl = [
                 '3.1. Üniversite harç, kayıt ve eğitim ücretleri',
                 '3.2. Konaklama (yurt, apartman vb.) ücretleri',
@@ -249,10 +250,10 @@ function generateTextOnlyPdf(data) {
                 '3.8. Günlük yaşam giderleri',
                 '3.9. Türkiye dışında havalimanı transferi (Çek Cumhuriyeti Prag hariç)'
             ];
-            for (const e of excl) { item('', e); }
+            for (const e of excl) { item('', e); doc.moveDown(0.05); }
 
             // ── MADDE 4 ──
-            checkPage(100);
+            checkPage(120);
             section('MADDE 4 – DANIŞMANLIK ÜCRETİ VE ÖDEME KOŞULLARI');
 
             const totalStr = total > 0 ? formatCurrency(total, cur) : '_________ EUR';
@@ -261,48 +262,49 @@ function generateTextOnlyPdf(data) {
             const inst2 = a2 ? formatCurrency(a2, cur) : '_________ EUR';
 
             doc.font('B').fontSize(SZ.body).fillColor(CLR.tx)
-                .text(`4.1. Toplam Danışmanlık Ücreti: ${totalStr}`, ML + 8, doc.y, { width: PW - 16 });
+                .text(`4.1. Toplam Danışmanlık Ücreti: ${totalStr}`, ML, doc.y, { width: PW });
             doc.font('R').fontSize(SZ.body)
-                .text(`       (Yazıyla: ${totalTxt} Euro)`, ML + 8, doc.y, { width: PW - 16 });
-            doc.moveDown(0.2);
+                .text(`(Yazıyla: ${totalTxt} Euro)`, ML, doc.y, { width: PW });
+            doc.moveDown(0.3);
 
-            doc.font('B').fontSize(SZ.body).text('4.2. Ödeme Planı:', ML + 8);
-            doc.moveDown(0.1);
-
-            doc.font('B').fontSize(SZ.body)
-                .text(`a) BİRİNCİ TAKSİT (Kabul Öncesi Danışmanlık Ücreti): ${inst1}`, ML + 16, doc.y, { width: PW - 32 });
-            doc.font('R').fontSize(SZ.body)
-                .text('İşbu sözleşmenin imzalanması ile birlikte peşin olarak ödenir. Bu ödeme, danışmanlık hizmetinin başlangıç bedeli olup, hizmetin fiilen başladığını gösterir.', ML + 16, doc.y, { width: PW - 32, lineGap: 1 });
+            doc.font('B').fontSize(SZ.body).text('4.2. Ödeme Planı:', ML);
             doc.moveDown(0.15);
 
             doc.font('B').fontSize(SZ.body)
-                .text(`b) İKİNCİ TAKSİT (Kabul Sonrası Danışmanlık Ücreti): ${inst2}`, ML + 16, doc.y, { width: PW - 32 });
+                .text(`a) BİRİNCİ TAKSİT (Kabul Öncesi Danışmanlık Ücreti): ${inst1}`, ML, doc.y, { width: PW });
             doc.font('R').fontSize(SZ.body)
-                .text('Öğrencinin hedef üniversitelerden birine kabul alması halinde, kabul mektubunun tesliminden itibaren 7 (yedi) iş günü içinde ödenir.', ML + 16, doc.y, { width: PW - 32, lineGap: 1 });
-            doc.moveDown(0.2);
+                .text('İşbu sözleşmenin imzalanması ile birlikte peşin olarak ödenir. Bu ödeme, danışmanlık hizmetinin başlangıç bedeli olup, hizmetin fiilen başladığını gösterir.', ML, doc.y, { width: PW, lineGap: 4 });
+            doc.moveDown(0.25);
 
-            doc.font('B').fontSize(SZ.body).text('4.3. Ödeme Yöntemi:', ML + 8);
-            para('Ödemeler, yukarıda belirtilen IBAN numaralarına havale/EFT yoluyla veya nakit olarak yapılabilir. Havale açıklamasına ÖĞRENCİ\'nin adı soyadı yazılmalıdır.', 16);
-            doc.moveDown(0.15);
+            doc.font('B').fontSize(SZ.body)
+                .text(`b) İKİNCİ TAKSİT (Kabul Sonrası Danışmanlık Ücreti): ${inst2}`, ML, doc.y, { width: PW });
+            doc.font('R').fontSize(SZ.body)
+                .text('Öğrencinin hedef üniversitelerden birine kabul alması halinde, kabul mektubunun tesliminden itibaren 7 (yedi) iş günü içinde ödenir.', ML, doc.y, { width: PW, lineGap: 4 });
+            doc.moveDown(0.3);
 
-            doc.font('B').fontSize(SZ.body).text('4.4. Döviz Kuru:', ML + 8);
-            para('EUR cinsinden belirlenen ücretler, ödeme günündeki T.C. Merkez Bankası EUR efektif satış kuru üzerinden TL\'ye çevrilebilir.', 16);
+            doc.font('B').fontSize(SZ.body).text('4.3. Ödeme Yöntemi:', ML);
+            para('Ödemeler, yukarıda belirtilen IBAN numaralarına havale/EFT yoluyla veya nakit olarak yapılabilir. Havale açıklamasına ÖĞRENCİ\'nin adı soyadı yazılmalıdır.');
+            doc.moveDown(0.25);
+
+            doc.font('B').fontSize(SZ.body).text('4.4. Döviz Kuru:', ML);
+            para('EUR cinsinden belirlenen ücretler, ödeme günündeki T.C. Merkez Bankası EUR efektif satış kuru üzerinden TL\'ye çevrilebilir.');
 
             // ── MADDE 5 ──
-            checkPage(80);
+            checkPage(100);
             section('MADDE 5 – İADE POLİTİKASI');
 
-            doc.font('B').fontSize(SZ.body).text('5.1. Birinci Taksit İadesi:', ML + 8);
-            para('Birinci taksit, sözleşmenin imzalanması ve hizmetin başlaması ile birlikte İADE EDİLMEZ niteliğindedir. VELİ veya ÖĞRENCİ\'nin herhangi bir sebeple danışmanlık hizmetinden vazgeçmesi halinde, bu tutar verilen hizmetin karşılığı olarak DANIŞMAN\'da kalacaktır.', 8);
-            doc.moveDown(0.15);
+            doc.font('B').fontSize(SZ.body).text('5.1. Birinci Taksit İadesi:', ML);
+            para('Birinci taksit, sözleşmenin imzalanması ve hizmetin başlaması ile birlikte İADE EDİLMEZ niteliğindedir. VELİ veya ÖĞRENCİ\'nin herhangi bir sebeple danışmanlık hizmetinden vazgeçmesi halinde, bu tutar verilen hizmetin karşılığı olarak DANIŞMAN\'da kalacaktır.');
+            doc.moveDown(0.25);
 
-            doc.font('B').fontSize(SZ.body).text('5.2. İkinci Taksit:', ML + 8);
-            para('a) ÖĞRENCİ, başvurduğu üniversitelerin hiçbirinden kabul alamaması durumunda ikinci taksit talep edilmez.', 16);
-            para('b) ÖĞRENCİ kabul aldığı halde kendi isteğiyle eğitimden vazgeçerse, ikinci taksit tam olarak ödenir.', 16);
-            doc.moveDown(0.15);
+            doc.font('B').fontSize(SZ.body).text('5.2. İkinci Taksit:', ML);
+            para('a) ÖĞRENCİ, başvurduğu üniversitelerin hiçbirinden kabul alamaması durumunda ikinci taksit talep edilmez.');
+            doc.moveDown(0.1);
+            para('b) ÖĞRENCİ kabul aldığı halde kendi isteğiyle eğitimden vazgeçerse, ikinci taksit tam olarak ödenir.');
+            doc.moveDown(0.25);
 
-            doc.font('B').fontSize(SZ.body).text('5.3. Mücbir Sebepler:', ML + 8);
-            para('Savaş, doğal afet, pandemi gibi mücbir sebeplerden kaynaklanan aksaklıklarda taraflar karşılıklı mutabakat ile çözüm arayacaktır.', 8);
+            doc.font('B').fontSize(SZ.body).text('5.3. Mücbir Sebepler:', ML);
+            para('Savaş, doğal afet, pandemi gibi mücbir sebeplerden kaynaklanan aksaklıklarda taraflar karşılıklı mutabakat ile çözüm arayacaktır.');
 
             // ── MADDE 6 ──
             checkPage(80);
@@ -313,10 +315,11 @@ function generateTextOnlyPdf(data) {
             item('6.4.', 'DANIŞMAN, üniversite başvurularının kabul garantisi vermemektedir. Kabul kararı tamamen üniversitelerin yetkisindedir.');
 
             // ── MADDE 7 ──
-            checkPage(110);
+            checkPage(130);
             section('MADDE 7 – TARAFLARIN YÜKÜMLÜLÜKLERİ');
 
-            doc.font('B').fontSize(SZ.body).text('7.1. DANIŞMAN\'ın Yükümlülükleri:', ML + 8);
+            doc.font('B').fontSize(SZ.body).text('7.1. DANIŞMAN\'ın Yükümlülükleri:', ML);
+            doc.moveDown(0.1);
             const dYuk = [
                 'Sözleşme kapsamındaki hizmetleri profesyonel standartlarda ve özenle yerine getirmek',
                 'ÖĞRENCİ\'yi başvuru süreçleri hakkında doğru ve güncel bilgilendirmek',
@@ -327,12 +330,13 @@ function generateTextOnlyPdf(data) {
             const abc = ['a', 'b', 'c', 'd', 'e', 'f'];
             for (let i = 0; i < dYuk.length; i++) {
                 doc.font('R').fontSize(SZ.body).fillColor(CLR.tx)
-                    .text(`${abc[i]}) ${dYuk[i]}`, ML + 16, doc.y, { width: PW - 32, lineGap: 1 });
+                    .text(`${abc[i]}) ${dYuk[i]}`, ML, doc.y, { width: PW, lineGap: 4 });
             }
-            doc.moveDown(0.2);
+            doc.moveDown(0.3);
 
-            checkPage(80);
-            doc.font('B').fontSize(SZ.body).text('7.2. VELİ ve ÖĞRENCİ\'nin Yükümlülükleri:', ML + 8);
+            checkPage(100);
+            doc.font('B').fontSize(SZ.body).text('7.2. VELİ ve ÖĞRENCİ\'nin Yükümlülükleri:', ML);
+            doc.moveDown(0.1);
             const vYuk = [
                 'DANIŞMAN\'a doğru, eksiksiz ve güncel bilgi vermek',
                 'İstenen belgeleri zamanında ve eksiksiz teslim etmek',
@@ -343,21 +347,25 @@ function generateTextOnlyPdf(data) {
             ];
             for (let i = 0; i < vYuk.length; i++) {
                 doc.font('R').fontSize(SZ.body).fillColor(CLR.tx)
-                    .text(`${abc[i]}) ${vYuk[i]}`, ML + 16, doc.y, { width: PW - 32, lineGap: 1 });
+                    .text(`${abc[i]}) ${vYuk[i]}`, ML, doc.y, { width: PW, lineGap: 4 });
             }
-            doc.moveDown(0.1);
+            doc.moveDown(0.15);
             item('7.3.', 'Yanlış veya eksik bilgi verilmesi nedeniyle doğacak tüm sorumluluk VELİ ve ÖĞRENCİ\'ye aittir.');
 
             // ── MADDE 8 ──
-            checkPage(70);
+            checkPage(90);
             section('MADDE 8 – GİZLİLİK VE KVKK');
             item('8.1.', 'DANIŞMAN, işbu sözleşme kapsamında edindiği tüm kişisel bilgileri 6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") hükümlerine uygun olarak işleyeceğini ve koruyacağını taahhüt eder.');
+            doc.moveDown(0.1);
             item('8.2.', 'Kişisel veriler yalnızca aşağıdaki amaçlarla kullanılacaktır:');
-            bullet('Üniversite başvurularının yapılması', 24);
-            bullet('Vize başvuru işlemlerinin yürütülmesi', 24);
-            bullet('Konaklama düzenlemelerinin sağlanması', 24);
-            bullet('İletişim ve bilgilendirme', 24);
+            doc.moveDown(0.1);
+            bullet('Üniversite başvurularının yapılması');
+            bullet('Vize başvuru işlemlerinin yürütülmesi');
+            bullet('Konaklama düzenlemelerinin sağlanması');
+            bullet('İletişim ve bilgilendirme');
+            doc.moveDown(0.1);
             item('8.3.', 'VELİ ve ÖĞRENCİ, kişisel verilerinin yukarıda belirtilen amaçlarla yurt dışındaki üniversiteler, konsolosluklar ve konaklama sağlayıcıları ile paylaşılmasına açıkça onay vermektedir.');
+            doc.moveDown(0.1);
             item('8.4.', 'Taraflar, sözleşme şartlarını ve ücret bilgilerini üçüncü şahıslarla paylaşmamayı kabul eder.');
 
             // ── MADDE 9 ──
