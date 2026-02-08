@@ -608,6 +608,13 @@
                 if (data.success) {
                     showAlert('success', data.message);
                     
+                    // Google Ads Conversion Tracking - Registration
+                    if (typeof gtag === 'function') {
+                        gtag('event', 'conversion', {
+                            'send_to': 'AW-17936806150/HJn9CM6p8vQbEIbi9-hC'
+                        });
+                    }
+                    
                     // Redirect based on response
                     setTimeout(() => {
                         window.location.href = data.redirect || '/user/dashboard';

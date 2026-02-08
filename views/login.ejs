@@ -394,6 +394,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 `;
                 
+                // Google Ads Conversion Tracking - New Registration
+                if (data.is_new_user && typeof gtag === 'function') {
+                    gtag('event', 'conversion', {
+                        'send_to': 'AW-17936806150/HJn9CM6p8vQbEIbi9-hC'
+                    });
+                }
+                
                 setTimeout(() => {
                     const urlParams = new URLSearchParams(window.location.search);
                     const redirect = urlParams.get('redirect');
