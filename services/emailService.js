@@ -780,49 +780,85 @@ const sendVisaApplicationEmail = async (user, country, consulateCity, status) =>
 // =====================================================
 const sendProfileReminderEmail = async (user) => {
     const html = `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f0f4f8;">
+        <!DOCTYPE html>
+        <html lang="tr" xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office">
+        <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta name="color-scheme" content="light only">
+            <meta name="supported-color-schemes" content="light only">
+            <!--[if mso]><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch><o:AllowPNG/></o:OfficeDocumentSettings></xml><![endif]-->
+            <style>
+                :root { color-scheme: light only; supported-color-schemes: light only; }
+                body, .email-bg, .email-card, .email-warning, .email-info-box { background-color: inherit !important; }
+                [data-ogsc] .email-warning { background-color: #fff3cd !important; }
+                [data-ogsc] .email-warning h3, [data-ogsc] .email-warning p { color: #1a1a1a !important; }
+                [data-ogsc] .email-card { background-color: #ffffff !important; }
+                [data-ogsc] .email-card p, [data-ogsc] .email-card h4, [data-ogsc] .email-card li { color: #333333 !important; }
+                @media (prefers-color-scheme: dark) {
+                    .email-bg { background-color: #f0f4f8 !important; }
+                    .email-card { background-color: #ffffff !important; color: #333333 !important; }
+                    .email-warning { background-color: #fff3cd !important; }
+                    .email-warning h3, .email-warning p { color: #1a1a1a !important; }
+                    .email-info-box { background-color: #f8f9fa !important; }
+                    .email-info-box h4 { color: #333333 !important; }
+                    .email-info-box li { color: #555555 !important; }
+                    .dark-text { color: #333333 !important; }
+                    .dark-text-light { color: #555555 !important; }
+                    .dark-text-muted { color: #666666 !important; }
+                    u + .body .email-bg { background-color: #f0f4f8 !important; }
+                }
+            </style>
+        </head>
+        <body class="body" style="margin: 0; padding: 0; background-color: #f0f4f8;">
+        <div class="email-bg" style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f0f4f8;">
             <div style="background: linear-gradient(135deg, #0056b3, #003d82); padding: 30px 20px; text-align: center; border-radius: 8px 8px 0 0;">
-                <div style="display: inline-block; background: white; border-radius: 50%; padding: 10px; margin-bottom: 12px;">
+                <div style="display: inline-block; background-color: #ffffff; border-radius: 50%; padding: 10px; margin-bottom: 12px;">
                     <img src="https://vgdanismanlik.com/images/logos/venture-global-logo.png" alt="Venture Global" style="height: 55px; width: auto; display: block;">
                 </div>
                 <h1 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: bold;">Profilinizi Tamamlayın</h1>
             </div>
-            <div style="background: white; padding: 30px; border-radius: 0 0 8px 8px;">
-                <p style="color: #333; line-height: 1.6; font-size: 16px;">
+            <div class="email-card" style="background-color: #ffffff; padding: 30px; border-radius: 0 0 8px 8px;">
+                <p class="dark-text" style="color: #333333; line-height: 1.6; font-size: 16px;">
                     Merhaba <strong>${user.first_name || 'Değerli Öğrencimiz'}</strong>,
                 </p>
                 
-                <p style="color: #333; line-height: 1.6;">
+                <p class="dark-text" style="color: #333333; line-height: 1.6;">
                     Venture Global ailesine hoş geldiniz!
                 </p>
                 
-                <div style="background: linear-gradient(135deg, #fff3cd, #ffeeba); border: 1px solid #ffc107; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <!--[if mso]><table width="100%" cellpadding="20" cellspacing="0" style="background-color:#fff3cd;border:2px solid #ffc107;border-radius:8px;"><tr><td><![endif]-->
+                <div class="email-warning" style="background-color: #fff3cd; border: 2px solid #ffc107; padding: 20px; border-radius: 8px; margin: 20px 0;">
                     <h3 style="color: #1a1a1a; margin: 0 0 10px 0; font-weight: bold;">
-                        ⚠️ Profil Bilgileriniz Eksik
+                        <span style="font-size: 20px;">⚠️</span> <span style="color: #1a1a1a;">Profil Bilgileriniz Eksik</span>
                     </h3>
-                    <p style="color: #333333; margin: 0; line-height: 1.5;">
+                    <p style="color: #1a1a1a; margin: 0; line-height: 1.5;">
                         Danışmanlık hizmetlerimizden tam olarak faydalanabilmeniz için lütfen profil bilgilerinizi ve veli bilgilerinizi tamamlayın.
                     </p>
                 </div>
+                <!--[if mso]></td></tr></table><![endif]-->
 
-                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                    <h4 style="color: #333; margin: 0 0 10px 0;">Tamamlamanız Gereken Bilgiler:</h4>
-                    <ul style="color: #555; line-height: 2; padding-left: 20px;">
-                        <li>Kişisel Bilgiler (Ad, Soyad, TC Kimlik No, Telefon)</li>
-                        <li>Doğum Tarihi ve Pasaport Bilgileri</li>
-                        <li>Aktif Olarak Okuduğu Okul</li>
-                        <li>Ev Adresi</li>
-                        <li>Veli Bilgileri (Anne ve Baba - en az 2 zorunlu)</li>
+                <div class="email-info-box" style="background-color: #f8f9fa; border: 1px solid #dee2e6; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                    <h4 class="dark-text" style="color: #333333; margin: 0 0 10px 0;">Tamamlamanız Gereken Bilgiler:</h4>
+                    <ul class="dark-text-light" style="color: #555555; line-height: 2; padding-left: 20px;">
+                        <li style="color: #555555;">Kişisel Bilgiler (Ad, Soyad, TC Kimlik No, Telefon)</li>
+                        <li style="color: #555555;">Doğum Tarihi ve Pasaport Bilgileri</li>
+                        <li style="color: #555555;">Aktif Olarak Okuduğu Okul</li>
+                        <li style="color: #555555;">Ev Adresi</li>
+                        <li style="color: #555555;">Veli Bilgileri (Anne ve Baba - en az 2 zorunlu)</li>
                     </ul>
                 </div>
 
                 <div style="text-align: center; margin: 25px 0;">
-                    <a href="https://vgdanismanlik.com/user/dashboard" style="background: linear-gradient(135deg, #0056b3, #003d82); color: white; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block; font-size: 16px;">
+                    <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" href="https://vgdanismanlik.com/user/dashboard" style="height:48px;v-text-anchor:middle;width:220px;" arcsize="17%" strokecolor="#003d82" fillcolor="#0056b3"><center style="color:#ffffff;font-family:Arial;font-size:16px;font-weight:bold;">Profilimi Tamamla</center></v:roundrect><![endif]-->
+                    <!--[if !mso]><!-->
+                    <a href="https://vgdanismanlik.com/user/dashboard" style="background-color: #0056b3; background: linear-gradient(135deg, #0056b3, #003d82); color: #ffffff; padding: 14px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block; font-size: 16px;">
                         Profilimi Tamamla
                     </a>
+                    <!--<![endif]-->
                 </div>
                 
-                <p style="color: #666; line-height: 1.6; font-size: 14px;">
+                <p class="dark-text-muted" style="color: #666666; line-height: 1.6; font-size: 14px;">
                     Profil bilgileriniz, sözleşme oluşturma ve başvuru süreçleri için kritik öneme sahiptir.
                     Herhangi bir sorunuz varsa bizimle iletişime geçmekten çekinmeyin.
                 </p>
@@ -830,6 +866,8 @@ const sendProfileReminderEmail = async (user) => {
                 ${getEmailSignature()}
             </div>
         </div>
+        </body>
+        </html>
     `;
     
     try {
