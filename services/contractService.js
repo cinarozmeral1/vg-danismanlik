@@ -33,11 +33,11 @@ function formatDate(d) {
     return `${String(x.getDate()).padStart(2, '0')}/${String(x.getMonth() + 1).padStart(2, '0')}/${x.getFullYear()}`;
 }
 function formatCurrency(a, c = 'EUR') {
-    if (!a && a !== 0) return '_________';
+    if (!a && a !== 0) return '';
     return `${parseFloat(a).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${c}`;
 }
 function numberToTurkishText(n) {
-    if (!n && n !== 0) return '_________';
+    if (!n && n !== 0) return '';
     n = Math.floor(parseFloat(n));
     const o = ['', 'Bir', 'İki', 'Üç', 'Dört', 'Beş', 'Altı', 'Yedi', 'Sekiz', 'Dokuz'];
     const t = ['', 'On', 'Yirmi', 'Otuz', 'Kırk', 'Elli', 'Altmış', 'Yetmiş', 'Seksen', 'Doksan'];
@@ -57,7 +57,19 @@ function generateTextOnlyPdf(data) {
     return new Promise((resolve, reject) => {
         try {
             const { user, applications, services, guardians } = data;
+            
+            // Debug logging
+            console.log('📋 Contract data:', {
+                userId: user?.id,
+                name: `${user?.first_name || ''} ${user?.last_name || ''}`,
+                guardianCount: (guardians || []).length,
+                applicationCount: (applications || []).length,
+                serviceCount: (services || []).length,
+                hasGuardians: (guardians || []).length > 0
+            });
+            
             const fp = findFont(FONT_PATHS), fb = findFont(FONT_BOLD_PATHS);
+            console.log('🔤 Fonts found:', { regular: !!fp, bold: !!fb });
 
             // Margins leave room for letterhead header (~80pt top) and footer (~55pt bottom)
             const doc = new PDFDocument({
@@ -74,16 +86,16 @@ function generateTextOnlyPdf(data) {
             doc.on('end', () => resolve(Buffer.concat(chunks)));
             doc.on('error', e => reject(e));
 
-            // ── Data ──
+            // ── Data (eksik bilgiler boş bırakılır) ──
             const today = formatDate(new Date());
-            const sn = `${user.first_name || ''} ${user.last_name || ''}`.trim() || '_________________________';
-            const tc = user.tc_number || '_________________________';
+            const sn = `${user.first_name || ''} ${user.last_name || ''}`.trim() || '';
+            const tc = user.tc_number || '';
             const bd = formatDate(user.birth_date);
-            const pp = user.passport_number || '_________________________';
+            const pp = user.passport_number || '';
             const app = applications && applications.length > 0 ? applications[0] : null;
-            const country = (app && app.country) || user.desired_country || '_________________________';
-            const program = (app && app.program_name) || '_________________________';
-            const bl = '_________________________';
+            const country = (app && app.country) || user.desired_country || '';
+            const program = (app && app.program_name) || '';
+            const bl = '';
 
             // Payment: each service = one installment, total = sum of all
             let svcs = (services || []).slice().sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
@@ -174,11 +186,11 @@ function generateTextOnlyPdf(data) {
             const primaryGuardian = (guardians || []).find(g => g.relationship === 'Baba') 
                 || (guardians || []).find(g => g.relationship === 'Anne') 
                 || (guardians || [])[0] || null;
-            const gName = primaryGuardian ? primaryGuardian.full_name : bl;
-            const gTc = primaryGuardian && primaryGuardian.tc_number ? primaryGuardian.tc_number : bl;
-            const gAddr = primaryGuardian && primaryGuardian.address ? primaryGuardian.address : bl;
-            const gPhone = primaryGuardian && primaryGuardian.phone ? primaryGuardian.phone : bl;
-            const gEmail = primaryGuardian && primaryGuardian.email ? primaryGuardian.email : bl;
+            const gName = (primaryGuardian && primaryGuardian.full_name) || '';
+            const gTc = (primaryGuardian && primaryGuardian.tc_number) || '';
+            const gAddr = (primaryGuardian && primaryGuardian.address) || '';
+            const gPhone = (primaryGuardian && primaryGuardian.phone) || '';
+            const gEmail = (primaryGuardian && primaryGuardian.email) || '';
 
             doc.font('B').fontSize(SZ.body).fillColor(CLR.dk).text('2. VELİ / YASAL TEMSİLCİ', ML);
             doc.moveDown(0.15);
@@ -256,10 +268,10 @@ function generateTextOnlyPdf(data) {
             checkPage(120);
             section('MADDE 4 – DANIŞMANLIK ÜCRETİ VE ÖDEME KOŞULLARI');
 
-            const totalStr = total > 0 ? formatCurrency(total, cur) : '_________ EUR';
-            const totalTxt = total > 0 ? numberToTurkishText(total) : '_________';
-            const inst1 = a1 ? formatCurrency(a1, cur) : '_________ EUR';
-            const inst2 = a2 ? formatCurrency(a2, cur) : '_________ EUR';
+            const totalStr = total > 0 ? formatCurrency(total, cur) : '';
+            const totalTxt = total > 0 ? numberToTurkishText(total) : '';
+            const inst1 = a1 ? formatCurrency(a1, cur) : '';
+            const inst2 = a2 ? formatCurrency(a2, cur) : '';
 
             doc.font('B').fontSize(SZ.body).fillColor(CLR.tx)
                 .text(`4.1. Toplam Danışmanlık Ücreti: ${totalStr}`, ML, doc.y, { width: PW });
@@ -461,10 +473,14 @@ function generateTextOnlyPdf(data) {
 // Step 2: Merge text pages onto letterhead template
 // ─────────────────────────────────────────────────────────────────────────────
 async function mergeWithLetterhead(textPdfBytes) {
+    console.log('📄 Starting letterhead merge...');
+    console.log('📄 Letterhead path:', LETTERHEAD_PATH);
     const letterheadBytes = fs.readFileSync(LETTERHEAD_PATH);
+    console.log('📄 Letterhead size:', letterheadBytes.length, 'bytes');
     const textDoc = await PDFLibDocument.load(textPdfBytes);
     const letterheadDoc = await PDFLibDocument.load(letterheadBytes);
     const finalDoc = await PDFLibDocument.create();
+    console.log('📄 Text pages:', textDoc.getPageCount(), '| Letterhead pages:', letterheadDoc.getPageCount());
 
     const textPageCount = textDoc.getPageCount();
     const lhPageCount = letterheadDoc.getPageCount();
@@ -494,9 +510,17 @@ async function generateContractPDF(data) {
     console.log('📄 Text PDF generated, size:', textPdfBuffer.length);
 
     if (fs.existsSync(LETTERHEAD_PATH)) {
-        const mergedBytes = await mergeWithLetterhead(textPdfBuffer);
-        console.log('📄 Merged with letterhead, size:', mergedBytes.length);
-        return Buffer.from(mergedBytes);
+        try {
+            const mergedBytes = await mergeWithLetterhead(textPdfBuffer);
+            console.log('📄 Merged with letterhead, size:', mergedBytes.length);
+            return Buffer.from(mergedBytes);
+        } catch (mergeErr) {
+            console.error('⚠️ Letterhead merge failed, returning text-only PDF:', mergeErr.message);
+            // Fallback: return text-only PDF rather than failing entirely
+            return textPdfBuffer;
+        }
+    } else {
+        console.warn('⚠️ Letterhead file not found at:', LETTERHEAD_PATH);
     }
 
     return textPdfBuffer;
