@@ -376,7 +376,7 @@ SADECE aşağıdaki JSON formatında yanıt ver, başka açıklama ekleme:
     "recommendation_1": {
         "university_name": "Birinci öneri üniversite adı (PARTNER LİSTESİNDEN - 1. TERCİH ÜLKESİNDEN)",
         "program_name": "Önerilen bölüm/program adı (LİSTEDEN)",
-        "country": "Ülke adı (İngilizce - ÖĞRENCİNİN 1. TERCİHİ: ${studentData.country_preferences?.[0] || 'Czech Republic'})",
+        "country": "Ülke adı İNGİLİZCE YAZILMALI (Germany/Czech Republic/Italy/Austria/UK/Poland/Hungary/Netherlands)",
         "city": "Şehir adı",
         "tuition": "Yıllık ücret (EUR cinsinden, programdan al)",
         "why_this_university": "Bu üniversitenin neden önerildiğine dair EN AZ 4-5 cümlelik detaylı açıklama. Üniversitenin güçlü yönleri, akademik kalitesi, öğrenciye uygunluğu.",
@@ -391,14 +391,14 @@ SADECE aşağıdaki JSON formatında yanıt ver, başka açıklama ekleme:
     "recommendation_2": {
         "university_name": "İkinci öneri üniversite adı (FARKLI BİR ÜNİVERSİTE - 2. TERCİH ÜLKESİNDEN: ${studentData.country_preferences?.[1] || 'Italy'})",
         "program_name": "Önerilen bölüm/program adı (LİSTEDEN)",
-        "country": "Ülke adı (ÖĞRENCİNİN 2. TERCİHİ: ${studentData.country_preferences?.[1] || 'Italy'})",
+        "country": "Ülke adı İNGİLİZCE (Germany/Czech Republic/Italy/Austria/UK/Poland/Hungary/Netherlands)",
         "city": "Şehir adı",
-        "tuition": "Yıllık ücret",
-        "why_this_university": "Bu üniversitenin neden alternatif olarak önerildiğine dair EN AZ 4-5 cümlelik detaylı açıklama.",
-        "why_this_program": "Bu programın neden uygun olduğuna dair EN AZ 3-4 cümlelik açıklama.",
-        "country_info": "Bu ülkede eğitim almanın avantajları hakkında EN AZ 4-5 cümlelik kapsamlı bilgi.",
-        "city_info": "Şehir hakkında EN AZ 4-5 cümlelik detaylı bilgi.",
-        "career_prospects": "Mezuniyet sonrası kariyer fırsatları hakkında EN AZ 3-4 cümlelik bilgi."${hasCanadianDiploma ? `,
+        "tuition": "Yıllık ücret (EUR cinsinden, programdan al)",
+        "why_this_university": "BU ALANI MUTLAKA DOLDUR! Bu üniversitenin neden alternatif olarak önerildiğine dair EN AZ 4-5 cümlelik detaylı açıklama. Üniversitenin güçlü yönleri, akademik kalitesi, dünya sıralaması.",
+        "why_this_program": "BU ALANI MUTLAKA DOLDUR! Bu programın neden uygun olduğuna dair EN AZ 3-4 cümlelik açıklama. Müfredat detayları, öğrencinin ilgi alanlarıyla eşleşme.",
+        "country_info": "BU ALANI MUTLAKA DOLDUR! Bu ülkede eğitim almanın avantajları hakkında EN AZ 4-5 cümlelik kapsamlı bilgi. Eğitim sistemi, yaşam kalitesi, vize süreci.",
+        "city_info": "BU ALANI MUTLAKA DOLDUR! Şehir hakkında EN AZ 4-5 cümlelik detaylı bilgi. Yaşam maliyeti, öğrenci hayatı, iklim, ulaşım.",
+        "career_prospects": "BU ALANI MUTLAKA DOLDUR! Mezuniyet sonrası kariyer fırsatları hakkında EN AZ 3-4 cümlelik bilgi. İş piyasası, ortalama maaşlar, çalışma izni."${hasCanadianDiploma ? `,
         "canadian_diploma_advantage": "Bu ülkede Kanada lise diplomasının sağladığı AVANTAJLAR: muafiyetler, sınavsız kabul imkanları vb. EN AZ 3-4 cümle."` : ''}${!hasCanadianDiploma && studentData.country_preferences?.includes('Netherlands') ? `,
         "netherlands_diploma_warning": "EĞER bu öneri Hollanda'dan bir Research University (WO) ise: Türk lise diploması ile bu üniversiteye kabul için ek şartları açıkla (4 AP dersi veya 1 yıl HBO). EĞER University of Applied Sciences (HBO) ise bu alanı boş bırak veya 'Uygulamalı Bilimler Üniversitesi olduğu için Türk lise diploması ile doğrudan kabul edilebilirsiniz.' yaz."` : ''}
     },
@@ -417,8 +417,10 @@ KURALLAR:
 4. Tüm açıklamalar Türkçe olsun
 5. Fiyatlar listeden alınsın ve EUR cinsinden olsun
 6. İlgi alanlarına uygun programlar öner
-${hasCanadianDiploma ? '7. ⭐ Kanada diploması avantajlarını her fırsatta vurgula ve WCEP ortaklığımızı öv!' : ''}
-${!hasCanadianDiploma && studentData.country_preferences?.includes('Netherlands') ? '8. 🇳🇱 HOLLANDA: Research University (WO) önerirsen Türk diploma uyarısını MUTLAKA ekle! University of Applied Sciences (HBO) önerirsen uyarıya gerek yok.' : ''}`;
+7. ⚠️ ÜLKE ADLARI MUTLAKA İNGİLİZCE OLSUN: Germany, Czech Republic, Italy, Austria, UK, Poland, Hungary, Netherlands. TÜRKÇE ÜLKE ADI KULLANMA!
+8. ⚠️ KRİTİK: HER İKİ ÖNERİDE DE "why_this_university", "why_this_program", "country_info", "city_info", "career_prospects" ALANLARINI MUTLAKA DOLDUR! HİÇBİRİ BOŞ BIRAKILMAMALI! Her alan en az 3-4 cümle olmalı.
+${hasCanadianDiploma ? '9. ⭐ Kanada diploması avantajlarını her fırsatta vurgula ve WCEP ortaklığımızı öv!' : ''}
+${!hasCanadianDiploma && studentData.country_preferences?.includes('Netherlands') ? '10. 🇳🇱 HOLLANDA: Research University (WO) önerirsen Türk diploma uyarısını MUTLAKA ekle! University of Applied Sciences (HBO) önerirsen uyarıya gerek yok.' : ''}`;
 }
 
 /**
@@ -572,6 +574,33 @@ function parseAIResponse(responseText, studentData, universities) {
         
         const hasCanadianDiploma = studentData.canadian_diploma === 'yes';
         
+        // Normalize country name to English
+        const normalizeCountry = (country) => {
+            if (!country) return country;
+            const map = {
+                'hollanda': 'Netherlands', 'holland': 'Netherlands', 'the netherlands': 'Netherlands',
+                'polonya': 'Poland', 'polska': 'Poland',
+                'almanya': 'Germany', 'deutschland': 'Germany',
+                'italya': 'Italy', 'italia': 'Italy',
+                'çekya': 'Czech Republic', 'czechia': 'Czech Republic', 'çek cumhuriyeti': 'Czech Republic',
+                'ingiltere': 'UK', 'england': 'UK', 'united kingdom': 'UK', 'birleşik krallık': 'UK',
+                'avusturya': 'Austria', 'österreich': 'Austria',
+                'macaristan': 'Hungary', 'magyarország': 'Hungary',
+                'ispanya': 'Spain', 'fransa': 'France', 'portekiz': 'Portugal',
+                'belçika': 'Belgium', 'isviçre': 'Switzerland', 'danimarka': 'Denmark',
+                'isveç': 'Sweden', 'norveç': 'Norway', 'finlandiya': 'Finland',
+                'irlanda': 'Ireland', 'yunanistan': 'Greece'
+            };
+            return map[country.toLowerCase().trim()] || country;
+        };
+        
+        // Normalize country in recommendation objects
+        const normalizeRec = (rec) => {
+            if (!rec) return rec;
+            if (rec.country) rec.country = normalizeCountry(rec.country);
+            return rec;
+        };
+        
         // New format with two recommendations
         return {
             success: true,
@@ -587,10 +616,10 @@ function parseAIResponse(responseText, studentData, universities) {
                 wcep_advantage_summary: parsed.wcep_advantage_summary || null,
                 
                 // First recommendation (primary)
-                recommendation_1: parsed.recommendation_1 || {
+                recommendation_1: normalizeRec(parsed.recommendation_1) || {
                     university_name: parsed.recommended_university_name,
                     program_name: parsed.recommended_program_name,
-                    country: parsed.recommended_country,
+                    country: normalizeCountry(parsed.recommended_country),
                     city: parsed.recommended_city,
                     tuition: parsed.estimated_tuition,
                     why_this_university: parsed.reasoning,
@@ -602,7 +631,7 @@ function parseAIResponse(responseText, studentData, universities) {
                 },
                 
                 // Second recommendation (alternative)
-                recommendation_2: parsed.recommendation_2 || null,
+                recommendation_2: normalizeRec(parsed.recommendation_2) || null,
                 
                 // Comparison and advice
                 comparison: parsed.comparison || '',
@@ -611,7 +640,7 @@ function parseAIResponse(responseText, studentData, universities) {
                 // Legacy fields for backwards compatibility
                 recommended_university_name: parsed.recommendation_1?.university_name || parsed.recommended_university_name,
                 recommended_program_name: parsed.recommendation_1?.program_name || parsed.recommended_program_name,
-                recommended_country: parsed.recommendation_1?.country || parsed.recommended_country,
+                recommended_country: normalizeCountry(parsed.recommendation_1?.country || parsed.recommended_country),
                 recommended_city: parsed.recommendation_1?.city || parsed.recommended_city,
                 recommended_tuition: parsed.recommendation_1?.tuition || parsed.estimated_tuition,
                 ai_reasoning: parsed.recommendation_1?.why_this_university || parsed.reasoning

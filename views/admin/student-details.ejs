@@ -4349,14 +4349,37 @@ function displayAIRecommendation(rec) {
     const container = document.getElementById('aiRecommendationContent');
     
     const countryFlags = {
-        'Germany': '🇩🇪',
-        'Czech Republic': '🇨🇿',
-        'Italy': '🇮🇹',
-        'Austria': '🇦🇹',
-        'UK': '🇬🇧',
-        'Poland': '🇵🇱',
-        'Hungary': '🇭🇺',
-        'Netherlands': '🇳🇱'
+        'Germany': '🇩🇪', 'Almanya': '🇩🇪',
+        'Czech Republic': '🇨🇿', 'Çekya': '🇨🇿', 'Çek Cumhuriyeti': '🇨🇿',
+        'Italy': '🇮🇹', 'İtalya': '🇮🇹',
+        'Austria': '🇦🇹', 'Avusturya': '🇦🇹',
+        'UK': '🇬🇧', 'İngiltere': '🇬🇧', 'United Kingdom': '🇬🇧',
+        'Poland': '🇵🇱', 'Polonya': '🇵🇱',
+        'Hungary': '🇭🇺', 'Macaristan': '🇭🇺',
+        'Netherlands': '🇳🇱', 'Hollanda': '🇳🇱', 'Holland': '🇳🇱',
+        'Spain': '🇪🇸', 'İspanya': '🇪🇸',
+        'France': '🇫🇷', 'Fransa': '🇫🇷',
+        'Portugal': '🇵🇹', 'Portekiz': '🇵🇹',
+        'Belgium': '🇧🇪', 'Belçika': '🇧🇪',
+        'Switzerland': '🇨🇭', 'İsviçre': '🇨🇭',
+        'Denmark': '🇩🇰', 'Danimarka': '🇩🇰',
+        'Sweden': '🇸🇪', 'İsveç': '🇸🇪',
+        'Norway': '🇳🇴', 'Norveç': '🇳🇴',
+        'Finland': '🇫🇮', 'Finlandiya': '🇫🇮',
+        'Ireland': '🇮🇪', 'İrlanda': '🇮🇪',
+        'Greece': '🇬🇷', 'Yunanistan': '🇬🇷'
+    };
+    
+    // Normalize country name to English
+    const normalizeCountry = (country) => {
+        if (!country) return country;
+        const map = {
+            'Hollanda': 'Netherlands', 'Holland': 'Netherlands', 'The Netherlands': 'Netherlands',
+            'Polonya': 'Poland', 'Almanya': 'Germany', 'İngiltere': 'UK',
+            'İtalya': 'Italy', 'Avusturya': 'Austria', 'Macaristan': 'Hungary',
+            'Çekya': 'Czech Republic', 'Çek Cumhuriyeti': 'Czech Republic'
+        };
+        return map[country] || country;
     };
     
     // Parse ai_reasoning if it's JSON (new format)
@@ -4381,7 +4404,9 @@ function displayAIRecommendation(rec) {
     function renderRecommendationCard(recData, number, isPrimary) {
         if (!recData) return '';
         
-        const flag = countryFlags[recData.country] || '🌍';
+        // Normalize country name for flag lookup
+        const normalizedCountry = normalizeCountry(recData.country);
+        const flag = countryFlags[recData.country] || countryFlags[normalizedCountry] || '🌍';
         const cardStyle = isPrimary 
             ? 'background: linear-gradient(135deg, #0056b3, #004494);' 
             : 'background: linear-gradient(135deg, #28a745, #20903d);';

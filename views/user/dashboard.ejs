@@ -656,31 +656,35 @@
                     const content = document.getElementById('aiRecommendationContent');
                     
                     const countryFlags = {
-                        'Germany': '🇩🇪',
-                        'Czech Republic': '🇨🇿',
-                        'Italy': '🇮🇹',
-                        'Austria': '🇦🇹',
-                        'UK': '🇬🇧',
-                        'Poland': '🇵🇱',
-                        'Hungary': '🇭🇺',
-                        'Netherlands': '🇳🇱',
-                        'Holland': '🇳🇱',
-                        'Hollanda': '🇳🇱'
+                        'Germany': '🇩🇪', 'Almanya': '🇩🇪',
+                        'Czech Republic': '🇨🇿', 'Çekya': '🇨🇿', 'Çek Cumhuriyeti': '🇨🇿',
+                        'Italy': '🇮🇹', 'İtalya': '🇮🇹',
+                        'Austria': '🇦🇹', 'Avusturya': '🇦🇹',
+                        'UK': '🇬🇧', 'İngiltere': '🇬🇧', 'United Kingdom': '🇬🇧',
+                        'Poland': '🇵🇱', 'Polonya': '🇵🇱',
+                        'Hungary': '🇭🇺', 'Macaristan': '🇭🇺',
+                        'Netherlands': '🇳🇱', 'Hollanda': '🇳🇱', 'Holland': '🇳🇱',
+                        'Spain': '🇪🇸', 'İspanya': '🇪🇸',
+                        'France': '🇫🇷', 'Fransa': '🇫🇷',
+                        'Portugal': '🇵🇹', 'Portekiz': '🇵🇹',
+                        'Belgium': '🇧🇪', 'Belçika': '🇧🇪',
+                        'Switzerland': '🇨🇭', 'İsviçre': '🇨🇭',
+                        'Denmark': '🇩🇰', 'Danimarka': '🇩🇰',
+                        'Sweden': '🇸🇪', 'İsveç': '🇸🇪',
+                        'Norway': '🇳🇴', 'Norveç': '🇳🇴',
+                        'Finland': '🇫🇮', 'Finlandiya': '🇫🇮',
+                        'Ireland': '🇮🇪', 'İrlanda': '🇮🇪',
+                        'Greece': '🇬🇷', 'Yunanistan': '🇬🇷'
                     };
                     
                     // Fix country names - normalize variations
                     const normalizeCountry = (country) => {
                         const countryMap = {
-                            'Holland': 'Netherlands',
-                            'Hollanda': 'Netherlands',
-                            'The Netherlands': 'Netherlands',
-                            'Çekya': 'Czech Republic',
-                            'Almanya': 'Germany',
-                            'İngiltere': 'UK',
-                            'İtalya': 'Italy',
-                            'Avusturya': 'Austria',
-                            'Polonya': 'Poland',
-                            'Macaristan': 'Hungary'
+                            'Holland': 'Netherlands', 'Hollanda': 'Netherlands', 'The Netherlands': 'Netherlands',
+                            'Çekya': 'Czech Republic', 'Çek Cumhuriyeti': 'Czech Republic',
+                            'Almanya': 'Germany', 'İngiltere': 'UK', 'United Kingdom': 'UK',
+                            'İtalya': 'Italy', 'Avusturya': 'Austria',
+                            'Polonya': 'Poland', 'Macaristan': 'Hungary'
                         };
                         return countryMap[country] || country;
                     };
