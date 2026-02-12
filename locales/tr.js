@@ -57,6 +57,28 @@ module.exports = {
             success: "Giriş başarılı! Yönlendiriliyorsunuz...",
             error: "Giriş sırasında bir hata oluştu"
         },
+        forgotPassword: {
+            title: "Şifremi Unuttum",
+            description: "E-posta adresinizi girin, şifre sıfırlama bağlantısı göndereceğiz.",
+            email: "E-posta Adresi",
+            submit: "Sıfırlama Linki Gönder",
+            success: "Şifre sıfırlama linki e-posta adresinize gönderildi.",
+            error: "Şifre sıfırlama sırasında bir hata oluştu.",
+            rememberPassword: "Şifrenizi hatırladınız mı?",
+            login: "Giriş Yap"
+        },
+        resetPassword: {
+            title: "Şifre Sıfırla",
+            newPassword: "Yeni Şifre",
+            confirmPassword: "Yeni Şifre Tekrarı",
+            submit: "Şifremi Güncelle",
+            success: "Şifreniz başarıyla güncellendi! Giriş sayfasına yönlendiriliyorsunuz...",
+            error: "Şifre sıfırlama sırasında bir hata oluştu.",
+            invalidToken: "Geçersiz veya süresi dolmuş sıfırlama linki.",
+            passwordMismatch: "Şifreler eşleşmiyor.",
+            passwordMinLength: "Şifre en az 6 karakter olmalıdır.",
+            login: "Giriş Yap"
+        },
         register: {
             title: "Kayıt Ol",
             personalInfo: "Kişisel Bilgiler",

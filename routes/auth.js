@@ -1043,7 +1043,7 @@ router.get('/verify-email', async (req, res) => {
     }
 });
 
-// Forgot Password
+// Forgot Password - works for users, admins, and partners
 router.post('/forgot-password', async (req, res) => {
     try {
         const { email, language = 'tr' } = req.body;
@@ -1055,34 +1055,78 @@ router.post('/forgot-password', async (req, res) => {
             });
         }
 
-        // Check if user exists
-        const result = await pool.query(
-            'SELECT id, first_name, email FROM users WHERE email = $1',
-            [email]
-        );
+        const emailLower = email.toLowerCase().trim();
+        let userRecord = null;
+        let userType = null;
 
-        if (result.rows.length === 0) {
+        // 1. Check users table
+        const userResult = await pool.query(
+            'SELECT id, first_name, email FROM users WHERE LOWER(email) = $1',
+            [emailLower]
+        );
+        if (userResult.rows.length > 0) {
+            userRecord = userResult.rows[0];
+            userType = 'user';
+        }
+
+        // 2. Check admins table
+        if (!userRecord) {
+            const adminResult = await pool.query(
+                'SELECT id, name as first_name, email FROM admins WHERE LOWER(email) = $1',
+                [emailLower]
+            );
+            if (adminResult.rows.length > 0) {
+                userRecord = adminResult.rows[0];
+                userType = 'admin';
+            }
+        }
+
+        // 3. Check partners table
+        if (!userRecord) {
+            const partnerResult = await pool.query(
+                'SELECT id, first_name, email FROM partners WHERE LOWER(email) = $1',
+                [emailLower]
+            );
+            if (partnerResult.rows.length > 0) {
+                userRecord = partnerResult.rows[0];
+                userType = 'partner';
+            }
+        }
+
+        if (!userRecord) {
             return res.status(400).json({
                 success: false,
                 message: language === 'tr' ? 
-                    'Bu e-posta adresi ile kayıtlı kullanıcı bulunamadı. Lütfen kayıt olun.' : 
-                    'No user found with this email address. Please register.'
+                    'Bu e-posta adresi ile kayıtlı kullanıcı bulunamadı.' : 
+                    'No user found with this email address.'
             });
         }
-
-        const user = result.rows[0];
 
         // Generate reset token
         const resetToken = generateResetToken();
 
-        // Save reset token to database
-        await pool.query(
-            'UPDATE users SET reset_token = $1, reset_token_expires = NOW() + INTERVAL \'1 hour\' WHERE id = $2',
-            [resetToken, user.id]
-        );
+        // Save reset token to the correct table
+        if (userType === 'user') {
+            await pool.query(
+                'UPDATE users SET reset_token = $1, reset_token_expires = NOW() + INTERVAL \'1 hour\' WHERE id = $2',
+                [resetToken, userRecord.id]
+            );
+        } else if (userType === 'admin') {
+            await pool.query(
+                'UPDATE admins SET reset_token = $1, reset_token_expires = NOW() + INTERVAL \'1 hour\' WHERE id = $2',
+                [resetToken, userRecord.id]
+            );
+        } else if (userType === 'partner') {
+            await pool.query(
+                'UPDATE partners SET reset_token = $1, reset_token_expires = NOW() + INTERVAL \'1 hour\' WHERE id = $2',
+                [resetToken, userRecord.id]
+            );
+        }
 
         // Send reset email
-        await sendPasswordResetEmail(email, user.first_name, resetToken, language);
+        await sendPasswordResetEmail(userRecord.email, userRecord.first_name, resetToken, language);
+
+        console.log(`✅ Password reset token sent to ${userType}: ${userRecord.email}`);
 
         res.json({
             success: true,
@@ -1239,63 +1283,7 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// Password Reset Request
-router.post('/forgot-password', async (req, res) => {
-    try {
-        const { eposta, language = 'tr' } = req.body;
-
-        if (!eposta) {
-            return res.status(400).json({
-                success: false,
-                message: language === 'tr' ? 'E-posta adresi gerekli' : 'Email address required'
-            });
-        }
-
-        // Find user
-        const result = await pool.query(
-            'SELECT id, ad, eposta FROM kullanicilar WHERE eposta = $1',
-            [eposta]
-        );
-
-        if (result.rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: language === 'tr' ? 'Bu e-posta adresi ile kayıtlı kullanıcı bulunamadı' : 'No user found with this eposta address'
-            });
-        }
-
-        const user = result.rows[0];
-
-        // Generate reset token
-        const resetToken = generateResetToken();
-        const resetTokenExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
-
-        // Update user with reset token
-        await pool.query(
-            'UPDATE kullanicilar SET sifre_sifirlama_token = $1, sifre_sifirlama_token_expires = $2 WHERE id = $3',
-            [resetToken, resetTokenExpires, user.id]
-        );
-
-        // Send reset eposta
-        await sendPasswordResetEmail(eposta, user.ad, resetToken, language);
-
-        res.json({
-            success: true,
-            message: language === 'tr' ? 
-                'Şifre sıfırlama bağlantısı e-posta adresinize gönderildi' : 
-                'Password reset link has been sent to your eposta address'
-        });
-
-    } catch (error) {
-        console.error('Password reset request error:', error);
-        res.status(500).json({
-            success: false,
-            message: language === 'tr' ? 'Şifre sıfırlama sırasında bir hata oluştu' : 'An error occurred during password reset'
-        });
-    }
-});
-
-// Password Reset
+// Reset Password - works for users, admins, and partners
 router.post('/reset-password', async (req, res) => {
     try {
         const { token, password, language = 'tr' } = req.body;
@@ -1307,34 +1295,73 @@ router.post('/reset-password', async (req, res) => {
             });
         }
 
-        // Find user with valid reset token
-        const result = await pool.query(
-            'SELECT id FROM kullanicilar WHERE sifre_sifirlama_token = $1 AND sifre_sifirlama_token_expires > NOW()',
-            [token]
-        );
-
-        if (result.rows.length === 0) {
+        if (password.length < 6) {
             return res.status(400).json({
                 success: false,
-                message: language === 'tr' ? 'Geçersiz veya süresi dolmuş reset tokeni' : 'Invalid or expired reset token'
+                message: language === 'tr' ? 'Şifre en az 6 karakter olmalıdır' : 'Password must be at least 6 characters'
             });
         }
 
-        const user = result.rows[0];
+        let userRecord = null;
+        let userType = null;
+
+        // 1. Check users table
+        const userResult = await pool.query(
+            'SELECT id FROM users WHERE reset_token = $1 AND reset_token_expires > NOW()',
+            [token]
+        );
+        if (userResult.rows.length > 0) {
+            userRecord = userResult.rows[0];
+            userType = 'user';
+        }
+
+        // 2. Check admins table
+        if (!userRecord) {
+            const adminResult = await pool.query(
+                'SELECT id FROM admins WHERE reset_token = $1 AND reset_token_expires > NOW()',
+                [token]
+            );
+            if (adminResult.rows.length > 0) {
+                userRecord = adminResult.rows[0];
+                userType = 'admin';
+            }
+        }
+
+        // 3. Check partners table
+        if (!userRecord) {
+            const partnerResult = await pool.query(
+                'SELECT id FROM partners WHERE reset_token = $1 AND reset_token_expires > NOW()',
+                [token]
+            );
+            if (partnerResult.rows.length > 0) {
+                userRecord = partnerResult.rows[0];
+                userType = 'partner';
+            }
+        }
+
+        if (!userRecord) {
+            return res.status(400).json({
+                success: false,
+                message: language === 'tr' ? 'Geçersiz veya süresi dolmuş sıfırlama linki. Lütfen tekrar deneyin.' : 'Invalid or expired reset link. Please try again.'
+            });
+        }
 
         // Hash new password
         const saltRounds = 10;
         const passwordHash = await bcrypt.hash(password, saltRounds);
 
-        // Update password and clear reset token
+        // Update password and clear reset token in the correct table
+        const tableName = userType === 'admin' ? 'admins' : userType === 'partner' ? 'partners' : 'users';
         await pool.query(
-            'UPDATE kullanicilar SET sifre_hash = $1, sifre_sifirlama_token = NULL, sifre_sifirlama_token_expires = NULL WHERE id = $2',
-            [passwordHash, user.id]
+            `UPDATE ${tableName} SET password_hash = $1, reset_token = NULL, reset_token_expires = NULL WHERE id = $2`,
+            [passwordHash, userRecord.id]
         );
+
+        console.log(`✅ Password reset successful for ${userType} ID: ${userRecord.id}`);
 
         res.json({
             success: true,
-            message: language === 'tr' ? 'Şifreniz başarıyla güncellendi' : 'Your password has been updated successfully'
+            message: language === 'tr' ? 'Şifreniz başarıyla güncellendi!' : 'Your password has been updated successfully!'
         });
 
     } catch (error) {

@@ -57,6 +57,28 @@ module.exports = {
             success: "Login successful! Redirecting...",
             error: "An error occurred during login"
         },
+        forgotPassword: {
+            title: "Forgot Password",
+            description: "Enter your email address and we'll send you a password reset link.",
+            email: "Email Address",
+            submit: "Send Reset Link",
+            success: "Password reset link has been sent to your email address.",
+            error: "An error occurred during password reset.",
+            rememberPassword: "Remember your password?",
+            login: "Login"
+        },
+        resetPassword: {
+            title: "Reset Password",
+            newPassword: "New Password",
+            confirmPassword: "Confirm New Password",
+            submit: "Update Password",
+            success: "Your password has been updated successfully! Redirecting to login...",
+            error: "An error occurred during password reset.",
+            invalidToken: "Invalid or expired reset link.",
+            passwordMismatch: "Passwords do not match.",
+            passwordMinLength: "Password must be at least 6 characters.",
+            login: "Login"
+        },
         register: {
             title: "Register",
             personalInfo: "Personal Information",

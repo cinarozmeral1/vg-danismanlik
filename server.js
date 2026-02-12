@@ -577,6 +577,19 @@ app.post('/api/maintenance/delete-unverified', async (req, res) => {
   }
 });
 
+// Auto-migrate: ensure admins table has reset_token columns for password reset
+(async () => {
+    try {
+        await pool.query(`
+            ALTER TABLE admins ADD COLUMN IF NOT EXISTS reset_token VARCHAR(255);
+            ALTER TABLE admins ADD COLUMN IF NOT EXISTS reset_token_expires TIMESTAMP;
+        `);
+        console.log('✅ Admin reset_token columns ensured');
+    } catch (err) {
+        console.log('⚠️ Admin migration skipped:', err.message);
+    }
+})();
+
 // Add missing columns to users table (idempotent)
 app.post('/api/maintenance/add-user-columns', async (req, res) => {
   try {
@@ -1488,7 +1501,22 @@ app.get('/complete-google-registration', (req, res) => {
 });
 
 app.get('/forgot-password', (req, res) => {
-    res.render('forgot-password', { title: res.locals.t.auth.forgotPassword.title });
+    res.render('forgot-password', { 
+        title: res.locals.t.auth.forgotPassword.title,
+        layout: false
+    });
+});
+
+app.get('/reset-password', (req, res) => {
+    const token = req.query.token;
+    if (!token) {
+        return res.redirect('/forgot-password');
+    }
+    res.render('reset-password', { 
+        title: res.locals.t.auth.resetPassword.title,
+        token: token,
+        layout: false
+    });
 });
 
 // Partner authentication pages

@@ -1743,7 +1743,7 @@ body {
     padding: var(--space-4);
   }
   
-  .admin-container {
+.admin-container {
     flex-direction: column;
   }
   

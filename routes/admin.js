@@ -790,13 +790,13 @@ router.put('/users/:id/guardians', async (req, res) => {
         const result = await client.query(
             'SELECT * FROM guardians WHERE user_id = $1 ORDER BY sort_order ASC',
             [id]
-        );
-
-        res.json({ 
-            success: true, 
-            message: 'Veli bilgileri başarıyla güncellendi',
+         );
+ 
+         res.json({
+             success: true,
+             message: 'Veli bilgileri başarıyla güncellendi',
             guardians: result.rows 
-        });
+         });
     } catch (error) {
         await client.query('ROLLBACK');
         console.error('Update guardians error:', error);
