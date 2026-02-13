@@ -6,6 +6,7 @@
 const { OAuth2Client } = require('google-auth-library');
 const pool = require('../config/database');
 const { generateUserToken } = require('../middleware/auth');
+const { sendNewStudentNotificationEmail } = require('./emailService');
 
 // Google OAuth Client
 const GOOGLE_CLIENT_ID = (process.env.GOOGLE_CLIENT_ID || '').trim();
@@ -179,7 +180,19 @@ async function handleGoogleAuth(googleToken, options = {}) {
             }
         }
         
-        // 4. Generate JWT token
+        // 4. Send new student notification if new user
+        if (isNewUser) {
+            sendNewStudentNotificationEmail({
+                first_name: user.first_name,
+                last_name: user.last_name,
+                email: user.email,
+                phone: user.phone
+            }, 'google').catch(err => {
+                console.error('⚠️ Admin notification email error:', err.message);
+            });
+        }
+
+        // 5. Generate JWT token
         const token = generateUserToken(user.id);
         
         return {

@@ -379,6 +379,16 @@ app.post('/login', async (req, res) => {
                 });
             }
 
+            // Block login for unverified non-admin users
+            if (!user.is_admin && !user.email_verified) {
+                return res.status(403).json({
+                    success: false,
+                    needs_verification: true,
+                    message: 'Önce e-posta adresinize gelen mailden hesabınızı doğrulayın. Doğrulama maili gelmedi mi? Aşağıdaki butona tıklayın.',
+                    email: user.email
+                });
+            }
+
             // Generate user token
             const token = generateUserToken(user.id);
 
@@ -617,9 +627,14 @@ app.post('/api/maintenance/add-user-columns', async (req, res) => {
 });
 app.use('/admin/guardians', guardianRoutes);
 
-// Public university routes (no authentication required)
+// Admin university edit route (authentication required)
 app.get('/admin/universities/edit/:id', async (req, res) => {
     try {
+        // SECURITY: Check if user is logged in and is admin
+        if (!res.locals.isLoggedIn || !res.locals.isAdmin) {
+            return res.redirect('/login');
+        }
+
         const universityId = req.params.id;
 
         // Get university details
@@ -745,6 +760,7 @@ app.post('/universities/create', async (req, res) => {
             world_ranking,
             description,
             requirements,
+            application_deadline,
             departments
         } = req.body;
 
@@ -756,11 +772,12 @@ app.post('/universities/create', async (req, res) => {
         }
 
         // Insert university
+        const deadlineValue = application_deadline && application_deadline !== '' ? application_deadline : null;
         const universityResult = await pool.query(`
-            INSERT INTO universities (name, country, city, logo_url, world_ranking, description, requirements, is_active, is_featured, is_partner)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+            INSERT INTO universities (name, country, city, logo_url, world_ranking, description, requirements, application_deadline, is_active, is_featured, is_partner)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
             RETURNING id
-        `, [name, country, city, logo_url, world_ranking, description, requirements, true, false, true]);
+        `, [name, country, city, logo_url, world_ranking, description, requirements, deadlineValue, true, false, true]);
 
         const universityId = universityResult.rows[0].id;
 

@@ -148,6 +148,22 @@
                         </div>
                     </div>
 
+                    <!-- Son Başvuru Tarihi -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6 class="text-primary mb-3">
+                                <i class="fas fa-calendar-alt me-2"></i>Son Başvuru Tarihi
+                            </h6>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="application_deadline" class="form-label">Son Başvuru Tarihi</label>
+                                <input type="date" class="form-control" id="application_deadline" name="application_deadline" value="<%= university.application_deadline ? new Date(university.application_deadline).toISOString().split('T')[0] : '' %>">
+                                <small class="text-muted">Üniversitenin son başvuru tarihini seçin</small>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Açıklama -->
                     <div class="row mb-4">
                         <div class="col-12">
@@ -400,6 +416,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 city: document.getElementById('city').value,
                 world_ranking: document.getElementById('world_ranking').value,
                 description: document.getElementById('description').value,
+                application_deadline: document.getElementById('application_deadline').value || null,
                 logo_url: document.getElementById('logo_url_input').value || null
             };
 

@@ -33,8 +33,13 @@ module.exports = async (req, res) => {
 
     console.log('🚀 Profile reminder cron started:', new Date().toISOString());
     console.log('🔧 Mode:', isTestMode ? 'TEST (only info@vgdanismanlik.com)' : 'PRODUCTION');
+    console.log('🔗 DATABASE_URL configured:', !!process.env.DATABASE_URL);
+    console.log('📧 EMAIL_USER configured:', !!process.env.EMAIL_USER);
 
     try {
+        // Verify database connectivity first
+        const dbTest = await pool.query('SELECT NOW() as now, (SELECT COUNT(*) FROM users WHERE is_admin = false) as total_students');
+        console.log('✅ Database connected. Time:', dbTest.rows[0].now, '| Total students:', dbTest.rows[0].total_students);
         // Find users with incomplete profiles
         const result = await pool.query(`
             SELECT u.id, u.first_name, u.last_name, u.email, u.created_at,
@@ -65,20 +70,45 @@ module.exports = async (req, res) => {
         // TEST MODE: Only send to info@vgdanismanlik.com, never to real users
         // ════════════════════════════════════════════════════════════════
         if (isTestMode) {
-            const testUser = users[0] || { first_name: 'Test', last_name: 'Kullanıcı' };
+            const testUser = users[0] || { first_name: 'Test', last_name: 'Kullanıcı', email: 'N/A' };
             console.log(`📧 [TEST] Sending ONLY to info@vgdanismanlik.com (sample user: ${testUser.email || 'N/A'})`);
             
-            const emailSent = await sendProfileReminderEmail({
-                ...testUser,
-                email: 'info@vgdanismanlik.com'
-            });
+            let emailSent = false;
+            let emailError = null;
+            try {
+                emailSent = await sendProfileReminderEmail({
+                    ...testUser,
+                    email: 'info@vgdanismanlik.com'
+                });
+            } catch (emailErr) {
+                emailError = emailErr.message;
+                console.error('❌ [TEST] Email send error:', emailErr.message);
+            }
 
             return res.status(200).json({
                 success: true,
                 mode: 'TEST',
-                message: 'Test email sent ONLY to info@vgdanismanlik.com. No real users were emailed.',
+                message: emailSent 
+                    ? 'Test email sent ONLY to info@vgdanismanlik.com. No real users were emailed.' 
+                    : 'Test email FAILED to send. Check email configuration.',
                 email_sent: emailSent,
-                eligible_users: users.length
+                email_error: emailError,
+                eligible_users: users.length,
+                sample_users: users.slice(0, 3).map(u => ({
+                    id: u.id,
+                    name: `${u.first_name} ${u.last_name}`,
+                    created: u.created_at,
+                    missing: {
+                        tc: !u.tc_number,
+                        phone: !u.phone,
+                        birth_date: !u.birth_date,
+                        school: !u.current_school,
+                        address: !u.home_address,
+                        guardians: parseInt(u.guardian_count) < 2
+                    }
+                })),
+                db_connected: true,
+                email_configured: !!process.env.EMAIL_USER
             });
         }
 

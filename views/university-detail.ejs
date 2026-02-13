@@ -69,6 +69,46 @@
                         </div>
                     </div>
 
+                    <!-- Son Başvuru Tarihi Section -->
+                    <% if (university.application_deadline) { %>
+                    <div class="content-section deadline-section">
+                        <h2><i class="fas fa-calendar-alt me-2"></i>Son Başvuru Tarihi</h2>
+                        <div class="deadline-content">
+                            <div class="deadline-badge-container">
+                                <% 
+                                    const deadlineDate = new Date(university.application_deadline);
+                                    const now = new Date();
+                                    const diffTime = deadlineDate - now;
+                                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                                    const months = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+                                    const formattedDate = deadlineDate.getDate() + ' ' + months[deadlineDate.getMonth()] + ' ' + deadlineDate.getFullYear();
+                                %>
+                                <div class="deadline-date-display">
+                                    <div class="deadline-icon">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div class="deadline-info">
+                                        <span class="deadline-date"><%= formattedDate %></span>
+                                        <% if (diffDays > 0) { %>
+                                            <span class="deadline-remaining <%= diffDays <= 30 ? 'deadline-urgent' : 'deadline-normal' %>">
+                                                <i class="fas fa-hourglass-half me-1"></i><%= diffDays %> gün kaldı
+                                            </span>
+                                        <% } else if (diffDays === 0) { %>
+                                            <span class="deadline-remaining deadline-urgent">
+                                                <i class="fas fa-exclamation-triangle me-1"></i>Son gün!
+                                            </span>
+                                        <% } else { %>
+                                            <span class="deadline-remaining deadline-expired">
+                                                <i class="fas fa-times-circle me-1"></i>Başvuru süresi doldu
+                                            </span>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+
                     <!-- Requirements Section -->
                     <% if (university.requirements) { %>
                     <div class="content-section">
@@ -316,6 +356,99 @@
     margin-bottom: 1.5rem;
     font-size: 1.8rem;
     letter-spacing: -0.025em;
+}
+
+/* Deadline Section Styles */
+.deadline-section h2 i {
+    color: #0d6efd !important;
+}
+
+.deadline-content {
+    margin-top: 1rem;
+}
+
+.deadline-badge-container {
+    display: flex;
+    align-items: center;
+}
+
+.deadline-date-display {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem 2rem;
+    background: linear-gradient(145deg, #f0f7ff 0%, #e8f4fd 100%);
+    border: 2px solid rgba(13, 110, 253, 0.15);
+    border-radius: 16px;
+    width: 100%;
+}
+
+.deadline-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
+}
+
+.deadline-icon i {
+    font-size: 1.5rem;
+    color: white !important;
+}
+
+.deadline-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.deadline-date {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #1e293b !important;
+    letter-spacing: -0.025em;
+}
+
+.deadline-remaining {
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+}
+
+.deadline-normal {
+    background: rgba(16, 185, 129, 0.1);
+    color: #059669 !important;
+}
+
+.deadline-urgent {
+    background: rgba(245, 158, 11, 0.1);
+    color: #d97706 !important;
+}
+
+.deadline-expired {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626 !important;
+}
+
+@media (max-width: 576px) {
+    .deadline-date-display {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+        padding: 1.5rem 1rem;
+    }
+    
+    .deadline-info {
+        align-items: center;
+    }
 }
 
 </style>

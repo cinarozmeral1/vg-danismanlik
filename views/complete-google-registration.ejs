@@ -203,7 +203,7 @@
                     </small>
                 </div>
                 
-                <div class="mb-4">
+                <div class="mb-3">
                     <label for="english_level" class="form-label">
                         <i class="fas fa-language me-2 text-primary"></i>
                         <%= currentLanguage === 'tr' ? 'İngilizce Seviyesi' : 'English Level' %> *
@@ -217,6 +217,61 @@
                         <option value="C1">C1 - <%= currentLanguage === 'tr' ? 'İleri' : 'Advanced' %></option>
                         <option value="C2">C2 - <%= currentLanguage === 'tr' ? 'Profesyonel' : 'Proficient' %></option>
                     </select>
+                </div>
+
+                <!-- Ek Bilgiler -->
+                <div class="mb-2 mt-3">
+                    <small class="text-muted fw-bold"><i class="fas fa-info-circle me-1"></i><%= currentLanguage === 'tr' ? 'Ek Bilgiler (Opsiyonel)' : 'Additional Info (Optional)' %></small>
+                </div>
+                <div class="row">
+                    <div class="col-6 mb-3">
+                        <label for="desired_country" class="form-label">
+                            <i class="fas fa-globe me-2 text-primary"></i>
+                            <%= currentLanguage === 'tr' ? 'Gitmek İstediği Ülke' : 'Desired Country' %>
+                        </label>
+                        <input type="text" class="form-control" id="desired_country" name="desired_country"
+                               placeholder="<%= currentLanguage === 'tr' ? 'Örn: Almanya' : 'e.g. Germany' %>">
+                    </div>
+                    <div class="col-6 mb-3">
+                        <label for="current_school" class="form-label">
+                            <i class="fas fa-school me-2 text-primary"></i>
+                            <%= currentLanguage === 'tr' ? 'Okuduğu Okul' : 'Current School' %>
+                        </label>
+                        <input type="text" class="form-control" id="current_school" name="current_school"
+                               placeholder="<%= currentLanguage === 'tr' ? 'Örn: Galatasaray Lisesi' : 'e.g. Your School' %>">
+                    </div>
+                    <div class="col-6 mb-3">
+                        <label for="active_class" class="form-label">
+                            <i class="fas fa-graduation-cap me-2 text-primary"></i>
+                            <%= currentLanguage === 'tr' ? 'Aktif Sınıf' : 'Current Grade' %>
+                        </label>
+                        <input type="text" class="form-control" id="active_class" name="active_class"
+                               placeholder="<%= currentLanguage === 'tr' ? 'Örn: 11' : 'e.g. 11' %>">
+                    </div>
+                    <div class="col-6 mb-3">
+                        <label for="passport_type" class="form-label">
+                            <i class="fas fa-passport me-2 text-primary"></i>
+                            <%= currentLanguage === 'tr' ? 'Pasaport Türü' : 'Passport Type' %>
+                        </label>
+                        <input type="text" class="form-control" id="passport_type" name="passport_type"
+                               placeholder="<%= currentLanguage === 'tr' ? 'Örn: Bordo' : 'e.g. Regular' %>">
+                    </div>
+                    <div class="col-6 mb-3">
+                        <label for="passport_number" class="form-label">
+                            <i class="fas fa-hashtag me-2 text-primary"></i>
+                            <%= currentLanguage === 'tr' ? 'Pasaport No' : 'Passport No' %>
+                        </label>
+                        <input type="text" class="form-control" id="passport_number" name="passport_number"
+                               placeholder="<%= currentLanguage === 'tr' ? 'Örn: P1234567' : 'e.g. P1234567' %>">
+                    </div>
+                    <div class="col-6 mb-3">
+                        <label for="home_address" class="form-label">
+                            <i class="fas fa-home me-2 text-primary"></i>
+                            <%= currentLanguage === 'tr' ? 'Ev Adresi' : 'Home Address' %>
+                        </label>
+                        <input type="text" class="form-control" id="home_address" name="home_address"
+                               placeholder="<%= currentLanguage === 'tr' ? 'Tam adresiniz' : 'Your address' %>">
+                    </div>
                 </div>
                 
                 <button type="submit" class="btn btn-complete" id="submitBtn">
@@ -310,7 +365,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     last_name: lastName,
                     tc_number: tcNumber,
                     phone: phoneNumber,
-                    english_level: englishLevel
+                    english_level: englishLevel,
+                    desired_country: document.getElementById('desired_country').value.trim() || null,
+                    current_school: document.getElementById('current_school').value.trim() || null,
+                    active_class: document.getElementById('active_class').value.trim() || null,
+                    passport_type: document.getElementById('passport_type').value.trim() || null,
+                    passport_number: document.getElementById('passport_number').value.trim() || null,
+                    home_address: document.getElementById('home_address').value.trim() || null
                 })
             });
             

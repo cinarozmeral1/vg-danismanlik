@@ -610,6 +610,80 @@
     </div>
 </section>
 
+<!-- Çekya Ofisimiz Section -->
+<section class="section py-5" style="background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold text-white mb-2" style="font-size: 2.2rem;">
+<%= t.home.czechOffice?.title || 'Çekya Ofisimiz' %>
+            </h2>
+            <p class="lead" style="color: rgba(255,255,255,0.8);"><%= t.home.czechOffice?.subtitle || "Prag'daki ofisimizde sizleri bekliyoruz" %></p>
+        </div>
+        <div class="row align-items-stretch g-4">
+            <!-- Sol - Harita -->
+            <div class="col-lg-4">
+                <div class="rounded-4 overflow-hidden shadow-lg" style="height: 100%; min-height: 380px;">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2558.8!2d14.3936!3d50.1005!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x470b953a0b0b0b0b%3A0x0!2sNa+Vetrn%C3%ADku+2513%2F4%2C+162+00+Praha!5e0!3m2!1str!2scz!4v1700000000000" 
+                        width="100%" 
+                        height="100%" 
+                        style="border:0; min-height: 380px;" 
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </div>
+            <!-- Orta - Ofis Fotoğrafı -->
+            <div class="col-lg-4">
+                <div class="rounded-4 overflow-hidden shadow-lg h-100" style="min-height: 380px;">
+                    <img src="/images/office/comenius-visu-03.jpg" 
+                         alt="<%= t.home.czechOffice?.title || 'Çekya Ofisimiz' %> - Prague" 
+                         class="w-100 h-100" 
+                         style="object-fit: cover; min-height: 380px;">
+                </div>
+            </div>
+            <!-- Sağ - Adres Bilgileri -->
+            <div class="col-lg-4">
+                <div class="h-100 d-flex flex-column justify-content-center p-4 rounded-4" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.15);">
+                    
+                    <h3 class="text-white fw-bold mb-4 text-center" style="font-size: 1.5rem;">Prague, <%= t.home.czechOffice?.country || 'Çek Cumhuriyeti' %></h3>
+                    
+                    <div class="mb-4">
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="me-3 mt-1" style="width: 40px; height: 40px; background: rgba(255,255,255,0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <i class="fas fa-map-marker-alt text-white"></i>
+                            </div>
+                            <div>
+                                <p class="text-white mb-0 fw-bold"><%= t.home.czechOffice?.addressLabel || 'Adres' %></p>
+                                <p class="mb-0" style="color: rgba(255,255,255,0.85); font-size: 1.05rem;">Na Vetrníku 2513/4<br>Prague, Czechia 162 00</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="me-3 mt-1" style="width: 40px; height: 40px; background: rgba(255,255,255,0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <i class="fas fa-globe-europe text-white"></i>
+                            </div>
+                            <div>
+                                <p class="text-white mb-0 fw-bold"><%= t.home.czechOffice?.regionLabel || 'Bölge' %></p>
+                                <p class="mb-0" style="color: rgba(255,255,255,0.85); font-size: 1.05rem;"><%= t.home.czechOffice?.region || 'Avrupa Birliği - Doğu Avrupa' %></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-auto">
+                        <a href="https://maps.google.com/?q=Na+Vetrníku+2513/4,+162+00+Prague,+Czechia" target="_blank" rel="noopener" class="btn btn-light btn-lg px-4 rounded-pill fw-bold">
+                            <i class="fas fa-directions me-2"></i><%= t.home.czechOffice?.directions || 'Yol Tarifi Al' %>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- WCEP Canadian Diploma Advantage Section -->
 <section class="section py-5" style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);">
     <div class="container">
@@ -713,7 +787,7 @@
 </section>
 
 <!-- Kanpus Early Preparation Banner -->
-<section class="section" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 4rem 0;">
+<section class="section" style="background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%); padding: 4rem 0;">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6 text-white mb-4 mb-lg-0">

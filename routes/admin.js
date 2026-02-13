@@ -9,6 +9,23 @@ router.use((req, res, next) => {
     res.locals.isAdminPage = true;
     next();
 });
+
+// ==================== SECURITY: BLANKET ADMIN AUTH ====================
+// This middleware protects ALL admin routes. No admin endpoint can be
+// accessed without a valid admin session. GET page requests redirect
+// to /login; API requests receive 401 JSON.
+router.use((req, res, next) => {
+    if (!res.locals.isLoggedIn || !res.locals.isAdmin) {
+        // GET requests for pages → redirect to login
+        if (req.method === 'GET' && !req.xhr && !(req.headers.accept || '').includes('application/json')) {
+            return res.redirect('/login');
+        }
+        // API requests (POST/PUT/DELETE/JSON) → 401 JSON
+        return res.status(401).json({ success: false, message: 'Admin authentication required' });
+    }
+    next();
+});
+// ==================== END BLANKET ADMIN AUTH ====================
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -571,11 +588,19 @@ router.get('/dashboard', async (req, res) => {
 router.get('/users', async (req, res) => {
     try {
         // Adminleri hariç tut (sadece öğrencileri listele)
+        // Guardians ve Services ile LEFT JOIN yaparak veli bilgileri ve ödeme durumunu çek
         const usersResult = await pool.query(
-            `SELECT id, first_name, last_name, email, phone, english_level, created_at, is_admin 
-             FROM users 
-             WHERE is_admin = false OR is_admin IS NULL
-             ORDER BY created_at DESC`
+            `SELECT u.id, u.first_name, u.last_name, u.email, u.phone, u.english_level, 
+                    u.tc_number, u.active_class, u.current_school, u.created_at, u.is_admin,
+                    string_agg(DISTINCT g.full_name, ', ') as guardian_names,
+                    bool_or(s.is_paid = true AND s.service_name ILIKE '%Kabul Oncesi%') as kabul_oncesi_paid,
+                    bool_or(s.is_paid = true AND s.service_name ILIKE '%Kabul Sonrasi%') as kabul_sonrasi_paid
+             FROM users u
+             LEFT JOIN guardians g ON g.user_id = u.id
+             LEFT JOIN services s ON s.user_id = u.id
+             WHERE u.is_admin = false OR u.is_admin IS NULL
+             GROUP BY u.id
+             ORDER BY u.created_at DESC`
         );
 
         // Get sidebar counts
@@ -1619,6 +1644,7 @@ router.put('/universities/:id', async (req, res) => {
         const description = req.body.description;
         const requirements = req.body.requirements;
         const world_ranking = req.body.world_ranking;
+        const application_deadline = req.body.application_deadline;
         let departmentsRaw = req.body.departments;
 
         // JSON body veya formdan gelebilir
@@ -1665,16 +1691,18 @@ router.put('/universities/:id', async (req, res) => {
         const worldRanking = world_ranking === '' || typeof world_ranking === 'undefined' || world_ranking === null ? null : Number(world_ranking);
 
         // Normalize booleans
+        const deadlineValue = application_deadline && application_deadline !== '' ? application_deadline : null;
         const result = await pool.query(`
             UPDATE universities SET 
                 name = $1, country = $2, city = $3, logo_url = $4, 
                 description = $5, requirements = $6,
-                world_ranking = $7, is_active = true, 
+                world_ranking = $7, application_deadline = $8,
+                is_active = true, 
                 is_featured = false, updated_at = CURRENT_TIMESTAMP
-            WHERE id = $8 RETURNING *
+            WHERE id = $9 RETURNING *
         `, [
             name, country, city, finalLogoUrl, description, requirements,
-            worldRanking, id
+            worldRanking, deadlineValue, id
         ]);
 
         if (result.rows.length === 0) {
@@ -1910,6 +1938,7 @@ router.post('/universities', async (req, res) => {
             world_ranking,
             description,
             requirements,
+            application_deadline,
             departments: departmentsRaw
         } = data;
 
@@ -1957,12 +1986,14 @@ router.post('/universities', async (req, res) => {
         }
 
         // Create university
+        const deadlineValue = application_deadline && application_deadline !== '' ? application_deadline : null;
         const universityResult = await pool.query(
             `INSERT INTO universities (
                 name, country, city, logo_url, world_ranking, 
-                description, requirements, is_active, is_featured,
+                description, requirements, application_deadline,
+                is_active, is_featured,
                 created_at, updated_at
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, true, false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *`,
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, true, false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *`,
             [
                 name,
                 country,
@@ -1970,7 +2001,8 @@ router.post('/universities', async (req, res) => {
                 logo_url || null,
                 world_ranking ? parseInt(world_ranking) : null,
                 description || null,
-                requirements || null
+                requirements || null,
+                deadlineValue
             ]
         );
 

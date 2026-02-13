@@ -31,6 +31,10 @@
       "dest": "/public/favicon.png"
     },
     {
+      "src": "/favicon-192.png",
+      "dest": "/public/favicon-192.png"
+    },
+    {
       "src": "/api/cron/(.*)",
       "dest": "/api/cron/$1.js"
     },

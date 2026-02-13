@@ -144,6 +144,22 @@
                                 </div>
                             </div>
 
+                            <!-- Son Başvuru Tarihi -->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <h6 class="text-primary mb-3">
+                                        <i class="fas fa-calendar-alt me-2"></i>Son Başvuru Tarihi
+                                    </h6>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="application_deadline" class="form-label">Son Başvuru Tarihi</label>
+                                        <input type="date" class="form-control" id="application_deadline" name="application_deadline">
+                                        <small class="text-muted">Üniversitenin son başvuru tarihini seçin</small>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Açıklama -->
                             <div class="row mb-4">
                                 <div class="col-12">
@@ -349,6 +365,7 @@
             const city = document.getElementById('city').value;
             const world_ranking = document.getElementById('world_ranking').value;
             const description = document.getElementById('description').value;
+            const application_deadline = document.getElementById('application_deadline').value;
             const logoFile = document.getElementById('logo_file').files[0];
             let logoUrl = document.getElementById('logo_url_hidden').value || null;
             
@@ -406,6 +423,7 @@
                     city,
                     world_ranking,
                     description,
+                    application_deadline: application_deadline || null,
                     logo_url: logoUrl || null,
                     departments
                 };

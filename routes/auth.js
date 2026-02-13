@@ -2,7 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const pool = require('../config/database');
 const { generateUserToken, generatePartnerToken } = require('../middleware/auth');
-const { sendVerificationEmail, sendPasswordResetEmail, sendPartnerVerificationEmail, generateVerificationToken, generateResetToken } = require('../services/emailService');
+const { sendVerificationEmail, sendPasswordResetEmail, sendPartnerVerificationEmail, sendNewStudentNotificationEmail, generateVerificationToken, generateResetToken } = require('../services/emailService');
 const { handleGoogleAuth } = require('../services/googleAuthService');
 
 const router = express.Router();
@@ -285,6 +285,7 @@ router.get('/google/callback', async (req, res) => {
             res.cookie('userToken', token, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
                 maxAge: 7 * 24 * 60 * 60 * 1000
             });
             
@@ -343,7 +344,9 @@ router.post('/complete-google-registration', async (req, res) => {
     const language = req.cookies.language || 'tr';
     
     try {
-        const { first_name, last_name, tc_number, phone, english_level } = req.body;
+        const { first_name, last_name, tc_number, phone, english_level,
+                desired_country, current_school, active_class,
+                passport_type, passport_number, home_address } = req.body;
         
         // Get pending Google info from cookies
         const googleEmail = req.cookies.google_pending_email;
@@ -400,8 +403,10 @@ router.post('/complete-google-registration', async (req, res) => {
             INSERT INTO users (
                 google_id, email, first_name, last_name, tc_number, phone, password_hash,
                 english_level, high_school_graduation_date, birth_date,
+                desired_country, current_school, active_class,
+                passport_type, passport_number, home_address,
                 email_verified, registered_via, personal_info_completed, created_at
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, NOW())
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, NOW())
             RETURNING *
         `, [
             googleId,
@@ -414,6 +419,12 @@ router.post('/complete-google-registration', async (req, res) => {
             english_level,
             null,
             null,
+            desired_country || null,
+            current_school || null,
+            active_class || null,
+            passport_type || null,
+            passport_number || null,
+            home_address || null,
             true, // email_verified
             'google',
             true // personal_info_completed
@@ -455,6 +466,7 @@ router.post('/complete-google-registration', async (req, res) => {
         res.cookie('userToken', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         });
         
@@ -463,6 +475,16 @@ router.post('/complete-google-registration', async (req, res) => {
         res.clearCookie('google_pending_id');
         res.clearCookie('google_pending_name');
         res.clearCookie('google_pending_wizard_rec');
+
+        // Send new student notification to admin (non-blocking)
+        sendNewStudentNotificationEmail({
+            first_name: user.first_name,
+            last_name: user.last_name,
+            email: user.email,
+            phone: user.phone
+        }, 'google_redirect').catch(err => {
+            console.error('⚠️ Admin notification email error:', err.message);
+        });
         
         res.json({
             success: true,
@@ -529,6 +551,7 @@ router.post('/google', async (req, res) => {
         res.cookie('userToken', result.token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         });
         
@@ -678,6 +701,7 @@ router.post('/google-oauth2', async (req, res) => {
         res.cookie('userToken', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         });
         
@@ -729,6 +753,8 @@ router.post('/register', async (req, res) => {
             passport_type,
             desired_country,
             active_class,
+            current_school,
+            home_address,
             language = 'tr'
         } = req.body;
 
@@ -795,8 +821,7 @@ router.post('/register', async (req, res) => {
         // Format phone number with space after country code
         const formattedPhone = formatPhoneNumber(phone);
         
-        // Insert user with NULL for optional fields - user will fill them later
-        // Email, password, phone (if provided), and english_level (if provided) are stored at registration
+        // Insert user with all provided fields from registration form
         const result = await pool.query(`
             INSERT INTO users (
                 first_name,
@@ -812,26 +837,30 @@ router.post('/register', async (req, res) => {
                 passport_number,
                 desired_country,
                 active_class,
+                current_school,
+                home_address,
                 verification_token,
                 registered_via,
                 personal_info_completed,
                 email_verified
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
-            RETURNING id, first_name, email
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
+            RETURNING id, first_name, last_name, email, phone
         `, [
-            first_name || '', // Will be filled later by user in settings
-            last_name || '', // Will be filled later by user in settings
+            first_name || '',
+            last_name || '',
             email,
-            null, // tc_number - user fills later
-            formattedPhone || null, // phone - from form if provided, formatted with space
+            tc_number || null,
+            formattedPhone || null,
             passwordHash,
-            english_level || null, // english_level - from form if provided
-            null, // high_school_graduation_date - user fills later
-            null, // birth_date - user fills later
-            null, // passport_type
-            null, // passport_number
-            null, // desired_country
-            null, // active_class
+            english_level || null,
+            high_school_graduation_date || null,
+            birth_date || null,
+            passport_type || null,
+            passport_number || null,
+            desired_country || null,
+            active_class || null,
+            current_school || null,
+            home_address || null,
             verificationToken,
             'email',
             isPersonalInfoComplete,
@@ -870,6 +899,16 @@ router.post('/register', async (req, res) => {
                 console.error('⚠️ Email send error:', err.message);
                 console.error('⚠️ Email send error details:', err);
             });
+
+        // Send new student notification to admin (non-blocking)
+        sendNewStudentNotificationEmail({
+            first_name: user.first_name,
+            last_name: user.last_name || last_name,
+            email: email,
+            phone: formattedPhone
+        }, 'email').catch(err => {
+            console.error('⚠️ Admin notification email error:', err.message);
+        });
 
         res.status(201).json({
             success: true,
@@ -1166,44 +1205,53 @@ router.post('/login', async (req, res) => {
             // User found - process user login
             const user = userResult.rows[0];
 
-        // Soft enforcement: allow login but mark as unverified for banner/redirects
-        const needsVerification = !user.is_admin && !user.email_verified;
-
-        // Check password
-        const passwordMatch = await bcrypt.compare(password, user.password_hash);
-        if (!passwordMatch) {
-            return res.status(401).json({
-                success: false,
+            // Check password first
+            const passwordMatch = await bcrypt.compare(password, user.password_hash);
+            if (!passwordMatch) {
+                return res.status(401).json({
+                    success: false,
                     message: language === 'tr' ? 'Geçersiz e-posta veya şifre' : 'Invalid email or password'
+                });
+            }
+
+            // Hard enforcement: block login for unverified non-admin users
+            if (!user.is_admin && !user.email_verified) {
+                return res.status(403).json({
+                    success: false,
+                    needs_verification: true,
+                    message: language === 'tr' 
+                        ? 'Önce e-posta adresinize gelen mailden hesabınızı doğrulayın. Doğrulama maili gelmedi mi? Aşağıdaki butona tıklayın.' 
+                        : 'Please verify your account from the email sent to your email address. Didn\'t receive the verification email? Click the button below.',
+                    email: user.email
+                });
+            }
+
+            // Generate token with login timestamp
+            const token = generateUserToken(user.id);
+            await pool.query('UPDATE users SET last_login_at = NOW() WHERE id = $1', [user.id]);
+
+            // Set cookie
+            res.cookie('userToken', token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
+                maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
             });
-        }
-
-        // Generate token with login timestamp
-        const token = generateUserToken(user.id);
-        await pool.query('UPDATE users SET last_login_at = NOW() WHERE id = $1', [user.id]);
-
-        // Set cookie
-        res.cookie('userToken', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-        });
 
             return res.json({
-            success: true,
-            message: language === 'tr' ? 'Giriş başarılı' : 'Login successful',
-            user: {
-                id: user.id,
-                first_name: user.first_name,
-                last_name: user.last_name,
-                email: user.email,
+                success: true,
+                message: language === 'tr' ? 'Giriş başarılı' : 'Login successful',
+                user: {
+                    id: user.id,
+                    first_name: user.first_name,
+                    last_name: user.last_name,
+                    email: user.email,
+                    is_admin: user.is_admin,
+                    email_verified: user.email_verified
+                },
+                token,
                 is_admin: user.is_admin,
-                email_verified: user.email_verified
-            },
-            token,
-            is_admin: user.is_admin,
-                is_partner: false,
-            needs_verification: needsVerification
+                is_partner: false
             });
         }
 
@@ -1249,6 +1297,7 @@ router.post('/login', async (req, res) => {
             res.cookie('partnerToken', token, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
                 maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
             });
 
@@ -1489,6 +1538,7 @@ router.post('/partner-login', async (req, res) => {
         res.cookie('partnerToken', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         });
 
@@ -1617,6 +1667,7 @@ router.post('/partner-setup-password', async (req, res) => {
         res.cookie('partnerToken', loginToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         });
 

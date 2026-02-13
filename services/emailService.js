@@ -886,6 +886,73 @@ const sendProfileReminderEmail = async (user) => {
     }
 };
 
+// Send new student registration notification to admin
+const sendNewStudentNotificationEmail = async (student, registrationMethod = 'email') => {
+    const methodLabels = {
+        'email': 'Manuel Kayıt (E-posta)',
+        'google': 'Google ile Kayıt',
+        'google_redirect': 'Google ile Kayıt (Redirect)'
+    };
+    const methodLabel = methodLabels[registrationMethod] || registrationMethod;
+
+    const html = `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <div style="background: linear-gradient(135deg, #0056b3 0%, #004494 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+                <h1 style="margin: 0; font-size: 24px;">Yeni Öğrenci Kaydı</h1>
+                <p style="margin: 10px 0 0 0; opacity: 0.9;">Venture Global Danışmanlık</p>
+            </div>
+            
+            <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
+                <h2 style="color: #333; margin-bottom: 20px;">Yeni bir öğrenci kaydoldu!</h2>
+                
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr style="border-bottom: 1px solid #e0e0e0;">
+                        <td style="padding: 10px 0; font-weight: bold; color: #555; width: 40%;">Ad Soyad:</td>
+                        <td style="padding: 10px 0; color: #333;">${student.first_name || ''} ${student.last_name || ''}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e0e0e0;">
+                        <td style="padding: 10px 0; font-weight: bold; color: #555;">E-posta:</td>
+                        <td style="padding: 10px 0; color: #333;">${student.email || '-'}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e0e0e0;">
+                        <td style="padding: 10px 0; font-weight: bold; color: #555;">Telefon:</td>
+                        <td style="padding: 10px 0; color: #333;">${student.phone || '-'}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e0e0e0;">
+                        <td style="padding: 10px 0; font-weight: bold; color: #555;">Kayıt Yöntemi:</td>
+                        <td style="padding: 10px 0; color: #333;">${methodLabel}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px 0; font-weight: bold; color: #555;">Tarih:</td>
+                        <td style="padding: 10px 0; color: #333;">${new Date().toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul' })}</td>
+                    </tr>
+                </table>
+                
+                <div style="margin-top: 25px; text-align: center;">
+                    <a href="https://vgdanismanlik.com/admin/dashboard" style="display: inline-block; background: #0056b3; color: white; padding: 12px 30px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+                        Admin Panelde Görüntüle (Giriş Gerekli)
+                    </a>
+                </div>
+            </div>
+            ${getEmailSignature()}
+        </div>
+    `;
+
+    try {
+        await transporter.sendMail({
+            from: `"Venture Global" <${process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com'}>`,
+            to: 'info@vgdanismanlik.com',
+            subject: `🆕 Yeni Öğrenci Kaydı - ${student.first_name || ''} ${student.last_name || ''} (${methodLabel})`,
+            html: html
+        });
+        console.log('✅ New student notification email sent to info@vgdanismanlik.com for:', student.email);
+        return true;
+    } catch (error) {
+        console.error('❌ New student notification email failed:', error.message);
+        return false;
+    }
+};
+
 module.exports = {
     transporter,
     sendVerificationEmail,
@@ -895,6 +962,7 @@ module.exports = {
     sendPartnerVerificationEmail,
     sendVisaApplicationEmail,
     sendProfileReminderEmail,
+    sendNewStudentNotificationEmail,
     generateVerificationToken,
     generateResetToken
 }; 

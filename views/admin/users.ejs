@@ -53,65 +53,115 @@
             <p class="text-muted">Sistemdeki tüm öğrencileri yönetin</p>
         </div>
 
-        <!-- Users Table -->
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Öğrenci Listesi (<%= users.length %>)</h5>
-                <div class="search-box">
-                    <div class="input-group" style="width: 300px;">
-                        <span class="input-group-text">
-                            <i class="fas fa-search"></i>
-                        </span>
-                        <input type="text" class="form-control" id="userSearchInput" placeholder="Öğrenci ara...">
+<!-- Advanced Filter Panel -->
+<div class="card mb-3">
+    <div class="card-body py-3">
+        <div class="row g-3 align-items-end">
+            <!-- Text Search -->
+            <div class="col-lg-4 col-md-6">
+                <label class="form-label fw-semibold mb-1"><i class="fas fa-search me-1"></i>Ara</label>
+                <input type="text" class="form-control" id="userSearchInput" placeholder="Ad, telefon, TC, okul, veli adı...">
+            </div>
+            <!-- Class Filter -->
+            <div class="col-lg-2 col-md-3">
+                <label class="form-label fw-semibold mb-1"><i class="fas fa-graduation-cap me-1"></i>Sınıf</label>
+                <select class="form-select" id="classFilter">
+                    <option value="">Tümü</option>
+                    <option value="9">9. Sınıf</option>
+                    <option value="10">10. Sınıf</option>
+                    <option value="11">11. Sınıf</option>
+                    <option value="12">12. Sınıf</option>
+                    <option value="Mezun">Mezun</option>
+                </select>
+            </div>
+            <!-- Payment Filters -->
+            <div class="col-lg-4 col-md-6">
+                <label class="form-label fw-semibold mb-1"><i class="fas fa-credit-card me-1"></i>Ödeme Durumu</label>
+                <div class="d-flex gap-3 mt-1">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="filterKabulOncesi">
+                        <label class="form-check-label small" for="filterKabulOncesi">Kabul Öncesi Ödemiş</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="filterKabulSonrasi">
+                        <label class="form-check-label small" for="filterKabulSonrasi">Kabul Sonrası Ödemiş</label>
                     </div>
                 </div>
             </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Ad Soyad</th>
-                                <th>E-posta</th>
-                                <th>Telefon</th>
-                                <th>İngilizce Seviyesi</th>
-                                <th>Kayıt Tarihi</th>
-                                <th>İşlemler</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% users.forEach(user => { %>
-                            <tr>
-                                <td><%= user.id %></td>
-                                <td><%= user.first_name %> <%= user.last_name %></td>
-                                <td><%= user.email %></td>
-                                <td><%= user.phone %></td>
-                                <td><span class="badge bg-info"><%= user.english_level %></span></td>
-                                <td><%= new Date(user.created_at).toLocaleDateString('tr-TR') %></td>
-                                <td>
-                                    <div class="btn-group" role="group">
-                                        <button class="btn btn-sm btn-outline-info js-view-details" data-user-id="<%= user.id %>">
-                                            <i class="fas fa-eye"></i> Detaylar
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-danger js-delete-user" data-user-id="<%= user.id %>" data-user-name="<%= user.first_name %> <%= user.last_name %>">
-                                            <i class="fas fa-trash"></i> Sil
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <% }); %>
-                        </tbody>
-                    </table>
-                </div>
+            <!-- Reset Button -->
+            <div class="col-lg-2 col-md-3">
+                <button class="btn btn-outline-secondary w-100" id="resetFilters">
+                    <i class="fas fa-undo me-1"></i>Sıfırla
+                </button>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Users Table -->
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Öğrenci Listesi (<span id="visibleCount"><%= users.length %></span> / <%= users.length %>)</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Ad Soyad</th>
+                        <th>E-posta</th>
+                        <th>Telefon</th>
+                        <th>İngilizce Seviyesi</th>
+                        <th>Kayıt Tarihi</th>
+                        <th>İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                    <% users.forEach(user => { %>
+                    <tr class="student-row"
+                        data-name="<%= (user.first_name + ' ' + user.last_name).toLowerCase() %>"
+                        data-phone="<%= (user.phone || '').toLowerCase() %>"
+                        data-email="<%= (user.email || '').toLowerCase() %>"
+                        data-tc="<%= user.tc_number || '' %>"
+                        data-school="<%= (user.current_school || '').toLowerCase() %>"
+                        data-class="<%= user.active_class || '' %>"
+                        data-guardians="<%= (user.guardian_names || '').toLowerCase() %>"
+                        data-kabul-oncesi="<%= user.kabul_oncesi_paid ? 'true' : 'false' %>"
+                        data-kabul-sonrasi="<%= user.kabul_sonrasi_paid ? 'true' : 'false' %>">
+                        <td><%= user.id %></td>
+                        <td><%= user.first_name %> <%= user.last_name %></td>
+                        <td><%= user.email %></td>
+                        <td><%= user.phone %></td>
+                        <td><span class="badge bg-info"><%= user.english_level %></span></td>
+                        <td><%= new Date(user.created_at).toLocaleDateString('tr-TR') %></td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-sm btn-outline-info js-view-details" data-user-id="<%= user.id %>">
+                                    <i class="fas fa-eye"></i> Detaylar
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger js-delete-user" data-user-id="<%= user.id %>" data-user-name="<%= user.first_name %> <%= user.last_name %>">
+                                    <i class="fas fa-trash"></i> Sil
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+        <!-- No results message -->
+        <div id="noResultsMsg" class="text-center text-muted py-4" style="display: none;">
+            <i class="fas fa-search me-2"></i>Filtrelere uygun öğrenci bulunamadı.
+        </div>
+    </div>
+</div>
+    </div> <!-- /.admin-main -->
+</div> <!-- /.admin-container -->
+
 <script>
-    // Event delegation for edit user buttons
     document.addEventListener('DOMContentLoaded', function() {
+        // Event delegation for buttons
         document.addEventListener('click', function(e) {
             const detailsBtn = e.target.closest('.js-view-details');
             const deleteBtn = e.target.closest('.js-delete-user');
@@ -128,21 +178,80 @@
             }
         });
 
-        // Search functionality
+        // --- Advanced Filter System ---
         const searchInput = document.getElementById('userSearchInput');
-        const tableRows = document.querySelectorAll('tbody tr');
-        
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            
-            tableRows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                if (text.includes(searchTerm)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
+        const classFilter = document.getElementById('classFilter');
+        const filterKabulOncesi = document.getElementById('filterKabulOncesi');
+        const filterKabulSonrasi = document.getElementById('filterKabulSonrasi');
+        const resetBtn = document.getElementById('resetFilters');
+        const visibleCountEl = document.getElementById('visibleCount');
+        const noResultsMsg = document.getElementById('noResultsMsg');
+        const allRows = document.querySelectorAll('.student-row');
+
+        function applyFilters() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const selectedClass = classFilter.value;
+            const requireKabulOncesi = filterKabulOncesi.checked;
+            const requireKabulSonrasi = filterKabulSonrasi.checked;
+
+            let visibleCount = 0;
+
+            allRows.forEach(row => {
+                let show = true;
+
+                // 1. Text search: name, phone, TC, school, guardians, email
+                if (searchTerm) {
+                    const name = row.getAttribute('data-name') || '';
+                    const phone = row.getAttribute('data-phone') || '';
+                    const email = row.getAttribute('data-email') || '';
+                    const tc = row.getAttribute('data-tc') || '';
+                    const school = row.getAttribute('data-school') || '';
+                    const guardians = row.getAttribute('data-guardians') || '';
+
+                    const textMatch = name.includes(searchTerm) ||
+                                     phone.includes(searchTerm) ||
+                                     email.includes(searchTerm) ||
+                                     tc.includes(searchTerm) ||
+                                     school.includes(searchTerm) ||
+                                     guardians.includes(searchTerm);
+                    if (!textMatch) show = false;
                 }
+
+                // 2. Class filter
+                if (show && selectedClass) {
+                    const rowClass = row.getAttribute('data-class') || '';
+                    if (rowClass !== selectedClass) show = false;
+                }
+
+                // 3. Payment filters (checkboxes - both can be active)
+                if (show && requireKabulOncesi) {
+                    if (row.getAttribute('data-kabul-oncesi') !== 'true') show = false;
+                }
+                if (show && requireKabulSonrasi) {
+                    if (row.getAttribute('data-kabul-sonrasi') !== 'true') show = false;
+                }
+
+                row.style.display = show ? '' : 'none';
+                if (show) visibleCount++;
             });
+
+            visibleCountEl.textContent = visibleCount;
+            noResultsMsg.style.display = visibleCount === 0 ? '' : 'none';
+        }
+
+        // Attach filter events
+        searchInput.addEventListener('input', applyFilters);
+        classFilter.addEventListener('change', applyFilters);
+        filterKabulOncesi.addEventListener('change', applyFilters);
+        filterKabulSonrasi.addEventListener('change', applyFilters);
+
+        // Reset all filters
+        resetBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            classFilter.value = '';
+            filterKabulOncesi.checked = false;
+            filterKabulSonrasi.checked = false;
+            applyFilters();
         });
     });
 

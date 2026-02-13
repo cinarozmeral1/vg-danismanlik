@@ -702,6 +702,15 @@ module.exports = {
             card1Content: "Venture Global (VG Danışmanlık), Türkiye'deki öğrencileri Avrupa'nın en prestijli üniversitelerine yönlendiren profesyonel bir eğitim danışmanlık şirketidir. 8 ülkede 50+ üniversite ile işbirliği yaparak öğrencilerimize en iyi eğitim fırsatlarını sunuyoruz.",
             card2Title: "VG Danışmanlık Hizmetleri",
             card2Content: "VG Danışmanlık olarak üniversite başvurusu, vize işlemleri, konaklama ve Avrupa'ya uyum süreçlerinde kapsamlı destek veriyoruz. Venture Global ile yurt dışı eğitim hayalinizi güvenle gerçekleştirin."
+        },
+        czechOffice: {
+            title: "Çekya Ofisimiz",
+            subtitle: "Prag'daki ofisimizde sizleri bekliyoruz",
+            country: "Çek Cumhuriyeti",
+            addressLabel: "Adres",
+            regionLabel: "Bölge",
+            region: "Avrupa Birliği - Doğu Avrupa",
+            directions: "Yol Tarifi Al"
         }
     },
     
