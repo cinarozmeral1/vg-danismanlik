@@ -368,6 +368,14 @@ router.post('/complete-google-registration', async (req, res) => {
             });
         }
         
+        // Validate additional required fields
+        if (!desired_country || !current_school || !active_class || !passport_type || !passport_number || !home_address) {
+            return res.status(400).json({
+                success: false,
+                message: language === 'tr' ? 'Lütfen tüm zorunlu alanları doldurun (ülke, okul, sınıf, pasaport bilgileri, ev adresi)' : 'Please fill in all required fields (country, school, grade, passport info, home address)'
+            });
+        }
+        
         // Validate TC number
         if (!/^\d{11}$/.test(tc_number)) {
             return res.status(400).json({
@@ -763,6 +771,14 @@ router.post('/register', async (req, res) => {
             return res.status(400).json({
                 success: false,
                 message: language === 'tr' ? 'Tüm zorunlu alanlar doldurulmalıdır' : 'All required fields must be filled'
+            });
+        }
+
+        // Validate additional required fields
+        if (!desired_country || !current_school || !active_class || !passport_type || !passport_number || !home_address) {
+            return res.status(400).json({
+                success: false,
+                message: language === 'tr' ? 'Lütfen tüm zorunlu alanları doldurun (ülke, okul, sınıf, pasaport bilgileri, ev adresi)' : 'Please fill in all required fields (country, school, grade, passport info, home address)'
             });
         }
 

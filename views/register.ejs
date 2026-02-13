@@ -369,57 +369,57 @@
                         </div>
                                 </div>
 
-                        <!-- Ek Bilgiler - Tam Genişlik -->
+                        <!-- Ek Bilgiler -->
                         <div class="row mt-2">
                             <div class="col-12 mb-2">
-                                <small class="text-muted fw-bold"><i class="fas fa-info-circle me-1"></i><%= currentLanguage === 'tr' ? 'Ek Bilgiler (Opsiyonel)' : 'Additional Info (Optional)' %></small>
+                                <small class="text-muted fw-bold"><i class="fas fa-info-circle me-1"></i><%= currentLanguage === 'tr' ? 'Ek Bilgiler' : 'Additional Info' %></small>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="desired_country" class="form-label">
                                     <i class="fas fa-globe me-2 text-primary"></i>
-                                    <%= currentLanguage === 'tr' ? 'Gitmek İstediği Ülke' : 'Desired Country' %>
+                                    <%= currentLanguage === 'tr' ? 'Gitmek İstediği Ülke' : 'Desired Country' %> <span class="text-danger">*</span>
                                 </label>
-                                <input type="text" class="form-control" id="desired_country" name="desired_country"
+                                <input type="text" class="form-control" id="desired_country" name="desired_country" required
                                        placeholder="<%= currentLanguage === 'tr' ? 'Örn: Almanya' : 'e.g. Germany' %>">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="current_school" class="form-label">
                                     <i class="fas fa-school me-2 text-primary"></i>
-                                    <%= currentLanguage === 'tr' ? 'Aktif Okuduğu Okul' : 'Current School' %>
+                                    <%= currentLanguage === 'tr' ? 'Aktif Okuduğu Okul' : 'Current School' %> <span class="text-danger">*</span>
                                 </label>
-                                <input type="text" class="form-control" id="current_school" name="current_school"
+                                <input type="text" class="form-control" id="current_school" name="current_school" required
                                        placeholder="<%= currentLanguage === 'tr' ? 'Örn: Galatasaray Lisesi' : 'e.g. Your High School' %>">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="active_class" class="form-label">
                                     <i class="fas fa-graduation-cap me-2 text-primary"></i>
-                                    <%= currentLanguage === 'tr' ? 'Aktif Sınıf' : 'Current Grade' %>
+                                    <%= currentLanguage === 'tr' ? 'Aktif Sınıf' : 'Current Grade' %> <span class="text-danger">*</span>
                                 </label>
-                                <input type="text" class="form-control" id="active_class" name="active_class"
+                                <input type="text" class="form-control" id="active_class" name="active_class" required
                                        placeholder="<%= currentLanguage === 'tr' ? 'Örn: 11' : 'e.g. 11' %>">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="passport_type" class="form-label">
                                     <i class="fas fa-passport me-2 text-primary"></i>
-                                    <%= currentLanguage === 'tr' ? 'Pasaport Türü' : 'Passport Type' %>
+                                    <%= currentLanguage === 'tr' ? 'Pasaport Türü' : 'Passport Type' %> <span class="text-danger">*</span>
                                 </label>
-                                <input type="text" class="form-control" id="passport_type" name="passport_type"
+                                <input type="text" class="form-control" id="passport_type" name="passport_type" required
                                        placeholder="<%= currentLanguage === 'tr' ? 'Örn: Bordo, Yeşil' : 'e.g. Regular, Green' %>">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="passport_number" class="form-label">
                                     <i class="fas fa-hashtag me-2 text-primary"></i>
-                                    <%= currentLanguage === 'tr' ? 'Pasaport Numarası' : 'Passport Number' %>
+                                    <%= currentLanguage === 'tr' ? 'Pasaport Numarası' : 'Passport Number' %> <span class="text-danger">*</span>
                                 </label>
-                                <input type="text" class="form-control" id="passport_number" name="passport_number"
+                                <input type="text" class="form-control" id="passport_number" name="passport_number" required
                                        placeholder="<%= currentLanguage === 'tr' ? 'Örn: P1234567' : 'e.g. P1234567' %>">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="home_address" class="form-label">
                                     <i class="fas fa-home me-2 text-primary"></i>
-                                    <%= currentLanguage === 'tr' ? 'Ev Adresi' : 'Home Address' %>
+                                    <%= currentLanguage === 'tr' ? 'Ev Adresi' : 'Home Address' %> <span class="text-danger">*</span>
                                 </label>
-                                <input type="text" class="form-control" id="home_address" name="home_address"
+                                <input type="text" class="form-control" id="home_address" name="home_address" required
                                        placeholder="<%= currentLanguage === 'tr' ? 'Tam ev adresiniz' : 'Your full home address' %>">
                             </div>
                         </div>
@@ -558,6 +558,21 @@
                     return;
                 }
                 
+                // Validate required additional fields
+                const desiredCountry = document.getElementById('desired_country').value.trim();
+                const currentSchool = document.getElementById('current_school').value.trim();
+                const activeClass = document.getElementById('active_class').value.trim();
+                const passportType = document.getElementById('passport_type').value.trim();
+                const passportNumber = document.getElementById('passport_number').value.trim();
+                const homeAddress = document.getElementById('home_address').value.trim();
+                
+                if (!desiredCountry || !currentSchool || !activeClass || !passportType || !passportNumber || !homeAddress) {
+                    showAlert('danger', '<%= currentLanguage === "tr" ? "Lütfen tüm zorunlu alanları doldurun (ülke, okul, sınıf, pasaport bilgileri, ev adresi)" : "Please fill in all required fields (country, school, grade, passport info, home address)" %>');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-user-plus me-2"></i><%= t.auth.register.submit %>';
+                    return;
+                }
+                
                 try {
                     const response = await fetch('/api/auth/register', {
                         method: 'POST',
@@ -570,12 +585,12 @@
                             tc_number: tcNumber,
                             phone: phoneNumber,
                             english_level: englishLevel,
-                            desired_country: document.getElementById('desired_country').value.trim() || null,
-                            current_school: document.getElementById('current_school').value.trim() || null,
-                            active_class: document.getElementById('active_class').value.trim() || null,
-                            passport_type: document.getElementById('passport_type').value.trim() || null,
-                            passport_number: document.getElementById('passport_number').value.trim() || null,
-                            home_address: document.getElementById('home_address').value.trim() || null,
+                            desired_country: desiredCountry,
+                            current_school: currentSchool,
+                            active_class: activeClass,
+                            passport_type: passportType,
+                            passport_number: passportNumber,
+                            home_address: homeAddress,
                             language: '<%= currentLanguage %>'
                         })
                     });
