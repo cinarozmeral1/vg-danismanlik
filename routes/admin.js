@@ -637,7 +637,7 @@ router.get('/applications', async (req, res) => {
                     u.email,
                     a.university_name as university,
                     a.program_name as program,
-                    'Türkiye' as country
+                    a.country
                 FROM applications a 
                 JOIN users u ON a.user_id = u.id 
                 ORDER BY a.created_at DESC
