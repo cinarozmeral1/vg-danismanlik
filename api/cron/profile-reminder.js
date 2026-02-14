@@ -77,9 +77,9 @@ module.exports = async (req, res) => {
             let emailError = null;
             try {
                 emailSent = await sendProfileReminderEmail({
-                    ...testUser,
-                    email: 'info@vgdanismanlik.com'
-                });
+                ...testUser,
+                email: 'info@vgdanismanlik.com'
+            });
             } catch (emailErr) {
                 emailError = emailErr.message;
                 console.error('❌ [TEST] Email send error:', emailErr.message);

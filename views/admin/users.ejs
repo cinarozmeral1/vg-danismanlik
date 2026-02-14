@@ -102,23 +102,23 @@
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0">Öğrenci Listesi (<span id="visibleCount"><%= users.length %></span> / <%= users.length %>)</h5>
-    </div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Ad Soyad</th>
-                        <th>E-posta</th>
-                        <th>Telefon</th>
-                        <th>İngilizce Seviyesi</th>
-                        <th>Kayıt Tarihi</th>
-                        <th>İşlemler</th>
-                    </tr>
-                </thead>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Ad Soyad</th>
+                                <th>E-posta</th>
+                                <th>Telefon</th>
+                                <th>İngilizce Seviyesi</th>
+                                <th>Kayıt Tarihi</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
                 <tbody id="usersTableBody">
-                    <% users.forEach(user => { %>
+                            <% users.forEach(user => { %>
                     <tr class="student-row"
                         data-name="<%= (user.first_name + ' ' + user.last_name).toLowerCase() %>"
                         data-phone="<%= (user.phone || '').toLowerCase() %>"
@@ -129,27 +129,27 @@
                         data-guardians="<%= (user.guardian_names || '').toLowerCase() %>"
                         data-kabul-oncesi="<%= user.kabul_oncesi_paid ? 'true' : 'false' %>"
                         data-kabul-sonrasi="<%= user.kabul_sonrasi_paid ? 'true' : 'false' %>">
-                        <td><%= user.id %></td>
-                        <td><%= user.first_name %> <%= user.last_name %></td>
-                        <td><%= user.email %></td>
-                        <td><%= user.phone %></td>
-                        <td><span class="badge bg-info"><%= user.english_level %></span></td>
-                        <td><%= new Date(user.created_at).toLocaleDateString('tr-TR') %></td>
-                        <td>
-                            <div class="btn-group" role="group">
-                                <button class="btn btn-sm btn-outline-info js-view-details" data-user-id="<%= user.id %>">
-                                    <i class="fas fa-eye"></i> Detaylar
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger js-delete-user" data-user-id="<%= user.id %>" data-user-name="<%= user.first_name %> <%= user.last_name %>">
-                                    <i class="fas fa-trash"></i> Sil
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    <% }); %>
-                </tbody>
-            </table>
-        </div>
+                                <td><%= user.id %></td>
+                                <td><%= user.first_name %> <%= user.last_name %></td>
+                                <td><%= user.email %></td>
+                                <td><%= user.phone %></td>
+                                <td><span class="badge bg-info"><%= user.english_level %></span></td>
+                                <td><%= new Date(user.created_at).toLocaleDateString('tr-TR') %></td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <button class="btn btn-sm btn-outline-info js-view-details" data-user-id="<%= user.id %>">
+                                            <i class="fas fa-eye"></i> Detaylar
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger js-delete-user" data-user-id="<%= user.id %>" data-user-name="<%= user.first_name %> <%= user.last_name %>">
+                                            <i class="fas fa-trash"></i> Sil
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
         <!-- No results message -->
         <div id="noResultsMsg" class="text-center text-muted py-4" style="display: none;">
             <i class="fas fa-search me-2"></i>Filtrelere uygun öğrenci bulunamadı.
