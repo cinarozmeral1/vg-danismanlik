@@ -97,15 +97,31 @@ function generateTextOnlyPdf(data) {
             const program = (app && app.program_name) || '';
             const bl = '';
 
-            // Payment: each service = one installment, total = sum of all
+            // Determine if student is 11th grade
+            const is11thGrade = user.active_class && String(user.active_class).trim() === '11';
+
+            // Payment: filter services by name for proper categorization
             let svcs = (services || []).slice().sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-            const s1 = svcs[0] || null, s2 = svcs[1] || null;
-            const cur = (s1 && s1.currency) || 'EUR';
+            const cur = (svcs[0] && svcs[0].currency) || 'EUR';
             const total = svcs.reduce((s, x) => s + parseFloat(x.amount || 0), 0);
+
+            // Find services by type (name-based matching)
+            const svcPrep = svcs.find(s => s.service_name && (s.service_name.includes('11') || s.service_name.toLowerCase().includes('hazirlik'))) || null;
+            const svcPre = svcs.find(s => s.service_name && s.service_name.toLowerCase().includes('kabul oncesi')) || null;
+            const svcPost = svcs.find(s => s.service_name && s.service_name.toLowerCase().includes('kabul sonrasi')) || null;
+
+            // For 12th grade (legacy): fall back to positional if name-based doesn't match
+            const s1 = svcPre || svcs[0] || null;
+            const s2 = svcPost || svcs[1] || null;
             const a1 = s1 ? parseFloat(s1.amount) : null, a2 = s2 ? parseFloat(s2.amount) : null;
             const paid1 = s1 ? s1.is_paid : false, paid2 = s2 ? s2.is_paid : false;
             const pd1 = s1 && s1.payment_date ? formatDate(s1.payment_date) : '__ / __ / ____';
             const pd2 = s2 && s2.payment_date ? formatDate(s2.payment_date) : '__ / __ / ____';
+
+            // 11th grade specific payment data
+            const aPrep = svcPrep ? parseFloat(svcPrep.amount) : null;
+            const paidPrep = svcPrep ? svcPrep.is_paid : false;
+            const pdPrep = svcPrep && svcPrep.payment_date ? formatDate(svcPrep.payment_date) : '__ / __ / ____';
 
             const PW = doc.page.width - 130; // usable text width
             const ML = 65;
@@ -226,6 +242,62 @@ function generateTextOnlyPdf(data) {
             para('DANIŞMAN, işbu sözleşme kapsamında aşağıdaki hizmetleri sunmayı taahhüt eder:');
             doc.moveDown(0.25);
 
+            if (is11thGrade) {
+                // ── 11. SINIF: Two-phase service listing ──
+
+                // A) 11. Sınıf Hizmetleri
+                checkPage(40);
+                doc.font('B').fontSize(SZ.sec - 1).fillColor(CLR.dk).text('A) 11. SINIF HİZMETLERİ (Başvuruya Hazırlık Dönemi)', ML, doc.y, { width: PW });
+                doc.moveDown(0.3);
+
+                const svcList11 = [
+                    ['2.1. Lise Ders Seçimleri ve Akademik Yönlendirme', ['Öğrencinin hedef üniversite ve bölümüne uygun ders seçimlerinin planlanması', 'Akademik performansın güçlendirilmesine yönelik stratejik rehberlik']],
+                    ['2.2. Öğrenci Portfolyosunun Oluşturulması', ['Öğrencinin akademik başarıları, extrakuriküler aktiviteleri ve projelerinin derlenmesi', 'Üniversite başvurularına uygun güçlü bir portfolyo hazırlanması']],
+                    ['2.3. Üniversite Giriş Sınavlarına Hazırlık', ['Hedef ülke ve üniversiteye göre gerekli sınavların (SAT, ACT vb.) belirlenmesi', 'Sınav hazırlık planının oluşturulması ve takibi']],
+                    ['2.4. İhtiyaca Göre Özel Ders Koordinasyonu', ['Öğrencinin akademik ihtiyaçlarına yönelik özel ders ayarlanması', 'Ders programının takibi ve performans değerlendirmesi']],
+                    ['2.5. Özgeçmiş (CV) Hazırlanması', ['Öğrencinin akademik ve kişisel deneyimlerini ön plana çıkaran profesyonel CV oluşturulması']],
+                    ['2.6. Motivasyon Mektuplarının Hazırlanması', ['Hedef üniversitelere özel motivasyon mektuplarının yazımında rehberlik', 'Mektupların düzenlenmesi ve nihai hale getirilmesi']],
+                    ['2.7. Referans Mektuplarının Hazırlanması', ['Uygun referans kişilerinin belirlenmesi', 'Referans mektubu yazım sürecinde öğretmenlere ve danışmanlara rehberlik']],
+                    ['2.8. Dil Sınavlarına Ön Danışmanlık ve Hazırlık Planı', ['IELTS, TOEFL gibi dil sınavları için ön değerlendirme ve hazırlık stratejisinin oluşturulması', 'Sınav tarihlerinin planlanması ve kayıt sürecinde destek']],
+                    ['2.9. Bölüm Seçimi İçin Psikolojik Destek ve Kariyer Yönlendirmesi', ['Öğrencinin ilgi alanları, yetenekleri ve kariyer hedeflerine yönelik kapsamlı değerlendirme', 'Henüz bölüm kararı netleşmemiş öğrenciler için profesyonel yönlendirme ve psikolojik destek']]
+                ];
+
+                for (const [title, items] of svcList11) {
+                    checkPage(30 + items.length * 18);
+                    doc.font('B').fontSize(SZ.body).fillColor(CLR.dk).text(title, ML, doc.y, { width: PW });
+                    doc.moveDown(0.1);
+                    for (const it of items) { bullet(it); }
+                    doc.moveDown(0.2);
+                }
+
+                // B) 12. Sınıf Hizmetleri
+                checkPage(40);
+                doc.moveDown(0.3);
+                doc.font('B').fontSize(SZ.sec - 1).fillColor(CLR.dk).text('B) 12. SINIF HİZMETLERİ (Başvuru ve Yerleşim Dönemi)', ML, doc.y, { width: PW });
+                doc.moveDown(0.3);
+
+                const svcList12 = [
+                    ['2.10. Öğrenci Profili ve İhtiyaç Analizi', ['Öğrencinin akademik geçmişi, ilgi alanları ve hedeflerine yönelik ayrıntılı analiz ve değerlendirme']],
+                    ['2.11. Üniversite Seçimi ve Yönlendirme', ['Öğrencinin profiline uygun üniversite ve programların belirlenmesi', 'Başvuru stratejisinin oluşturulması']],
+                    ['2.12. Başvuru Dosyası Hazırlama', ['Gerekli belgelerin listelenmesi', 'Motivasyon mektubu yazımında rehberlik', 'Özgeçmiş (CV) hazırlanmasında destek', 'Başvuru formlarının doldurulmasında yardım']],
+                    ['2.13. Başvuru Takibi', ['Üniversite başvurularının yapılması ve takibi', 'Kabul mektubunun teslim sürecinin takibi']],
+                    ['2.14. Vize Danışmanlığı', ['Vize başvurusu için gerekli belgelerin hazırlanması', 'Başvuru formunun doldurulmasında yardım', 'Vize randevusu alınmasında destek', 'Başvuru sürecinin takibi']],
+                    ['2.15. Konaklama Düzenlemeleri', ['Öğrenci yurdu veya özel konaklama seçeneklerinin araştırılması', 'Konaklama rezervasyonunda yardım']],
+                    ['2.16. Varış Öncesi Hazırlık', ['Gidiş öncesi bilgilendirme ve oryantasyon', 'Gerekli eşya ve belge listesi hazırlanması']],
+                    ['2.17. Varış Sonrası Destek (Çek Cumhuriyeti için)', ['Prag Havalimanı\'nda karşılama ve transfer', 'SIM kart temini konusunda yardım', 'Banka hesabı açılmasında destek', 'İlk günlerde şehir oryantasyonu']],
+                    ['2.18. Sürekli Destek', ['Eğitim süreci boyunca 7/24 iletişim hattı', 'Acil durumlarda destek']]
+                ];
+
+                for (const [title, items] of svcList12) {
+                    checkPage(30 + items.length * 18);
+                    doc.font('B').fontSize(SZ.body).fillColor(CLR.dk).text(title, ML, doc.y, { width: PW });
+                    doc.moveDown(0.1);
+                    for (const it of items) { bullet(it); }
+                    doc.moveDown(0.2);
+                }
+
+            } else {
+                // ── 12. SINIF (veya diğer): Mevcut tek bölüm hizmet listesi ──
             const svcList = [
                 ['2.1. Öğrenci Profili ve İhtiyaç Analizi', ['Öğrencinin akademik geçmişi, ilgi alanları ve hedeflerine yönelik ayrıntılı analiz ve değerlendirme']],
                 ['2.2. Üniversite Seçimi ve Yönlendirme', ['Öğrencinin profiline uygun üniversite ve programların belirlenmesi', 'Başvuru stratejisinin oluşturulması']],
@@ -244,6 +316,7 @@ function generateTextOnlyPdf(data) {
                 doc.moveDown(0.1);
                 for (const it of items) { bullet(it); }
                 doc.moveDown(0.2);
+                }
             }
 
             // ── MADDE 3 ──
@@ -272,6 +345,7 @@ function generateTextOnlyPdf(data) {
             const totalTxt = total > 0 ? numberToTurkishText(total) : '';
             const inst1 = a1 ? formatCurrency(a1, cur) : '';
             const inst2 = a2 ? formatCurrency(a2, cur) : '';
+            const instPrep = aPrep ? formatCurrency(aPrep, cur) : '';
 
             doc.font('B').fontSize(SZ.body).fillColor(CLR.tx)
                 .text(`4.1. Toplam Danışmanlık Ücreti: ${totalStr}`, ML, doc.y, { width: PW });
@@ -282,6 +356,27 @@ function generateTextOnlyPdf(data) {
             doc.font('B').fontSize(SZ.body).text('4.2. Ödeme Planı:', ML);
             doc.moveDown(0.15);
 
+            if (is11thGrade) {
+                // ── 11. Sınıf: 3 Taksitli Ödeme Planı ──
+                doc.font('B').fontSize(SZ.body)
+                    .text(`a) BİRİNCİ TAKSİT (11. Sınıf Başvuruya Hazırlık Ücreti): ${instPrep}`, ML, doc.y, { width: PW });
+                doc.font('R').fontSize(SZ.body)
+                    .text('İşbu sözleşmenin imzalanması ile birlikte peşin olarak ödenir. Bu ödeme, 11. sınıf döneminde sunulacak başvuruya hazırlık danışmanlık hizmetlerinin karşılığı olup, hizmetin fiilen başladığını gösterir.', ML, doc.y, { width: PW, lineGap: 4 });
+                doc.moveDown(0.25);
+
+                doc.font('B').fontSize(SZ.body)
+                    .text(`b) İKİNCİ TAKSİT (Kabul Öncesi Danışmanlık Ücreti): ${inst1}`, ML, doc.y, { width: PW });
+                doc.font('R').fontSize(SZ.body)
+                    .text('Öğrencinin 12. sınıfa geçmesi ile birlikte, üniversite başvuru sürecinin fiilen başlaması üzerine ödenir. Bu ödeme, 12. sınıf döneminde sunulacak başvuru danışmanlık hizmetlerinin karşılığıdır.', ML, doc.y, { width: PW, lineGap: 4 });
+                doc.moveDown(0.25);
+
+                doc.font('B').fontSize(SZ.body)
+                    .text(`c) ÜÇÜNCÜ TAKSİT (Kabul Sonrası Danışmanlık Ücreti): ${inst2}`, ML, doc.y, { width: PW });
+                doc.font('R').fontSize(SZ.body)
+                    .text('Öğrencinin hedef üniversitelerden birine kabul alması halinde, kabul mektubunun tesliminden itibaren 7 (yedi) iş günü içinde ödenir.', ML, doc.y, { width: PW, lineGap: 4 });
+                doc.moveDown(0.3);
+            } else {
+                // ── 12. Sınıf (veya diğer): Mevcut 2 Taksitli Ödeme Planı ──
             doc.font('B').fontSize(SZ.body)
                 .text(`a) BİRİNCİ TAKSİT (Kabul Öncesi Danışmanlık Ücreti): ${inst1}`, ML, doc.y, { width: PW });
             doc.font('R').fontSize(SZ.body)
@@ -293,8 +388,9 @@ function generateTextOnlyPdf(data) {
             doc.font('R').fontSize(SZ.body)
                 .text('Öğrencinin hedef üniversitelerden birine kabul alması halinde, kabul mektubunun tesliminden itibaren 7 (yedi) iş günü içinde ödenir.', ML, doc.y, { width: PW, lineGap: 4 });
             doc.moveDown(0.3);
+            }
 
-            doc.font('B').fontSize(SZ.body).text('4.3. Ödeme Yöntemi:', ML);
+            doc.font('B').fontSize(SZ.body).text(`4.3. Ödeme Yöntemi:`, ML);
             para('Ödemeler, yukarıda belirtilen IBAN numaralarına havale/EFT yoluyla veya nakit olarak yapılabilir. Havale açıklamasına ÖĞRENCİ\'nin adı soyadı yazılmalıdır.');
             doc.moveDown(0.25);
 
@@ -305,6 +401,28 @@ function generateTextOnlyPdf(data) {
             checkPage(100);
             section('MADDE 5 – İADE POLİTİKASI');
 
+            if (is11thGrade) {
+                // ── 11. Sınıf: 3 Taksitli İade Politikası ──
+                doc.font('B').fontSize(SZ.body).text('5.1. Birinci Taksit (11. Sınıf Başvuruya Hazırlık Ücreti) İadesi:', ML);
+                para('Birinci taksit, sözleşmenin imzalanması ve 11. sınıf hazırlık hizmetlerinin başlaması ile birlikte İADE EDİLMEZ niteliğindedir. VELİ veya ÖĞRENCİ\'nin herhangi bir sebeple danışmanlık hizmetinden vazgeçmesi halinde, bu tutar verilen hizmetin karşılığı olarak DANIŞMAN\'da kalacaktır.');
+                doc.moveDown(0.25);
+
+                doc.font('B').fontSize(SZ.body).text('5.2. İkinci Taksit (Kabul Öncesi Danışmanlık Ücreti):', ML);
+                para('a) İkinci taksit, 12. sınıf başvuru sürecinin başlaması ile ödenir ve İADE EDİLMEZ niteliğindedir.');
+                doc.moveDown(0.1);
+                para('b) VELİ veya ÖĞRENCİ\'nin 12. sınıf başvuru sürecinden önce danışmanlık hizmetinden vazgeçmesi halinde, ikinci taksit talep edilmez.');
+                doc.moveDown(0.25);
+
+                doc.font('B').fontSize(SZ.body).text('5.3. Üçüncü Taksit (Kabul Sonrası Danışmanlık Ücreti):', ML);
+                para('a) ÖĞRENCİ, başvurduğu üniversitelerin hiçbirinden kabul alamaması durumunda üçüncü taksit talep edilmez.');
+                doc.moveDown(0.1);
+                para('b) ÖĞRENCİ kabul aldığı halde kendi isteğiyle eğitimden vazgeçerse, üçüncü taksit tam olarak ödenir.');
+                doc.moveDown(0.25);
+
+                doc.font('B').fontSize(SZ.body).text('5.4. Mücbir Sebepler:', ML);
+                para('Savaş, doğal afet, pandemi gibi mücbir sebeplerden kaynaklanan aksaklıklarda taraflar karşılıklı mutabakat ile çözüm arayacaktır.');
+            } else {
+                // ── 12. Sınıf (veya diğer): Mevcut İade Politikası ──
             doc.font('B').fontSize(SZ.body).text('5.1. Birinci Taksit İadesi:', ML);
             para('Birinci taksit, sözleşmenin imzalanması ve hizmetin başlaması ile birlikte İADE EDİLMEZ niteliğindedir. VELİ veya ÖĞRENCİ\'nin herhangi bir sebeple danışmanlık hizmetinden vazgeçmesi halinde, bu tutar verilen hizmetin karşılığı olarak DANIŞMAN\'da kalacaktır.');
             doc.moveDown(0.25);
@@ -317,6 +435,7 @@ function generateTextOnlyPdf(data) {
 
             doc.font('B').fontSize(SZ.body).text('5.3. Mücbir Sebepler:', ML);
             para('Savaş, doğal afet, pandemi gibi mücbir sebeplerden kaynaklanan aksaklıklarda taraflar karşılıklı mutabakat ile çözüm arayacaktır.');
+            }
 
             // ── MADDE 6 ──
             checkPage(80);
@@ -448,15 +567,25 @@ function generateTextOnlyPdf(data) {
             doc.text('Tarih: ' + today);
 
             // ── EK-1: ÖDEME MAKBUZU ──
-            checkPage(80);
+            checkPage(is11thGrade ? 100 : 80);
             doc.moveDown(0.4);
             section('EK-1: ÖDEME MAKBUZU');
             doc.moveDown(0.15);
 
             doc.font('R').fontSize(SZ.body).fillColor(CLR.tx);
+            if (is11thGrade) {
+                // 11. Sınıf: 3 taksit makbuzu
+                doc.text(`${paidPrep ? '☑' : '☐'} 1. Taksit (11. Sınıf Hazırlık) Ödendi    Tarih: ${pdPrep}    Tutar: ${instPrep}`);
+                doc.moveDown(0.25);
+                doc.text(`${paid1 ? '☑' : '☐'} 2. Taksit (Kabul Öncesi) Ödendi    Tarih: ${pd1}    Tutar: ${inst1}`);
+                doc.moveDown(0.25);
+                doc.text(`${paid2 ? '☑' : '☐'} 3. Taksit (Kabul Sonrası) Ödendi    Tarih: ${pd2}    Tutar: ${inst2}`);
+            } else {
+                // 12. Sınıf (veya diğer): 2 taksit makbuzu
             doc.text(`${paid1 ? '☑' : '☐'} 1. Taksit Ödendi    Tarih: ${pd1}    Tutar: ${inst1}`);
             doc.moveDown(0.25);
             doc.text(`${paid2 ? '☑' : '☐'} 2. Taksit Ödendi    Tarih: ${pd2}    Tutar: ${inst2}`);
+            }
 
             doc.moveDown(0.5);
             doc.moveTo(ML, doc.y).lineTo(RX, doc.y).strokeColor(CLR.dk).lineWidth(0.4).stroke();

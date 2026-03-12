@@ -29,12 +29,15 @@ const getEmailSignature = () => {
     `;
 };
 
-// Email configuration
+// Email configuration - trim whitespace/newlines from credentials
+const emailUser = (process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com').trim().replace(/\\n/g, '').replace(/\n/g, '');
+const emailPass = (process.env.EMAIL_PASS || 'msdu gdlm cbfq tttc').trim().replace(/\\n/g, '').replace(/\n/g, '');
+
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-    user: process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com',
-    pass: process.env.EMAIL_PASS || 'msdu gdlm cbfq tttc'
+        user: emailUser,
+        pass: emailPass
     },
     tls: {
         rejectUnauthorized: false
@@ -45,8 +48,8 @@ const transporter = nodemailer.createTransport({
 const testSMTPConnection = async () => {
     try {
         console.log('🔍 Testing SMTP connection...');
-        console.log('   EMAIL_USER:', process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com');
-        console.log('   EMAIL_PASS:', process.env.EMAIL_PASS ? '***SET***' : 'NOT SET');
+        console.log('   EMAIL_USER:', emailUser);
+        console.log('   EMAIL_PASS:', emailPass ? `***SET*** (length: ${emailPass.length})` : 'NOT SET (using fallback)');
         
         await transporter.verify();
         console.log('✅ SMTP connection successful');
@@ -939,16 +942,25 @@ const sendNewStudentNotificationEmail = async (student, registrationMethod = 'em
     `;
 
     try {
-        await transporter.sendMail({
-            from: `"Venture Global" <${process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com'}>`,
+        console.log('📧 Attempting to send new student notification email...');
+        console.log('   From:', emailUser);
+        console.log('   To: info@vgdanismanlik.com');
+        console.log('   Student:', student.email);
+        
+        const result = await transporter.sendMail({
+            from: `"Venture Global" <${emailUser}>`,
             to: 'info@vgdanismanlik.com',
             subject: `🆕 Yeni Öğrenci Kaydı - ${student.first_name || ''} ${student.last_name || ''} (${methodLabel})`,
             html: html
         });
         console.log('✅ New student notification email sent to info@vgdanismanlik.com for:', student.email);
+        console.log('   Message ID:', result.messageId);
         return true;
     } catch (error) {
         console.error('❌ New student notification email failed:', error.message);
+        console.error('   Error code:', error.code);
+        console.error('   Error response:', error.response);
+        console.error('   Full error:', JSON.stringify(error, null, 2));
         return false;
     }
 };

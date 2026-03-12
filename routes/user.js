@@ -221,6 +221,33 @@ router.get('/services', async (req, res) => {
 });
 
 
+// Render user appointments page
+router.get('/appointments', async (req, res) => {
+    try {
+        if (!res.locals.isLoggedIn) {
+            return res.redirect('/login');
+        }
+
+        const appointmentsResult = await pool.query(
+            'SELECT * FROM appointments WHERE email = $1 ORDER BY appointment_date DESC',
+            [res.locals.currentUser.email]
+        );
+
+        res.render('user/appointments', {
+            title: 'Randevularım',
+            currentLanguage: res.locals.currentLanguage || 'tr',
+            isLoggedIn: res.locals.isLoggedIn,
+            currentUser: res.locals.currentUser,
+            user: res.locals.currentUser,
+            appointments: appointmentsResult.rows,
+            t: res.locals.t
+        });
+    } catch (error) {
+        console.error('Appointments page error:', error);
+        res.redirect('/login');
+    }
+});
+
 // Render user settings page
 router.get('/settings', async (req, res) => {
     try {
@@ -1206,8 +1233,13 @@ router.get('/services-list', authenticateUser, async (req, res) => {
     try {
         console.log('📋 Fetching services for user ID:', req.user.id);
         
-        // Get REAL services from database for THIS USER ONLY
-        const query = 'SELECT id, user_id, service_name, amount, currency, due_date, payment_date, is_paid, notes, created_at FROM services WHERE user_id = $1 ORDER BY created_at DESC';
+        // Get services for this user, excluding internal commission entries
+        const query = `SELECT id, user_id, service_name, amount, currency, due_date, payment_date, is_paid, notes, created_at 
+                        FROM services 
+                        WHERE user_id = $1 
+                          AND service_name NOT ILIKE '%ESE Komisyon%'
+                          AND service_name NOT ILIKE '%komisyon%'
+                        ORDER BY created_at DESC`;
         const values = [req.user.id];
         
         console.log('Running query for user:', req.user.id);

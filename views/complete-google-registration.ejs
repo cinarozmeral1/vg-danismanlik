@@ -245,8 +245,12 @@
                             <i class="fas fa-graduation-cap me-2 text-primary"></i>
                             <%= currentLanguage === 'tr' ? 'Aktif Sınıf' : 'Current Grade' %> <span class="text-danger">*</span>
                         </label>
-                        <input type="text" class="form-control" id="active_class" name="active_class" required
-                               placeholder="<%= currentLanguage === 'tr' ? 'Örn: 11' : 'e.g. 11' %>">
+                        <select class="form-select" id="active_class" name="active_class" required>
+                            <option value=""><%= currentLanguage === 'tr' ? 'Seçiniz' : 'Select' %></option>
+                            <option value="11"><%= currentLanguage === 'tr' ? '11. Sınıf' : '11th Grade' %></option>
+                            <option value="12"><%= currentLanguage === 'tr' ? '12. Sınıf' : '12th Grade' %></option>
+                            <option value="Mezun"><%= currentLanguage === 'tr' ? 'Mezun' : 'Graduate' %></option>
+                        </select>
                     </div>
                     <div class="col-6 mb-3">
                         <label for="passport_type" class="form-label">
@@ -362,6 +366,47 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (!desiredCountry || !currentSchool || !activeClass || !passportType || !passportNumber || !homeAddress) {
             showAlert('danger', '<%= currentLanguage === "tr" ? "Lütfen tüm zorunlu alanları doldurun (ülke, okul, sınıf, pasaport bilgileri, ev adresi)" : "Please fill in all required fields (country, school, grade, passport info, home address)" %>');
+            return;
+        }
+
+        function isGarbageInput(str, minLen) {
+            var cleaned = str.replace(/\s/g, '');
+            if (cleaned.length < minLen) return true;
+            var unique = new Set(cleaned.toLowerCase()).size;
+            if (cleaned.length >= 5 && unique <= 1) return true;
+            if (cleaned.length >= 8 && unique <= 2) return true;
+            return false;
+        }
+
+        if (/\d/.test(firstName) || firstName.length < 2 || isGarbageInput(firstName, 2)) {
+            showAlert('danger', '<%= currentLanguage === "tr" ? "Lütfen geçerli bir ad girin (en az 2 karakter, rakam içermemeli)" : "Please enter a valid first name" %>');
+            return;
+        }
+        if (/\d/.test(lastName) || lastName.length < 2 || isGarbageInput(lastName, 2)) {
+            showAlert('danger', '<%= currentLanguage === "tr" ? "Lütfen geçerli bir soyad girin (en az 2 karakter, rakam içermemeli)" : "Please enter a valid last name" %>');
+            return;
+        }
+        if (tcNumber && /^(\d)\1{10}$/.test(tcNumber)) {
+            showAlert('danger', '<%= currentLanguage === "tr" ? "Lütfen geçerli bir TC kimlik numarası girin" : "Please enter a valid TC number" %>');
+            return;
+        }
+        if (phoneNumber) {
+            var phoneDigits = phoneNumber.replace(/\D/g, '');
+            if (phoneDigits.length >= 8 && new Set(phoneDigits).size <= 2) {
+                showAlert('danger', '<%= currentLanguage === "tr" ? "Lütfen geçerli bir telefon numarası girin" : "Please enter a valid phone number" %>');
+                return;
+            }
+        }
+        if (isGarbageInput(passportNumber, 4)) {
+            showAlert('danger', '<%= currentLanguage === "tr" ? "Lütfen geçerli bir pasaport numarası girin" : "Please enter a valid passport number" %>');
+            return;
+        }
+        if (isGarbageInput(currentSchool, 3)) {
+            showAlert('danger', '<%= currentLanguage === "tr" ? "Lütfen geçerli bir okul adı girin" : "Please enter a valid school name" %>');
+            return;
+        }
+        if (isGarbageInput(homeAddress, 5)) {
+            showAlert('danger', '<%= currentLanguage === "tr" ? "Lütfen geçerli bir ev adresi girin (en az 5 karakter)" : "Please enter a valid home address" %>');
             return;
         }
         

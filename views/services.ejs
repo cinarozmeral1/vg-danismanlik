@@ -15,7 +15,7 @@
     <div class="container">
         <!-- AI Student Wizard Button (Only Turkish - no English support) -->
         <% if (typeof currentLanguage === 'undefined' || currentLanguage === 'tr') { %>
-        <div class="text-center mb-5">
+        <div class="text-center mb-5 reveal">
             <div class="wizard-highlight-box">
                 <div class="wizard-icon-wrapper">
                     <i class="fas fa-magic"></i>
@@ -41,7 +41,7 @@
             .wizard-icon-wrapper {
                 width: 60px;
                 height: 60px;
-                background: linear-gradient(135deg, #0056b3 0%, #28a745 100%);
+                background: #005A9E;
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
@@ -55,7 +55,7 @@
                 align-items: center;
                 justify-content: center;
                 gap: 8px;
-                background: linear-gradient(135deg, #0056b3 0%, #28a745 100%);
+                background: #005A9E;
                 color: white;
                 border-radius: 50px;
                 font-weight: 600;
@@ -83,7 +83,7 @@
         </style>
         <% } %>
         
-        <div class="row">
+        <div class="row reveal">
             <div class="col-lg-4 mb-4">
                 <div class="card h-100 shadow" style="background-color: #e6f0fa !important;">
                     <div class="card-body text-center">
@@ -128,7 +128,7 @@
             </div>
         </div>
         
-        <div class="row mt-4">
+        <div class="row mt-4 reveal">
             <div class="col-lg-4 mb-4">
                 <div class="card h-100 shadow" style="background-color: #e6f0fa !important;">
                     <div class="card-body text-center">
@@ -176,7 +176,7 @@
             </div>
         </div>
         
-        <div class="row mt-4">
+        <div class="row mt-4 reveal">
             <div class="col-lg-6 mb-4">
                 <div class="card h-100 shadow" style="background-color: #e6f0fa !important;">
                     <div class="card-body text-center">
@@ -213,7 +213,7 @@
 <section class="py-5" style="background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);">
     <div class="container">
         <div class="row">
-            <div class="col-12 text-center text-white mb-5">
+            <div class="col-12 text-center text-white mb-5 reveal">
                 <h2 class="display-5 fw-bold mb-3">Kanpus <%= t.services.kanpus.title %></h2>
                 <p class="lead"><%= t.services.kanpus.subtitle %></p>
                 <div class="alert alert-light mt-3 d-inline-block px-5 py-3" style="background: rgba(255,255,255,0.95); border-radius: 15px;">
@@ -232,7 +232,7 @@
                 </div>
             </div>
         </div>
-        <div class="row g-4">
+        <div class="row g-4 reveal">
             <div class="col-lg-3 col-md-6">
                 <div class="card h-100 shadow-lg" style="border: none;">
                     <div class="card-body text-center">
@@ -266,7 +266,7 @@
                 </div>
             </div>
         </div>
-        <div class="row mt-4">
+        <div class="row mt-4 reveal">
             <div class="col-lg-12">
                 <div class="card shadow-lg" style="border: none; background: rgba(255,255,255,0.95);">
                     <div class="card-body">
@@ -285,7 +285,7 @@
                 </div>
             </div>
         </div>
-        <div class="row mt-5">
+        <div class="row mt-5 reveal">
             <div class="col-12 text-center">
                 <div class="p-4 rounded" style="background: rgba(255,255,255,0.1);">
                     <h4 class="text-white fw-bold mb-3"><%= t.services.kanpus.earlyPrepTitle %></h4>
@@ -300,12 +300,12 @@
 <section class="bg-light py-5">
     <div class="container">
         <div class="row">
-            <div class="col-12 text-center mb-5">
+            <div class="col-12 text-center mb-5 reveal">
                 <h2 class="display-5 fw-bold"><%= t.services.whyChooseUs.title %></h2>
                 <p class="lead" style="color: black !important;"><%= t.services.whyChooseUs.subtitle %></p>
             </div>
         </div>
-        <div class="row">
+        <div class="row reveal">
             <div class="col-lg-3 col-md-6 mb-4">
                 <div class="text-center">
                     <i class="fas fa-users fa-3x text-primary mb-3"></i>
@@ -341,7 +341,7 @@
 <!-- Contact CTA Section -->
 <section class="bg-primary text-white py-5">
     <div class="container">
-        <div class="row justify-content-center">
+        <div class="row justify-content-center reveal">
             <div class="col-lg-8 text-center">
                 <h2 class="mb-4"><%= t.services.cta.title %></h2>
                 <p class="lead mb-4"><%= t.services.cta.subtitle %></p>
@@ -350,8 +350,27 @@
                         <i class="fas fa-envelope me-2"></i>
                         <%= t.services.cta.contactUs %>
                     </a>
+                    <a href="/#randevu" class="btn btn-light btn-lg">
+                        <i class="fas fa-calendar-check me-2"></i><%= currentLanguage === 'en' ? 'Book an Appointment' : 'Randevu Al' %>
+                    </a>
                 </div>
             </div>
         </div>
     </div>
-</section> 
+</section>
+
+<script>
+(function() {
+    var reveals = document.querySelectorAll('.reveal');
+    if (!reveals.length) return;
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry, i) {
+            if (entry.isIntersecting) {
+                setTimeout(function() { entry.target.classList.add('visible'); }, i * 80);
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.15 });
+    reveals.forEach(function(el) { observer.observe(el); });
+})();
+</script>

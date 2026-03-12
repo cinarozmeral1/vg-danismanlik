@@ -1,0 +1,166 @@
+<!-- Main Content -->
+    <section class="section bg-light text-dark" style="min-height: 80vh;">
+        <div class="container">
+            <div class="row">
+                <!-- Sidebar -->
+                <div class="col-lg-3 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="fas fa-user me-2"></i>Öğrenci Menüsü</h5>
+                        </div>
+                        <div class="list-group list-group-flush">
+                            <a href="/user/dashboard" class="list-group-item list-group-item-action">
+                                <i class="fas fa-user me-2"></i>Profil Bilgileri
+                            </a>
+                            <a href="/user/applications" class="list-group-item list-group-item-action">
+                                <i class="fas fa-file-alt me-2"></i>Başvurularım
+                            </a>
+                            <a href="/user/services" class="list-group-item list-group-item-action">
+                                <i class="fas fa-credit-card me-2"></i>Hizmetler & Ödemeler
+                            </a>
+                            <a href="/user/appointments" class="list-group-item list-group-item-action active">
+                                <i class="fas fa-calendar-check me-2"></i>Randevularım
+                            </a>
+                            <a href="/user/files" class="list-group-item list-group-item-action">
+                                <i class="fas fa-folder-open me-2"></i>Dosyalarım
+                            </a>
+                            <a href="/user/settings" class="list-group-item list-group-item-action">
+                                <i class="fas fa-cog me-2"></i>Ayarlar
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action text-danger" data-action="logout">
+                                <i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card shadow-sm mt-3 border-0" style="background: linear-gradient(135deg, #005A9E, #003d6b); border-radius: 12px;">
+                        <div class="card-body text-white text-center p-3">
+                            <i class="fas fa-comments mb-2" style="font-size: 1.5rem;"></i>
+                            <p class="mb-2 small">Aklına takılan bir şey mi var?</p>
+                            <a href="/#randevu" class="btn btn-light btn-sm w-100 fw-bold">
+                                <i class="fas fa-calendar-plus me-1"></i>Görüşme Planla
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="col-lg-9">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="fas fa-calendar-check me-2"></i>Randevularım</h5>
+                            <a href="/#randevu" class="btn btn-light btn-sm">
+                                <i class="fas fa-plus me-1"></i>Yeni Randevu Al
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            <% if (typeof appointments !== 'undefined' && appointments && appointments.length > 0) { %>
+                                <%
+                                    const now = new Date();
+                                    const upcoming = appointments.filter(a => new Date(a.appointment_date) >= new Date(now.toISOString().split('T')[0]));
+                                    const past = appointments.filter(a => new Date(a.appointment_date) < new Date(now.toISOString().split('T')[0]));
+                                %>
+
+                                <% if (upcoming.length > 0) { %>
+                                <h6 class="fw-bold text-primary mb-3"><i class="fas fa-clock me-1"></i>Yaklaşan Randevular</h6>
+                                <div class="table-responsive mb-4">
+                                    <table class="table table-hover align-middle">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Tarih</th>
+                                                <th>Saat (TR)</th>
+                                                <th>Durum</th>
+                                                <th>Toplantı Linki</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% upcoming.forEach(apt => { %>
+                                            <tr>
+                                                <td>
+                                                    <strong><%= new Date(apt.appointment_date).toLocaleDateString('tr-TR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %></strong>
+                                                </td>
+                                                <td><span class="badge bg-primary" style="font-size: 14px;"><%= apt.turkey_time %></span></td>
+                                                <td>
+                                                    <% if (apt.status === 'confirmed') { %>
+                                                        <span class="badge bg-success">Onaylandı</span>
+                                                    <% } else if (apt.status === 'cancelled') { %>
+                                                        <span class="badge bg-danger">İptal Edildi</span>
+                                                    <% } else { %>
+                                                        <span class="badge bg-warning text-dark"><%= apt.status %></span>
+                                                    <% } %>
+                                                </td>
+                                                <td>
+                                                    <% if (apt.zoom_link) { %>
+                                                        <a href="<%= apt.zoom_link %>" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                            <i class="fas fa-video me-1"></i>Zoom'a Katıl
+                                                        </a>
+                                                    <% } else { %>
+                                                        <span class="text-muted small">Henüz atanmadı</span>
+                                                    <% } %>
+                                                </td>
+                                            </tr>
+                                            <% }); %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <% } %>
+
+                                <% if (past.length > 0) { %>
+                                <h6 class="fw-bold text-muted mb-3"><i class="fas fa-history me-1"></i>Geçmiş Randevular</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Tarih</th>
+                                                <th>Saat (TR)</th>
+                                                <th>Durum</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% past.forEach(apt => { %>
+                                            <tr class="text-muted">
+                                                <td><%= new Date(apt.appointment_date).toLocaleDateString('tr-TR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %></td>
+                                                <td><span class="badge bg-secondary"><%= apt.turkey_time %></span></td>
+                                                <td>
+                                                    <% if (apt.status === 'confirmed') { %>
+                                                        <span class="badge bg-secondary">Tamamlandı</span>
+                                                    <% } else if (apt.status === 'cancelled') { %>
+                                                        <span class="badge bg-danger">İptal Edildi</span>
+                                                    <% } else { %>
+                                                        <span class="badge bg-secondary"><%= apt.status %></span>
+                                                    <% } %>
+                                                </td>
+                                            </tr>
+                                            <% }); %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <% } %>
+
+                            <% } else { %>
+                                <div class="text-center py-5">
+                                    <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                                    <h5 class="text-muted">Henüz randevunuz bulunmuyor</h5>
+                                    <p class="text-muted">Uzman danışmanlarımızla ücretsiz bir görüşme planlayın.</p>
+                                    <a href="/#randevu" class="btn btn-primary">
+                                        <i class="fas fa-calendar-plus me-1"></i>Randevu Al
+                                    </a>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<script>
+document.querySelectorAll('[data-action="logout"]').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (confirm('Çıkış yapmak istediğinize emin misiniz?')) {
+            document.cookie = 'userToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            window.location.href = '/login';
+        }
+    });
+});
+</script>

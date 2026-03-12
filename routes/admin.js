@@ -4,6 +4,27 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
 
+function generateUniversitySlug(name, city, country) {
+    return [name, city, country]
+        .filter(Boolean)
+        .join('-')
+        .toLowerCase()
+        .replace(/ü/g, 'u').replace(/ö/g, 'o').replace(/ş/g, 's')
+        .replace(/ç/g, 'c').replace(/ğ/g, 'g').replace(/ı/g, 'i')
+        .replace(/é/g, 'e').replace(/è/g, 'e').replace(/ë/g, 'e')
+        .replace(/á/g, 'a').replace(/à/g, 'a').replace(/ä/g, 'a')
+        .replace(/ú/g, 'u').replace(/ů/g, 'u').replace(/ó/g, 'o')
+        .replace(/ő/g, 'o').replace(/ř/g, 'r').replace(/ž/g, 'z')
+        .replace(/ý/g, 'y').replace(/ě/g, 'e').replace(/š/g, 's')
+        .replace(/č/g, 'c').replace(/ň/g, 'n').replace(/ď/g, 'd')
+        .replace(/ť/g, 't').replace(/í/g, 'i').replace(/ł/g, 'l')
+        .replace(/ą/g, 'a').replace(/ę/g, 'e').replace(/ź/g, 'z')
+        .replace(/ś/g, 's').replace(/ć/g, 'c').replace(/ń/g, 'n')
+        .replace(/ż/g, 'z').replace(/'|'/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
+
 // Admin sayfalarında footer'ı gizlemek için flag
 router.use((req, res, next) => {
     res.locals.isAdminPage = true;
@@ -26,6 +47,17 @@ router.use((req, res, next) => {
     next();
 });
 // ==================== END BLANKET ADMIN AUTH ====================
+
+function requireSuperAdminPage(req, res, next) {
+    if (!res.locals.isSuperAdmin) {
+        if (req.method === 'GET' && !req.xhr && !(req.headers.accept || '').includes('application/json')) {
+            return res.redirect('/admin/dashboard');
+        }
+        return res.status(403).json({ success: false, message: 'Bu isleme yetkiniz yok.' });
+    }
+    next();
+}
+
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -182,9 +214,43 @@ async function ensureTablesExist() {
             ALTER TABLE user_documents 
             ALTER COLUMN file_path TYPE TEXT
         `).catch(err => {
-            // Ignore error if column already TEXT or doesn't exist
             console.log('Note: file_path column update skipped (may already be TEXT)');
         });
+
+        // Add file_data column if not exists
+        await pool.query(`
+            ALTER TABLE user_documents 
+            ADD COLUMN IF NOT EXISTS file_data TEXT
+        `).catch(err => {
+            console.log('Note: file_data column already exists or could not be added');
+        });
+
+        // Make file_path nullable (needed for file_data based storage)
+        await pool.query(`
+            ALTER TABLE user_documents 
+            ALTER COLUMN file_path DROP NOT NULL
+        `).catch(err => {
+            console.log('Note: file_path already nullable');
+        });
+
+        // Ensure uploaded_at column exists (some tables have created_at, some have uploaded_at)
+        await pool.query(`
+            ALTER TABLE user_documents 
+            ADD COLUMN IF NOT EXISTS uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        `).catch(err => {
+            console.log('Note: uploaded_at column already exists');
+        });
+
+        // Standardize active_class values for existing students
+        await pool.query(`
+            UPDATE users SET active_class = '11' WHERE active_class IS NOT NULL AND LOWER(TRIM(active_class)) IN ('11', '11.', '11. sinif', '11. sınıf', '11.sinif', '11.sınıf')
+        `).catch(err => console.log('Note: active_class 11 standardization skipped'));
+        await pool.query(`
+            UPDATE users SET active_class = '12' WHERE active_class IS NOT NULL AND LOWER(TRIM(active_class)) IN ('12', '12.', '12. sinif', '12. sınıf', '12.sinif', '12.sınıf')
+        `).catch(err => console.log('Note: active_class 12 standardization skipped'));
+        await pool.query(`
+            UPDATE users SET active_class = 'Mezun' WHERE active_class IS NOT NULL AND LOWER(TRIM(active_class)) IN ('mezun', 'graduate', 'graduated')
+        `).catch(err => console.log('Note: active_class Mezun standardization skipped'));
 
         // Create applications table
         await pool.query(`
@@ -293,6 +359,221 @@ async function ensureTablesExist() {
             console.log('ℹ️ Sample universities data already exists or error:', error.message);
         }
         
+        // Fix incorrect country values for universities
+        await pool.query(`UPDATE universities SET country = 'Czech Republic' WHERE LOWER(name) LIKE '%charles%' AND country != 'Czech Republic'`).catch(() => {});
+        await pool.query(`UPDATE universities SET city = 'Prague' WHERE LOWER(name) LIKE '%charles%' AND city != 'Prague'`).catch(() => {});
+        await pool.query(`UPDATE universities SET country = 'Italy' WHERE LOWER(name) LIKE '%bologna%' AND country != 'Italy'`).catch(() => {});
+        await pool.query(`UPDATE universities SET city = 'Bologna' WHERE LOWER(name) LIKE '%bologna%' AND city != 'Bologna'`).catch(() => {});
+        await pool.query(`UPDATE universities SET country = 'Italy' WHERE LOWER(name) LIKE '%padua%' AND country != 'Italy'`).catch(() => {});
+        await pool.query(`UPDATE universities SET country = 'Italy' WHERE LOWER(name) LIKE '%padova%' AND country != 'Italy'`).catch(() => {});
+        await pool.query(`UPDATE universities SET country = 'Italy' WHERE LOWER(name) LIKE '%politecnico%milan%' AND country != 'Italy'`).catch(() => {});
+        await pool.query(`UPDATE universities SET country = 'Italy' WHERE LOWER(name) LIKE '%sapienza%' AND country != 'Italy'`).catch(() => {});
+        await pool.query(`UPDATE universities SET country = 'Germany' WHERE LOWER(name) LIKE '%munich%' OR LOWER(name) LIKE '%münchen%' AND country != 'Germany'`).catch(() => {});
+        await pool.query(`UPDATE universities SET country = 'Austria' WHERE LOWER(name) LIKE '%vienna%' OR LOWER(name) LIKE '%wien%' AND country != 'Austria'`).catch(() => {});
+        await pool.query(`UPDATE universities SET country = 'Hungary' WHERE LOWER(name) LIKE '%pecs%' OR LOWER(name) LIKE '%pécs%' AND country != 'Hungary'`).catch(() => {});
+        await pool.query(`UPDATE universities SET country = 'Hungary' WHERE LOWER(name) LIKE '%budapest%' AND country != 'Hungary'`).catch(() => {});
+        await pool.query(`UPDATE universities SET country = 'Poland' WHERE LOWER(name) LIKE '%warsaw%' AND country != 'Poland'`).catch(() => {});
+        await pool.query(`UPDATE universities SET country = 'Czech Republic' WHERE LOWER(name) LIKE '%czech%' AND country != 'Czech Republic'`).catch(() => {});
+        console.log('✅ University country data fixed');
+
+        // Fix broken AI recommendations where fallback assigned wrong countries
+        try {
+            // Fix recommendations where Charles University has wrong country in ai_reasoning JSON
+            await pool.query(`
+                UPDATE ai_recommendations 
+                SET ai_reasoning = regexp_replace(
+                    regexp_replace(
+                        ai_reasoning,
+                        '"university_name"\\s*:\\s*"Charles University[^"]*"\\s*,\\s*"program_name"\\s*:\\s*"[^"]*"\\s*,\\s*"country"\\s*:\\s*"(?!Czech Republic)[^"]*"',
+                        regexp_replace(
+                            substring(ai_reasoning from '"university_name"\\s*:\\s*"Charles University[^"]*"\\s*,\\s*"program_name"\\s*:\\s*"[^"]*"\\s*,\\s*"country"\\s*:\\s*"[^"]*"'),
+                            '"country"\\s*:\\s*"[^"]*"',
+                            '"country": "Czech Republic"'
+                        )
+                    ),
+                    '"university_name"\\s*:\\s*"University of Bologna[^"]*"\\s*,\\s*"program_name"\\s*:\\s*"[^"]*"\\s*,\\s*"country"\\s*:\\s*"(?!Italy)[^"]*"',
+                    regexp_replace(
+                        substring(ai_reasoning from '"university_name"\\s*:\\s*"University of Bologna[^"]*"\\s*,\\s*"program_name"\\s*:\\s*"[^"]*"\\s*,\\s*"country"\\s*:\\s*"[^"]*"'),
+                        '"country"\\s*:\\s*"[^"]*"',
+                        '"country": "Italy"'
+                    )
+                )
+                WHERE ai_reasoning LIKE '%Charles University%' OR ai_reasoning LIKE '%Bologna%'
+            `).catch(() => {});
+            console.log('✅ AI recommendations country data fix attempted via regex');
+        } catch (regexErr) {
+            console.log('ℹ️ Regex fix not supported, trying JSON approach');
+        }
+
+        // Simpler approach: fix via application-level JSON parsing
+        try {
+            const brokenRecs = await pool.query(`
+                SELECT id, ai_reasoning FROM ai_recommendations 
+                WHERE ai_reasoning IS NOT NULL 
+                AND (ai_reasoning LIKE '%Charles University%' OR ai_reasoning LIKE '%Bologna%')
+            `);
+            
+            for (const rec of brokenRecs.rows) {
+                try {
+                    const data = JSON.parse(rec.ai_reasoning);
+                    let changed = false;
+                    
+                    if (data.recommendation_1) {
+                        if (data.recommendation_1.university_name && 
+                            data.recommendation_1.university_name.toLowerCase().includes('charles') && 
+                            data.recommendation_1.country !== 'Czech Republic') {
+                            data.recommendation_1.country = 'Czech Republic';
+                            data.recommendation_1.city = 'Prague';
+                            changed = true;
+                        }
+                        if (data.recommendation_1.university_name && 
+                            data.recommendation_1.university_name.toLowerCase().includes('bologna') && 
+                            data.recommendation_1.country !== 'Italy') {
+                            data.recommendation_1.country = 'Italy';
+                            data.recommendation_1.city = 'Bologna';
+                            changed = true;
+                        }
+                    }
+                    
+                    if (data.recommendation_2) {
+                        if (data.recommendation_2.university_name && 
+                            data.recommendation_2.university_name.toLowerCase().includes('charles') && 
+                            data.recommendation_2.country !== 'Czech Republic') {
+                            data.recommendation_2.country = 'Czech Republic';
+                            data.recommendation_2.city = 'Prague';
+                            changed = true;
+                        }
+                        if (data.recommendation_2.university_name && 
+                            data.recommendation_2.university_name.toLowerCase().includes('bologna') && 
+                            data.recommendation_2.country !== 'Italy') {
+                            data.recommendation_2.country = 'Italy';
+                            data.recommendation_2.city = 'Bologna';
+                            changed = true;
+                        }
+                    }
+                    
+                    if (changed) {
+                        await pool.query(
+                            'UPDATE ai_recommendations SET ai_reasoning = $1 WHERE id = $2',
+                            [JSON.stringify(data), rec.id]
+                        );
+                        console.log(`✅ Fixed AI recommendation #${rec.id} country data`);
+                    }
+                } catch (parseErr) {
+                    // Skip non-JSON ai_reasoning entries
+                }
+            }
+            console.log('✅ AI recommendations country data fixed via JSON parsing');
+        } catch (jsonFixErr) {
+            console.log('ℹ️ AI recommendations fix skipped:', jsonFixErr.message);
+        }
+
+        // Create gallery tables
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS gallery_topics (
+                id SERIAL PRIMARY KEY,
+                title VARCHAR(300) NOT NULL,
+                sort_order INTEGER DEFAULT 0,
+                is_active BOOLEAN DEFAULT TRUE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+        
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS gallery_images (
+                id SERIAL PRIMARY KEY,
+                topic_id INTEGER REFERENCES gallery_topics(id) ON DELETE CASCADE,
+                image_url TEXT NOT NULL,
+                caption TEXT,
+                sort_order INTEGER DEFAULT 0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+        console.log('✅ Gallery tables ensured');
+
+        // Create school_partnership_rules table for tiered pricing (e.g., ESE)
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS school_partnership_rules (
+                id SERIAL PRIMARY KEY,
+                school_name VARCHAR(300) NOT NULL,
+                service_keyword VARCHAR(200) NOT NULL,
+                tier_threshold INTEGER NOT NULL DEFAULT 3,
+                tier_1_amount DECIMAL(10,2) NOT NULL,
+                tier_2_amount DECIMAL(10,2) NOT NULL,
+                currency VARCHAR(3) NOT NULL DEFAULT 'EUR',
+                reset_period VARCHAR(20) NOT NULL DEFAULT 'yearly',
+                is_active BOOLEAN DEFAULT TRUE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+        
+        // Create predefined_services table if it doesn't exist
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS predefined_services (
+                id SERIAL PRIMARY KEY,
+                service_name VARCHAR(200) NOT NULL,
+                service_type VARCHAR(50) NOT NULL DEFAULT 'consultancy',
+                description TEXT,
+                default_amount DECIMAL(10,2),
+                currency VARCHAR(3) NOT NULL DEFAULT 'EUR',
+                is_customizable BOOLEAN DEFAULT TRUE,
+                is_active BOOLEAN DEFAULT TRUE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+        
+        // Insert ESE partnership rule if not exists
+        const eseExists = await pool.query(
+            `SELECT id FROM school_partnership_rules WHERE service_keyword = 'ESE Komisyon' LIMIT 1`
+        );
+        if (eseExists.rows.length === 0) {
+            await pool.query(`
+                INSERT INTO school_partnership_rules (school_name, service_keyword, tier_threshold, tier_1_amount, tier_2_amount, currency, reset_period)
+                VALUES ('European School of Economics', 'ESE Komisyon', 3, 3300.00, 4400.00, 'EUR', 'yearly')
+            `);
+            console.log('✅ ESE partnership rule created');
+        }
+        
+        // Insert ESE predefined service if not exists
+        const eseServiceExists = await pool.query(
+            `SELECT id FROM predefined_services WHERE service_name = 'ESE Komisyon' LIMIT 1`
+        );
+        if (eseServiceExists.rows.length === 0) {
+            await pool.query(`
+                INSERT INTO predefined_services (service_name, service_type, description, default_amount, currency, is_customizable, is_active)
+                VALUES ('ESE Komisyon', 'school_partnership', 'European School of Economics - Öğrenci başına komisyon geliri (ilk 3 öğrenci: 3.300€, 4. öğrenciden itibaren: 4.400€, yıllık sıfırlanır)', 3300.00, 'EUR', false, true)
+            `);
+            console.log('✅ ESE predefined service created');
+        }
+        
+        console.log('✅ School partnership tables ensured');
+
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS appointments (
+                id SERIAL PRIMARY KEY,
+                full_name VARCHAR(255) NOT NULL,
+                phone VARCHAR(50) NOT NULL,
+                email VARCHAR(255) NOT NULL,
+                target_country VARCHAR(100) NOT NULL,
+                field_of_interest VARCHAR(100) NOT NULL,
+                education_level VARCHAR(100) NOT NULL,
+                grade VARCHAR(10),
+                budget VARCHAR(50),
+                notes TEXT,
+                appointment_date DATE NOT NULL,
+                czech_time VARCHAR(10) NOT NULL,
+                turkey_time VARCHAR(10) NOT NULL,
+                start_utc TIMESTAMPTZ NOT NULL,
+                end_utc TIMESTAMPTZ NOT NULL,
+                calendar_event_id TEXT,
+                ip_address VARCHAR(50),
+                status VARCHAR(20) DEFAULT 'confirmed',
+                created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+        console.log('✅ Appointments table ensured');
+
         console.log('✅ Tables ensured to exist');
     } catch (error) {
         console.error('❌ Error ensuring tables:', error.message);
@@ -359,17 +640,26 @@ const getAdminSidebarCounts = async () => {
             console.log('ℹ️ Partners table not found, using 0');
         }
         
+        let aiRecommendationCount = 0;
+        try {
+            const aiResult = await pool.query('SELECT COUNT(*) as count FROM ai_recommendations r JOIN users u ON r.user_id = u.id');
+            aiRecommendationCount = parseInt(aiResult.rows[0].count);
+        } catch (error) {
+            console.log('ℹ️ ai_recommendations table not found, using 0');
+        }
+        
         return {
             userCount: parseInt(usersResult.rows[0].count),
             applicationCount: applicationCount,
-            pendingApplicationCount: applicationCount, // Pending applications count
-            approvedApplicationCount: approvedApplicationCount, // Approved applications count
+            pendingApplicationCount: applicationCount,
+            approvedApplicationCount: approvedApplicationCount,
             universityCount: universityCount,
-            partnerCount: partnerCount
+            partnerCount: partnerCount,
+            aiRecommendationCount: aiRecommendationCount
         };
     } catch (error) {
         console.error('Error getting admin sidebar counts:', error);
-        return { userCount: 0, applicationCount: 0, universityCount: 0, partnerCount: 0 };
+        return { userCount: 0, applicationCount: 0, universityCount: 0, partnerCount: 0, aiRecommendationCount: 0 };
     }
 };
 
@@ -594,7 +884,9 @@ router.get('/users', async (req, res) => {
                     u.tc_number, u.active_class, u.current_school, u.created_at, u.is_admin,
                     string_agg(DISTINCT g.full_name, ', ') as guardian_names,
                     bool_or(s.is_paid = true AND s.service_name ILIKE '%Kabul Oncesi%') as kabul_oncesi_paid,
-                    bool_or(s.is_paid = true AND s.service_name ILIKE '%Kabul Sonrasi%') as kabul_sonrasi_paid
+                    bool_or(s.is_paid = true AND s.service_name ILIKE '%Kabul Sonrasi%') as kabul_sonrasi_paid,
+                    bool_or(s.is_paid = true AND (s.service_name ILIKE '%11%' OR s.service_name ILIKE '%Hazirlik%')) as hazirlik_paid,
+                    bool_or(s.is_paid = true) as has_any_paid_service
              FROM users u
              LEFT JOIN guardians g ON g.user_id = u.id
              LEFT JOIN services s ON s.user_id = u.id
@@ -603,6 +895,8 @@ router.get('/users', async (req, res) => {
              ORDER BY u.created_at DESC`
         );
 
+        const activeCount = usersResult.rows.filter(u => u.has_any_paid_service).length;
+
         // Get sidebar counts
         const sidebarCounts = await getAdminSidebarCounts();
 
@@ -610,6 +904,7 @@ router.get('/users', async (req, res) => {
             title: 'Öğrenciler - Admin Panel',
             activePage: 'users',
             users: usersResult.rows,
+            activeCount,
             ...sidebarCounts
         });
     } catch (error) {
@@ -1411,7 +1706,8 @@ router.get('/universities-page', async (req, res) => {
         res.render('admin/universities-simple', {
             title: 'Universities List - Venture Global',
             universities: universities.rows,
-            count: universities.rows.length
+            count: universities.rows.length,
+            activePage: 'universities'
         });
     } catch (error) {
         console.error('❌ Simple universities page error:', error);
@@ -1419,6 +1715,7 @@ router.get('/universities-page', async (req, res) => {
             title: 'Universities List - Venture Global',
             universities: [],
             count: 0,
+            activePage: 'universities',
             error: error.message
         });
     }
@@ -1484,6 +1781,7 @@ router.get('/universities', async (req, res) => {
             universities: universities,
             countries: countries,
             user: fakeUser,
+            activePage: 'universities',
             ...sidebarCounts
         });
     } catch (error) {
@@ -1493,6 +1791,7 @@ router.get('/universities', async (req, res) => {
             universities: [],
             countries: [],
             user: req.user,
+            activePage: 'universities',
             error: 'Server error'
         });
     }
@@ -1692,17 +1991,19 @@ router.put('/universities/:id', async (req, res) => {
 
         // Normalize booleans
         const deadlineValue = application_deadline && application_deadline !== '' ? application_deadline : null;
+        const updatedSlug = generateUniversitySlug(name, city, country);
         const result = await pool.query(`
             UPDATE universities SET 
                 name = $1, country = $2, city = $3, logo_url = $4, 
                 description = $5, requirements = $6,
                 world_ranking = $7, application_deadline = $8,
+                slug = $9,
                 is_active = true, 
                 is_featured = false, updated_at = CURRENT_TIMESTAMP
-            WHERE id = $9 RETURNING *
+            WHERE id = $10 RETURNING *
         `, [
             name, country, city, finalLogoUrl, description, requirements,
-            worldRanking, deadlineValue, id
+            worldRanking, deadlineValue, updatedSlug, id
         ]);
 
         if (result.rows.length === 0) {
@@ -1987,13 +2288,14 @@ router.post('/universities', async (req, res) => {
 
         // Create university
         const deadlineValue = application_deadline && application_deadline !== '' ? application_deadline : null;
+        const generatedSlug = generateUniversitySlug(name, city, country);
         const universityResult = await pool.query(
             `INSERT INTO universities (
                 name, country, city, logo_url, world_ranking, 
                 description, requirements, application_deadline,
-                is_active, is_featured,
+                slug, is_active, is_featured,
                 created_at, updated_at
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, true, false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *`,
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, true, false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *`,
             [
                 name,
                 country,
@@ -2002,7 +2304,8 @@ router.post('/universities', async (req, res) => {
                 world_ranking ? parseInt(world_ranking) : null,
                 description || null,
                 requirements || null,
-                deadlineValue
+                deadlineValue,
+                generatedSlug
             ]
         );
 
@@ -2654,6 +2957,57 @@ router.get('/predefined-services', async (req, res) => {
     }
 });
 
+// Calculate school partnership price (tiered pricing like ESE)
+router.get('/api/school-partnership-price', async (req, res) => {
+    try {
+        const { service_keyword } = req.query;
+        if (!service_keyword) {
+            return res.status(400).json({ success: false, message: 'service_keyword required' });
+        }
+        
+        // Get partnership rule
+        const ruleResult = await pool.query(
+            'SELECT * FROM school_partnership_rules WHERE service_keyword = $1 AND is_active = true LIMIT 1',
+            [service_keyword]
+        );
+        
+        if (ruleResult.rows.length === 0) {
+            return res.json({ success: true, amount: null, message: 'No rule found' });
+        }
+        
+        const rule = ruleResult.rows[0];
+        
+        // Count students with this service in the current year
+        const currentYear = new Date().getFullYear();
+        const countResult = await pool.query(
+            `SELECT COUNT(DISTINCT user_id) as student_count 
+             FROM services 
+             WHERE service_name = $1 
+             AND EXTRACT(YEAR FROM created_at) = $2`,
+            [service_keyword, currentYear]
+        );
+        
+        const currentCount = parseInt(countResult.rows[0].student_count) || 0;
+        const amount = currentCount < rule.tier_threshold ? parseFloat(rule.tier_1_amount) : parseFloat(rule.tier_2_amount);
+        
+        res.json({
+            success: true,
+            amount: amount,
+            currency: rule.currency,
+            currentCount: currentCount,
+            tierThreshold: rule.tier_threshold,
+            tier: currentCount < rule.tier_threshold ? 1 : 2,
+            schoolName: rule.school_name,
+            message: currentCount < rule.tier_threshold 
+                ? `${currentCount}/${rule.tier_threshold} öğrenci (Kademe 1: ${rule.tier_1_amount} ${rule.currency})`
+                : `${currentCount} öğrenci (Kademe 2: ${rule.tier_2_amount} ${rule.currency})`
+        });
+    } catch (error) {
+        console.error('School partnership price error:', error);
+        res.json({ success: true, amount: null, message: 'Fiyat hesaplanamadı' });
+    }
+});
+
 // Add service from predefined list
 router.post('/users/:id/services/from-predefined', async (req, res) => {
     try {
@@ -2675,27 +3029,40 @@ router.post('/users/:id/services/from-predefined', async (req, res) => {
         
         const predefinedService = predefinedResult.rows[0];
         
-        // Use predefined service name and default amount if not provided
         const serviceName = predefinedService.service_name;
-        const serviceAmount = amount || predefinedService.default_amount || 0;
-        const serviceCurrency = currency || predefinedService.currency;
+        let serviceCurrency = currency || predefinedService.currency;
         
-        console.log('Adding service from predefined:', { 
-            id, 
-            predefined_service_id, 
-            serviceName, 
-            serviceAmount, 
-            serviceCurrency, 
-            due_date, 
-            payment_date, 
-            is_paid, 
-            has_installments 
-        });
+        // Auto-calculate amount for school partnerships (tiered pricing)
+        let serviceAmount = amount || predefinedService.default_amount || 0;
+        if (predefinedService.service_type === 'school_partnership') {
+            try {
+                const ruleResult = await pool.query(
+                    'SELECT * FROM school_partnership_rules WHERE service_keyword = $1 AND is_active = true LIMIT 1',
+                    [serviceName]
+                );
+                if (ruleResult.rows.length > 0) {
+                    const rule = ruleResult.rows[0];
+                    const currentYear = new Date().getFullYear();
+                    const countResult = await pool.query(
+                        `SELECT COUNT(DISTINCT user_id) as student_count FROM services WHERE service_name = $1 AND EXTRACT(YEAR FROM created_at) = $2`,
+                        [serviceName, currentYear]
+                    );
+                    const currentCount = parseInt(countResult.rows[0].student_count) || 0;
+                    serviceAmount = currentCount < rule.tier_threshold ? parseFloat(rule.tier_1_amount) : parseFloat(rule.tier_2_amount);
+                    serviceCurrency = rule.currency;
+                    console.log(`📊 School partnership pricing: ${serviceName}, count=${currentCount}, threshold=${rule.tier_threshold}, amount=${serviceAmount}`);
+                }
+            } catch (e) {
+                console.log('School partnership pricing fallback:', e.message);
+            }
+        }
+        
+        console.log('Adding service from predefined:', { id, serviceName, serviceAmount, serviceCurrency });
         
         const result = await pool.query(
             `INSERT INTO services (user_id, service_name, amount, currency, due_date, payment_date, is_paid, has_installments) 
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING *`,
-            [id, serviceName, serviceAmount, serviceCurrency, due_date, payment_date, is_paid, has_installments]
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+            [id, serviceName, serviceAmount, serviceCurrency, due_date || null, payment_date || null, is_paid || false, has_installments || false]
         );
         
         res.json({
@@ -3367,14 +3734,29 @@ router.get('/users/:id/documents', async (req, res) => {
     try {
         const { id } = req.params;
         
+        // First, discover the actual columns in user_documents table
+        const colCheck = await pool.query(`
+            SELECT column_name FROM information_schema.columns 
+            WHERE table_name = 'user_documents'
+        `);
+        const cols = colCheck.rows.map(r => r.column_name);
+        console.log('user_documents columns:', cols);
+        
+        const hasUploadedAt = cols.includes('uploaded_at');
+        const hasCreatedAt = cols.includes('created_at');
+        const hasMimeType = cols.includes('mime_type');
+        
+        const tsCol = hasUploadedAt ? 'uploaded_at' : (hasCreatedAt ? 'created_at' : null);
+        const tsSelect = tsCol ? `, ${tsCol} as created_at` : '';
+        const orderBy = tsCol ? `ORDER BY ${tsCol} DESC` : 'ORDER BY id DESC';
+        const mimeSelect = hasMimeType ? ', mime_type' : '';
+        
         const result = await pool.query(
-            `SELECT 
-                id, title, description, category, file_size, 
-                original_filename, uploaded_at
+            `SELECT id, title, description, category, file_size${mimeSelect},
+                original_filename${tsSelect}
             FROM user_documents 
             WHERE user_id = $1
-            ORDER BY uploaded_at DESC
-        `, [id]);
+            ${orderBy}`, [id]);
         
         res.json({
             success: true,
@@ -3382,7 +3764,7 @@ router.get('/users/:id/documents', async (req, res) => {
         });
     } catch (error) {
         console.error('Get user documents error:', error);
-        res.status(500).json({ success: false, message: 'Server error' });
+        res.status(500).json({ success: false, message: 'Server error: ' + error.message });
     }
 });
 
@@ -3392,7 +3774,7 @@ router.get('/users/:id/documents/:docId/download', async (req, res) => {
         const { id, docId } = req.params;
         
         const result = await pool.query(
-            'SELECT file_data, mime_type, original_filename FROM user_documents WHERE id = $1 AND user_id = $2',
+            'SELECT file_data, file_path, mime_type, original_filename FROM user_documents WHERE id = $1 AND user_id = $2',
             [docId, id]
         );
         
@@ -3401,14 +3783,28 @@ router.get('/users/:id/documents/:docId/download', async (req, res) => {
         }
         
         const document = result.rows[0];
-        const fileBuffer = Buffer.from(document.file_data, 'base64');
         
-        res.setHeader('Content-Type', document.mime_type);
-        res.setHeader('Content-Disposition', `attachment; filename="${document.original_filename}"`);
+        if (!document.file_data && !document.file_path) {
+            return res.status(404).json({ success: false, message: 'Dosya verisi bulunamadı' });
+        }
+        
+        let fileBuffer;
+        if (document.file_data) {
+            fileBuffer = Buffer.from(document.file_data, 'base64');
+        } else if (document.file_path && document.file_path.startsWith('data:')) {
+            const base64Data = document.file_path.split(',')[1];
+            fileBuffer = Buffer.from(base64Data, 'base64');
+        } else {
+            return res.status(404).json({ success: false, message: 'Dosya verisi okunamadı' });
+        }
+        
+        res.setHeader('Content-Type', document.mime_type || 'application/octet-stream');
+        res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(document.original_filename)}"`);
+        res.setHeader('Content-Length', fileBuffer.length);
         res.send(fileBuffer);
     } catch (error) {
         console.error('Download user document error:', error);
-        res.status(500).json({ success: false, message: 'Server error' });
+        res.status(500).json({ success: false, message: 'Server error: ' + error.message });
     }
 });
 
@@ -3701,15 +4097,16 @@ router.post('/users/:userId/generate-contract', async (req, res) => {
         const title = `Danışmanlık Sözleşmesi - ${contractNo}`;
         
         const docResult = await pool.query(`
-            INSERT INTO user_documents (user_id, title, category, description, file_data, original_filename, file_size, mime_type)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-            RETURNING id, title, original_filename, file_size, uploaded_at
+            INSERT INTO user_documents (user_id, title, category, description, file_data, file_path, original_filename, file_size, mime_type)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+            RETURNING id, title, original_filename, file_size
         `, [
             userId,
             title,
             'other',
             `${user.first_name} ${user.last_name} için otomatik oluşturulan danışmanlık sözleşmesi`,
             base64Data,
+            '',
             fileName,
             pdfBuffer.length,
             'application/pdf'
@@ -3868,51 +4265,7 @@ router.put('/users/:userId/checklist/:itemId', async (req, res) => {
     }
 });
 
-// File download endpoint
-router.get('/users/:userId/documents/:documentId/download', async (req, res) => {
-    try {
-        const { userId, documentId } = req.params;
-        
-        const documentResult = await pool.query(`
-            SELECT file_data, mime_type, original_filename 
-            FROM user_documents 
-            WHERE id = $1 AND user_id = $2
-        `, [documentId, userId]);
-        
-        if (documentResult.rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Dosya bulunamadı'
-            });
-        }
-        
-        const document = documentResult.rows[0];
-        
-        if (!document.file_data) {
-            return res.status(404).json({
-                success: false,
-                message: 'Dosya verisi bulunamadı'
-            });
-        }
-        
-        // Convert base64 to buffer
-        const buffer = Buffer.from(document.file_data, 'base64');
-        
-        // Set appropriate headers for file download
-        res.setHeader('Content-Disposition', `attachment; filename="${document.original_filename}"`);
-        res.setHeader('Content-Type', document.mime_type);
-        res.setHeader('Content-Length', buffer.length);
-        
-        // Send the file buffer
-        res.send(buffer);
-    } catch (error) {
-        console.error('Error downloading file:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Dosya indirilirken hata oluştu'
-        });
-    }
-});
+// File download endpoint (handled by earlier route definition)
 
 // File delete endpoint
 router.delete('/users/:userId/documents/:documentId', async (req, res) => {
@@ -4023,7 +4376,34 @@ router.get('/api/financial-data', async (req, res) => {
         let query;
         let params = [];
         
-        if (type === 'receivables') {
+        if (type === 'expenses') {
+            // Partner earnings/commissions (expenses)
+            query = `
+                SELECT 
+                    pe.id,
+                    pe.amount,
+                    pe.currency,
+                    pe.is_paid,
+                    pe.payment_date,
+                    pe.notes,
+                    pe.created_at,
+                    u.id as user_id,
+                    u.first_name as student_first_name,
+                    u.last_name as student_last_name,
+                    p.id as partner_id,
+                    COALESCE(p.first_name || ' ' || p.last_name, 'Partner') as partner_name
+                FROM partner_earnings pe
+                LEFT JOIN users u ON pe.user_id = u.id
+                LEFT JOIN partners p ON pe.partner_id = p.id
+            `;
+            
+            if (period !== 'all') {
+                query += ` WHERE COALESCE(pe.payment_date, pe.created_at::date) >= $1`;
+                params.push(dateRange.startDate);
+            }
+            
+            query += ' ORDER BY COALESCE(pe.payment_date, pe.created_at) DESC';
+        } else if (type === 'receivables') {
             // Unpaid services - show all currencies
             query = `
                 SELECT 
@@ -4171,7 +4551,7 @@ router.get('/api/financial-comparison', async (req, res) => {
     }
 });
 
-// Get net profit (revenue - receivables) - by currency
+// Get net profit (revenue - expenses) - by currency
 router.get('/api/net-profit', async (req, res) => {
     try {
         const { period = 'all' } = req.query;
@@ -4205,9 +4585,31 @@ router.get('/api/net-profit', async (req, res) => {
         
         const receivablesResult = await pool.query(receivablesQuery);
         
+        // Get total expenses (partner earnings/commissions) by currency
+        let expensesQuery = `
+            SELECT SUM(amount) as total, currency
+            FROM partner_earnings
+        `;
+        const expensesParams = [];
+        
+        if (period !== 'all') {
+            expensesQuery += ' WHERE COALESCE(payment_date, created_at::date) >= $1';
+            expensesParams.push(dateRange.startDate);
+        }
+        
+        expensesQuery += ' GROUP BY currency';
+        
+        let expensesResult;
+        try {
+            expensesResult = await pool.query(expensesQuery, expensesParams);
+        } catch (e) {
+            expensesResult = { rows: [] };
+        }
+        
         // Group by currency (no conversion)
         const revenueByCurrency = {};
         const receivablesByCurrency = {};
+        const expensesByCurrency = {};
         
         revenueResult.rows.forEach(row => {
             revenueByCurrency[row.currency || 'EUR'] = parseFloat(row.total || 0);
@@ -4217,18 +4619,23 @@ router.get('/api/net-profit', async (req, res) => {
             receivablesByCurrency[row.currency || 'EUR'] = parseFloat(row.total || 0);
         });
         
-        // Calculate net profit for each currency
-        // Net profit = revenue only (receivables are future payments, not debt)
+        expensesResult.rows.forEach(row => {
+            expensesByCurrency[row.currency || 'EUR'] = parseFloat(row.total || 0);
+        });
+        
+        // Calculate net profit for each currency: Revenue - Expenses
         const allCurrencies = new Set([
             ...Object.keys(revenueByCurrency),
-            ...Object.keys(receivablesByCurrency)
+            ...Object.keys(receivablesByCurrency),
+            ...Object.keys(expensesByCurrency)
         ]);
         
         const profitByCurrency = Array.from(allCurrencies).map(currency => ({
             currency: currency,
             revenue: parseFloat((revenueByCurrency[currency] || 0).toFixed(2)),
             receivables: parseFloat((receivablesByCurrency[currency] || 0).toFixed(2)),
-            netProfit: parseFloat((revenueByCurrency[currency] || 0).toFixed(2)) // Net profit = revenue (alacaklar borç değil)
+            expenses: parseFloat((expensesByCurrency[currency] || 0).toFixed(2)),
+            netProfit: parseFloat(((revenueByCurrency[currency] || 0) - (expensesByCurrency[currency] || 0)).toFixed(2))
         }));
         
         res.json({
@@ -4243,6 +4650,145 @@ router.get('/api/net-profit', async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Net profit calculation error: ' + error.message
+        });
+    }
+});
+
+// Student-based profitability (per-student income, expense, net profit)
+router.get('/api/student-profitability', async (req, res) => {
+    try {
+        const { period = 'all' } = req.query;
+        const dateRange = getDateRange(period);
+        
+        // Revenue per student (from services, is_paid=true), optionally filtered by period
+        let revenueQuery = `
+            SELECT s.user_id, 
+                   SUM(s.amount) as total_revenue,
+                   s.currency
+            FROM services s
+            WHERE s.is_paid = true
+        `;
+        const revenueParams = [];
+        if (period !== 'all') {
+            revenueQuery += ` AND s.payment_date >= $1`;
+            revenueParams.push(dateRange.startDate);
+        }
+        revenueQuery += ` GROUP BY s.user_id, s.currency`;
+        
+        // Expenses per student (from partner_earnings), NOT filtered by period
+        const expenseQuery = `
+            SELECT pe.user_id,
+                   SUM(pe.amount) as total_expense,
+                   pe.currency
+            FROM partner_earnings pe
+            GROUP BY pe.user_id, pe.currency
+        `;
+        
+        let revenueResult, expenseResult;
+        try {
+            revenueResult = await pool.query(revenueQuery, revenueParams);
+        } catch (e) {
+            revenueResult = { rows: [] };
+        }
+        try {
+            expenseResult = await pool.query(expenseQuery);
+        } catch (e) {
+            expenseResult = { rows: [] };
+        }
+        
+        // Gather all user IDs that have either revenue or expenses
+        const userIds = new Set();
+        revenueResult.rows.forEach(r => userIds.add(r.user_id));
+        expenseResult.rows.forEach(r => userIds.add(r.user_id));
+        
+        if (userIds.size === 0) {
+            return res.json({
+                success: true,
+                data: { students: [], totals: { revenue: {}, expenses: {}, netProfit: {} } }
+            });
+        }
+        
+        // Get user names
+        const usersResult = await pool.query(
+            `SELECT id, first_name, last_name FROM users WHERE id = ANY($1)`,
+            [Array.from(userIds)]
+        );
+        const usersMap = {};
+        usersResult.rows.forEach(u => { usersMap[u.id] = u; });
+        
+        // Build per-student data grouped by currency
+        const studentData = {};
+        
+        revenueResult.rows.forEach(r => {
+            const key = r.user_id;
+            if (!studentData[key]) studentData[key] = { revenues: {}, expenses: {} };
+            const cur = r.currency || 'EUR';
+            studentData[key].revenues[cur] = (studentData[key].revenues[cur] || 0) + parseFloat(r.total_revenue);
+        });
+        
+        expenseResult.rows.forEach(r => {
+            const key = r.user_id;
+            if (!studentData[key]) studentData[key] = { revenues: {}, expenses: {} };
+            const cur = r.currency || 'EUR';
+            studentData[key].expenses[cur] = (studentData[key].expenses[cur] || 0) + parseFloat(r.total_expense);
+        });
+        
+        // Build response array
+        const students = Object.keys(studentData).map(userId => {
+            const user = usersMap[userId] || { first_name: 'Bilinmeyen', last_name: '' };
+            const data = studentData[userId];
+            const allCurrencies = new Set([...Object.keys(data.revenues), ...Object.keys(data.expenses)]);
+            
+            const byCurrency = Array.from(allCurrencies).map(cur => ({
+                currency: cur,
+                revenue: parseFloat((data.revenues[cur] || 0).toFixed(2)),
+                expense: parseFloat((data.expenses[cur] || 0).toFixed(2)),
+                netProfit: parseFloat(((data.revenues[cur] || 0) - (data.expenses[cur] || 0)).toFixed(2))
+            }));
+            
+            return {
+                user_id: parseInt(userId),
+                first_name: user.first_name,
+                last_name: user.last_name,
+                byCurrency: byCurrency
+            };
+        }).sort((a, b) => {
+            const aTotal = a.byCurrency.reduce((s, c) => s + c.netProfit, 0);
+            const bTotal = b.byCurrency.reduce((s, c) => s + c.netProfit, 0);
+            return bTotal - aTotal;
+        });
+        
+        // Calculate totals per currency
+        const totalRevenue = {};
+        const totalExpenses = {};
+        const totalNetProfit = {};
+        
+        students.forEach(s => {
+            s.byCurrency.forEach(c => {
+                totalRevenue[c.currency] = (totalRevenue[c.currency] || 0) + c.revenue;
+                totalExpenses[c.currency] = (totalExpenses[c.currency] || 0) + c.expense;
+                totalNetProfit[c.currency] = (totalNetProfit[c.currency] || 0) + c.netProfit;
+            });
+        });
+        
+        res.json({
+            success: true,
+            data: {
+                students: students,
+                totals: {
+                    revenue: totalRevenue,
+                    expenses: totalExpenses,
+                    netProfit: totalNetProfit
+                },
+                period: period,
+                studentCount: students.length
+            }
+        });
+    } catch (error) {
+        console.error('Student profitability API error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Student profitability error: ' + error.message
         });
     }
 });
@@ -5394,11 +5940,13 @@ router.delete('/visa-applications/:id', async (req, res) => {
 // ==================== AI RECOMMENDATIONS ROUTES ====================
 
 // AI Recommendations Page
-router.get('/ai-recommendations', async (req, res) => {
+router.get('/ai-recommendations', requireSuperAdminPage, async (req, res) => {
     try {
+        const sidebarCounts = await getAdminSidebarCounts();
         res.render('admin/ai-recommendations', {
             title: 'AI Önerileri',
-            activePage: 'ai-recommendations'
+            activePage: 'ai-recommendations',
+            ...sidebarCounts
         });
     } catch (error) {
         console.error('AI recommendations page error:', error);
@@ -5407,7 +5955,7 @@ router.get('/ai-recommendations', async (req, res) => {
 });
 
 // Get All AI Recommendations (API)
-router.get('/ai-recommendations/list', async (req, res) => {
+router.get('/ai-recommendations/list', requireSuperAdminPage, async (req, res) => {
     try {
         const limit = parseInt(req.query.limit) || 100;
         
@@ -5434,7 +5982,7 @@ router.get('/ai-recommendations/list', async (req, res) => {
 });
 
 // Delete AI Recommendation
-router.delete('/ai-recommendations/:id', async (req, res) => {
+router.delete('/ai-recommendations/:id', requireSuperAdminPage, async (req, res) => {
     try {
         const { id } = req.params;
         
@@ -5481,6 +6029,286 @@ router.get('/users/:userId/ai-recommendation', async (req, res) => {
     }
 });
 
+// ==================== GALERİ YÖNETİMİ ====================
+
+// Cloudinary configuration for gallery
+const cloudinary = require('cloudinary').v2;
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'dkhe6tjqo',
+    api_key: process.env.CLOUDINARY_API_KEY || '373479217921793',
+    api_secret: process.env.CLOUDINARY_API_SECRET || 'GWf3lT2-xcUUPAAGRLMyT3ieyvY'
+});
+
+const galleryUpload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 20 * 1024 * 1024 },
+    fileFilter: function (req, file, cb) {
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        if (allowedTypes.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Sadece resim dosyaları yüklenebilir (JPEG, PNG, GIF, WebP)'));
+        }
+    }
+});
+
+// Gallery Admin Page
+router.get('/gallery', requireSuperAdminPage, async (req, res) => {
+    try {
+        const topics = await pool.query(`
+            SELECT gt.*, 
+                   COUNT(gi.id) as image_count
+            FROM gallery_topics gt
+            LEFT JOIN gallery_images gi ON gt.id = gi.topic_id
+            GROUP BY gt.id
+            ORDER BY gt.sort_order ASC, gt.created_at DESC
+        `);
+        
+        const images = await pool.query(`
+            SELECT * FROM gallery_images ORDER BY topic_id, sort_order ASC, created_at DESC
+        `);
+        
+        const imagesByTopic = {};
+        images.rows.forEach(img => {
+            if (!imagesByTopic[img.topic_id]) imagesByTopic[img.topic_id] = [];
+            imagesByTopic[img.topic_id].push(img);
+        });
+        
+        const sidebarCounts = await getAdminSidebarCounts();
+        
+        res.render('admin/gallery', {
+            title: 'Galeri Yönetimi',
+            activePage: 'gallery',
+            topics: topics.rows,
+            imagesByTopic: imagesByTopic,
+            ...sidebarCounts
+        });
+    } catch (error) {
+        console.error('Gallery page error:', error);
+        res.status(500).send('Galeri sayfası yüklenirken hata oluştu');
+    }
+});
+
+// Create Gallery Topic
+router.post('/gallery/topics', requireSuperAdminPage, async (req, res) => {
+    try {
+        const { title } = req.body;
+        if (!title || !title.trim()) {
+            return res.status(400).json({ success: false, message: 'Başlık gerekli' });
+        }
+        
+        const maxOrder = await pool.query('SELECT COALESCE(MAX(sort_order), 0) + 1 as next_order FROM gallery_topics');
+        const nextOrder = maxOrder.rows[0].next_order;
+        
+        const result = await pool.query(
+            'INSERT INTO gallery_topics (title, sort_order) VALUES ($1, $2) RETURNING *',
+            [title.trim(), nextOrder]
+        );
+        
+        res.json({ success: true, topic: result.rows[0] });
+    } catch (error) {
+        console.error('Create topic error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Update Gallery Topic
+router.put('/gallery/topics/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { title, is_active } = req.body;
+        
+        const updates = [];
+        const params = [];
+        let paramIdx = 1;
+        
+        if (title !== undefined) {
+            updates.push(`title = $${paramIdx++}`);
+            params.push(title.trim());
+        }
+        if (is_active !== undefined) {
+            updates.push(`is_active = $${paramIdx++}`);
+            params.push(is_active);
+        }
+        updates.push(`updated_at = CURRENT_TIMESTAMP`);
+        
+        params.push(id);
+        
+        const result = await pool.query(
+            `UPDATE gallery_topics SET ${updates.join(', ')} WHERE id = $${paramIdx} RETURNING *`,
+            params
+        );
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Konu bulunamadı' });
+        }
+        
+        res.json({ success: true, topic: result.rows[0] });
+    } catch (error) {
+        console.error('Update topic error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Delete Gallery Topic
+router.delete('/gallery/topics/:id', requireSuperAdminPage, async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        const images = await pool.query('SELECT image_url FROM gallery_images WHERE topic_id = $1', [id]);
+        for (const img of images.rows) {
+            try {
+                const urlParts = img.image_url.split('/');
+                const publicId = 'gallery/' + urlParts[urlParts.length - 1].split('.')[0];
+                await cloudinary.uploader.destroy(publicId);
+            } catch (e) {}
+        }
+        
+        await pool.query('DELETE FROM gallery_topics WHERE id = $1', [id]);
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Delete topic error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Generate Cloudinary upload signature (browser uploads directly to Cloudinary)
+router.get('/gallery/upload-signature', requireSuperAdminPage, async (req, res) => {
+    try {
+        const timestamp = Math.round(new Date().getTime() / 1000);
+        const params = {
+            timestamp: timestamp,
+            folder: 'gallery',
+            transformation: 'w_1920,c_limit'
+        };
+        const signature = cloudinary.utils.api_sign_request(params, 
+            process.env.CLOUDINARY_API_SECRET || 'GWf3lT2-xcUUPAAGRLMyT3ieyvY'
+        );
+        res.json({
+            success: true,
+            signature: signature,
+            timestamp: timestamp,
+            cloudName: process.env.CLOUDINARY_CLOUD_NAME || 'dkhe6tjqo',
+            apiKey: process.env.CLOUDINARY_API_KEY || '373479217921793'
+        });
+    } catch (error) {
+        console.error('Signature error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Save Cloudinary image URL to database (after browser uploads directly)
+router.post('/gallery/images', requireSuperAdminPage, async (req, res) => {
+    try {
+        const { topic_id, image_url, caption } = req.body;
+        
+        if (!image_url) {
+            return res.status(400).json({ success: false, message: 'Görsel URL gerekli' });
+        }
+        if (!topic_id) {
+            return res.status(400).json({ success: false, message: 'Konu ID gerekli' });
+        }
+        
+        const maxOrder = await pool.query(
+            'SELECT COALESCE(MAX(sort_order), 0) + 1 as next_order FROM gallery_images WHERE topic_id = $1',
+            [topic_id]
+        );
+        
+        const result = await pool.query(
+            'INSERT INTO gallery_images (topic_id, image_url, caption, sort_order) VALUES ($1, $2, $3, $4) RETURNING *',
+            [topic_id, image_url, caption || null, maxOrder.rows[0].next_order]
+        );
+        
+        res.json({ success: true, image: result.rows[0] });
+    } catch (error) {
+        console.error('Save image error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Update Gallery Image Caption
+router.put('/gallery/images/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { caption } = req.body;
+        
+        const result = await pool.query(
+            'UPDATE gallery_images SET caption = $1 WHERE id = $2 RETURNING *',
+            [caption || null, id]
+        );
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Görsel bulunamadı' });
+        }
+        
+        res.json({ success: true, image: result.rows[0] });
+    } catch (error) {
+        console.error('Update image error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Delete Gallery Image
+router.delete('/gallery/images/:id', requireSuperAdminPage, async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        const image = await pool.query('SELECT image_url FROM gallery_images WHERE id = $1', [id]);
+        if (image.rows.length > 0) {
+            try {
+                const urlParts = image.rows[0].image_url.split('/');
+                const filenameWithExt = urlParts[urlParts.length - 1];
+                const publicId = 'gallery/' + filenameWithExt.split('.')[0];
+                await cloudinary.uploader.destroy(publicId);
+            } catch (e) {}
+        }
+        
+        await pool.query('DELETE FROM gallery_images WHERE id = $1', [id]);
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Delete image error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Reorder Gallery Images within a topic
+router.put('/gallery/images-reorder', async (req, res) => {
+    try {
+        const { order } = req.body;
+        if (!Array.isArray(order)) {
+            return res.status(400).json({ success: false, message: 'Geçersiz sıralama verisi' });
+        }
+        
+        for (let i = 0; i < order.length; i++) {
+            await pool.query('UPDATE gallery_images SET sort_order = $1 WHERE id = $2', [i, order[i]]);
+        }
+        
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Reorder images error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Reorder Gallery Topics
+router.put('/gallery/topics-reorder', async (req, res) => {
+    try {
+        const { order } = req.body;
+        if (!Array.isArray(order)) {
+            return res.status(400).json({ success: false, message: 'Geçersiz sıralama verisi' });
+        }
+        
+        for (let i = 0; i < order.length; i++) {
+            await pool.query('UPDATE gallery_topics SET sort_order = $1 WHERE id = $2', [i, order[i]]);
+        }
+        
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Reorder topics error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
 // ==================== CO-ADMIN YÖNETİMİ ====================
 
 // Adminler sayfası (sadece super admin erişebilir)
@@ -5500,28 +6328,13 @@ router.get('/admins', async (req, res) => {
             ORDER BY created_at DESC
         `, [superAdminEmail]);
         
-        // İstatistikleri getir
-        const userCountResult = await pool.query('SELECT COUNT(*) FROM users WHERE is_admin = false OR is_admin IS NULL');
-        let applicationCount = 0;
-        let partnerCount = 0;
-        
-        try {
-            const applicationCountResult = await pool.query('SELECT COUNT(*) FROM applications');
-            applicationCount = parseInt(applicationCountResult.rows[0].count) || 0;
-        } catch (e) { }
-        
-        try {
-            const partnerCountResult = await pool.query('SELECT COUNT(*) FROM partners');
-            partnerCount = parseInt(partnerCountResult.rows[0].count) || 0;
-        } catch (e) { }
+        const sidebarCounts = await getAdminSidebarCounts();
         
         res.render('admin/admins', {
             title: 'Adminler',
             activePage: 'admins',
             coAdmins: coAdminsResult.rows,
-            userCount: parseInt(userCountResult.rows[0].count) || 0,
-            applicationCount: applicationCount,
-            partnerCount: partnerCount
+            ...sidebarCounts
         });
     } catch (error) {
         console.error('Admins page error:', error);
@@ -5653,4 +6466,339 @@ router.delete('/api/admins/:id', async (req, res) => {
     }
 });
 
-module.exports = router; 
+// Test email notification endpoint (Super Admin only)
+router.post('/api/test-email-notification', async (req, res) => {
+    try {
+        if (!req.session?.user?.is_super_admin) {
+            return res.status(403).json({ success: false, message: 'Super admin only' });
+        }
+        
+        const { sendNewStudentNotificationEmail } = require('../services/emailService');
+        const { method = 'email' } = req.body;
+        
+        const testStudent = {
+            first_name: 'Test',
+            last_name: method === 'google' ? 'Google Kayıt' : 'Manuel Kayıt',
+            email: method === 'google' ? 'test.google@example.com' : 'test.manuel@example.com',
+            phone: '+90 555 000 0000'
+        };
+        
+        const result = await sendNewStudentNotificationEmail(testStudent, method === 'google' ? 'google' : 'email');
+        
+        res.json({
+            success: result,
+            message: result 
+                ? `Test email (${method}) başarıyla gönderildi!` 
+                : `Test email (${method}) gönderilemedi. Logları kontrol edin.`
+        });
+    } catch (error) {
+        console.error('Test email error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ==================== APPOINTMENTS ADMIN ====================
+router.get('/appointments', requireSuperAdminPage, async (req, res) => {
+    try {
+        const sidebarCounts = await getAdminSidebarCounts();
+        const appointments = await pool.query(
+            `SELECT * FROM appointments ORDER BY appointment_date DESC, turkey_time DESC`
+        );
+        res.render('admin/appointments', {
+            title: 'Randevular',
+            activePage: 'appointments',
+            appointments: appointments.rows,
+            ...sidebarCounts
+        });
+    } catch (error) {
+        console.error('Appointments page error:', error);
+        res.status(500).send('Randevular sayfası yüklenirken hata oluştu');
+    }
+});
+
+router.post('/appointments/:id/delete', requireSuperAdminPage, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const result = await pool.query('SELECT * FROM appointments WHERE id = $1', [id]);
+        if (result.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Randevu bulunamadı.' });
+        }
+        await pool.query('DELETE FROM appointments WHERE id = $1', [id]);
+        console.log('Appointment deleted:', id, result.rows[0].full_name);
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Appointment delete error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+router.post('/appointments/:id/status', requireSuperAdminPage, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+        if (!['confirmed', 'completed', 'cancelled'].includes(status)) {
+            return res.status(400).json({ success: false, message: 'Geçersiz durum' });
+        }
+        const oldResult = await pool.query('SELECT * FROM appointments WHERE id = $1', [id]);
+        await pool.query('UPDATE appointments SET status = $1 WHERE id = $2', [status, id]);
+
+        if (status === 'completed' && oldResult.rows.length > 0 && oldResult.rows[0].status !== 'completed') {
+            const apt = oldResult.rows[0];
+            try {
+                const nodemailer = require('nodemailer');
+                const emailUser = (process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com').trim().replace(/\\n/g, '').replace(/\n/g, '');
+                const emailPass = (process.env.EMAIL_PASS || '').trim().replace(/\\n/g, '').replace(/\n/g, '');
+                const mailer = nodemailer.createTransport({ service: 'gmail', auth: { user: emailUser, pass: emailPass }, tls: { rejectUnauthorized: false } });
+
+                const getEmailSignature = () => `<div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0;"><p style="margin: 0 0 15px 0; color: #333; font-style: italic; font-weight: 500;">Kind Regards,</p><p style="margin: 0 0 3px 0;"><a href="https://vgdanismanlik.com" style="color: #2563eb; text-decoration: underline; font-weight: bold; font-style: italic;">vgdanismanlik.com</a></p><p style="margin: 0 0 3px 0; color: #1a365d; font-weight: bold; font-style: italic;">CZ: +420 776 791 541</p><p style="margin: 0 0 20px 0; color: #1a365d; font-weight: bold; font-style: italic;">TR: +90 539 927 30 08</p><table cellpadding="0" cellspacing="0" border="0" style="margin-top: 15px;"><tr><td style="vertical-align: middle; padding-right: 15px;"><img src="https://vgdanismanlik.com/images/logos/venture-global-logo.png" alt="Venture Global" style="height: 80px; width: auto;"></td><td style="vertical-align: middle;"><p style="margin: 0; color: #1e40af; font-size: 18px; font-weight: bold;">VENTURE GLOBAL <sup style="font-size: 10px;">®</sup></p><p style="margin: 0; color: #3b82f6; font-size: 14px; font-weight: 600;">YURT DIŞI EĞİTİM</p><p style="margin: 0; color: #3b82f6; font-size: 14px; font-weight: 600;">DANIŞMANLIĞI</p></td></tr></table></div>`;
+                const emailWrapper = (content) => `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="color-scheme" content="light dark"><style>@media (prefers-color-scheme: dark) { .email-body { background-color: #1a1a2e !important; } .email-card { background-color: #16213e !important; border-color: #2a2a4a !important; } .email-text { color: #e0e0e0 !important; } .email-muted { color: #a0a0b0 !important; } .info-box { background-color: #1a2744 !important; } }</style></head><body style="margin: 0; padding: 0;"><div class="email-body" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #1a1a1a;"><div style="background: linear-gradient(135deg, #005A9E 0%, #003d6b 100%); color: white; padding: 30px; text-align: center; border-radius: 12px 12px 0 0;"><h1 style="margin: 0; font-size: 24px; font-weight: 700;">VG Danışmanlık</h1><p style="margin: 8px 0 0 0; opacity: 0.9; font-size: 14px;">Yurt Dışı Eğitim Danışmanlığı</p></div><div class="email-card" style="background: #ffffff; padding: 30px; border-radius: 0 0 12px 12px; border: 1px solid #e5e7eb; border-top: none;">${content}${getEmailSignature()}</div><div style="text-align: center; padding: 20px; color: #9ca3af; font-size: 12px;"><p style="margin: 0;">© ${new Date().getFullYear()} VG Danışmanlık</p></div></div></body></html>`;
+
+                const dateFormatted = new Date(apt.appointment_date).toLocaleDateString('tr-TR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                const firstName = apt.full_name.split(' ')[0];
+
+                await mailer.sendMail({
+                    from: `"VG Danışmanlık" <${emailUser}>`,
+                    to: apt.email,
+                    subject: 'VG Danışmanlık - Görüşmemiz Nasıldı?',
+                    html: emailWrapper(`
+                        <h2 class="email-text" style="color: #1a1a1a; margin: 0 0 20px 0; font-size: 20px;">Teşekkür Ederiz, ${firstName}!</h2>
+                        <p class="email-muted" style="color: #4b5563; line-height: 1.7; margin-bottom: 20px;">
+                            <strong>${dateFormatted}</strong> tarihindeki danışmanlık mülakatımızı tamamladık. Sizinle görüşmekten büyük memnuniyet duyduk.
+                        </p>
+                        <div style="background: #f0f7ff; border-radius: 12px; padding: 24px; margin: 24px 0; border-left: 4px solid #005A9E; text-align: center;">
+                            <p style="margin: 0 0 12px 0; color: #005A9E; font-size: 16px; font-weight: 600;">Görüşmemiz işinize yaradı mı?</p>
+                            <p style="margin: 0; color: #4b5563; font-size: 14px;">Geri bildiriminiz bizim için çok değerli.</p>
+                        </div>
+                        <div style="text-align: center; margin: 30px 0;">
+                            <table cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto;">
+                                <tr>
+                                    <td style="padding: 0 6px;">
+                                        <a href="https://wa.me/905399273008?text=${encodeURIComponent('Merhaba, mülakatım çok verimli geçti. Teşekkür ederim!')}" style="display: inline-block; background: linear-gradient(135deg, #005A9E, #003d6b); color: white; padding: 14px 24px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 15px;">Çok Memnunum</a>
+                                    </td>
+                                    <td style="padding: 0 6px;">
+                                        <a href="https://wa.me/905399273008?text=${encodeURIComponent('Merhaba, mülakatımla ilgili geri bildirimim var.')}" style="display: inline-block; background: #f0f7ff; color: #005A9E; padding: 14px 24px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 15px; border: 2px solid #005A9E;">Geri Bildirimim Var</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div style="background: #f0f7ff; border-radius: 12px; padding: 20px; margin: 24px 0;">
+                            <p style="margin: 0 0 8px 0; color: #005A9E; font-weight: 600; font-size: 15px;">Sonraki Adımlar</p>
+                            <ul style="margin: 0; padding-left: 20px; color: #4b5563; font-size: 14px; line-height: 1.8;">
+                                <li>Görüşmede belirlenen yol haritanıza göre gerekli belgeleri hazırlayın.</li>
+                                <li>Sorularınız için WhatsApp üzerinden bize her zaman ulaşabilirsiniz.</li>
+                                <li>Başvuru süreciniz hakkında sizi düzenli olarak bilgilendireceğiz.</li>
+                            </ul>
+                        </div>
+                        <div style="text-align: center; margin-top: 25px;">
+                            <a href="https://wa.me/905399273008" style="display: inline-block; background: linear-gradient(135deg, #005A9E 0%, #003d6b 100%); color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px;">WhatsApp'tan Yazın</a>
+                        </div>
+                    `)
+                });
+                console.log('Satisfaction email sent to:', apt.email);
+            } catch (emailErr) {
+                console.error('Satisfaction email error:', emailErr.message);
+            }
+        }
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Appointment status error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ==================== ADMIN APPOINTMENT CREATION ====================
+router.get('/appointments/create', requireSuperAdminPage, async (req, res) => {
+    try {
+        const sidebarCounts = await getAdminSidebarCounts();
+        res.render('admin/appointment-create', {
+            title: 'Yeni Randevu Oluştur',
+            activePage: 'appointments',
+            ...sidebarCounts
+        });
+    } catch (error) {
+        console.error('Appointment create page error:', error);
+        res.status(500).send('Sayfa yüklenirken hata oluştu');
+    }
+});
+
+router.get('/api/students-search', requireSuperAdminPage, async (req, res) => {
+    try {
+        const q = (req.query.q || '').trim();
+        if (q.length < 2) {
+            return res.json({ success: true, students: [] });
+        }
+        const result = await pool.query(`
+            SELECT id, first_name, last_name, email, phone, desired_country, active_class
+            FROM users 
+            WHERE (is_admin = false OR is_admin IS NULL)
+            AND (
+                LOWER(first_name || ' ' || last_name) LIKE LOWER($1)
+                OR LOWER(email) LIKE LOWER($1)
+                OR phone LIKE $1
+            )
+            ORDER BY first_name, last_name
+            LIMIT 15
+        `, [`%${q}%`]);
+        res.json({ success: true, students: result.rows });
+    } catch (error) {
+        console.error('Student search error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+router.post('/appointments/create', requireSuperAdminPage, async (req, res) => {
+    try {
+        const { meetingType, studentId, fullName, phone, email, targetCountry, fieldOfInterest, educationLevel, grade, notes, date, timeSlot } = req.body;
+        const isPro = meetingType === 'professional';
+
+        if (!fullName || !email || !date || !timeSlot) {
+            return res.status(400).json({ success: false, message: 'Zorunlu alanları doldurun.' });
+        }
+
+        const slotParts = timeSlot.split('|');
+        const czechTime = slotParts[0];
+        const turkeyTime = slotParts[1];
+        const startUTC = slotParts[2];
+        const endUTC = slotParts[3];
+
+        const conflictCheck = await pool.query(
+            `SELECT id FROM appointments WHERE appointment_date = $1 AND status != 'cancelled' AND start_utc = $2`,
+            [date, startUTC]
+        );
+        if (conflictCheck.rows.length > 0) {
+            return res.status(409).json({ success: false, message: 'Bu saat dilimi dolu. Farklı bir saat seçin.' });
+        }
+
+        const calendarService = require('../services/calendarService');
+        const zoomService = require('../services/zoomService');
+
+        const eventTitle = isPro ? `VG Görüşme - ${fullName}` : `VG Randevu - ${fullName} (Admin)`;
+        const eventDesc = isPro
+            ? `Katılımcı: ${fullName}\nE-posta: ${email}\nTelefon: ${phone || '-'}\n${notes ? 'Not: ' + notes : ''}\n(Profesyonel Görüşme)`
+            : `Ad Soyad: ${fullName}\nTelefon: ${phone || '-'}\nE-posta: ${email}\nHedef Ülke: ${targetCountry || '-'}\nİlgi Alanı: ${fieldOfInterest || '-'}\n(Admin tarafından oluşturuldu)`;
+
+        let calendarEventId = null;
+        try {
+            calendarEventId = await calendarService.createEvent({
+                title: eventTitle,
+                description: eventDesc,
+                startDate: new Date(startUTC),
+                endDate: new Date(endUTC),
+                attendeeEmail: email,
+                attendeeName: fullName
+            });
+        } catch (calError) {
+            console.error('Calendar event creation failed:', calError.message);
+        }
+
+        let zoomLink = null;
+        try {
+            if (zoomService.isConfigured()) {
+                const meeting = await zoomService.createZoomMeeting({
+                    topic: isPro ? `VG Danışmanlık - Görüşme - ${fullName}` : `VG Danışmanlık - ${fullName}`,
+                    startTime: startUTC,
+                    duration: 30,
+                    agenda: isPro ? `Profesyonel görüşme: ${fullName}` : `Danışmanlık görüşmesi: ${fullName} - ${targetCountry || 'Genel'}`
+                });
+                zoomLink = meeting.join_url;
+            }
+        } catch (zoomError) {
+            console.error('Zoom meeting creation failed:', zoomError.message);
+        }
+
+        const result = await pool.query(
+            `INSERT INTO appointments (
+                full_name, phone, email, target_country, field_of_interest,
+                education_level, grade, budget, notes,
+                appointment_date, czech_time, turkey_time,
+                start_utc, end_utc, calendar_event_id, ip_address, status, zoom_link, meeting_type
+            ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,'confirmed',$17,$18)
+            RETURNING *`,
+            [fullName, phone || '', email,
+             isPro ? 'Profesyonel' : (targetCountry || 'Admin'),
+             isPro ? 'Profesyonel Görüşme' : (fieldOfInterest || 'Genel Danışmanlık'),
+             isPro ? 'Profesyonel' : (educationLevel || 'Belirtilmedi'),
+             grade || null, null, notes || (isPro ? 'Profesyonel görüşme' : 'Admin tarafından oluşturuldu'),
+             date, czechTime, turkeyTime, startUTC, endUTC,
+             calendarEventId || null, 'admin', zoomLink, isPro ? 'professional' : 'student']
+        );
+
+        const appointment = result.rows[0];
+
+        try {
+            const nodemailer = require('nodemailer');
+            const emailUserEnv = (process.env.EMAIL_USER || '').trim();
+            const emailPassEnv = (process.env.EMAIL_PASS || '').trim();
+            if (emailUserEnv && emailPassEnv) {
+                const mailer = nodemailer.createTransport({ service: 'gmail', auth: { user: emailUserEnv, pass: emailPassEnv }, tls: { rejectUnauthorized: false } });
+                const dateFormatted = new Date(date).toLocaleDateString('tr-TR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+                const getEmailSignature = () => `<div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0;"><p style="margin: 0 0 15px 0; color: #333; font-style: italic; font-weight: 500;">Kind Regards,</p><p style="margin: 0 0 3px 0;"><a href="https://vgdanismanlik.com" style="color: #2563eb; text-decoration: underline; font-weight: bold; font-style: italic;">vgdanismanlik.com</a></p><p style="margin: 0 0 3px 0; color: #1a365d; font-weight: bold; font-style: italic;">CZ: +420 776 791 541</p><p style="margin: 0 0 20px 0; color: #1a365d; font-weight: bold; font-style: italic;">TR: +90 539 927 30 08</p><table cellpadding="0" cellspacing="0" border="0" style="margin-top: 15px;"><tr><td style="vertical-align: middle; padding-right: 15px;"><img src="https://vgdanismanlik.com/images/logos/venture-global-logo.png" alt="Venture Global" style="height: 80px; width: auto;"></td><td style="vertical-align: middle;"><p style="margin: 0; color: #1e40af; font-size: 18px; font-weight: bold;">VENTURE GLOBAL <sup style="font-size: 10px;">&reg;</sup></p><p style="margin: 0; color: #3b82f6; font-size: 14px; font-weight: 600;">YURT DIŞI EĞİTİM</p><p style="margin: 0; color: #3b82f6; font-size: 14px; font-weight: 600;">DANIŞMANLIĞI</p></td></tr></table></div>`;
+                const emailWrapper = (content) => `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="color-scheme" content="light dark"><meta name="supported-color-schemes" content="light dark"><style>@media (prefers-color-scheme: dark) { .email-body { background-color: #1a1a2e !important; } .email-card { background-color: #16213e !important; border-color: #2a2a4a !important; } .email-text { color: #e0e0e0 !important; } .email-muted { color: #a0a0b0 !important; } .info-box { background-color: #1a2744 !important; border-color: #005A9E !important; } }</style></head><body style="margin: 0; padding: 0;"><div class="email-body" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #1a1a1a;"><div style="background: linear-gradient(135deg, #005A9E 0%, #003d6b 100%); color: white; padding: 30px; text-align: center; border-radius: 12px 12px 0 0;"><h1 style="margin: 0; font-size: 24px; font-weight: 700;">VG Danışmanlık</h1><p style="margin: 8px 0 0 0; opacity: 0.9; font-size: 14px;">Yurt Dışı Eğitim Danışmanlığı</p></div><div class="email-card" style="background: #ffffff; padding: 30px; border-radius: 0 0 12px 12px; border: 1px solid #e5e7eb; border-top: none;">${content}${getEmailSignature()}</div></div></body></html>`;
+
+                if (isPro) {
+                    await mailer.sendMail({
+                        from: `"VG Danışmanlık" <${emailUserEnv}>`,
+                        to: email,
+                        subject: `VG Danışmanlık - Görüşme Onayı (${dateFormatted})`,
+                        html: emailWrapper(`
+                            <h2 style="color: #1a1a1a; margin: 0 0 20px 0; font-size: 20px;">Görüşmeniz Onaylandı</h2>
+                            <p style="color: #4b5563; line-height: 1.6; margin-bottom: 20px;">
+                                Sayın <strong>${fullName}</strong>, görüşmeniz başarıyla planlanmıştır. Detaylar aşağıdadır.
+                            </p>
+                            <div style="background: #f0f7ff; border-radius: 12px; padding: 24px; margin: 24px 0; border-left: 4px solid #005A9E;">
+                                <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
+                                    <tr><td style="padding: 8px 0; color: #6b7280; font-size: 14px; width: 100px;">Tarih</td><td style="padding: 8px 0; font-weight: 600; color: #1a1a1a;">${dateFormatted}</td></tr>
+                                    <tr><td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Saat (TR)</td><td style="padding: 8px 0; font-weight: 700; color: #005A9E; font-size: 20px;">${turkeyTime}</td></tr>
+                                    <tr><td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Süre</td><td style="padding: 8px 0; color: #1a1a1a;">30 Dakika</td></tr>
+                                </table>
+                            </div>
+                            ${zoomLink ? `<div style="text-align: center; margin: 25px 0;"><a href="${zoomLink}" style="display: inline-block; background: linear-gradient(135deg, #2D8CFF, #0B5CFF); color: white; padding: 16px 36px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 16px; box-shadow: 0 4px 15px rgba(45,140,255,0.3);">Zoom Toplantısına Katıl</a></div>` : ''}
+                            <div style="background: #f0f7ff; border-radius: 8px; padding: 16px; margin: 20px 0;">
+                                <p style="margin: 0; color: #003d6b; font-size: 14px;">
+                                    <strong>Bilgilendirme:</strong> Toplantı linki görüşmeden 30 dakika önce ayrıca e-posta ile gönderilecektir. Herhangi bir değişiklik için bizimle iletişime geçebilirsiniz.
+                                </p>
+                            </div>
+                            <div style="text-align: center; margin-top: 25px;">
+                                <a href="https://wa.me/905399273008" style="display: inline-block; background: linear-gradient(135deg, #005A9E 0%, #003d6b 100%); color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px;">
+                                    WhatsApp ile İletişim
+                                </a>
+                            </div>
+                        `)
+                    });
+                } else {
+                    await mailer.sendMail({
+                        from: `"VG Danışmanlık" <${emailUserEnv}>`,
+                        to: email,
+                        subject: `VG Danışmanlık - Randevu Onayı (${dateFormatted})`,
+                        html: emailWrapper(`
+                            <h2 style="color: #1a1a1a; margin: 0 0 20px 0; font-size: 20px;">Randevunuz Onaylandı</h2>
+                            <p style="color: #4b5563; line-height: 1.6; margin-bottom: 20px;">
+                                Merhaba <strong>${fullName}</strong>, danışmanlık görüşmeniz planlandı.
+                            </p>
+                            <div style="background: #f0f7ff; border-radius: 12px; padding: 24px; margin: 24px 0; border-left: 4px solid #005A9E;">
+                                <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
+                                    <tr><td style="padding: 8px 0; color: #6b7280; font-size: 14px; width: 100px;">Tarih</td><td style="padding: 8px 0; font-weight: 600; color: #1a1a1a;">${dateFormatted}</td></tr>
+                                    <tr><td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Saat</td><td style="padding: 8px 0; font-weight: 600; color: #1a1a1a;">${turkeyTime} (Türkiye Saati)</td></tr>
+                                    <tr><td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Süre</td><td style="padding: 8px 0; color: #1a1a1a;">30 Dakika</td></tr>
+                                </table>
+                            </div>
+                            ${zoomLink ? `<div style="text-align: center; margin: 20px 0;"><a href="${zoomLink}" style="display: inline-block; background: linear-gradient(135deg, #2D8CFF, #0B5CFF); color: white; padding: 14px 32px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 15px;">Zoom Toplantısına Katıl</a></div>` : ''}
+                            <p style="color: #6b7280; font-size: 14px; text-align: center;">Toplantı linki görüşmeden 30 dakika önce ayrıca e-posta ile gönderilecektir.</p>
+                        `)
+                    });
+                }
+            }
+        } catch (mailErr) {
+            console.error('Admin appointment confirmation mail error:', mailErr.message);
+        }
+
+        res.json({ success: true, message: isPro ? 'Görüşme başarıyla oluşturuldu.' : 'Randevu başarıyla oluşturuldu.', appointment: { id: appointment.id } });
+    } catch (error) {
+        console.error('Admin appointment create error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+module.exports = router;

@@ -6,7 +6,7 @@
                 <div class="col-lg-3 mb-4">
                     <div class="card shadow-sm">
                         <div class="card-header bg-primary text-white">
-                            <h5 class="mb-0"><i class="fas fa-user me-2"></i>Hesap Menüsü</h5>
+                            <h5 class="mb-0"><i class="fas fa-user me-2"></i>Öğrenci Menüsü</h5>
                         </div>
                         <div class="list-group list-group-flush">
                             <a href="/user/dashboard" class="list-group-item list-group-item-action">
@@ -18,14 +18,26 @@
                             <a href="/user/services" class="list-group-item list-group-item-action">
                                 <i class="fas fa-credit-card me-2"></i>Hizmetler & Ödemeler
                             </a>
+                            <a href="/user/appointments" class="list-group-item list-group-item-action">
+                                <i class="fas fa-calendar-check me-2"></i>Randevularım
+                            </a>
                             <a href="/user/files" class="list-group-item list-group-item-action active">
-                                <i class="fas fa-folder me-2"></i>Dosyalarım
+                                <i class="fas fa-folder-open me-2"></i>Dosyalarım
                             </a>
                             <a href="/user/settings" class="list-group-item list-group-item-action">
                                 <i class="fas fa-cog me-2"></i>Ayarlar
                             </a>
                             <a href="#" class="list-group-item list-group-item-action text-danger" data-action="logout">
                                 <i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card shadow-sm mt-3 border-0" style="background: linear-gradient(135deg, #005A9E, #003d6b); border-radius: 12px;">
+                        <div class="card-body text-white text-center p-3">
+                            <i class="fas fa-comments mb-2" style="font-size: 1.5rem;"></i>
+                            <p class="mb-2 small">Aklına takılan bir şey mi var?</p>
+                            <a href="/#randevu" class="btn btn-light btn-sm w-100 fw-bold">
+                                <i class="fas fa-calendar-plus me-1"></i>Görüşme Planla
                             </a>
                         </div>
                     </div>
@@ -92,9 +104,6 @@
         </div>
     </section>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
     <!-- Custom JS -->
     <script>
         // Load files on page load

@@ -1,0 +1,68 @@
+<div class="admin-sidebar" id="adminSidebar">
+    <div class="sidebar-header">
+        <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Yönetim Paneli</h6>
+    </div>
+    <nav class="sidebar-nav">
+        <a href="/admin/dashboard" class="nav-item <%= typeof activePage !== 'undefined' && activePage === 'dashboard' ? 'active' : '' %>">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="/admin/users" class="nav-item <%= typeof activePage !== 'undefined' && activePage === 'users' ? 'active' : '' %>">
+            <i class="fas fa-users"></i>
+            <span>Öğrenciler</span>
+            <% if (typeof userCount !== 'undefined' && userCount > 0) { %>
+                <span class="badge bg-primary ms-auto"><%= userCount %></span>
+            <% } %>
+        </a>
+        <a href="/admin/applications" class="nav-item <%= typeof activePage !== 'undefined' && activePage === 'applications' ? 'active' : '' %>">
+            <i class="fas fa-file-alt"></i>
+            <span>Başvurular</span>
+            <% if (typeof applicationCount !== 'undefined' && applicationCount > 0) { %>
+                <span class="badge bg-success ms-auto"><%= applicationCount %></span>
+            <% } %>
+        </a>
+        <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
+        <a href="/admin/partners" class="nav-item <%= typeof activePage !== 'undefined' && activePage === 'partners' ? 'active' : '' %>">
+            <i class="fas fa-handshake"></i>
+            <span>Partnerler</span>
+            <% if (typeof partnerCount !== 'undefined' && partnerCount > 0) { %>
+                <span class="badge bg-info ms-auto"><%= partnerCount %></span>
+            <% } %>
+        </a>
+        <% } %>
+        <a href="/admin/universities" class="nav-item <%= typeof activePage !== 'undefined' && activePage === 'universities' ? 'active' : '' %>">
+            <i class="fas fa-university"></i>
+            <span>Üniversiteler</span>
+            <% if (typeof universityCount !== 'undefined' && universityCount > 0) { %>
+                <span class="badge bg-info ms-auto"><%= universityCount %></span>
+            <% } %>
+        </a>
+        <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
+        <a href="/admin/appointments" class="nav-item <%= typeof activePage !== 'undefined' && activePage === 'appointments' ? 'active' : '' %>">
+            <i class="fas fa-calendar-check"></i>
+            <span>Randevular</span>
+        </a>
+        <a href="/admin/gallery" class="nav-item <%= typeof activePage !== 'undefined' && activePage === 'gallery' ? 'active' : '' %>">
+            <i class="fas fa-images"></i>
+            <span>Galeri</span>
+        </a>
+        <a href="/admin/ai-recommendations" class="nav-item <%= typeof activePage !== 'undefined' && activePage === 'ai-recommendations' ? 'active' : '' %>">
+            <i class="fas fa-magic" style="color: #6f42c1;"></i>
+            <span>AI Önerileri</span>
+            <% if (typeof aiRecommendationCount !== 'undefined' && aiRecommendationCount > 0) { %>
+                <span class="badge bg-purple ms-auto" style="background-color: #6f42c1 !important;"><%= aiRecommendationCount %></span>
+            <% } %>
+        </a>
+        <% } %>
+        <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
+        <a href="/admin/backups" class="nav-item <%= typeof activePage !== 'undefined' && activePage === 'backups' ? 'active' : '' %>">
+            <i class="fas fa-database"></i>
+            <span>Yedekleme</span>
+        </a>
+        <a href="/admin/admins" class="nav-item <%= typeof activePage !== 'undefined' && activePage === 'admins' ? 'active' : '' %>">
+            <i class="fas fa-user-shield"></i>
+            <span>Adminler</span>
+        </a>
+        <% } %>
+    </nav>
+</div>

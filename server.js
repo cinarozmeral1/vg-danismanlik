@@ -154,6 +154,7 @@ const guardianRoutes = require('./routes/guardians');
 const stripeWebhookRoutes = require('./routes/stripe-webhook');
 const wizardRoutes = require('./routes/wizard');
 const blogRoutes = require('./routes/blog');
+const appointmentRoutes = require('./routes/appointments');
 
 // Import authentication middleware
 const { authenticateAdmin } = require('./middleware/auth');
@@ -573,6 +574,7 @@ app.use('/student-wizard', wizardRoutes);
 app.use('/wizard', wizardRoutes);  // Kısa yol
 app.use('/api/wizard', wizardRoutes);
 app.use('/blog', blogRoutes);  // SEO Blog
+app.use('/api/appointments', appointmentRoutes);
 
 // Scheduled cleanup for unverified users older than 72h since last login
 app.post('/api/maintenance/delete-unverified', async (req, res) => {
@@ -681,22 +683,15 @@ app.get('/admin/universities/edit/:id', async (req, res) => {
     }
 });
 
-app.get('/c/:id', async (req, res) => {
+app.get('/universities/:slug', async (req, res) => {
     try {
-        const universityId = req.params.id;
+        const slug = req.params.slug;
 
-        // Get university details
-        console.log('Fetching university with ID:', universityId);
-        
         const universityResult = await pool.query(`
-            SELECT 
-                u.*,
-                0 as actual_program_count
+            SELECT u.*, 0 as actual_program_count
             FROM universities u
-            WHERE u.id = $1
-        `, [universityId]);
-        
-        console.log('University query result:', universityResult.rows);
+            WHERE u.slug = $1
+        `, [slug]);
 
         if (universityResult.rows.length === 0) {
             return res.status(404).render('error', {
@@ -707,24 +702,20 @@ app.get('/c/:id', async (req, res) => {
 
         const university = universityResult.rows[0];
 
-        // Get university departments (ordered by sort_order)
         const departmentsResult = await pool.query(`
             SELECT id, name_tr, name_en, price, currency, COALESCE(sort_order, 9999) as sort_order
             FROM university_departments 
             WHERE university_id = $1 AND is_active = true
             ORDER BY COALESCE(sort_order, 9999) ASC, name_tr ASC
-        `, [universityId]);
+        `, [university.id]);
 
-        // Get university programs (empty for now)
         const programsResult = { rows: [] };
-
-        // Get university images (empty for now)
         const imagesResult = { rows: [] };
 
-        // Set SEO metadata for university detail page
         res.locals.seoTitle = `${university.name} - ${university.country} | Venture Global`;
         res.locals.seoDescription = `${university.name} (${university.city}, ${university.country}) hakkında bilgiler, bölümler, programlar ve başvuru süreci. ${university.country} üniversite başvurunuzda profesyonel destek alın. Yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı ve Avrupa eğitim danışmanlığı hizmetlerimiz.`;
         res.locals.seoKeywords = `${university.name.toLowerCase()}, ${university.country.toLowerCase()} üniversite, ${university.city.toLowerCase()} üniversite, ${university.country.toLowerCase()} eğitim, ${university.country.toLowerCase()} başvuru, yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı`;
+        res.locals.canonicalUrl = `${res.locals.baseUrl || 'https://vgdanismanlik.com'}/universities/${slug}`;
         res.locals.schemaType = 'CollegeOrUniversity';
         res.locals.ogType = 'article';
         if (university.logo_url) {
@@ -740,6 +731,26 @@ app.get('/c/:id', async (req, res) => {
         });
     } catch (error) {
         console.error('University detail error:', error);
+        res.status(500).render('error', {
+            title: 'Hata',
+            message: 'Üniversite bilgileri yüklenirken bir hata oluştu.'
+        });
+    }
+});
+
+app.get('/c/:id', async (req, res) => {
+    try {
+        const universityId = req.params.id;
+        const result = await pool.query('SELECT slug FROM universities WHERE id = $1', [universityId]);
+        if (result.rows.length > 0 && result.rows[0].slug) {
+            return res.redirect(301, '/universities/' + result.rows[0].slug);
+        }
+        return res.status(404).render('error', {
+            title: 'Üniversite Bulunamadı',
+            message: 'Aradığınız üniversite bulunamadı.'
+        });
+    } catch (error) {
+        console.error('University redirect error:', error);
         res.status(500).render('error', {
             title: 'Sunucu Hatası',
             message: 'Üniversite bilgileri yüklenirken bir hata oluştu.'
@@ -810,35 +821,31 @@ app.post('/universities/create', async (req, res) => {
 // Logout routes (both GET and POST for compatibility)
 app.get('/admin/logout', (req, res) => {
     console.log('Admin logout GET endpoint called');
-    res.clearCookie('userToken', {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        path: '/'
-    });
-    res.clearCookie('adminToken', {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        path: '/'
-    });
+    const expireOpts = { httpOnly: true, secure: process.env.NODE_ENV === 'production', path: '/', maxAge: 0 };
+    res.cookie('userToken', '', expireOpts);
+    res.cookie('adminToken', '', expireOpts);
+    res.cookie('partnerToken', '', expireOpts);
+    res.clearCookie('userToken');
+    res.clearCookie('adminToken');
+    res.clearCookie('partnerToken');
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
     res.redirect('/login');
 });
 
 app.post('/logout', (req, res) => {
     console.log('Logout POST endpoint called');
-    res.clearCookie('userToken', {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        path: '/'
-    });
-    res.clearCookie('adminToken', {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        path: '/'
-    });
+    const expireOpts = { httpOnly: true, secure: process.env.NODE_ENV === 'production', path: '/', maxAge: 0 };
+    res.cookie('userToken', '', expireOpts);
+    res.cookie('adminToken', '', expireOpts);
+    res.cookie('partnerToken', '', expireOpts);
+    res.clearCookie('userToken');
+    res.clearCookie('adminToken');
+    res.clearCookie('partnerToken');
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
     res.redirect('/login');
 });
 
@@ -880,7 +887,7 @@ app.get('/sitemap.xml', async (req, res) => {
         let universities = [];
         try {
             const universitiesResult = await pool.query(`
-                SELECT id, name, updated_at
+                SELECT id, name, slug, updated_at
                 FROM universities 
                 WHERE is_active = true
                 ORDER BY updated_at DESC
@@ -953,6 +960,14 @@ app.get('/sitemap.xml', async (req, res) => {
         <priority>0.7</priority>
         <xhtml:link rel="alternate" hreflang="tr" href="${baseUrl}/change-language/tr"/>
         <xhtml:link rel="alternate" hreflang="en" href="${baseUrl}/change-language/en"/>
+    </url>
+    
+    <!-- Gallery -->
+    <url>
+        <loc>${baseUrl}/gallery</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
     </url>
     
     <!-- Blog -->
@@ -1087,7 +1102,7 @@ app.get('/sitemap.xml', async (req, res) => {
             ? new Date(uni.updated_at).toISOString().split('T')[0]
             : new Date().toISOString().split('T')[0];
         return `    <url>
-        <loc>${baseUrl}/university/${uni.id}</loc>
+        <loc>${baseUrl}/universities/${uni.slug || uni.id}</loc>
         <lastmod>${lastmod}</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
@@ -1218,6 +1233,44 @@ app.get('/media', (req, res) => {
     res.render('media', { title: res.locals.t.nav.media || 'Medyada Biz' });
 });
 
+app.get('/gallery', async (req, res) => {
+    try {
+        const topics = await pool.query(`
+            SELECT * FROM gallery_topics 
+            WHERE is_active = true 
+            ORDER BY sort_order ASC, created_at DESC
+        `);
+        
+        const images = await pool.query(`
+            SELECT gi.* FROM gallery_images gi
+            JOIN gallery_topics gt ON gi.topic_id = gt.id
+            WHERE gt.is_active = true
+            ORDER BY gi.topic_id, gi.sort_order ASC, gi.created_at DESC
+        `);
+        
+        const imagesByTopic = {};
+        images.rows.forEach(img => {
+            if (!imagesByTopic[img.topic_id]) imagesByTopic[img.topic_id] = [];
+            imagesByTopic[img.topic_id].push(img);
+        });
+        
+        res.locals.seoTitle = 'Galeri - Venture Global | Fotoğraf Galerisi';
+        res.locals.seoDescription = 'Venture Global galeri. Üniversite ziyaretleri, öğrenci etkinlikleri ve daha fazlası.';
+        res.render('gallery', { 
+            title: 'Galeri',
+            topics: topics.rows,
+            imagesByTopic: imagesByTopic
+        });
+    } catch (error) {
+        console.error('Gallery page error:', error);
+        res.render('gallery', { 
+            title: 'Galeri',
+            topics: [],
+            imagesByTopic: {}
+        });
+    }
+});
+
 app.get('/partners/wcep', (req, res) => {
     res.render('partners/wcep', { title: 'WCEP - Venture Global' });
 });
@@ -1227,8 +1280,7 @@ app.get('/partners/medczech', (req, res) => {
 });
 
 app.get('/partners/bestschool', (req, res) => {
-    // BestSchool sayfası mevcut değil, ana sayfaya yönlendir
-    res.redirect('/');
+    res.redirect(301, '/universities/best-school-cz-prag-czech-republic');
 });
 
 app.get('/partners/kanpus', (req, res) => {
@@ -1247,21 +1299,13 @@ app.get('/universities', async (req, res) => {
         // Get all universities from database with optimized query (sorted by admin-defined order)
         const universitiesResult = await pool.query(`
             SELECT 
-                u.id,
-                u.name,
-                u.name_en,
-                u.country,
-                u.city,
-                u.logo_url,
-                u.world_ranking,
-                u.is_featured,
-                u.created_at,
+                u.*,
                 COALESCE(u.sort_order, 9999) as sort_order,
                 COUNT(ud.id) as department_count
             FROM universities u
             LEFT JOIN university_departments ud ON u.id = ud.university_id AND ud.is_active = true
             WHERE u.is_active = true
-            GROUP BY u.id, u.name, u.name_en, u.country, u.city, u.logo_url, u.world_ranking, u.is_featured, u.created_at, u.sort_order
+            GROUP BY u.id
             ORDER BY COALESCE(u.sort_order, 9999) ASC, u.is_featured DESC, u.name ASC
         `);
 
@@ -1279,100 +1323,30 @@ app.get('/universities', async (req, res) => {
     }
 });
 
-// University detail page route - Supports both numeric ID and slug (name-based lookup)
 app.get('/university/:id', async (req, res) => {
     try {
         const universityParam = req.params.id;
-        let universityResult;
-
-        // Check if the parameter is a numeric ID or a slug
         const isNumericId = /^\d+$/.test(universityParam);
-        
-        console.log('Fetching university with param:', universityParam, 'isNumeric:', isNumericId);
-        
+        let result;
         if (isNumericId) {
-            // Query by numeric ID
-            universityResult = await pool.query(`
-                SELECT 
-                    u.*,
-                    0 as actual_program_count
-                FROM universities u
-                WHERE u.id = $1
-            `, [universityParam]);
+            result = await pool.query('SELECT slug FROM universities WHERE id = $1', [universityParam]);
         } else {
-            // Query by slug - search in name (case-insensitive, partial match)
             const slugMap = {
-                'semmelweis': 'Semmelweis',
-                'ctu': 'Czech Technical',
-                'vse': 'VSE',
-                'tum': 'Technical University of Munich',
-                'univie': 'Vienna',
-                'polimi': 'Politecnico di Milano',
-                'charles': 'Charles University',
-                'masaryk': 'Masaryk',
-                'palacky': 'Palacky'
+                'semmelweis': 'Semmelweis', 'ctu': 'Czech Technical', 'vse': 'VSE',
+                'tum': 'Technical University of Munich', 'univie': 'Vienna',
+                'polimi': 'Politecnico di Milano', 'charles': 'Charles University',
+                'masaryk': 'Masaryk', 'palacky': 'Palacky'
             };
-            
             const searchTerm = slugMap[universityParam.toLowerCase()] || universityParam;
-            
-            universityResult = await pool.query(`
-                SELECT 
-                    u.*,
-                    0 as actual_program_count
-                FROM universities u
-                WHERE LOWER(u.name) LIKE LOWER($1)
-                LIMIT 1
-            `, [`%${searchTerm}%`]);
+            result = await pool.query('SELECT slug FROM universities WHERE LOWER(name) LIKE LOWER($1) LIMIT 1', [`%${searchTerm}%`]);
         }
-        
-        console.log('University query result:', universityResult.rows);
-
-        if (universityResult.rows.length === 0) {
-            return res.status(404).render('error', {
-                title: 'Üniversite Bulunamadı',
-                message: 'Aradığınız üniversite bulunamadı.'
-            });
+        if (result.rows.length > 0 && result.rows[0].slug) {
+            return res.redirect(301, '/universities/' + result.rows[0].slug);
         }
-
-        const university = universityResult.rows[0];
-
-        // Get university departments (ordered by sort_order)
-        const departmentsResult = await pool.query(`
-            SELECT id, name_tr, name_en, price, currency, COALESCE(sort_order, 9999) as sort_order
-            FROM university_departments 
-            WHERE university_id = $1 AND is_active = true
-            ORDER BY COALESCE(sort_order, 9999) ASC, name_tr ASC
-        `, [university.id]);
-
-        // Get university programs (empty for now)
-        const programsResult = { rows: [] };
-
-        // Get university images (empty for now)
-        const imagesResult = { rows: [] };
-
-        // Set SEO metadata for university detail page
-        res.locals.seoTitle = `${university.name} - ${university.country} | Venture Global`;
-        res.locals.seoDescription = `${university.name} (${university.city}, ${university.country}) hakkında bilgiler, bölümler, programlar ve başvuru süreci. ${university.country} üniversite başvurunuzda profesyonel destek alın. Yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı ve Avrupa eğitim danışmanlığı hizmetlerimiz.`;
-        res.locals.seoKeywords = `${university.name.toLowerCase()}, ${university.country.toLowerCase()} üniversite, ${university.city.toLowerCase()} üniversite, ${university.country.toLowerCase()} eğitim, ${university.country.toLowerCase()} başvuru, yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı`;
-        res.locals.schemaType = 'CollegeOrUniversity';
-        res.locals.ogType = 'article';
-        if (university.logo_url) {
-            res.locals.ogImage = res.locals.baseUrl + university.logo_url;
-        }
-
-        res.render('university-detail', {
-            title: `${university.name} - Venture Global`,
-            university: university,
-            departments: departmentsResult.rows || [],
-            programs: programsResult.rows || [],
-            images: imagesResult.rows || []
-        });
+        return res.status(404).render('error', { title: 'Üniversite Bulunamadı', message: 'Aradığınız üniversite bulunamadı.' });
     } catch (error) {
-        console.error('University detail error:', error);
-        res.status(500).render('error', {
-            title: 'Sunucu Hatası',
-            message: 'Üniversite bilgileri yüklenirken bir hata oluştu.'
-        });
+        console.error('University redirect error:', error);
+        res.status(500).render('error', { title: 'Sunucu Hatası', message: 'Üniversite bilgileri yüklenirken bir hata oluştu.' });
     }
 });
 

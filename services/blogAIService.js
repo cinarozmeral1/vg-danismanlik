@@ -34,6 +34,17 @@ const COUNTRY_NAMES = {
     'Netherlands': { tr: 'Hollanda', en: 'Netherlands' }
 };
 
+const COUNTRY_STUDENT_LIFE_SLUGS = {
+    'Czech Republic': 'czech',
+    'Italy': 'italy',
+    'UK': 'uk',
+    'Germany': 'germany',
+    'Austria': 'austria',
+    'Hungary': 'hungary',
+    'Poland': 'poland',
+    'Netherlands': 'netherlands'
+};
+
 
 /**
  * Select a real department from database with BALANCED country rotation
@@ -69,7 +80,7 @@ async function selectRealDepartment() {
     for (const country of sortedCountries) {
         const result = await pool.query(`
             SELECT d.id, d.name_tr, d.name_en, d.price, d.currency,
-                   u.id as university_id, u.name as university_name, u.country, u.city
+                   u.id as university_id, u.name as university_name, u.country, u.city, u.slug as university_slug
             FROM university_departments d
             JOIN universities u ON d.university_id = u.id
             WHERE u.country = $1 
@@ -109,7 +120,7 @@ async function selectRealDepartment() {
     console.log('🔄 Fallback: Selecting from any country (Bachelor only)...');
     const result = await pool.query(`
         SELECT d.id, d.name_tr, d.name_en, d.price, d.currency,
-               u.id as university_id, u.name as university_name, u.country, u.city
+               u.id as university_id, u.name as university_name, u.country, u.city, u.slug as university_slug
         FROM university_departments d
         JOIN universities u ON d.university_id = u.id
         WHERE d.is_active = true 
@@ -136,9 +147,11 @@ async function selectRealDepartment() {
 
 /**
  * Generate BILINGUAL blog post
+ * @param {Object} options - { draft: boolean } if draft=true, saves as unpublished
  */
-async function generateBlogPost() {
-    console.log('📝 Starting bilingual blog post generation...');
+async function generateBlogPost(options = {}) {
+    const isDraft = options.draft === true;
+    console.log(`📝 Starting bilingual blog post generation... (draft: ${isDraft})`);
     
     const dept = await selectRealDepartment();
     
@@ -166,6 +179,8 @@ async function generateBlogPost() {
     
     const titleTR = `${dept.university_name} - ${dept.name_tr} Lisans Programı`;
     const titleEN = `${dept.university_name} - ${dept.name_en || dept.name_tr} Bachelor's Program`;
+
+    const isPublished = !isDraft;
     
     // Save to database
     const result = await pool.query(`
@@ -174,7 +189,7 @@ async function generateBlogPost() {
             excerpt_tr, excerpt_en, meta_description_tr, meta_description_en,
             keywords, topic_type, related_university_id, related_country,
             featured_image_url, is_published, published_at
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, true, NOW())
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, ${isPublished ? 'NOW()' : 'NULL'})
         RETURNING *
     `, [
         titleTR,
@@ -190,7 +205,8 @@ async function generateBlogPost() {
         'department',
         dept.university_id,
         dept.country,
-        imageUrl
+        imageUrl,
+        isPublished
     ]);
     
     // Mark as covered
@@ -239,6 +255,9 @@ KURALLAR:
 5. Son paragrafta "Venture Global (VG Danışmanlık) ile iletişime geçebilirsiniz" de
 6. Bu bir UNDERGRADUATE / LİSANS programıdır, yüksek lisans değil
 7. "yurt dışı eğitim danışmanlığı", "eğitim danışmanlığı", "yurtdışında eğitim" gibi anahtar kelimeleri doğal şekilde kullan
+8. Makalenin içerisinde şu iki linki doğal şekilde yerleştir:
+   - Ülke öğrenci hayatı sayfası linki: <a href="STUDENT_LIFE_LINK">${countryName}'de Öğrenci Hayatı</a>
+   - Üniversite detay sayfası linki: <a href="UNIVERSITY_DETAIL_LINK">${dept.university_name} hakkında detaylı bilgi</a>
 
 FORMAT: Sadece HTML tagleri kullan. Başlıklar için <h2> ve <h3>, paragraflar için <p>, listeler için <ul><li> kullan. Markdown (## veya **) KULLANMA. Kod bloğu EKLEME.`
         : `Write a blog article in English about the ${deptName} BACHELOR'S / UNDERGRADUATE program at ${dept.university_name}.
@@ -261,6 +280,9 @@ RULES:
 5. End with "Contact Venture Global (VG Danışmanlık) for more information"
 6. This is a BACHELOR'S / UNDERGRADUATE program, NOT a master's degree
 7. Naturally include keywords like "study abroad", "education consulting", "overseas education"
+8. Naturally include these two links in the article:
+   - Student life page link: <a href="STUDENT_LIFE_LINK">Student Life in ${countryName}</a>
+   - University detail page link: <a href="UNIVERSITY_DETAIL_LINK">Learn more about ${dept.university_name}</a>
 
 FORMAT: Use only HTML tags. Use <h2> and <h3> for headings, <p> for paragraphs, <ul><li> for lists. DO NOT use Markdown (## or **). NO code blocks.`;
 
@@ -320,12 +342,41 @@ FORMAT: Use only HTML tags. Use <h2> and <h3> for headings, <p> for paragraphs, 
         .replace(/<\/?head[^>]*>/gi, '')
         .replace(/<title[^>]*>[\s\S]*?<\/title>/gi, '')
         .replace(/^\s*\{[\s\S]*?\}\s*$/gm, '')
-        // Convert markdown to HTML if AI still uses it
         .replace(/^### (.+)$/gm, '<h3>$1</h3>')
         .replace(/^## (.+)$/gm, '<h2>$1</h2>')
         .replace(/^# (.+)$/gm, '<h2>$1</h2>')
         .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
         .trim();
+    
+    // Post-processing: Replace internal link placeholders with real URLs
+    const studentLifeSlug = COUNTRY_STUDENT_LIFE_SLUGS[dept.country] || '';
+    const studentLifeUrl = studentLifeSlug ? `/student-life/${studentLifeSlug}` : '';
+    const universityDetailUrl = dept.university_slug ? `/universities/${dept.university_slug}` : `/c/${dept.university_id}`;
+
+    content = content.replace(/STUDENT_LIFE_LINK/g, studentLifeUrl);
+    content = content.replace(/UNIVERSITY_DETAIL_LINK/g, universityDetailUrl);
+
+    const hasStudentLifeLink = content.includes('/student-life/');
+    const hasUniversityLink = content.includes('/universities/') || content.includes(`/c/${dept.university_id}`);
+
+    if (!hasStudentLifeLink || !hasUniversityLink) {
+        const countryNameTr = COUNTRY_NAMES[dept.country]?.tr || dept.country;
+        const countryNameEn = COUNTRY_NAMES[dept.country]?.en || dept.country;
+        let linksHtml = lang === 'tr' ? '<h3>İlgili Sayfalar</h3><ul>' : '<h3>Related Pages</h3><ul>';
+        
+        if (!hasStudentLifeLink && studentLifeUrl) {
+            linksHtml += lang === 'tr'
+                ? `<li><a href="${studentLifeUrl}">${countryNameTr}'de Öğrenci Hayatı</a></li>`
+                : `<li><a href="${studentLifeUrl}">Student Life in ${countryNameEn}</a></li>`;
+        }
+        if (!hasUniversityLink) {
+            linksHtml += lang === 'tr'
+                ? `<li><a href="${universityDetailUrl}">${dept.university_name} hakkında detaylı bilgi</a></li>`
+                : `<li><a href="${universityDetailUrl}">Learn more about ${dept.university_name}</a></li>`;
+        }
+        linksHtml += '</ul>';
+        content += linksHtml;
+    }
     
     return content;
 }

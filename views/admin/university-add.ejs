@@ -1,50 +1,6 @@
 <!-- Admin University Add Content -->
 <div class="admin-container">
-    <!-- Sidebar -->
-    <div class="admin-sidebar">
-        <div class="sidebar-header">
-            <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Yönetim Paneli</h6>
-        </div>
-        <nav class="sidebar-nav">
-            <a href="/admin/dashboard" class="nav-item">
-                <i class="fas fa-tachometer-alt"></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="/admin/users" class="nav-item">
-                <i class="fas fa-users"></i>
-                <span>Öğrenciler</span>
-                <span class="badge bg-primary ms-auto"><%= userCount %></span>
-            </a>
-            <a href="/admin/applications" class="nav-item">
-                <i class="fas fa-file-alt"></i>
-                <span>Başvurular</span>
-                <span class="badge bg-success ms-auto"><%= applicationCount %></span>
-            </a>
-            <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
-            <a href="/admin/partners" class="nav-item">
-                <i class="fas fa-handshake"></i>
-                <span>Partnerler</span>
-                <% if (typeof partnerCount !== 'undefined' && partnerCount > 0) { %>
-                    <span class="badge bg-info ms-auto"><%= partnerCount %></span>
-                <% } %>
-            </a>
-            <% } %>
-            <a href="/admin/universities" class="nav-item active">
-                <i class="fas fa-university"></i>
-                <span>Üniversiteler</span>
-            </a>
-            <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
-            <a href="/admin/backups" class="nav-item">
-                <i class="fas fa-database"></i>
-                <span>Yedekleme</span>
-            </a>
-            <a href="/admin/admins" class="nav-item">
-                <i class="fas fa-user-shield"></i>
-                <span>Adminler</span>
-            </a>
-            <% } %>
-        </nav>
-    </div>
+    <%- include('partials/sidebar') %>
 
     <!-- Main Content Area -->
     <div class="admin-main">

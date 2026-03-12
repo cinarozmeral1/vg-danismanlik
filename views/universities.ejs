@@ -8,6 +8,18 @@
                 <p class="text-muted">Avrupa'nın önde gelen üniversiteleri ile işbirliği yapıyoruz</p>
             </div>
 
+            <!-- Search Bar -->
+            <div class="filter-section mb-3" style="padding: 1.2rem 2rem;">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0" style="border-radius: 12px 0 0 12px; border: 2px solid rgba(13, 110, 253, 0.2); border-right: none;">
+                        <i class="fas fa-search text-primary"></i>
+                    </span>
+                    <input type="text" class="form-control border-start-0" id="universitySearchInput" 
+                           placeholder="Üniversite adı ara (Türkçe veya İngilizce)..."
+                           style="border-radius: 0 12px 12px 0; border: 2px solid rgba(13, 110, 253, 0.2); border-left: none; font-weight: 500;">
+                </div>
+            </div>
+
             <!-- Filter Section -->
             <div class="filter-section mb-4">
                 <div class="row">
@@ -57,7 +69,11 @@
                     <div class="col-lg-4 col-md-6 mb-4 university-card" 
                          data-country="<%= university.country || '' %>" 
                          data-ranking="<%= university.world_ranking || 0 %>"
-                         data-program-count="<%= university.department_count || 0 %>">
+                         data-program-count="<%= university.department_count || 0 %>"
+                         data-name="<%= (university.name || '').toLowerCase() %>"
+                         data-name-en="<%= (university.name_en || '').toLowerCase() %>"
+                         data-name-tr="<%= (university.name_tr || '').toLowerCase() %>"
+                         data-uid="<%= university.id %>">
                         <div class="card h-100 university-card-inner">
                             <div class="card-header bg-transparent border-0">
                                 <div class="d-flex justify-content-between align-items-start">
@@ -151,7 +167,7 @@
                             </div>
                                                                     <div class="card-footer bg-transparent border-0">
                                             <div class="d-flex justify-content-center align-items-center">
-                                                <button onclick="window.location.href='/c/<%= university.id %>'" class="btn btn-primary btn-sm">
+                                                <button onclick="window.location.href='/universities/<%= university.slug || university.id %>'" class="btn btn-primary btn-sm">
                                                     <i class="fas fa-info-circle me-2"></i>Detaylar
                                                 </button>
                                             </div>
@@ -182,6 +198,9 @@
                         <a href="/contact" class="btn btn-primary btn-lg me-3">
                             <i class="fas fa-phone me-2"></i>İletişime Geçin
                         </a>
+                        <a href="/#randevu" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-calendar-check me-2"></i><%= currentLanguage === 'en' ? 'Book an Appointment' : 'Randevu Al' %>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -190,71 +209,77 @@
 </div>
 
         <script>
-            // Optimized Filter functionality
             document.addEventListener('DOMContentLoaded', function() {
         const countryFilter = document.getElementById('countryFilter');
         const rankingFilter = document.getElementById('rankingFilter');
         const programFilter = document.getElementById('programFilter');
+        const searchInput = document.getElementById('universitySearchInput');
         const universityCards = document.querySelectorAll('.university-card');
 
-        // Debounce function for better performance
         function debounce(func, wait) {
             let timeout;
             return function executedFunction(...args) {
-                const later = () => {
-                    clearTimeout(timeout);
-                    func(...args);
-                };
                 clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
+                timeout = setTimeout(() => func(...args), wait);
             };
+        }
+
+        function turkishLower(str) {
+            return str.replace(/İ/g, 'i').replace(/I/g, 'ı').replace(/Ğ/g, 'ğ').replace(/Ü/g, 'ü')
+                      .replace(/Ş/g, 'ş').replace(/Ö/g, 'ö').replace(/Ç/g, 'ç').toLowerCase();
         }
 
         function filterUniversities() {
             const selectedCountry = countryFilter.value;
             const selectedRanking = rankingFilter.value;
             const selectedProgram = programFilter.value;
-
+            const searchTerm = turkishLower(searchInput.value.trim());
             let visibleCount = 0;
 
             universityCards.forEach(card => {
                 const country = card.dataset.country || '';
                 const ranking = parseInt(card.dataset.ranking) || 0;
                 const programCount = parseInt(card.dataset.programCount) || 0;
-
                 let showCard = true;
 
-                // Country filter
-                if (selectedCountry && country !== selectedCountry) {
-                    showCard = false;
+                if (searchTerm) {
+                    const name = turkishLower(card.dataset.name || '');
+                    const nameEn = turkishLower(card.dataset.nameEn || '');
+                    const nameTr = turkishLower(card.dataset.nameTr || '');
+                    if (!name.includes(searchTerm) && !nameEn.includes(searchTerm) && !nameTr.includes(searchTerm)) {
+                        showCard = false;
+                    }
                 }
 
-                // Ranking filter
+                if (selectedCountry && country !== selectedCountry) showCard = false;
+
                 if (selectedRanking) {
-                    const [minRank, maxRank] = selectedRanking.split('-').map(r => r === '+' ? Infinity : parseInt(r));
-                    if (ranking < minRank || (maxRank !== Infinity && ranking > maxRank)) {
+                    const parts = selectedRanking.replace('+', '-Infinity').split('-');
+                    const minRank = parseInt(parts[0]);
+                    const maxRank = parts[1] === 'Infinity' ? Infinity : parseInt(parts[1]);
+                    if (selectedRanking.endsWith('+')) {
+                        if (ranking < minRank) showCard = false;
+                    } else if (ranking < minRank || ranking > maxRank) {
                         showCard = false;
                     }
                 }
 
-                
-                // Program count filter
                 if (selectedProgram) {
-                    const [minProgram, maxProgram] = selectedProgram.split('-').map(p => p === '+' ? Infinity : parseInt(p));
-                    if (programCount < minProgram || (maxProgram !== Infinity && programCount > maxProgram)) {
+                    const parts = selectedProgram.replace('+', '-Infinity').split('-');
+                    const minP = parseInt(parts[0]);
+                    const maxP = parts[1] === 'Infinity' ? Infinity : parseInt(parts[1]);
+                    if (selectedProgram.endsWith('+')) {
+                        if (programCount < minP) showCard = false;
+                    } else if (programCount < minP || programCount > maxP) {
                         showCard = false;
                     }
                 }
 
-                if (showCard) {
-                    card.style.display = 'block';
-                    visibleCount++;
-                } else {
-                    card.style.display = 'none';
-                }
+                card.style.display = showCard ? 'block' : 'none';
+                if (showCard) visibleCount++;
             });
 
-            // Show result count
+            saveFiltersToSession();
             updateResultCount(visibleCount, universityCards.length);
         }
 
@@ -264,48 +289,62 @@
                 resultDiv = document.createElement('div');
                 resultDiv.id = 'filterResults';
                 resultDiv.className = 'alert alert-info mt-3';
-                document.querySelector('.filter-section').appendChild(resultDiv);
+                document.querySelector('.filter-section:last-of-type').appendChild(resultDiv);
             }
-            
-            if (visible === total) {
+            if (visible === total && !searchInput.value.trim()) {
                 resultDiv.style.display = 'none';
             } else {
-                resultDiv.innerHTML = `<i class="fas fa-info-circle me-2"></i>${visible} üniversite bulundu (toplam ${total} üniversite)`;
+                resultDiv.innerHTML = '<i class="fas fa-info-circle me-2"></i>' + visible + ' üniversite bulundu (toplam ' + total + ' üniversite)';
                 resultDiv.style.display = 'block';
             }
         }
 
-        // Use debounced filter for better performance
-        const debouncedFilter = debounce(filterUniversities, 300);
-
-        if (countryFilter) countryFilter.addEventListener('change', debouncedFilter);
-        if (rankingFilter) rankingFilter.addEventListener('change', debouncedFilter);
-        if (programFilter) programFilter.addEventListener('change', debouncedFilter);
-        
-        // Clear filters button
-        document.getElementById('clearFiltersBtn').addEventListener('click', clearFilters);
-    });
-
-    function clearFilters() {
-        const countryFilter = document.getElementById('countryFilter');
-        const rankingFilter = document.getElementById('rankingFilter');
-        const programFilter = document.getElementById('programFilter');
-        
-        if (countryFilter) countryFilter.value = '';
-        if (rankingFilter) rankingFilter.value = '';
-        if (programFilter) programFilter.value = '';
-        
-        document.querySelectorAll('.university-card').forEach(card => {
-            card.style.display = 'block';
-        });
-
-        // Hide result count
-        const resultDiv = document.getElementById('filterResults');
-        if (resultDiv) {
-            resultDiv.style.display = 'none';
+        function saveFiltersToSession() {
+            try {
+                sessionStorage.setItem('uni_filters', JSON.stringify({
+                    country: countryFilter.value,
+                    ranking: rankingFilter.value,
+                    program: programFilter.value,
+                    search: searchInput.value
+                }));
+            } catch(e) {}
         }
-    }
 
+        function restoreFiltersFromSession() {
+            try {
+                const saved = sessionStorage.getItem('uni_filters');
+                if (saved) {
+                    const f = JSON.parse(saved);
+                    if (f.country) countryFilter.value = f.country;
+                    if (f.ranking) rankingFilter.value = f.ranking;
+                    if (f.program) programFilter.value = f.program;
+                    if (f.search) searchInput.value = f.search;
+                    filterUniversities();
+                }
+            } catch(e) {}
+        }
+
+        function clearFilters() {
+            countryFilter.value = '';
+            rankingFilter.value = '';
+            programFilter.value = '';
+            searchInput.value = '';
+            sessionStorage.removeItem('uni_filters');
+            universityCards.forEach(card => { card.style.display = 'block'; });
+            const resultDiv = document.getElementById('filterResults');
+            if (resultDiv) resultDiv.style.display = 'none';
+        }
+
+        const debouncedFilter = debounce(filterUniversities, 200);
+
+        countryFilter.addEventListener('change', debouncedFilter);
+        rankingFilter.addEventListener('change', debouncedFilter);
+        programFilter.addEventListener('change', debouncedFilter);
+        searchInput.addEventListener('input', debouncedFilter);
+        document.getElementById('clearFiltersBtn').addEventListener('click', clearFilters);
+
+        restoreFiltersFromSession();
+    });
 </script>
 
 <style>
@@ -538,4 +577,5 @@
         font-size: 2rem;
     }
 }
-</style> 
+</style>
+ 

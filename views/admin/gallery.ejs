@@ -1,0 +1,435 @@
+<!-- Admin Gallery Content -->
+<div class="admin-container">
+    <%- include('partials/sidebar') %>
+
+    <!-- Main Content Area -->
+    <div class="admin-main">
+
+<style>
+.topic-card {
+    border: 1px solid #dee2e6;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+.topic-header {
+    background: linear-gradient(135deg, #1a5276, #2980b9);
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.topic-header .drag-handle-topic {
+    cursor: grab;
+    margin-right: 10px;
+    opacity: 0.7;
+}
+.topic-header .drag-handle-topic:hover { opacity: 1; }
+.topic-header h5 { margin: 0; }
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    padding: 20px;
+}
+.gallery-image-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    transition: box-shadow 0.2s;
+    cursor: grab;
+}
+.gallery-image-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.gallery-image-card.sortable-ghost {
+    opacity: 0.4;
+    border: 2px dashed #2980b9;
+}
+.gallery-image-card img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+.gallery-image-card .caption-area {
+    padding: 8px 10px;
+    font-size: 0.85rem;
+}
+.gallery-image-card .delete-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(220, 53, 69, 0.9);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 2;
+}
+.gallery-image-card:hover .delete-btn { opacity: 1; }
+.upload-zone {
+    border: 2px dashed #adb5bd;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    margin: 0 20px 20px;
+}
+.upload-zone:hover, .upload-zone.dragover {
+    border-color: #2980b9;
+    background: #f0f8ff;
+}
+.topic-card.sortable-ghost {
+    opacity: 0.4;
+    border: 2px dashed #2980b9;
+}
+.upload-progress {
+    margin: 0 20px 15px;
+    display: none;
+}
+.upload-progress .progress-text {
+    font-size: 0.85rem;
+    color: #555;
+    margin-bottom: 5px;
+}
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3><i class="fas fa-images me-2"></i>Galeri Yönetimi</h3>
+    <button class="btn btn-primary" onclick="showAddTopicModal()">
+        <i class="fas fa-plus me-2"></i>Yeni Başlık Ekle
+    </button>
+</div>
+
+<% if (topics.length === 0) { %>
+<div class="text-center py-5">
+    <i class="fas fa-images fa-3x text-muted mb-3"></i>
+    <h5 class="text-muted">Henüz galeri başlığı eklenmemiş</h5>
+    <p class="text-muted">Başlamak için "Yeni Başlık Ekle" butonuna tıklayın.</p>
+</div>
+<% } %>
+
+<div id="topicsContainer">
+<% topics.forEach(function(topic) { %>
+    <div class="topic-card" data-topic-id="<%= topic.id %>">
+        <div class="topic-header">
+            <div class="d-flex align-items-center">
+                <span class="drag-handle-topic" title="Sürükleyerek sırala"><i class="fas fa-grip-vertical fa-lg"></i></span>
+                <div>
+                    <h5><i class="fas fa-folder-open me-2"></i><span class="topic-title"><%= topic.title %></span></h5>
+                    <small><%= topic.image_count %> görsel</small>
+                </div>
+            </div>
+            <div>
+                <button class="btn btn-sm btn-outline-light me-1" onclick="editTopic(<%= topic.id %>, '<%= topic.title.replace(/'/g, "\\'") %>')">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-light me-1" onclick="toggleTopic(<%= topic.id %>, <%= !topic.is_active %>)">
+                    <i class="fas fa-<%= topic.is_active ? 'eye' : 'eye-slash' %>"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteTopic(<%= topic.id %>)">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="image-grid" id="images-<%= topic.id %>">
+            <% if (imagesByTopic[topic.id]) { %>
+                <% imagesByTopic[topic.id].forEach(function(img) { %>
+                    <div class="gallery-image-card" data-image-id="<%= img.id %>">
+                        <button class="delete-btn" onclick="deleteImage(<%= img.id %>, this)" title="Sil">
+                            <i class="fas fa-times" style="font-size: 12px;"></i>
+                        </button>
+                        <img src="<%= img.image_url %>" alt="<%= img.caption || '' %>" loading="lazy">
+                        <div class="caption-area">
+                            <input type="text" class="form-control form-control-sm" 
+                                   value="<%= img.caption || '' %>" 
+                                   placeholder="Açıklama ekle..."
+                                   onchange="updateCaption(<%= img.id %>, this.value)">
+                        </div>
+                    </div>
+                <% }); %>
+            <% } %>
+        </div>
+        
+        <div class="upload-progress" id="progress-<%= topic.id %>">
+            <div class="progress-text" id="progressText-<%= topic.id %>"></div>
+            <div class="progress" style="height: 6px;">
+                <div class="progress-bar bg-info" id="progressBar-<%= topic.id %>" style="width: 0%"></div>
+            </div>
+        </div>
+        <div class="upload-zone" onclick="document.getElementById('fileInput-<%= topic.id %>').click()"
+             ondragover="event.preventDefault(); this.classList.add('dragover')"
+             ondragleave="this.classList.remove('dragover')"
+             ondrop="handleDrop(event, <%= topic.id %>, this)">
+            <i class="fas fa-cloud-upload-alt fa-2x text-muted mb-2"></i>
+            <p class="mb-0 text-muted">Görsel yüklemek için tıklayın veya sürükleyin</p>
+            <input type="file" id="fileInput-<%= topic.id %>" accept="image/*" multiple 
+                   style="display:none" onchange="uploadImages(<%= topic.id %>, this.files)">
+        </div>
+    </div>
+<% }); %>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
+<script>
+let topicModal;
+
+document.addEventListener('DOMContentLoaded', function() {
+    topicModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('topicModal'));
+    initSortable();
+});
+
+// ===== SORTABLE: Drag & Drop Reordering =====
+function initSortable() {
+    // Topic reordering
+    const topicsContainer = document.getElementById('topicsContainer');
+    if (topicsContainer) {
+        new Sortable(topicsContainer, {
+            animation: 200,
+            handle: '.drag-handle-topic',
+            ghostClass: 'sortable-ghost',
+            onEnd: async function() {
+                const order = Array.from(topicsContainer.querySelectorAll('.topic-card'))
+                    .map(el => parseInt(el.dataset.topicId));
+                try {
+                    await fetch('/admin/gallery/topics-reorder', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ order })
+                    });
+                } catch (err) {
+                    console.error('Topic reorder error:', err);
+                }
+            }
+        });
+    }
+
+    // Image reordering within each topic
+    document.querySelectorAll('.image-grid').forEach(grid => {
+        new Sortable(grid, {
+            animation: 200,
+            ghostClass: 'sortable-ghost',
+            filter: '.caption-area input',
+            preventOnFilter: false,
+            onEnd: async function() {
+                const order = Array.from(grid.querySelectorAll('.gallery-image-card'))
+                    .map(el => parseInt(el.dataset.imageId));
+                try {
+                    await fetch('/admin/gallery/images-reorder', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ order })
+                    });
+                } catch (err) {
+                    console.error('Image reorder error:', err);
+                }
+            }
+        });
+    });
+}
+
+// ===== MODAL =====
+window.showAddTopicModal = function() {
+    document.getElementById('topicModalTitle').textContent = 'Yeni Başlık Ekle';
+    document.getElementById('editTopicId').value = '';
+    document.getElementById('topicTitle').value = '';
+    topicModal.show();
+};
+
+window.editTopic = function(id, title) {
+    document.getElementById('topicModalTitle').textContent = 'Başlığı Düzenle';
+    document.getElementById('editTopicId').value = id;
+    document.getElementById('topicTitle').value = title;
+    topicModal.show();
+};
+
+window.saveTopic = async function() {
+    const id = document.getElementById('editTopicId').value;
+    const title = document.getElementById('topicTitle').value.trim();
+    if (!title) return alert('Başlık gerekli');
+    
+    try {
+        const url = id ? `/admin/gallery/topics/${id}` : '/admin/gallery/topics';
+        const method = id ? 'PUT' : 'POST';
+        const response = await fetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title })
+        });
+        const data = await response.json();
+        if (data.success) {
+            topicModal.hide();
+            location.reload();
+        } else {
+            alert(data.message || 'Hata oluştu');
+        }
+    } catch (err) {
+        alert('Hata: ' + err.message);
+    }
+};
+
+window.deleteTopic = async function(id) {
+    if (!confirm('Bu başlık ve tüm görselleri silinecek. Emin misiniz?')) return;
+    try {
+        const response = await fetch(`/admin/gallery/topics/${id}`, { method: 'DELETE' });
+        const data = await response.json();
+        if (data.success) location.reload();
+        else alert(data.message || 'Hata');
+    } catch (err) {
+        alert('Hata: ' + err.message);
+    }
+};
+
+window.toggleTopic = async function(id, active) {
+    try {
+        await fetch(`/admin/gallery/topics/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ is_active: active })
+        });
+        location.reload();
+    } catch (err) {
+        alert('Hata: ' + err.message);
+    }
+};
+
+// ===== UPLOAD directly to Cloudinary (bypasses Vercel 4.5MB limit) =====
+window.uploadImages = async function(topicId, files) {
+    const fileArr = Array.from(files);
+    const total = fileArr.length;
+    const progressWrap = document.getElementById('progress-' + topicId);
+    const progressText = document.getElementById('progressText-' + topicId);
+    const progressBar = document.getElementById('progressBar-' + topicId);
+    
+    if (progressWrap) progressWrap.style.display = 'block';
+    let succeeded = 0;
+    let failed = 0;
+    
+    for (let i = 0; i < total; i++) {
+        const file = fileArr[i];
+        if (progressText) progressText.textContent = `Yükleniyor: ${i + 1} / ${total} - ${file.name}`;
+        if (progressBar) progressBar.style.width = ((i / total) * 100) + '%';
+        
+        try {
+            // 1. Get upload signature from our server
+            const sigRes = await fetch('/admin/gallery/upload-signature');
+            const sig = await sigRes.json();
+            if (!sig.success) throw new Error('İmza alınamadı');
+            
+            // 2. Upload directly to Cloudinary (no server size limit)
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('api_key', sig.apiKey);
+            formData.append('timestamp', sig.timestamp);
+            formData.append('signature', sig.signature);
+            formData.append('folder', 'gallery');
+            formData.append('transformation', 'w_1920,c_limit');
+            
+            const cloudRes = await fetch(`https://api.cloudinary.com/v1_1/${sig.cloudName}/image/upload`, {
+                method: 'POST',
+                body: formData
+            });
+            const cloudData = await cloudRes.json();
+            
+            if (!cloudData.secure_url) throw new Error(cloudData.error?.message || 'Cloudinary hatası');
+            
+            // 3. Save URL to our database
+            const saveRes = await fetch('/admin/gallery/images', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ topic_id: topicId, image_url: cloudData.secure_url })
+            });
+            const saveData = await saveRes.json();
+            
+            if (saveData.success) succeeded++;
+            else throw new Error(saveData.message);
+        } catch (err) {
+            failed++;
+            console.error('Upload error for', file.name, err.message);
+        }
+    }
+    
+    if (progressBar) progressBar.style.width = '100%';
+    if (progressText) {
+        progressText.textContent = `Tamamlandı: ${succeeded} başarılı` + (failed > 0 ? `, ${failed} başarısız` : '');
+    }
+    
+    if (failed > 0) {
+        alert(`${succeeded} görsel yüklendi, ${failed} görsel yüklenemedi.`);
+    }
+    
+    setTimeout(() => location.reload(), 800);
+};
+
+window.handleDrop = function(event, topicId, zone) {
+    event.preventDefault();
+    zone.classList.remove('dragover');
+    const files = event.dataTransfer.files;
+    if (files.length > 0) window.uploadImages(topicId, files);
+};
+
+// ===== IMAGE CRUD =====
+window.deleteImage = async function(imageId, btn) {
+    if (!confirm('Bu görsel silinecek. Emin misiniz?')) return;
+    try {
+        const response = await fetch(`/admin/gallery/images/${imageId}`, { method: 'DELETE' });
+        const data = await response.json();
+        if (data.success) {
+            btn.closest('.gallery-image-card').remove();
+        } else {
+            alert(data.message || 'Hata');
+        }
+    } catch (err) {
+        alert('Hata: ' + err.message);
+    }
+};
+
+window.updateCaption = async function(imageId, caption) {
+    try {
+        await fetch(`/admin/gallery/images/${imageId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ caption })
+        });
+    } catch (err) {
+        console.error('Caption update error:', err);
+    }
+};
+</script>
+
+    </div><!-- admin-main -->
+</div><!-- admin-container -->
+
+<!-- Add Topic Modal (outside admin-container to avoid z-index/overflow issues) -->
+<div class="modal fade" id="topicModal" tabindex="-1" aria-labelledby="topicModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="topicModalTitle">Yeni Başlık Ekle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editTopicId">
+                <div class="mb-3">
+                    <label class="form-label">Başlık</label>
+                    <input type="text" class="form-control" id="topicTitle" placeholder="Örn: Sapienza Üniversitesi">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-primary" onclick="saveTopic()">Kaydet</button>
+            </div>
+        </div>
+    </div>
+</div>

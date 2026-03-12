@@ -164,37 +164,8 @@ router.post('/submit', async (req, res) => {
         try {
             aiResult = await analyzeStudentProfile(studentData);
         } catch (err) {
-            console.log('AI failed, using fallback');
-            aiResult = {
-                success: true,
-                data: {
-                    prep_school_needed: ['A1', 'A2', 'B1'].includes(studentData.english_level),
-                    recommendation_1: {
-                        university_name: 'Charles University',
-                        program_name: 'Lisans Programı',
-                        country: studentData.country_preferences[0] || 'Czech Republic',
-                        city: 'Prague',
-                        tuition: '5000 EUR',
-                        why_this_university: 'Avrupa\'nın en köklü üniversitelerinden biri.',
-                        why_this_program: 'İlgi alanlarınıza uygun.',
-                        country_info: 'Uygun fiyatlı eğitim.',
-                        city_info: 'Öğrenci dostu şehir.',
-                        career_prospects: 'Geniş kariyer fırsatları.'
-                    },
-                    recommendation_2: {
-                        university_name: 'University of Bologna',
-                        program_name: 'Lisans Programı',
-                        country: studentData.country_preferences[1] || 'Italy',
-                        city: 'Bologna',
-                        tuition: '3000 EUR',
-                        why_this_university: 'Dünyanın en eski üniversitesi.',
-                        why_this_program: 'Kapsamlı programlar.',
-                        country_info: 'Zengin kültür.',
-                        city_info: 'Canlı öğrenci hayatı.',
-                        career_prospects: 'AB fırsatları.'
-                    }
-                }
-            };
+            console.error('AI failed in submit route:', err.message);
+            aiResult = await buildSmartFallback(studentData);
         }
         
         // Full recommendation data for ai_reasoning column
@@ -299,62 +270,16 @@ router.post('/analyze', isAuthenticated, async (req, res) => {
             aiResult = await analyzeStudentProfile(studentData);
         } catch (aiError) {
             console.error('❌ AI analysis threw error:', aiError.message);
-            // Manual fallback if analyzeStudentProfile somehow fails
-            aiResult = {
-                success: true,
-                data: {
-                    prep_school_needed: ['A1', 'A2', 'B1'].includes(studentData.english_level),
-                    recommendation_1: {
-                        university_name: 'Charles University (CUNI)',
-                        program_name: studentData.education_level === 'master' ? 'Yüksek Lisans Programı' : 'Lisans Programı',
-                        country: studentData.country_preferences[0] || 'Czech Republic',
-                        city: 'Prague',
-                        tuition: '5000 EUR',
-                        why_this_university: 'Avrupa\'nın en köklü üniversitelerinden biri.',
-                        why_this_program: 'İlgi alanlarınıza uygun bir program.',
-                        country_info: 'Kaliteli ve uygun fiyatlı eğitim imkanı.',
-                        city_info: 'Öğrenci dostu bir şehir.',
-                        career_prospects: 'Geniş kariyer fırsatları.'
-                    },
-                    recommendation_2: {
-                        university_name: 'University of Bologna',
-                        program_name: studentData.education_level === 'master' ? 'Yüksek Lisans Programı' : 'Lisans Programı',
-                        country: studentData.country_preferences[1] || 'Italy',
-                        city: 'Bologna',
-                        tuition: '3000 EUR',
-                        why_this_university: 'Dünyanın en eski üniversitesi.',
-                        why_this_program: 'Kapsamlı eğitim programları.',
-                        country_info: 'Zengin kültür ve uygun maliyetler.',
-                        city_info: 'Canlı öğrenci hayatı.',
-                        career_prospects: 'AB genelinde fırsatlar.'
-                    },
-                    is_fallback: true
-                }
-            };
+            console.error('Stack:', aiError.stack);
+            
+            // SMART FALLBACK: Use real university data from database
+            aiResult = await buildSmartFallback(studentData);
         }
         
         // Ensure we always have a valid result
         if (!aiResult || !aiResult.success || !aiResult.data) {
-            console.log('⚠️ AI result invalid, using emergency fallback');
-            aiResult = {
-                success: true,
-                data: {
-                    prep_school_needed: false,
-                    recommendation_1: {
-                        university_name: 'Charles University (CUNI)',
-                        program_name: 'Lisans Programı',
-                        country: 'Czech Republic',
-                        city: 'Prague',
-                        tuition: '5000 EUR',
-                        why_this_university: 'Köklü ve prestijli bir üniversite.',
-                        why_this_program: 'Geniş program yelpazesi.',
-                        country_info: 'Uygun fiyatlı eğitim.',
-                        city_info: 'Güzel ve tarihi şehir.',
-                        career_prospects: 'İyi kariyer imkanları.'
-                    },
-                    is_fallback: true
-                }
-            };
+            console.log('⚠️ AI result invalid, using smart fallback');
+            aiResult = await buildSmartFallback(studentData);
         }
         
         // Log recommendation summary
@@ -393,38 +318,14 @@ router.post('/analyze', isAuthenticated, async (req, res) => {
         console.error('❌ CRITICAL: Outer catch triggered:', error.message);
         console.error('Stack:', error.stack);
         
-        // Yine de bir sonuç dön - ASLA HATA GÖSTERİLMEZ
+        // SMART FALLBACK - Use real data from database
+        const emergencyResult = await buildSmartFallback(studentData);
         res.json({
             success: true,
             message: 'Analiz tamamlandı',
             data: {
                 recommendation_id: null,
-                prep_school_needed: false,
-                recommendation_1: {
-                    university_name: 'Charles University (CUNI)',
-                    program_name: studentData?.education_level === 'master' ? 'Yüksek Lisans Programı' : 'Lisans Programı',
-                    country: 'Czech Republic',
-                    city: 'Prague',
-                    tuition: '5000 EUR',
-                    why_this_university: 'Avrupa\'nın en köklü üniversitelerinden biri olan Charles University, uluslararası öğrenciler için mükemmel bir seçimdir.',
-                    why_this_program: 'Bu program, ilgi alanlarınıza uygun kapsamlı bir eğitim sunmaktadır.',
-                    country_info: 'Çek Cumhuriyeti, Avrupa\'nın kalbinde uygun fiyatlı ve kaliteli eğitim sunan bir ülkedir.',
-                    city_info: 'Prag, öğrenci dostu yaşam maliyetleri ve zengin kültürel hayatıyla öne çıkar.',
-                    career_prospects: 'Mezuniyet sonrası Avrupa genelinde geniş kariyer fırsatları bulunmaktadır.'
-                },
-                recommendation_2: {
-                    university_name: 'University of Bologna',
-                    program_name: studentData?.education_level === 'master' ? 'Yüksek Lisans Programı' : 'Lisans Programı',
-                    country: 'Italy',
-                    city: 'Bologna',
-                    tuition: '3000 EUR',
-                    why_this_university: 'Dünyanın en eski üniversitesi.',
-                    why_this_program: 'Kapsamlı eğitim programları.',
-                    country_info: 'Zengin kültür ve uygun eğitim maliyetleri.',
-                    city_info: 'Canlı öğrenci hayatı.',
-                    career_prospects: 'AB genelinde kariyer fırsatları.'
-                },
-                is_fallback: true
+                ...emergencyResult.data
             }
         });
     }
@@ -525,6 +426,144 @@ router.delete('/my-recommendation', isAuthenticated, async (req, res) => {
         });
     }
 });
+
+/**
+ * Build smart fallback recommendation using real university data from database
+ */
+async function buildSmartFallback(studentData) {
+    try {
+        const preferredCountries = studentData?.country_preferences || ['Czech Republic', 'Italy'];
+        const educationLevel = studentData?.education_level || 'bachelor';
+        const interests = studentData?.interests || [];
+        
+        // Query real universities from database, prioritizing preferred countries and partner universities
+        const uniResult = await pool.query(`
+            SELECT u.id, u.name, u.country, u.city, u.tuition_fee_min, u.tuition_fee_max, u.description, u.world_ranking, u.is_partner,
+                   (SELECT json_agg(json_build_object('name_tr', d.name_tr, 'price', d.price, 'currency', d.currency))
+                    FROM university_departments d WHERE d.university_id = u.id AND d.is_active = true LIMIT 5) as departments
+            FROM universities u
+            WHERE u.is_active = true
+            ORDER BY 
+                CASE WHEN u.country = ANY($1) THEN 0 ELSE 1 END,
+                u.is_partner DESC,
+                u.world_ranking ASC NULLS LAST,
+                RANDOM()
+            LIMIT 10
+        `, [preferredCountries]);
+        
+        const universities = uniResult.rows;
+        
+        if (universities.length === 0) {
+            console.error('❌ No universities found for smart fallback');
+            return getHardcodedFallback(studentData);
+        }
+        
+        // Pick best 2 universities from different countries if possible
+        const uni1 = universities[0];
+        const uni2 = universities.find(u => u.country !== uni1.country) || universities[1] || universities[0];
+        
+        const buildRecommendation = (uni) => {
+            const deps = uni.departments || [];
+            const firstDep = deps[0];
+            const programName = firstDep?.name_tr || (educationLevel === 'master' ? 'Yüksek Lisans Programı' : 'Lisans Programı');
+            const tuition = firstDep?.price ? `${firstDep.price} ${firstDep.currency || 'EUR'}` : 
+                           (uni.tuition_fee_min ? `${uni.tuition_fee_min} EUR` : 'Fiyat değişken');
+            
+            const countryDescriptions = {
+                'Czech Republic': 'Çek Cumhuriyeti, Avrupa\'nın kalbinde yer alan, uygun fiyatlı ve kaliteli eğitimiyle tanınan bir ülkedir. Yaşam maliyetleri Batı Avrupa\'ya kıyasla oldukça uygun olup, öğrencilere hem akademik hem de kültürel açıdan zengin bir deneyim sunar.',
+                'Italy': 'İtalya, eğitim sistemi, kültürel zenginliği ve yaşam kalitesi ile öğrenciler için cazip bir ülkedir. İtalya\'da eğitim almak, öğrencilere uluslararası bir perspektif kazandırır ve iş fırsatlarını genişletir.',
+                'Germany': 'Almanya, dünya standartlarında eğitim kalitesi ve güçlü ekonomisiyle öğrenciler için ideal bir destinasyondur. Birçok üniversitede düşük veya sıfır harç ücreti uygulanmaktadır.',
+                'UK': 'İngiltere, dünyanın en prestijli üniversitelerine ev sahipliği yapmaktadır. İngilizce eğitim imkanı ve güçlü akademik gelenek, mezunlara küresel kariyer kapıları açar.',
+                'Poland': 'Polonya, uygun maliyetli eğitim ve yaşam koşullarıyla Avrupa\'da öğrenci dostu bir ülkedir. AB üyeliği sayesinde mezunlara geniş kariyer fırsatları sunar.',
+                'Austria': 'Avusturya, yüksek yaşam kalitesi ve güçlü akademik geleneğiyle tanınır. Almanca ve İngilizce program seçenekleri ile geniş bir eğitim yelpazesi sunar.',
+                'Hungary': 'Macaristan, uygun fiyatlı eğitim ve yaşam maliyetleriyle Orta Avrupa\'da popüler bir öğrenci destinasyonudur.',
+                'Netherlands': 'Hollanda, İngilizce eğitim programlarının yaygınlığı ve uluslararası ortamıyla öne çıkar.'
+            };
+            
+            const cityDescriptions = {
+                'Prague': 'Prag, tarihi dokusu, canlı öğrenci hayatı ve uygun yaşam maliyetleriyle Avrupa\'nın en popüler öğrenci şehirlerinden biridir. Şehir, zengin kültürel etkinlikler ve uluslararası bir atmosfer sunar.',
+                'Milano': 'Milano, İtalya\'nın ekonomik ve moda başkenti olarak bilinir. Şehir, öğrenciler için birçok fırsat sunar ve yaşam maliyeti diğer Avrupa şehirlerine göre nispeten düşüktür.',
+                'Bologna': 'Bologna, canlı öğrenci hayatı ve zengin tarihi mimarisiyle İtalya\'nın en öğrenci dostu şehirlerinden biridir.',
+                'Rome': 'Roma, tarihi zenginlikleri ve kültürel yaşamıyla eşsiz bir öğrenci deneyimi sunar.',
+                'Berlin': 'Berlin, dinamik kültür sahnesı, uygun yaşam maliyetleri ve uluslararası atmosferiyle öğrenciler için ideal bir şehirdir.',
+                'Munich': 'Münih, güçlü ekonomisi ve yüksek yaşam kalitesiyle Almanya\'nın en cazip şehirlerinden biridir.',
+                'London': 'Londra, dünyanın en kozmopolit şehirlerinden biri olarak sınırsız kariyer ve kültürel fırsatlar sunar.',
+                'Vienna': 'Viyana, dünyanın en yaşanılabilir şehirlerinden biri olup, zengin kültürel mirası ve yüksek eğitim kalitesiyle öne çıkar.',
+                'Warsaw': 'Varşova, hızla gelişen ekonomisi ve canlı öğrenci hayatıyla dikkat çeken bir Avrupa başkentidir.',
+                'Budapest': 'Budapeşte, uygun yaşam maliyetleri ve zengin kültürel hayatıyla öğrenciler için cazip bir şehirdir.',
+                'Coventry': 'Coventry, İngiltere\'nin merkezi konumunda yer alan, öğrenci dostu bir şehirdir.'
+            };
+            
+            const countryInfo = countryDescriptions[uni.country] || `${uni.country}, uluslararası öğrencilere kaliteli eğitim fırsatları sunan bir ülkedir.`;
+            const cityInfo = cityDescriptions[uni.city] || `${uni.city}, öğrenciler için zengin akademik ve kültürel deneyimler sunan bir şehirdir.`;
+            
+            const ranking = uni.world_ranking ? `, dünya sıralamasında ${uni.world_ranking}. sırada yer almaktadır` : '';
+            const partnerNote = uni.is_partner ? ' Venture Global\'ın partner üniversitelerinden biri olması, başvuru sürecinde size özel avantajlar sağlar.' : '';
+            
+            return {
+                university_name: uni.name,
+                program_name: programName,
+                country: uni.country,
+                city: uni.city,
+                tuition: tuition,
+                why_this_university: `${uni.name}${ranking}. ${uni.description || 'Uluslararası öğrenciler için güçlü bir akademik ortam sunan köklü bir üniversitedir.'}${partnerNote}`,
+                why_this_program: `${programName}, öğrencinin ilgi alanlarına ve kariyer hedeflerine uygun kapsamlı bir eğitim programıdır. Program, öğrencilere hem teorik bilgi hem de pratik beceriler kazandırmayı hedefler.`,
+                country_info: countryInfo,
+                city_info: cityInfo,
+                career_prospects: `${uni.name} mezunları, ${uni.country} ve Avrupa genelinde geniş kariyer fırsatlarına sahiptir. Üniversitenin güçlü endüstri bağlantıları, staj ve iş bulma süreçlerinde önemli avantaj sağlar.`
+            };
+        };
+        
+        console.log(`✅ Smart fallback built with: ${uni1.name} (${uni1.country}) and ${uni2.name} (${uni2.country})`);
+        
+        return {
+            success: true,
+            data: {
+                prep_school_needed: ['A1', 'A2', 'B1'].includes(studentData?.english_level),
+                recommendation_1: buildRecommendation(uni1),
+                recommendation_2: uni2.id !== uni1.id ? buildRecommendation(uni2) : null,
+                is_fallback: true
+            }
+        };
+    } catch (dbError) {
+        console.error('❌ Smart fallback DB error:', dbError.message);
+        return getHardcodedFallback(studentData);
+    }
+}
+
+function getHardcodedFallback(studentData) {
+    return {
+        success: true,
+        data: {
+            prep_school_needed: ['A1', 'A2', 'B1'].includes(studentData?.english_level),
+            recommendation_1: {
+                university_name: 'Charles University (CUNI)',
+                program_name: studentData?.education_level === 'master' ? 'Yüksek Lisans Programı' : 'Lisans Programı',
+                country: 'Czech Republic',
+                city: 'Prague',
+                tuition: '5000 EUR',
+                why_this_university: 'Charles University, 1348 yılında kurulan ve Orta Avrupa\'nın en eski üniversitesi olan köklü bir kurumdur. Dünya sıralamasında ilk 300 içinde yer alan üniversite, uluslararası öğrencilere İngilizce eğitim programları sunmaktadır.',
+                why_this_program: 'Bu program, geniş bir müfredat yelpazesi ve güçlü akademik kadrosuyla öğrencilere kapsamlı bir eğitim deneyimi sunmaktadır.',
+                country_info: 'Çek Cumhuriyeti, Avrupa\'nın kalbinde yer alan, uygun fiyatlı ve kaliteli eğitimiyle tanınan bir ülkedir. Yaşam maliyetleri Batı Avrupa\'ya kıyasla oldukça uygun olup, öğrencilere zengin bir kültürel deneyim sunar.',
+                city_info: 'Prag, tarihi dokusu, canlı öğrenci hayatı ve uygun yaşam maliyetleriyle Avrupa\'nın en popüler öğrenci şehirlerinden biridir.',
+                career_prospects: 'Mezuniyet sonrası Avrupa genelinde geniş kariyer fırsatları bulunmaktadır. Çek Cumhuriyeti\'nin güçlü ekonomisi ve AB üyeliği, mezunlara uluslararası kariyer kapıları açar.'
+            },
+            recommendation_2: {
+                university_name: 'University of Bologna',
+                program_name: studentData?.education_level === 'master' ? 'Yüksek Lisans Programı' : 'Lisans Programı',
+                country: 'Italy',
+                city: 'Bologna',
+                tuition: '3000 EUR',
+                why_this_university: 'University of Bologna, 1088 yılında kurulan dünyanın en eski üniversitesidir. Güçlü akademik geleneği ve uluslararası tanınırlığıyla öğrencilere üstün bir eğitim deneyimi sunar.',
+                why_this_program: 'Program, kapsamlı müfredatı ve uygulama odaklı yaklaşımıyla öğrencileri iş dünyasına hazırlar.',
+                country_info: 'İtalya, eğitim sistemi, kültürel zenginliği ve yaşam kalitesi ile öğrenciler için cazip bir ülkedir. Uygun eğitim ücretleri ve zengin burs imkanları mevcuttur.',
+                city_info: 'Bologna, canlı öğrenci hayatı, leziz mutfağı ve zengin tarihi mimarisiyle İtalya\'nın en öğrenci dostu şehirlerinden biridir.',
+                career_prospects: 'Bologna Üniversitesi mezunları, İtalya ve AB genelinde güçlü kariyer fırsatlarına sahiptir.'
+            },
+            is_fallback: true
+        }
+    };
+}
 
 module.exports = router;
 

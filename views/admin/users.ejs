@@ -1,50 +1,6 @@
 <!-- Admin Users Content -->
 <div class="admin-container">
-    <!-- Sidebar -->
-    <div class="admin-sidebar">
-        <div class="sidebar-header">
-            <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Yönetim Paneli</h6>
-        </div>
-        <nav class="sidebar-nav">
-            <a href="/admin/dashboard" class="nav-item">
-                <i class="fas fa-tachometer-alt"></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="/admin/users" class="nav-item active">
-                <i class="fas fa-users"></i>
-                <span>Öğrenciler</span>
-                <span class="badge bg-primary ms-auto"><%= userCount %></span>
-            </a>
-            <a href="/admin/applications" class="nav-item">
-                <i class="fas fa-file-alt"></i>
-                <span>Başvurular</span>
-                <span class="badge bg-success ms-auto"><%= applicationCount %></span>
-            </a>
-            <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
-            <a href="/admin/partners" class="nav-item">
-                <i class="fas fa-handshake"></i>
-                <span>Partnerler</span>
-                <% if (typeof partnerCount !== 'undefined' && partnerCount > 0) { %>
-                    <span class="badge bg-info ms-auto"><%= partnerCount %></span>
-                <% } %>
-            </a>
-            <% } %>
-            <a href="/admin/universities" class="nav-item">
-                <i class="fas fa-university"></i>
-                <span>Üniversiteler</span>
-            </a>
-            <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
-            <a href="/admin/backups" class="nav-item">
-                <i class="fas fa-database"></i>
-                <span>Yedekleme</span>
-            </a>
-            <a href="/admin/admins" class="nav-item">
-                <i class="fas fa-user-shield"></i>
-                <span>Adminler</span>
-            </a>
-            <% } %>
-        </nav>
-    </div>
+    <%- include('partials/sidebar') %>
 
     <!-- Main Content Area -->
     <div class="admin-main">
@@ -67,8 +23,6 @@
                 <label class="form-label fw-semibold mb-1"><i class="fas fa-graduation-cap me-1"></i>Sınıf</label>
                 <select class="form-select" id="classFilter">
                     <option value="">Tümü</option>
-                    <option value="9">9. Sınıf</option>
-                    <option value="10">10. Sınıf</option>
                     <option value="11">11. Sınıf</option>
                     <option value="12">12. Sınıf</option>
                     <option value="Mezun">Mezun</option>
@@ -77,7 +31,11 @@
             <!-- Payment Filters -->
             <div class="col-lg-4 col-md-6">
                 <label class="form-label fw-semibold mb-1"><i class="fas fa-credit-card me-1"></i>Ödeme Durumu</label>
-                <div class="d-flex gap-3 mt-1">
+                <div class="d-flex gap-3 flex-wrap mt-1">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="filterHazirlik">
+                        <label class="form-check-label small" for="filterHazirlik">11. Sınıf Hazırlık Ödemiş</label>
+                    </div>
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="filterKabulOncesi">
                         <label class="form-check-label small" for="filterKabulOncesi">Kabul Öncesi Ödemiş</label>
@@ -101,7 +59,7 @@
 <!-- Users Table -->
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">Öğrenci Listesi (<span id="visibleCount"><%= users.length %></span> / <%= users.length %>)</h5>
+        <h5 class="mb-0">Öğrenci Listesi (<span id="visibleCount"><%= users.length %></span> / <%= users.length %>) <span class="ms-3 text-success" style="font-size: 0.85rem;"><i class="fas fa-check-circle me-1"></i>Aktif Öğrenci: <span id="activeCount"><%= typeof activeCount !== 'undefined' ? activeCount : 0 %></span>/<%= users.length %></span></h5>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -113,6 +71,7 @@
                                 <th>E-posta</th>
                                 <th>Telefon</th>
                                 <th>İngilizce Seviyesi</th>
+                                <th>Aktiflik Durumu</th>
                                 <th>Kayıt Tarihi</th>
                                 <th>İşlemler</th>
                             </tr>
@@ -128,12 +87,21 @@
                         data-class="<%= user.active_class || '' %>"
                         data-guardians="<%= (user.guardian_names || '').toLowerCase() %>"
                         data-kabul-oncesi="<%= user.kabul_oncesi_paid ? 'true' : 'false' %>"
-                        data-kabul-sonrasi="<%= user.kabul_sonrasi_paid ? 'true' : 'false' %>">
+                        data-kabul-sonrasi="<%= user.kabul_sonrasi_paid ? 'true' : 'false' %>"
+                        data-hazirlik="<%= user.hazirlik_paid ? 'true' : 'false' %>"
+                        data-active="<%= user.has_any_paid_service ? 'true' : 'false' %>">
                                 <td><%= user.id %></td>
                                 <td><%= user.first_name %> <%= user.last_name %></td>
                                 <td><%= user.email %></td>
                                 <td><%= user.phone %></td>
                                 <td><span class="badge bg-info"><%= user.english_level %></span></td>
+                                <td>
+                                    <% if (user.has_any_paid_service) { %>
+                                        <span class="badge bg-success">Aktif</span>
+                                    <% } else { %>
+                                        <span class="badge bg-warning text-dark">Ödeme Bekleniyor</span>
+                                    <% } %>
+                                </td>
                                 <td><%= new Date(user.created_at).toLocaleDateString('tr-TR') %></td>
                                 <td>
                                     <div class="btn-group" role="group">
@@ -181,6 +149,7 @@
         // --- Advanced Filter System ---
         const searchInput = document.getElementById('userSearchInput');
         const classFilter = document.getElementById('classFilter');
+        const filterHazirlik = document.getElementById('filterHazirlik');
         const filterKabulOncesi = document.getElementById('filterKabulOncesi');
         const filterKabulSonrasi = document.getElementById('filterKabulSonrasi');
         const resetBtn = document.getElementById('resetFilters');
@@ -191,6 +160,7 @@
         function applyFilters() {
             const searchTerm = searchInput.value.toLowerCase().trim();
             const selectedClass = classFilter.value;
+            const requireHazirlik = filterHazirlik.checked;
             const requireKabulOncesi = filterKabulOncesi.checked;
             const requireKabulSonrasi = filterKabulSonrasi.checked;
 
@@ -223,12 +193,15 @@
                     if (rowClass !== selectedClass) show = false;
                 }
 
-                // 3. Payment filters (checkboxes - both can be active)
-                if (show && requireKabulOncesi) {
-                    if (row.getAttribute('data-kabul-oncesi') !== 'true') show = false;
-                }
-                if (show && requireKabulSonrasi) {
-                    if (row.getAttribute('data-kabul-sonrasi') !== 'true') show = false;
+                // 3. Payment filters (OR logic - show if ANY checked condition matches)
+                if (show && (requireHazirlik || requireKabulOncesi || requireKabulSonrasi)) {
+                    const hasHazirlik = row.getAttribute('data-hazirlik') === 'true';
+                    const hasKabulOncesi = row.getAttribute('data-kabul-oncesi') === 'true';
+                    const hasKabulSonrasi = row.getAttribute('data-kabul-sonrasi') === 'true';
+                    const matchesAny = (requireHazirlik && hasHazirlik) ||
+                                      (requireKabulOncesi && hasKabulOncesi) ||
+                                      (requireKabulSonrasi && hasKabulSonrasi);
+                    if (!matchesAny) show = false;
                 }
 
                 row.style.display = show ? '' : 'none';
@@ -242,6 +215,7 @@
         // Attach filter events
         searchInput.addEventListener('input', applyFilters);
         classFilter.addEventListener('change', applyFilters);
+        filterHazirlik.addEventListener('change', applyFilters);
         filterKabulOncesi.addEventListener('change', applyFilters);
         filterKabulSonrasi.addEventListener('change', applyFilters);
 
@@ -249,6 +223,7 @@
         resetBtn.addEventListener('click', function() {
             searchInput.value = '';
             classFilter.value = '';
+            filterHazirlik.checked = false;
             filterKabulOncesi.checked = false;
             filterKabulSonrasi.checked = false;
             applyFilters();

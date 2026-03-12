@@ -3,6 +3,46 @@ const express = require('express');
 const router = express.Router();
 const { getBlogPosts, getBlogPostBySlug, getBlogPostCount, getRelatedPosts, generateBlogPost } = require('../services/blogAIService');
 
+const COUNTRY_SIDEBAR_DATA = {
+    'Czech Republic': { slug: 'czech', tr: 'Çek Cumhuriyeti', en: 'Czech Republic', flag: '🇨🇿' },
+    'Italy': { slug: 'italy', tr: 'İtalya', en: 'Italy', flag: '🇮🇹' },
+    'UK': { slug: 'uk', tr: 'İngiltere', en: 'United Kingdom', flag: '🇬🇧' },
+    'Germany': { slug: 'germany', tr: 'Almanya', en: 'Germany', flag: '🇩🇪' },
+    'Austria': { slug: 'austria', tr: 'Avusturya', en: 'Austria', flag: '🇦🇹' },
+    'Hungary': { slug: 'hungary', tr: 'Macaristan', en: 'Hungary', flag: '🇭🇺' },
+    'Poland': { slug: 'poland', tr: 'Polonya', en: 'Poland', flag: '🇵🇱' },
+    'Netherlands': { slug: 'netherlands', tr: 'Hollanda', en: 'Netherlands', flag: '🇳🇱' }
+};
+
+async function buildSidebarLinks(post, lang) {
+    const countryData = COUNTRY_SIDEBAR_DATA[post.related_country];
+    const links = {};
+    if (countryData) {
+        const countryName = lang === 'tr' ? countryData.tr : countryData.en;
+        links.studentLife = {
+            url: `/student-life/${countryData.slug}`,
+            label: lang === 'tr' ? `${countryName}'de Öğrenci Hayatı` : `Student Life in ${countryName}`,
+            icon: 'fas fa-globe-europe',
+            flag: countryData.flag
+        };
+    }
+    if (post.related_university_id) {
+        let uniUrl = `/c/${post.related_university_id}`;
+        try {
+            const slugResult = await pool.query('SELECT slug FROM universities WHERE id = $1', [post.related_university_id]);
+            if (slugResult.rows.length > 0 && slugResult.rows[0].slug) {
+                uniUrl = `/universities/${slugResult.rows[0].slug}`;
+            }
+        } catch (e) { /* fallback to /c/ */ }
+        links.universityDetail = {
+            url: uniUrl,
+            label: lang === 'tr' ? 'Üniversite Detayları' : 'University Details',
+            icon: 'fas fa-university'
+        };
+    }
+    return links;
+}
+
 /**
  * GET /blog - Blog listing page
  */
@@ -123,6 +163,8 @@ router.get('/:slug', async (req, res) => {
             }
         };
         
+        const sidebarLinks = await buildSidebarLinks(post, lang);
+
         res.render('blog/article', {
             title: `${displayPost.title} | Venture Global`,
             metaDescription: displayPost.metaDescription,
@@ -132,6 +174,7 @@ router.get('/:slug', async (req, res) => {
             structuredData: JSON.stringify(structuredData),
             post: displayPost,
             relatedPosts: displayRelated,
+            sidebarLinks,
             lang
         });
         
@@ -145,6 +188,61 @@ router.get('/:slug', async (req, res) => {
 });
 
 /**
+ * GET /blog/preview/:id - Admin-only preview for draft/unpublished posts
+ */
+router.get('/preview/:id', async (req, res) => {
+    if (!res.locals.isLoggedIn || !res.locals.isAdmin) {
+        return res.status(403).send('Yetkiniz yok.');
+    }
+
+    try {
+        const { Pool } = require('pg');
+        const pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false });
+        const result = await pool.query('SELECT * FROM blog_posts WHERE id = $1', [req.params.id]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).send('Makale bulunamadı.');
+        }
+
+        const post = result.rows[0];
+        const lang = res.locals.currentLanguage || 'tr';
+
+        const displayPost = {
+            id: post.id,
+            title: lang === 'tr' ? post.title_tr : post.title_en,
+            content: lang === 'tr' ? post.content_tr : post.content_en,
+            excerpt: lang === 'tr' ? post.excerpt_tr : post.excerpt_en,
+            slug: post.slug,
+            image: post.featured_image_url,
+            topic: post.topic_type,
+            country: post.related_country,
+            date: post.published_at ? formatDate(post.published_at, lang) : 'TASLAK',
+            views: post.view_count || 0,
+            metaDescription: lang === 'tr' ? post.meta_description_tr : post.meta_description_en,
+            keywords: post.keywords
+        };
+
+        const sidebarLinks = await buildSidebarLinks(post, lang);
+
+        res.render('blog/article', {
+            title: `[ÖNIZLEME] ${displayPost.title}`,
+            metaDescription: displayPost.metaDescription,
+            metaKeywords: displayPost.keywords,
+            canonicalUrl: '',
+            ogImage: displayPost.image,
+            structuredData: '{}',
+            post: displayPost,
+            relatedPosts: [],
+            sidebarLinks,
+            lang
+        });
+    } catch (error) {
+        console.error('Preview error:', error);
+        res.status(500).send('Önizleme yüklenemedi: ' + error.message);
+    }
+});
+
+/**
  * POST /blog/generate - Manual trigger for blog generation (admin only)
  */
 router.post('/generate', async (req, res) => {
@@ -154,17 +252,21 @@ router.post('/generate', async (req, res) => {
     }
     
     try {
-        console.log('📝 Manual blog generation triggered by admin');
-        const post = await generateBlogPost();
+        const isDraft = req.body && req.body.draft === true;
+        console.log(`📝 Manual blog generation triggered by admin (draft: ${isDraft})`);
+        const post = await generateBlogPost({ draft: isDraft });
         
         res.json({
             success: true,
-            message: 'Blog post generated',
+            message: isDraft ? 'Draft blog post generated (not published)' : 'Blog post generated',
             post: {
                 id: post.id,
                 title: post.title_tr,
                 slug: post.slug,
-                url: `/blog/${post.slug}`
+                is_published: post.is_published,
+                url: post.is_published ? `/blog/${post.slug}` : null,
+                content_tr_preview: post.content_tr ? post.content_tr.substring(0, 500) : '',
+                content_en_preview: post.content_en ? post.content_en.substring(0, 500) : ''
             }
         });
     } catch (error) {

@@ -37,20 +37,20 @@
                         <h3 class="fw-semibold text-dark mt-4 mb-3"><%= kanpusContent.approachTitle || '' %></h3>
                         <p><%= kanpusContent.approachBody || '' %></p>
                         
-                        <div class="mt-4 p-3 rounded" style="background: #f0f9ff; border-left: 4px solid #0ea5e9;">
-                            <h5 class="fw-bold text-info mb-2">IELTS Hazırlık</h5>
+                        <div class="mt-4 p-3 rounded" style="background: #eef6ff; border-left: 4px solid #005A9E;">
+                            <h5 class="fw-bold mb-2" style="color: #1a365d;">IELTS Hazırlık</h5>
                             <p class="mb-0"><%= kanpusContent.ieltsApproach || 'IELTS sınavında başarılı olmak için Academic ve General Training modüllerinde kapsamlı hazırlık sunuyoruz. Reading, Listening, Speaking ve Writing becerilerinizi uzman öğretmenlerle geliştirerek 9.0 band hedefine ulaşın.' %></p>
                         </div>
                         
-                        <div class="mt-3 p-3 rounded" style="background: #fef3c7; border-left: 4px solid #f59e0b;">
-                            <h5 class="fw-bold text-warning mb-2">TOEFL iBT Hazırlık</h5>
+                        <div class="mt-3 p-3 rounded" style="background: #eef6ff; border-left: 4px solid #005A9E;">
+                            <h5 class="fw-bold mb-2" style="color: #1a365d;">TOEFL iBT Hazırlık</h5>
                             <p class="mb-0"><%= kanpusContent.toeflApproach || 'TOEFL iBT sınavı için Reading, Listening, Speaking ve Writing bölümlerinde profesyonel eğitim alın. Akademik İngilizce becerilerinizi geliştirerek 120 puan hedefine ulaşın ve dünya çapındaki üniversitelere kabul alın.' %></p>
                         </div>
                     </article>
                 </div>
                 <div class="col-lg-5">
                     <div class="partner-card h-100 gradient-card">
-                        <h3 class="fw-semibold text-dark mb-3"><i class="fas fa-star me-2 text-primary"></i>
+                        <h3 class="fw-semibold text-dark mb-3">
                             <%= kanpusContent.whyTitle || '' %>
                         </h3>
                         <ul class="feature-list">
@@ -61,7 +61,7 @@
                         <div class="highlight-box mt-4 text-dark">
                             <%= kanpusContent.highlightBody || '' %>
                         </div>
-                        <div class="alert alert-success mt-4" style="border: 2px solid #10b981; border-radius: 12px;">
+                        <div class="mt-4 p-3 rounded" style="background: #eef6ff; border-left: 4px solid #005A9E; border-radius: 12px;">
                             <strong><%= kanpusContent.exclusiveOffer || '' %></strong>
                         </div>
                     </div>
@@ -71,7 +71,7 @@
     </section>
 
     <!-- Early Preparation Banner -->
-    <section class="section py-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <section class="section py-4" style="background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-10">
@@ -110,13 +110,13 @@
                 <div class="col-lg-6">
                     <div class="partner-card shadow-sm h-100">
                         <div class="d-flex align-items-center mb-3">
-                            <h3 class="fw-bold text-danger mb-0"><%= programs.ieltsTitle || 'IELTS' %></h3>
+                            <h3 class="fw-bold text-dark mb-0"><%= programs.ieltsTitle || 'IELTS' %></h3>
                         </div>
                         <p class="mb-3"><%= programs.ieltsDescription || '' %></p>
                         <ul class="list-unstyled">
                             <% if (Array.isArray(programs.ieltsSections)) { %>
                                 <% programs.ieltsSections.forEach(function(section) { %>
-                                    <li><i class="fas fa-check-circle text-danger me-2"></i><%= section %></li>
+                                    <li><i class="fas fa-check-circle me-2" style="color: black;"></i><%= section %></li>
                                 <% }) %>
                             <% } %>
                         </ul>
@@ -130,13 +130,13 @@
                 <div class="col-lg-6">
                     <div class="partner-card shadow-sm h-100">
                         <div class="d-flex align-items-center mb-3">
-                            <h3 class="fw-bold text-primary mb-0"><%= programs.ibTitle || 'IB Diploma' %></h3>
+                            <h3 class="fw-bold text-dark mb-0"><%= programs.ibTitle || 'IB Diploma' %></h3>
                         </div>
                         <p class="mb-3"><%= programs.ibDescription || '' %></p>
                         <ul class="list-unstyled">
                             <% if (Array.isArray(programs.ibSubjects)) { %>
                                 <% programs.ibSubjects.forEach(function(subject) { %>
-                                    <li><i class="fas fa-check-circle text-primary me-2"></i><%= subject %></li>
+                                    <li><i class="fas fa-check-circle me-2" style="color: black;"></i><%= subject %></li>
                                 <% }) %>
                             <% } %>
                         </ul>
@@ -147,13 +147,13 @@
                 <div class="col-lg-6">
                     <div class="partner-card shadow-sm h-100">
                         <div class="d-flex align-items-center mb-3">
-                            <h3 class="fw-bold text-success mb-0"><%= programs.apTitle || 'AP Courses' %></h3>
+                            <h3 class="fw-bold text-dark mb-0"><%= programs.apTitle || 'AP Courses' %></h3>
                         </div>
                         <p class="mb-3"><%= programs.apDescription || '' %></p>
                         <ul class="list-unstyled">
                             <% if (Array.isArray(programs.apSubjects)) { %>
                                 <% programs.apSubjects.forEach(function(subject) { %>
-                                    <li><i class="fas fa-check-circle text-success me-2"></i><%= subject %></li>
+                                    <li><i class="fas fa-check-circle me-2" style="color: black;"></i><%= subject %></li>
                                 <% }) %>
                             <% } %>
                         </ul>
@@ -164,13 +164,13 @@
                 <div class="col-lg-6">
                     <div class="partner-card shadow-sm h-100">
                         <div class="d-flex align-items-center mb-3">
-                            <h3 class="fw-bold text-warning mb-0"><%= programs.satTitle || 'SAT Prep' %></h3>
+                            <h3 class="fw-bold text-dark mb-0"><%= programs.satTitle || 'SAT Prep' %></h3>
                         </div>
                         <p class="mb-3"><%= programs.satDescription || '' %></p>
                         <ul class="list-unstyled">
                             <% if (Array.isArray(programs.satSections)) { %>
                                 <% programs.satSections.forEach(function(section) { %>
-                                    <li><i class="fas fa-check-circle text-warning me-2"></i><%= section %></li>
+                                    <li><i class="fas fa-check-circle me-2" style="color: black;"></i><%= section %></li>
                                 <% }) %>
                             <% } %>
                         </ul>
@@ -181,13 +181,13 @@
                 <div class="col-lg-6">
                     <div class="partner-card shadow-sm h-100">
                         <div class="d-flex align-items-center mb-3">
-                            <h3 class="fw-bold text-info mb-0"><%= programs.toeflTitle || 'TOEFL iBT' %></h3>
+                            <h3 class="fw-bold text-dark mb-0"><%= programs.toeflTitle || 'TOEFL iBT' %></h3>
                         </div>
                         <p class="mb-3"><%= programs.toeflDescription || '' %></p>
                         <ul class="list-unstyled">
                             <% if (Array.isArray(programs.toeflSections)) { %>
                                 <% programs.toeflSections.forEach(function(section) { %>
-                                    <li><i class="fas fa-check-circle text-info me-2"></i><%= section %></li>
+                                    <li><i class="fas fa-check-circle me-2" style="color: black;"></i><%= section %></li>
                                 <% }) %>
                             <% } %>
                         </ul>
@@ -223,7 +223,7 @@
                 <div class="col-lg-4">
                     <div class="partner-card text-center h-100">
                         <div class="mb-3">
-                            <i class="fas fa-users text-success" style="font-size: 3rem;"></i>
+                            <i class="fas fa-users" style="font-size: 3rem; color: #005A9E;"></i>
                         </div>
                         <h4 class="fw-bold text-dark mb-3"><%= kanpusContent.groupStudyTitle || '' %></h4>
                         <p class="text-body-secondary"><%= kanpusContent.groupStudyBody || '' %></p>
@@ -234,7 +234,7 @@
                 <div class="col-lg-4">
                     <div class="partner-card text-center h-100">
                         <div class="mb-3">
-                            <i class="fas fa-compass text-info" style="font-size: 3rem;"></i>
+                            <i class="fas fa-compass" style="font-size: 3rem; color: #005A9E;"></i>
                         </div>
                         <h4 class="fw-bold text-dark mb-3"><%= kanpusContent.counselingTitle || '' %></h4>
                         <p class="text-body-secondary"><%= kanpusContent.counselingBody || '' %></p>

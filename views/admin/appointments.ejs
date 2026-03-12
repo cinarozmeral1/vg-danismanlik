@@ -1,0 +1,384 @@
+<div class="admin-container">
+    <%- include('partials/sidebar') %>
+
+    <div class="admin-main">
+        <div class="p-4">
+
+            <style>
+                .apt-card { transition: all 0.2s ease; border-radius: 12px !important; overflow: visible; }
+                .apt-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important; }
+                .apt-date-col { min-width: 100px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px 16px; }
+                .apt-date-day { font-size: 32px; font-weight: 800; line-height: 1; }
+                .apt-date-month { font-size: 12px; opacity: 0.85; margin-top: 4px; }
+                .apt-date-time { font-size: 15px; font-weight: 700; margin-top: 6px; }
+                .apt-date-tz { font-size: 10px; opacity: 0.65; }
+                .status-badge { padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
+                .status-confirmed { background: #dbeafe; color: #1e40af; }
+                .status-completed { background: #d1fae5; color: #065f46; }
+                .status-cancelled { background: #fee2e2; color: #991b1b; }
+                .zoom-input-group { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+                .zoom-input-group input { flex: 1; min-width: 200px; border-radius: 8px; border: 1px solid #d1d5db; padding: 6px 12px; font-size: 13px; }
+                .zoom-input-group input:focus { outline: none; border-color: #005A9E; box-shadow: 0 0 0 3px rgba(0,90,158,0.1); }
+                .btn-zoom-save { background: #005A9E; color: white; border: none; padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+                .btn-zoom-save:hover { background: #004a85; }
+                .btn-zoom-send { background: linear-gradient(135deg, #2D8CFF, #0B5CFF); color: white; border: none; padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+                .btn-zoom-send:hover { opacity: 0.9; }
+                .btn-zoom-send:disabled { opacity: 0.5; cursor: not-allowed; }
+                .stat-card { border-radius: 12px; border: none; }
+                .stat-card .stat-value { font-size: 28px; font-weight: 800; line-height: 1; }
+                .detail-tag { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 6px; font-size: 12px; background: #f3f4f6; color: #374151; }
+                .status-dropdown .dropdown-item { font-size: 14px; padding: 8px 16px; }
+                .status-dropdown .dropdown-menu { z-index: 1050; }
+                .apt-card { position: relative; z-index: 1; }
+                .apt-card:has(.dropdown-menu.show) { z-index: 100; }
+                .section-title { font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+                @media (max-width: 768px) {
+                    .apt-card .row { flex-direction: column; }
+                    .apt-date-col { flex-direction: row; gap: 12px; padding: 12px 16px; border-radius: 12px 12px 0 0 !important; min-width: auto; }
+                    .zoom-input-group { flex-direction: column; }
+                    .zoom-input-group input { min-width: auto; width: 100%; }
+                }
+            </style>
+
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                <div>
+                    <h4 class="mb-1 fw-bold" style="color: #1a1a1a;"><i class="fas fa-calendar-check me-2" style="color: #005A9E;"></i>Randevular</h4>
+                    <p class="text-muted mb-0 small"><%= appointments.length %> randevu kayıtlı</p>
+                </div>
+                <div class="d-flex gap-2 align-items-center flex-wrap">
+                    <a href="/admin/appointments/create" class="btn btn-sm text-white fw-semibold" style="background: #005A9E; border-radius: 8px; padding: 6px 16px;">
+                        <i class="fas fa-plus me-1"></i>Yeni Randevu
+                    </a>
+                    <div class="input-group input-group-sm" style="width: 240px;">
+                        <span class="input-group-text border-0" style="background: #f3f4f6;"><i class="fas fa-search text-muted"></i></span>
+                        <input type="text" class="form-control border-0" id="searchInput" placeholder="İsim, email, telefon..." onkeyup="filterTable()" style="background: #f3f4f6;">
+                    </div>
+                    <select class="form-select form-select-sm border-0" id="statusFilter" onchange="filterTable()" style="width: 150px; background: #f3f4f6;">
+                        <option value="all">Tüm Durumlar</option>
+                        <option value="confirmed">Onaylı</option>
+                        <option value="completed">Tamamlandı</option>
+                        <option value="cancelled">İptal</option>
+                    </select>
+                </div>
+            </div>
+
+            <% if (appointments.length === 0) { %>
+                <div class="card border-0 shadow-sm" style="border-radius: 16px;">
+                    <div class="card-body text-center py-5">
+                        <div style="width: 80px; height: 80px; background: #f0f7ff; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px;">
+                            <i class="fas fa-calendar-plus" style="font-size: 32px; color: #005A9E;"></i>
+                        </div>
+                        <h5 class="fw-bold text-muted">Henüz randevu bulunmuyor</h5>
+                        <p class="text-muted mb-0">Yeni randevular ana sayfadaki takvim sistemi üzerinden oluşturulacaktır.</p>
+                    </div>
+                </div>
+            <% } else { %>
+
+                <!-- Stats -->
+                <div class="row g-3 mb-4">
+                    <div class="col-6 col-md-3">
+                        <div class="card stat-card shadow-sm h-100">
+                            <div class="card-body text-center py-3">
+                                <div class="stat-value" style="color: #005A9E;"><%= appointments.filter(a => a.status === 'confirmed').length %></div>
+                                <small class="text-muted fw-medium">Onaylı</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card stat-card shadow-sm h-100">
+                            <div class="card-body text-center py-3">
+                                <div class="stat-value" style="color: #059669;"><%= appointments.filter(a => a.status === 'completed').length %></div>
+                                <small class="text-muted fw-medium">Tamamlandı</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card stat-card shadow-sm h-100">
+                            <div class="card-body text-center py-3">
+                                <div class="stat-value text-danger"><%= appointments.filter(a => a.status === 'cancelled').length %></div>
+                                <small class="text-muted fw-medium">İptal</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card stat-card shadow-sm h-100">
+                            <div class="card-body text-center py-3">
+                                <div class="stat-value" style="color: #6366f1;"><%= appointments.length %></div>
+                                <small class="text-muted fw-medium">Toplam</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cards -->
+                <div id="appointmentsList">
+                    <% appointments.forEach(function(apt) {
+                        const months = ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+                        const aptDate = new Date(apt.appointment_date);
+                        const dayNum = aptDate.getDate();
+                        const monthStr = months[aptDate.getMonth()];
+                        const yearStr = aptDate.getFullYear();
+                        const bgColor = apt.status === 'confirmed' ? '#005A9E' : apt.status === 'completed' ? '#059669' : '#dc3545';
+                    %>
+                        <div class="card apt-card border-0 shadow-sm mb-3"
+                             data-status="<%= apt.status %>"
+                             data-search="<%= (apt.full_name + ' ' + apt.email + ' ' + apt.phone + ' ' + apt.target_country + ' ' + apt.field_of_interest).toLowerCase() %>"
+                             id="apt-card-<%= apt.id %>">
+                            <div class="row g-0">
+                                <!-- Date -->
+                                <div class="col-auto">
+                                    <div class="apt-date-col text-white" style="background: <%= bgColor %>; border-radius: 12px 0 0 12px;">
+                                        <div class="apt-date-day"><%= dayNum %></div>
+                                        <div class="apt-date-month"><%= monthStr %> <%= yearStr %></div>
+                                        <div class="apt-date-time"><%= apt.turkey_time %></div>
+                                        <div class="apt-date-tz">TSİ</div>
+                                    </div>
+                                </div>
+                                <!-- Content -->
+                                <div class="col p-3">
+                                    <!-- Top row: name + status + actions -->
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <h6 class="mb-1 fw-bold" style="font-size: 16px;"><%= apt.full_name %></h6>
+                                            <div class="d-flex gap-3 flex-wrap">
+                                                <a href="https://wa.me/<%= apt.phone.replace(/\D/g, '') %>" target="_blank" class="text-decoration-none" style="color: #25D366; font-size: 13px;">
+                                                    <i class="fab fa-whatsapp me-1"></i><%
+                                                    const digits = (apt.phone || '').replace(/\D/g, '');
+                                                    let pCode = '', pNum = apt.phone || '';
+                                                    if (digits.startsWith('90') && digits.length >= 12) {
+                                                        pCode = '+90';
+                                                        pNum = digits.substring(2).replace(/(\d{3})(\d{3})(\d{2})(\d{2})/, '$1 $2 $3 $4');
+                                                    } else if (digits.startsWith('1') && digits.length >= 11) {
+                                                        pCode = '+1';
+                                                        pNum = digits.substring(1).replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3');
+                                                    }
+                                                    if (pCode) { %>
+                                                        <span class="badge bg-secondary" style="font-size: 10px; padding: 2px 5px; vertical-align: middle; font-weight: 600;"><%= pCode %></span> <%= pNum %>
+                                                    <% } else { %>
+                                                        <%= apt.phone %>
+                                                    <% } %>
+                                                </a>
+                                                <a href="mailto:<%= apt.email %>" class="text-decoration-none" style="color: #005A9E; font-size: 13px;">
+                                                    <i class="fas fa-envelope me-1"></i><%= apt.email %>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="status-badge status-<%= apt.status %>">
+                                                <% if (apt.status === 'confirmed') { %><i class="fas fa-clock"></i> Onaylı
+                                                <% } else if (apt.status === 'completed') { %><i class="fas fa-check-circle"></i> Tamamlandı
+                                                <% } else { %><i class="fas fa-times-circle"></i> İptal
+                                                <% } %>
+                                            </span>
+                                            <div class="dropdown status-dropdown">
+                                                <button class="btn btn-sm btn-light border-0" data-bs-toggle="dropdown" style="border-radius: 8px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                                                    <i class="fas fa-ellipsis-v text-muted"></i>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                                    <li><a class="dropdown-item" href="#" onclick="updateStatus(<%= apt.id %>, 'confirmed'); return false;"><i class="fas fa-check me-2" style="color: #005A9E;"></i>Onayla</a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="updateStatus(<%= apt.id %>, 'completed'); return false;"><i class="fas fa-check-circle me-2" style="color: #059669;"></i>Tamamlandı</a></li>
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li><a class="dropdown-item text-danger" href="#" onclick="updateStatus(<%= apt.id %>, 'cancelled'); return false;"><i class="fas fa-times me-2"></i>İptal Et</a></li>
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li><a class="dropdown-item text-danger fw-bold" href="#" data-delete-id="<%= apt.id %>" data-delete-name="<%= apt.full_name %>" onclick="deleteAppointment(this.dataset.deleteId, this.dataset.deleteName); return false;"><i class="fas fa-trash-alt me-2"></i>Sil</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Tags -->
+                                    <div class="d-flex gap-2 flex-wrap mb-2">
+                                        <% if (apt.meeting_type === 'professional') { %>
+                                            <span class="detail-tag" style="background: #f3e8ff; color: #7c3aed; border-color: #e9d5ff;"><i class="fas fa-briefcase" style="color: #7c3aed;"></i> Profesyonel Görüşme</span>
+                                        <% } else { %>
+                                            <span class="detail-tag"><i class="fas fa-globe" style="color: #005A9E;"></i> <%= apt.target_country %></span>
+                                            <span class="detail-tag"><i class="fas fa-graduation-cap" style="color: #005A9E;"></i> <%= apt.field_of_interest %></span>
+                                            <span class="detail-tag"><i class="fas fa-user" style="color: #005A9E;"></i> <%= apt.education_level %><%= apt.grade ? ' - ' + apt.grade + '. Sınıf' : '' %></span>
+                                            <% if (apt.budget) { %>
+                                                <span class="detail-tag"><i class="fas fa-wallet" style="color: #005A9E;"></i> <%= apt.budget %></span>
+                                            <% } %>
+                                        <% } %>
+                                    </div>
+
+                                    <% if (apt.notes) { %>
+                                        <div class="p-2 rounded mb-2" style="background: #f8f9fa; font-size: 13px; color: #4b5563;">
+                                            <i class="fas fa-sticky-note me-1 text-muted"></i><%= apt.notes %>
+                                        </div>
+                                    <% } %>
+
+                                    <!-- Zoom Link -->
+                                    <div class="mt-2 pt-2" style="border-top: 1px solid #f0f0f0;">
+                                        <div class="section-title">Zoom Toplantı Linki</div>
+                                        <div class="zoom-input-group" id="zoom-group-<%= apt.id %>">
+                                            <input type="url" id="zoom-input-<%= apt.id %>" value="<%= apt.zoom_link || '' %>" placeholder="https://zoom.us/j/..." class="form-control-sm">
+                                            <button class="btn-zoom-save" onclick="saveZoomLink(<%= apt.id %>)">
+                                                <i class="fas fa-save me-1"></i>Kaydet
+                                            </button>
+                                            <button class="btn-zoom-send" onclick="sendZoomInvite(<%= apt.id %>)" <%= !apt.zoom_link ? 'disabled' : '' %> id="zoom-send-<%= apt.id %>">
+                                                <i class="fas fa-paper-plane me-1"></i>Davet Gönder
+                                            </button>
+                                        </div>
+                                        <% if (apt.zoom_link) { %>
+                                            <div class="mt-1">
+                                                <a href="<%= apt.zoom_link %>" target="_blank" class="text-decoration-none" style="font-size: 12px; color: #005A9E;">
+                                                    <i class="fas fa-external-link-alt me-1"></i>Toplantıyı aç
+                                                </a>
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<script>
+function filterTable() {
+    const status = document.getElementById('statusFilter').value;
+    const search = document.getElementById('searchInput').value.toLowerCase().trim();
+    document.querySelectorAll('.apt-card').forEach(card => {
+        const cardStatus = card.dataset.status;
+        const cardSearch = card.dataset.search;
+        const statusMatch = status === 'all' || cardStatus === status;
+        const searchMatch = !search || cardSearch.includes(search);
+        card.style.display = (statusMatch && searchMatch) ? '' : 'none';
+    });
+}
+
+function updateStatus(id, status) {
+    const labels = { confirmed: 'Onayla', completed: 'Tamamlandı olarak işaretle', cancelled: 'İptal et' };
+    if (!confirm(`Bu randevuyu "${labels[status] || status}" olarak değiştirmek istediğinize emin misiniz?`)) return;
+
+    fetch('/admin/appointments/' + id + '/status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert(data.message || 'Bir hata oluştu.');
+        }
+    })
+    .catch(() => alert('Bağlantı hatası. Lütfen tekrar deneyin.'));
+}
+
+function saveZoomLink(id) {
+    const input = document.getElementById('zoom-input-' + id);
+    const link = input.value.trim();
+    if (!link) {
+        alert('Lütfen bir Zoom linki girin.');
+        return;
+    }
+    if (!link.startsWith('http')) {
+        alert('Geçerli bir URL girin (https://...)');
+        return;
+    }
+
+    const btn = event.target.closest('.btn-zoom-save');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Kaydediliyor...';
+    btn.disabled = true;
+
+    fetch('/api/appointments/zoom-link', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ appointmentId: id, zoomLink: link })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            btn.innerHTML = '<i class="fas fa-check me-1"></i>Kaydedildi!';
+            btn.style.background = '#059669';
+            document.getElementById('zoom-send-' + id).disabled = false;
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.background = '';
+                btn.disabled = false;
+            }, 2000);
+        } else {
+            alert(data.message || 'Kayıt başarısız.');
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+    })
+    .catch(() => {
+        alert('Bağlantı hatası.');
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    });
+}
+
+function deleteAppointment(id, name) {
+    if (!confirm(`"${name}" adlı randevuyu kalıcı olarak silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`)) return;
+
+    fetch('/admin/appointments/' + id + '/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            const card = document.getElementById('apt-card-' + id);
+            if (card) {
+                card.style.transition = 'opacity 0.3s, transform 0.3s';
+                card.style.opacity = '0';
+                card.style.transform = 'translateX(50px)';
+                setTimeout(() => card.remove(), 300);
+            }
+        } else {
+            alert(data.message || 'Silme işlemi başarısız.');
+        }
+    })
+    .catch(() => alert('Bağlantı hatası. Lütfen tekrar deneyin.'));
+}
+
+function sendZoomInvite(id) {
+    const link = document.getElementById('zoom-input-' + id).value.trim();
+    if (!link) {
+        alert('Önce Zoom linkini kaydedin.');
+        return;
+    }
+
+    if (!confirm('Öğrenciye Zoom davet maili gönderilecek. Devam etmek istiyor musunuz?')) return;
+
+    const btn = document.getElementById('zoom-send-' + id);
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Gönderiliyor...';
+    btn.disabled = true;
+
+    fetch('/api/appointments/send-zoom-invite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ appointmentId: id })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            btn.innerHTML = '<i class="fas fa-check me-1"></i>Gönderildi!';
+            btn.style.background = '#059669';
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.background = '';
+                btn.disabled = false;
+            }, 3000);
+        } else {
+            alert(data.message || 'Gönderim başarısız.');
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+    })
+    .catch(() => {
+        alert('Bağlantı hatası.');
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    });
+}
+</script>

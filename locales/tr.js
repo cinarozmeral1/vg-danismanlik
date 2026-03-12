@@ -594,7 +594,7 @@ module.exports = {
             partners: "Çözüm Ortağı"
         },
         features: {
-            title: "Venture Global®",
+            title: "VG Danışmanlık",
             subtitle: "",
             body: [],
             network: {
@@ -2035,12 +2035,68 @@ module.exports = {
         faq: {
             title: "Sık Sorulan Sorular",
             subtitle: "En çok sorulan sorulara yanıtlar",
-            question1: "Hangi ülkelerde hizmet veriyorsunuz?",
-            answer1: "Almanya, Avusturya, İngiltere, İtalya, Çek Cumhuriyeti, Polonya, Macaristan ve Hollanda'da hizmet veriyoruz. Bu ülkelerdeki en prestijli üniversitelerle işbirliği yapıyoruz.",
-            question2: "Hizmet ücretleriniz nedir?",
-            answer2: "Hizmet ücretlerimiz seçtiğiniz program ve ülkeye göre değişmektedir. Detaylı bilgi için bizimle iletişime geçebilirsiniz.",
-            question3: "Vize başvuru süreci ne kadar sürer?",
-            answer3: "Vize başvuru süreci ülkeye göre 2-8 hafta arasında değişmektedir. Erken başvuru yapmanızı öneririz."
+            items: [
+                {
+                    question: "Hangi ülkelerde hizmet veriyorsunuz?",
+                    answer: "Almanya, Avusturya, İngiltere, İtalya, Çek Cumhuriyeti, Polonya, Macaristan ve Hollanda'da hizmet veriyoruz. Bu 8 ülkedeki 50'den fazla prestijli üniversite ile doğrudan işbirliği yapıyoruz. Her ülkede yerel danışmanlarımız ve partner kurumlarımız bulunmaktadır."
+                },
+                {
+                    question: "Hizmet ücretleriniz nedir?",
+                    answer: "Hizmet ücretlerimiz seçtiğiniz program, ülke ve hizmet paketine göre değişmektedir. Temel danışmanlık, kapsamlı başvuru yönetimi ve premium paketlerimiz mevcuttur. Ücretsiz ön görüşme ile size en uygun paketi birlikte belirleyebiliriz. Detaylı fiyat bilgisi için bizimle iletişime geçmenizi öneririz."
+                },
+                {
+                    question: "Vize başvuru süreci ne kadar sürer?",
+                    answer: "Vize başvuru süreci ülkeye göre değişmektedir. Almanya için ortalama 4-8 hafta, İngiltere için 3-6 hafta, İtalya ve Çek Cumhuriyeti için 2-4 hafta sürmektedir. Randevu yoğunluklarına göre bu süreler uzayabilir, bu nedenle en az 3 ay öncesinden başvuru sürecini başlatmanızı öneriyoruz."
+                },
+                {
+                    question: "Başvuru için hangi belgeler gereklidir?",
+                    answer: "Temel olarak lise diploması veya transkript, dil yeterlilik belgesi (IELTS/TOEFL), pasaport, motivasyon mektubu ve özgeçmiş gerekmektedir. Bazı programlar için portfolyo, referans mektubu veya ek sınav sonuçları istenebilir. Ülke ve üniversiteye özel belge listesini danışmanlık sürecinde sizinle detaylı olarak paylaşıyoruz."
+                },
+                {
+                    question: "Dil bilmeden yurt dışında eğitim alabilir miyim?",
+                    answer: "Evet, birçok ülkede İngilizce eğitim veren programlar mevcuttur. Ayrıca bazı üniversiteler koşullu kabul vererek dil hazırlık programına yönlendirebilir. Almanya'da Studienkolleg, İngiltere'de Foundation Year gibi hazırlık programları da bulunmaktadır. Partner kurumlarımız Kanpus aracılığıyla IELTS, TOEFL ve diğer dil sınavlarına da hazırlanabilirsiniz."
+                },
+                {
+                    question: "Yurt dışında eğitim masrafları ne kadar tutar?",
+                    answer: "Eğitim masrafları ülke ve üniversiteye göre büyük farklılık gösterir. Almanya'da devlet üniversiteleri ücretsizdir (dönemlik ~300€ harç), Çek Cumhuriyeti'nde yıllık 5.000-15.000€, İtalya'da 1.000-4.000€, İngiltere'de 10.000-25.000£ arasında değişmektedir. Aylık yaşam masrafları ise ülkeye göre 500-1.500€ arasındadır."
+                },
+                {
+                    question: "Burs imkanları var mı?",
+                    answer: "Evet, birçok ülkede burs imkanları mevcuttur. Almanya'da DAAD bursları, İtalya'da DSU bursları, Macaristan'da Stipendium Hungaricum, Polonya'da hükümet bursları gibi seçenekler bulunmaktadır. Ayrıca birçok üniversite başarı, ihtiyaç ve spor bursları da sunmaktadır. Burs başvuru sürecinde de size destek sağlıyoruz."
+                },
+                {
+                    question: "Öğrenci vizesi ile çalışabilir miyim?",
+                    answer: "Çoğu Avrupa ülkesinde öğrenci vizesi ile sınırlı süre çalışma hakkınız vardır. Almanya'da yılda 120 tam gün veya 240 yarım gün, İngiltere'de haftada 20 saat, İtalya'da haftada 20 saat çalışabilirsiniz. Mezuniyet sonrası iş arama vizesi de birçok ülkede mevcuttur (Almanya'da 18 ay, Hollanda'da 1 yıl)."
+                },
+                {
+                    question: "Konaklama konusunda yardımcı oluyor musunuz?",
+                    answer: "Evet, her ülkede konaklama konusunda kapsamlı destek sağlıyoruz. Öğrenci yurtları, özel yurtlar, paylaşımlı daireler ve ev sahipli konaklama seçeneklerini sizin için araştırıyor ve başvuru sürecinizi yönetiyoruz. Bütçenize ve tercihlerinize göre en uygun seçeneği birlikte belirliyoruz."
+                },
+                {
+                    question: "WCEP Kanada programı nedir?",
+                    answer: "WCEP (World Canadian Education Program) ortaklığımız sayesinde 12. sınıfı Kanada'nın prestijli okullarında tamamlayarak Kanada lise diploması alabilirsiniz. Bu diploma ile Almanya'da Studienkolleg'i atlayabilir, İngiltere'de Foundation Year'ı bypass edebilir ve Çekya'da tıp fakültesine sınavsız kabul alabilirsiniz."
+                },
+                {
+                    question: "Kanpus ile ortaklığınız ne sağlıyor?",
+                    answer: "Kanpus ortaklığımız sayesinde öğrencilerimiz IB Diploma, AP Courses, SAT, TOEFL ve IELTS sınavlarına uzman öğretmenlerle birebir online derslerle hazırlanabilir. Kanpus'tan ders alan öğrenciler Venture Global'de, Venture Global'den danışmanlık alan öğrenciler Kanpus'ta ayrıcalıklı indirimlerden yararlanır."
+                },
+                {
+                    question: "Başvuru sürecinde ne kadar destek alırım?",
+                    answer: "Başvuru sürecinin her aşamasında yanınızdayız: ülke ve üniversite seçiminden belge hazırlığına, motivasyon mektubu yazımından vize başvurusuna, uçak bileti organizasyonundan konaklama ayarlamalarına kadar tüm süreçleri birlikte yönetiyoruz. Ayrıca eğitiminiz süresince 7/24 destek hattımızla yanınızdayız."
+                },
+                {
+                    question: "Ne zaman başvuru yapmalıyım?",
+                    answer: "İdeal olarak eğitime başlamak istediğiniz tarihten en az 6-12 ay önce süreci başlatmanızı öneriyoruz. Kış dönemi başvuruları için Haziran-Eylül, yaz dönemi başvuruları için Ocak-Mart arasında iletişime geçmeniz en uygun zamanlama olacaktır. Erken başvuru hem burs fırsatlarını hem de tercih edilebilirliğinizi artırır."
+                },
+                {
+                    question: "Online görüşme yapabiliyor muyuz?",
+                    answer: "Evet, tüm danışmanlık görüşmelerimiz online olarak yapılabilmektedir. Zoom, Google Meet veya WhatsApp video aracılığıyla yüz yüze görüşme imkanı sunuyoruz. İstanbul'da bulunan ofisimize gelerek de yüz yüze görüşme gerçekleştirebilirsiniz. İlk ön değerlendirme görüşmemiz ücretsizdir."
+                },
+                {
+                    question: "Sağlık sigortası konusunda ne yapmalıyım?",
+                    answer: "Tüm Avrupa ülkeleri öğrencilerden geçerli bir sağlık sigortası istemektedir. Bazı ülkelerde devlet sağlık sigortasına katılabilirken, bazılarında özel sigorta yaptırmanız gerekmektedir. Almanya'da devlet sigortası aylık ~110€, özel sigorta ise ~40-80€ arasındadır. Vize başvurusundan önce sigorta konusunda size rehberlik ediyoruz."
+                }
+            ]
         }
     },
     

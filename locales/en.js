@@ -590,7 +590,7 @@ module.exports = {
             partners: "Partners"
         },
         features: {
-            title: "Venture Global®",
+            title: "VG Danışmanlık",
             subtitle: "",
             body: [],
             network: {
@@ -2007,12 +2007,68 @@ module.exports = {
         faq: {
             title: "Frequently Asked Questions",
             subtitle: "Answers to the most asked questions",
-            question1: "Which countries do you provide services in?",
-            answer1: "We provide services in Germany, Austria, United Kingdom, Italy, Czech Republic, Poland, Hungary and Netherlands. We cooperate with the most prestigious universities in these countries.",
-            question2: "What are your service fees?",
-            answer2: "Our service fees vary according to the program and country you choose. Please contact us for detailed information.",
-            question3: "How long does the visa application process take?",
-            answer3: "The visa application process varies between 2-8 weeks depending on the country. We recommend applying early."
+            items: [
+                {
+                    question: "Which countries do you provide services in?",
+                    answer: "We provide services in Germany, Austria, United Kingdom, Italy, Czech Republic, Poland, Hungary and Netherlands. We cooperate with over 50 prestigious universities across these 8 countries. We have local advisors and partner institutions in each country."
+                },
+                {
+                    question: "What are your service fees?",
+                    answer: "Our service fees vary depending on the program, country and service package you choose. We offer basic counseling, comprehensive application management and premium packages. We can determine the most suitable package for you during a free initial consultation. Please contact us for detailed pricing information."
+                },
+                {
+                    question: "How long does the visa application process take?",
+                    answer: "The visa application process varies by country. It takes approximately 4-8 weeks for Germany, 3-6 weeks for the UK, and 2-4 weeks for Italy and Czech Republic. These timelines may extend depending on appointment availability, so we recommend starting the process at least 3 months in advance."
+                },
+                {
+                    question: "What documents are required for the application?",
+                    answer: "Basic requirements include a high school diploma or transcript, language proficiency certificate (IELTS/TOEFL), passport, motivation letter and CV. Some programs may require a portfolio, reference letters or additional exam results. We share the country and university-specific document list in detail during the counseling process."
+                },
+                {
+                    question: "Can I study abroad without knowing the local language?",
+                    answer: "Yes, many countries offer programs taught in English. Some universities also provide conditional admission and direct you to language preparation programs. Preparatory programs like Studienkolleg in Germany and Foundation Year in the UK are also available. Through our partner Kanpus, you can also prepare for IELTS, TOEFL and other language exams."
+                },
+                {
+                    question: "How much does studying abroad cost?",
+                    answer: "Education costs vary significantly by country and university. Public universities in Germany are tuition-free (~€300 semester fee), Czech Republic costs €5,000-15,000 per year, Italy €1,000-4,000, and the UK £10,000-25,000. Monthly living expenses range from €500-1,500 depending on the country."
+                },
+                {
+                    question: "Are scholarship opportunities available?",
+                    answer: "Yes, many countries offer scholarship opportunities. Options include DAAD scholarships in Germany, DSU scholarships in Italy, Stipendium Hungaricum in Hungary, and government scholarships in Poland. Many universities also offer merit-based, need-based and athletic scholarships. We support you throughout the scholarship application process."
+                },
+                {
+                    question: "Can I work with a student visa?",
+                    answer: "Most European countries allow limited working hours on a student visa. In Germany, you can work 120 full days or 240 half days per year; in the UK, 20 hours per week; and in Italy, 20 hours per week. Post-graduation job-seeking visas are also available in many countries (18 months in Germany, 1 year in the Netherlands)."
+                },
+                {
+                    question: "Do you help with accommodation?",
+                    answer: "Yes, we provide comprehensive accommodation support in every country. We research and manage applications for student dormitories, private halls, shared apartments and homestay options. We determine the most suitable option together based on your budget and preferences."
+                },
+                {
+                    question: "What is the WCEP Canada program?",
+                    answer: "Through our WCEP (World Canadian Education Program) partnership, you can complete your 12th grade at prestigious schools in Canada and earn a Canadian high school diploma. With this diploma, you can skip Studienkolleg in Germany, bypass Foundation Year in the UK, and gain direct admission to medical schools in Czech Republic."
+                },
+                {
+                    question: "What does the Kanpus partnership offer?",
+                    answer: "Through our Kanpus partnership, students can prepare for IB Diploma, AP Courses, SAT, TOEFL and IELTS exams with expert teachers in one-on-one online classes. Kanpus students get exclusive discounts at Venture Global, and Venture Global clients get exclusive discounts at Kanpus."
+                },
+                {
+                    question: "How much support will I receive during the application process?",
+                    answer: "We are with you at every stage: from country and university selection to document preparation, from writing motivation letters to visa applications, from flight bookings to accommodation arrangements. We also provide 24/7 support throughout your education."
+                },
+                {
+                    question: "When should I apply?",
+                    answer: "Ideally, we recommend starting the process at least 6-12 months before your intended start date. For winter semester applications, contact us between June-September; for summer semester, between January-March. Early applications increase both scholarship opportunities and your chances of acceptance."
+                },
+                {
+                    question: "Can we have an online consultation?",
+                    answer: "Yes, all our consultations can be conducted online. We offer face-to-face meetings via Zoom, Google Meet or WhatsApp video. You can also visit our office in Istanbul for an in-person meeting. Our initial assessment consultation is free of charge."
+                },
+                {
+                    question: "What should I do about health insurance?",
+                    answer: "All European countries require students to have valid health insurance. In some countries you can join the state health insurance system, while in others you need private insurance. In Germany, state insurance costs approximately €110/month, while private insurance ranges from €40-80/month. We guide you on insurance matters before your visa application."
+                }
+            ]
         }
     },
     

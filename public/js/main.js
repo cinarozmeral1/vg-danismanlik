@@ -663,8 +663,9 @@ document.addEventListener('DOMContentLoaded', function() {
     new FormHandler();
     
     // Initialize hero background rotator
-    const heroBackgroundRotator = new HeroBackgroundRotator();
-    heroBackgroundRotator.init();
+    // HeroBackgroundRotator devre disi - video background kullaniliyor
+    // const heroBackgroundRotator = new HeroBackgroundRotator();
+    // heroBackgroundRotator.init();
     
     // Initialize animation observer
     const animationObserver = new AnimationObserver();

@@ -6,10 +6,13 @@ yarn-error.log*
 
 # Environment variables
 .env
+.env.*
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+.env.production
+.env.vercel
 
 # Logs
 logs
@@ -110,3 +113,7 @@ Thumbs.db
 *.tmp
 *.temp
 .env*.local
+
+# Large media files
+public/videos/
+test-11-sinif-sozlesme.pdf

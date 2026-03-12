@@ -1,50 +1,6 @@
 <!-- Admin Dashboard Content -->
 <div class="admin-container">
-    <!-- Sidebar -->
-    <div class="admin-sidebar">
-        <div class="sidebar-header">
-            <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Yönetim Paneli</h6>
-        </div>
-        <nav class="sidebar-nav">
-            <a href="/admin/dashboard" class="nav-item active">
-                <i class="fas fa-tachometer-alt"></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="/admin/users" class="nav-item">
-                <i class="fas fa-users"></i>
-                <span>Öğrenciler</span>
-                <span class="badge bg-primary ms-auto"><%= userCount %></span>
-            </a>
-            <a href="/admin/applications" class="nav-item">
-                <i class="fas fa-file-alt"></i>
-                <span>Başvurular</span>
-                <span class="badge bg-success ms-auto"><%= applicationCount %></span>
-            </a>
-            <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
-            <a href="/admin/partners" class="nav-item">
-                <i class="fas fa-handshake"></i>
-                <span>Partnerler</span>
-                <% if (typeof partnerCount !== 'undefined' && partnerCount > 0) { %>
-                    <span class="badge bg-info ms-auto"><%= partnerCount %></span>
-                <% } %>
-            </a>
-            <% } %>
-            <a href="/admin/universities" class="nav-item">
-                <i class="fas fa-university"></i>
-                <span>Üniversiteler</span>
-            </a>
-            <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
-            <a href="/admin/backups" class="nav-item">
-                <i class="fas fa-database"></i>
-                <span>Yedekleme</span>
-            </a>
-            <a href="/admin/admins" class="nav-item">
-                <i class="fas fa-user-shield"></i>
-                <span>Adminler</span>
-            </a>
-            <% } %>
-        </nav>
-    </div>
+    <%- include('partials/sidebar') %>
 
     <!-- Main Content Area -->
     <div class="admin-main">
@@ -154,28 +110,35 @@
         </div>
 
         <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
-        <!-- Net Profit Card (Sadece Super Admin) -->
+        <!-- Student-Based Profitability Card -->
         <div class="row mt-4">
             <div class="col-12">
                 <div class="card financial-card profit-card" id="netProfitCard">
-                    <div class="card-header bg-info text-white">
+                    <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">
                             <i class="fas fa-calculator me-2"></i>
-                            Net Kar Hesaplama
+                            Öğrenci Bazlı Karlılık
                         </h5>
+                        <select class="form-select form-select-sm" id="profitPeriodFilter" style="width: auto; min-width: 160px; color: #333;">
+                            <option value="all" selected>Tüm Zamanlar</option>
+                            <option value="7days">Son 7 Gün</option>
+                            <option value="30days">Son 30 Gün</option>
+                            <option value="90days">Son 3 Ay</option>
+                            <option value="1year">Son 1 Yıl</option>
+                        </select>
                     </div>
                     <div class="card-body">
-                        <div class="row">
+                        <div class="row mb-3">
                             <div class="col-md-4">
                                 <div class="financial-stat">
                                     <h6 class="text-muted mb-2">Toplam Gelir</h6>
                                     <h4 class="mb-0 text-success" id="totalRevenue">0.00 EUR</h4>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-4" id="expenseStatCard">
                                 <div class="financial-stat">
-                                    <h6 class="text-muted mb-2">Toplam Alacaklar</h6>
-                                    <h4 class="mb-0 text-warning" id="totalReceivables">0.00 EUR</h4>
+                                    <h6 class="text-muted mb-2">Toplam Gider</h6>
+                                    <h4 class="mb-0 text-danger" id="totalExpenses">0.00 EUR</h4>
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -185,17 +148,26 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row mt-3">
-                            <div class="col-md-12">
-                                <label class="form-label">Zaman Aralığı:</label>
-                                <select class="form-select form-select-sm" id="profitPeriodFilter">
-                                    <option value="7days">Son 7 Gün</option>
-                                    <option value="30days">Son 30 Gün</option>
-                                    <option value="90days" selected>Son 3 Ay</option>
-                                    <option value="1year">Son 1 Yıl</option>
-                                    <option value="all">Tüm Zamanlar</option>
-                                </select>
-                            </div>
+                        <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                            <table class="table table-sm table-hover" id="profitabilityTable">
+                                <thead class="table-light sticky-top">
+                                    <tr>
+                                        <th>Öğrenci</th>
+                                        <th class="text-end">Gelir</th>
+                                        <th class="text-end expense-col">Gider</th>
+                                        <th class="text-end">Net Kar</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="profitabilityTableBody">
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted py-3">
+                                            <i class="fas fa-spinner fa-spin me-2"></i>Yükleniyor...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot class="table-light" id="profitabilityFooter">
+                                </tfoot>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -328,6 +300,8 @@
                 </div>
             </div>
         </div>
+
+        <!-- Giderler section removed - merged into student profitability above -->
         <% } %>
 
         <!-- Recent Activity -->
@@ -416,20 +390,22 @@ let currentFilters = {
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     loadFinancialData();
-    loadNetProfit();
+    loadStudentProfitability();
     loadAIRecommendationStats();
     
     // Add event listeners for filters
     document.getElementById('periodFilter').addEventListener('change', function() {
         currentFilters.period = this.value;
         loadFinancialData();
-        loadNetProfit();
     });
     
-    // Net profit filter
-    document.getElementById('profitPeriodFilter').addEventListener('change', function() {
-        loadNetProfit();
-    });
+    // Student profitability filter (revenue period only)
+    const profitFilter = document.getElementById('profitPeriodFilter');
+    if (profitFilter) {
+        profitFilter.addEventListener('change', function() {
+            loadStudentProfitability();
+        });
+    }
 });
 
 // Load AI Recommendation Statistics
@@ -592,38 +568,101 @@ function updateRevenueDisplay(data, period) {
     `).join('');
 }
 
-// Load net profit
-async function loadNetProfit() {
-    const period = document.getElementById('profitPeriodFilter').value;
+// Load student-based profitability
+async function loadStudentProfitability() {
+    const profitFilter = document.getElementById('profitPeriodFilter');
+    const period = profitFilter ? profitFilter.value : 'all';
     
     try {
-        const response = await fetch(`/admin/api/net-profit?period=${period}`);
+        const response = await fetch(`/admin/api/student-profitability?period=${period}`);
         const data = await response.json();
         
-        if (data.success && data.data.byCurrency) {
-            // Show totals by currency
-            const revenueText = data.data.byCurrency.map(item => 
-                `${item.revenue.toFixed(2)} ${item.currency}`
-            ).join(' + ') || '0.00 EUR';
-            
-            const receivablesText = data.data.byCurrency.map(item => 
-                `${item.receivables.toFixed(2)} ${item.currency}`
-            ).join(' + ') || '0.00 EUR';
-            
-            // Net profit = revenue only (alacaklar borç değil, sadece henüz zamanı gelmemiş)
-            const netProfitText = data.data.byCurrency
-                .filter(item => item.revenue > 0) // Sadece geliri olan para birimleri
-                .map(item => 
-                    `${item.revenue.toFixed(2)} ${item.currency}`
-                ).join(' + ') || '0.00 EUR';
-            
-            document.getElementById('totalRevenue').textContent = revenueText;
-            document.getElementById('totalReceivables').textContent = receivablesText;
-            document.getElementById('netProfit').textContent = netProfitText;
+        if (data.success) {
+            updateProfitabilityDisplay(data.data);
         }
     } catch (error) {
-        console.error('Error loading net profit:', error);
+        console.error('Error loading student profitability:', error);
     }
+}
+
+function formatCurrencyMap(currencyMap) {
+    const entries = Object.entries(currencyMap).filter(([, v]) => v !== 0);
+    if (entries.length === 0) return '0.00 EUR';
+    return entries.map(([cur, amount]) => `${parseFloat(amount).toFixed(2)} ${cur}`).join(' + ');
+}
+
+function updateProfitabilityDisplay(data) {
+    const profitFilter = document.getElementById('profitPeriodFilter');
+    const isAllTime = profitFilter ? profitFilter.value === 'all' : true;
+    const colSpan = isAllTime ? 4 : 3;
+    
+    // Show/hide expense elements based on period
+    document.getElementById('expenseStatCard').style.display = isAllTime ? '' : 'none';
+    document.querySelectorAll('.expense-col').forEach(el => el.style.display = isAllTime ? '' : 'none');
+
+    // Update summary totals
+    document.getElementById('totalRevenue').textContent = formatCurrencyMap(data.totals.revenue);
+    if (isAllTime) {
+        document.getElementById('totalExpenses').textContent = formatCurrencyMap(data.totals.expenses);
+        document.getElementById('netProfit').textContent = formatCurrencyMap(data.totals.netProfit);
+    } else {
+        document.getElementById('netProfit').textContent = formatCurrencyMap(data.totals.revenue);
+    }
+    
+    const tbody = document.getElementById('profitabilityTableBody');
+    const tfoot = document.getElementById('profitabilityFooter');
+    
+    if (!data.students || data.students.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="${colSpan}" class="text-center text-muted py-3">
+                    <i class="fas fa-inbox me-2"></i>Henüz gelir veya gider kaydı bulunan öğrenci yok.
+                </td>
+            </tr>
+        `;
+        tfoot.innerHTML = '';
+        return;
+    }
+    
+    tbody.innerHTML = data.students.map(student => {
+        const revText = student.byCurrency.map(c => `${c.revenue.toFixed(2)} ${c.currency}`).join(' + ') || '0.00';
+        const expText = student.byCurrency.map(c => `${c.expense.toFixed(2)} ${c.currency}`).join(' + ') || '0.00';
+        const netText = student.byCurrency.map(c => {
+            const val = isAllTime ? c.netProfit : c.revenue;
+            const cls = val >= 0 ? 'text-success' : 'text-danger';
+            return `<span class="${cls}">${val.toFixed(2)} ${c.currency}</span>`;
+        }).join(' + ') || '0.00';
+        
+        const expCol = isAllTime ? `<td class="text-end text-danger expense-col"><strong>${expText}</strong></td>` : '';
+        
+        return `
+            <tr>
+                <td>
+                    <a href="/admin/users/${student.user_id}" class="text-decoration-none" style="color: inherit;">
+                        <strong>${student.first_name} ${student.last_name}</strong>
+                    </a>
+                </td>
+                <td class="text-end text-success"><strong>${revText}</strong></td>
+                ${expCol}
+                <td class="text-end"><strong>${netText}</strong></td>
+            </tr>
+        `;
+    }).join('');
+    
+    // Footer totals
+    const totalRevText = formatCurrencyMap(data.totals.revenue);
+    const totalExpText = formatCurrencyMap(data.totals.expenses);
+    const totalNetText = isAllTime ? formatCurrencyMap(data.totals.netProfit) : formatCurrencyMap(data.totals.revenue);
+    const expFootCol = isAllTime ? `<td class="text-end text-danger expense-col">${totalExpText}</td>` : '';
+    
+    tfoot.innerHTML = `
+        <tr class="fw-bold">
+            <td>TOPLAM (${data.studentCount} öğrenci)</td>
+            <td class="text-end text-success">${totalRevText}</td>
+            ${expFootCol}
+            <td class="text-end text-primary">${totalNetText}</td>
+        </tr>
+    `;
 }
 
 // Export financial data
@@ -636,6 +675,6 @@ function exportFinancialData(type) {
 // Refresh all financial data
 function refreshFinancialData() {
     loadFinancialData();
-    loadNetProfit();
+    loadStudentProfitability();
 }
 </script> 

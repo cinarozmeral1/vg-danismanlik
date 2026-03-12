@@ -378,12 +378,9 @@ router.put('/api/change-password', authenticatePartner, async (req, res) => {
 
 // Partner logout
 router.post('/logout', (req, res) => {
-    res.clearCookie('partnerToken', {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        path: '/'
-    });
+    const expireOpts = { httpOnly: true, secure: process.env.NODE_ENV === 'production', path: '/', maxAge: 0 };
+    res.cookie('partnerToken', '', expireOpts);
+    res.clearCookie('partnerToken');
     
     res.json({
         success: true,

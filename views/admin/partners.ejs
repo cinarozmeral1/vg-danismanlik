@@ -1,44 +1,6 @@
 <!-- Admin Partners Content -->
 <div class="admin-container">
-    <!-- Sidebar -->
-    <div class="admin-sidebar">
-        <div class="sidebar-header">
-            <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Yönetim Paneli</h6>
-        </div>
-        <nav class="sidebar-nav">
-            <a href="/admin/dashboard" class="nav-item">
-                <i class="fas fa-tachometer-alt"></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="/admin/users" class="nav-item">
-                <i class="fas fa-users"></i>
-                <span>Öğrenciler</span>
-                <span class="badge bg-primary ms-auto"><%= userCount %></span>
-            </a>
-            <a href="/admin/applications" class="nav-item">
-                <i class="fas fa-file-alt"></i>
-                <span>Başvurular</span>
-                <span class="badge bg-success ms-auto"><%= applicationCount %></span>
-            </a>
-            <a href="/admin/partners" class="nav-item active">
-                <i class="fas fa-handshake"></i>
-                <span>Partnerler</span>
-                <span class="badge bg-info ms-auto"><%= partners.length %></span>
-            </a>
-            <a href="/admin/universities" class="nav-item">
-                <i class="fas fa-university"></i>
-                <span>Üniversiteler</span>
-            </a>
-            <a href="/admin/backups" class="nav-item">
-                <i class="fas fa-database"></i>
-                <span>Yedekleme</span>
-            </a>
-            <a href="/admin/admins" class="nav-item">
-                <i class="fas fa-user-shield"></i>
-                <span>Adminler</span>
-            </a>
-        </nav>
-    </div>
+    <%- include('partials/sidebar') %>
 
     <!-- Main Content Area -->
     <div class="admin-main">
@@ -287,7 +249,7 @@
     // Show add partner modal
     function showAddPartnerModal() {
         document.getElementById('addPartnerForm').reset();
-        const modal = new bootstrap.Modal(document.getElementById('addPartnerModal'));
+        const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('addPartnerModal'));
         modal.show();
     }
 
@@ -316,7 +278,8 @@
             
             if (data.success) {
                 alert(data.message);
-                bootstrap.Modal.getInstance(document.getElementById('addPartnerModal')).hide();
+                const addModal = bootstrap.Modal.getInstance(document.getElementById('addPartnerModal'));
+                if (addModal) addModal.hide();
                 window.location.reload();
             } else {
                 alert(data.message || 'Partner eklenemedi!');
@@ -346,7 +309,7 @@
                     document.getElementById('editPartnerPhone').value = partner.phone || '';
                     document.getElementById('editPartnerActive').checked = partner.is_active;
                     
-                    const modal = new bootstrap.Modal(document.getElementById('editPartnerModal'));
+                    const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editPartnerModal'));
                     modal.show();
                 }
             }
@@ -377,7 +340,8 @@
             
             if (data.success) {
                 alert('Partner başarıyla güncellendi!');
-                bootstrap.Modal.getInstance(document.getElementById('editPartnerModal')).hide();
+                const editModal = bootstrap.Modal.getInstance(document.getElementById('editPartnerModal'));
+                if (editModal) editModal.hide();
                 window.location.reload();
             } else {
                 alert(data.message || 'Partner güncellenemedi!');

@@ -5,6 +5,10 @@ const JWT_SECRET = process.env.JWT_SECRET || 'venture-global-secret-key-2024';
 
 // User info middleware for layout
 const userInfoMiddleware = async (req, res, next) => {
+    // Prevent caching of authenticated pages
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    res.set('Pragma', 'no-cache');
+
     try {
         const token = req.cookies.userToken || req.cookies.adminToken;
         
@@ -14,7 +18,7 @@ const userInfoMiddleware = async (req, res, next) => {
             if (decoded.userId) {
                 // Regular user or admin user
                 const result = await pool.query(
-                    'SELECT id, first_name, last_name, email, email_verified, is_admin, admin_role FROM users WHERE id = $1',
+                    'SELECT id, first_name, last_name, email, phone, email_verified, is_admin, admin_role FROM users WHERE id = $1',
                     [decoded.userId]
                 );
                 

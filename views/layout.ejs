@@ -124,7 +124,7 @@
     
     <!-- Preload critical resources -->
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
@@ -133,14 +133,14 @@
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
     
-    <!-- Google Fonts - Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts - Montserrat + Playfair Display + Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;800&family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     
     <!-- Swiper Slider CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
     
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/css/style.css?v=20260201-sidebar-full-height">
+    <link rel="stylesheet" href="/css/style.css?v=20260225-font-reveal">
     
     <!-- Structured Data (JSON-LD) - Organization & Educational Service -->
     <script type="application/ld+json">
@@ -371,6 +371,7 @@
                             <li><a class="dropdown-item" href="/about-us"><i class="fas fa-info-circle me-2"></i><%= (typeof t !== 'undefined' && t.nav) ? t.nav.aboutUs : 'Tanışalım' %></a></li>
                             <li><a class="dropdown-item" href="/media"><i class="fas fa-bullhorn me-2"></i><%= (typeof t !== 'undefined' && t.nav) ? t.nav.media : 'Medyada Biz' %></a></li>
                             <li><a class="dropdown-item" href="/blog"><i class="fas fa-blog me-2"></i><%= (typeof t !== 'undefined' && t.nav) ? (t.nav.blog || 'Blog') : 'Blog' %></a></li>
+                            <li><a class="dropdown-item" href="/gallery"><i class="fas fa-images me-2"></i>Galeri</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li class="dropdown-header"><i class="fas fa-handshake me-2"></i><%= (typeof t !== 'undefined' && t.nav) ? (t.nav.partners || 'Çözüm Ortaklarımız') : 'Çözüm Ortaklarımız' %></li>
                             <li><a class="dropdown-item d-flex align-items-center" href="/partners/wcep">
@@ -466,24 +467,30 @@
                                     <% } %>
                                     <li><a class="dropdown-item" href="/admin/universities"><i class="fas fa-university me-2"></i>Üniversiteler</a></li>
                                     <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
+                                    <li><a class="dropdown-item" href="/admin/appointments"><i class="fas fa-calendar-check me-2"></i>Randevular</a></li>
+                                    <li><a class="dropdown-item" href="/admin/gallery"><i class="fas fa-images me-2"></i>Galeri</a></li>
+                                    <li><a class="dropdown-item" href="/admin/ai-recommendations"><i class="fas fa-magic me-2" style="color: #6f42c1;"></i>AI Önerileri</a></li>
+                                    <% } %>
+                                    <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
                                     <li><a class="dropdown-item" href="/admin/backups"><i class="fas fa-database me-2"></i>Yedekleme</a></li>
                                     <li><a class="dropdown-item" href="/admin/admins"><i class="fas fa-user-shield me-2"></i>Adminler</a></li>
                                     <% } %>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-danger" href="/admin/logout"><i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap</a></li>
+                                    <li><a class="dropdown-item text-danger" href="#" onclick="doLogout(); return false;"><i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap</a></li>
                                 <% } else if (currentUser && currentUser.is_partner) { %>
                                     <li><a class="dropdown-item" href="/partner/dashboard"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
                                     <li><a class="dropdown-item" href="/partner/settings"><i class="fas fa-cog me-2"></i>Ayarlar</a></li>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-danger" href="#" onclick="partnerLogout(); return false;"><i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap</a></li>
+                                    <li><a class="dropdown-item text-danger" href="#" onclick="doLogout(); return false;"><i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap</a></li>
                                 <% } else { %>
                                     <li><a class="dropdown-item" href="/user/dashboard"><i class="fas fa-user me-2"></i>Profil Bilgileri</a></li>
                                     <li><a class="dropdown-item" href="/user/applications"><i class="fas fa-file-alt me-2"></i>Başvurularım</a></li>
                                     <li><a class="dropdown-item" href="/user/services"><i class="fas fa-credit-card me-2"></i>Hizmetler & Ödemeler</a></li>
+                                    <li><a class="dropdown-item" href="/user/appointments"><i class="fas fa-calendar-check me-2"></i>Randevularım</a></li>
                                     <li><a class="dropdown-item" href="/user/files"><i class="fas fa-folder-open me-2"></i>Dosyalarım</a></li>
                                     <li><a class="dropdown-item" href="/user/settings"><i class="fas fa-cog me-2"></i>Ayarlar</a></li>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-danger" href="/admin/logout"><i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap</a></li>
+                                    <li><a class="dropdown-item text-danger" href="#" onclick="doLogout(); return false;"><i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap</a></li>
                                 <% } %>
                             </ul>
                         </li>
@@ -555,7 +562,7 @@
                             </div>
                             <div>
                                 <h6 style="margin: 0; font-size: 1rem; font-weight: 600; color: var(--gray-900);">
-                                    <%= (currentUser && (currentUser.first_name || currentUser.name)) ? (currentUser.first_name || currentUser.name) : ((typeof t !== 'undefined' && t.nav) ? t.nav.user : 'Kullanıcı') %>
+                                    <% if (currentUser && currentUser.first_name) { %><%= currentUser.first_name %><% if (currentUser.last_name) { %> <%= currentUser.last_name %><% } %><% } else if (currentUser && currentUser.name) { %><%= currentUser.name %><% } else { %><%= (typeof t !== 'undefined' && t.nav) ? t.nav.user : 'Kullanıcı' %><% } %>
                                 </h6>
                                 <small style="color: var(--gray-600);">
                                     <% if (currentUser && currentUser.is_admin) { %>
@@ -575,7 +582,7 @@
                                 <i class="fas fa-tachometer-alt"></i>
                                 <%= (typeof t !== 'undefined' && t.nav) ? t.nav.adminPanel : 'Admin Paneli' %>
                             </a>
-                            <a href="/admin/logout" class="mobile-logout-btn">
+                            <a href="#" onclick="doLogout(); return false;" class="mobile-logout-btn">
                                 <i class="fas fa-sign-out-alt"></i>
                                 <%= (typeof t !== 'undefined' && t.nav) ? t.nav.signOut : 'ÇIKIŞ YAP' %>
                             </a>
@@ -584,7 +591,7 @@
                                 <i class="fas fa-handshake"></i>
                                 <%= (typeof t !== 'undefined' && t.nav) ? t.nav.partnerPanel : 'Partner Paneli' %>
                             </a>
-                            <a href="#" onclick="partnerLogout(); return false;" class="mobile-logout-btn">
+                            <a href="#" onclick="doLogout(); return false;" class="mobile-logout-btn">
                                 <i class="fas fa-sign-out-alt"></i>
                                 <%= (typeof t !== 'undefined' && t.nav) ? t.nav.signOut : 'ÇIKIŞ YAP' %>
                             </a>
@@ -593,10 +600,10 @@
                                 <i class="fas fa-user"></i>
                                 <%= (typeof t !== 'undefined' && t.nav) ? t.nav.myProfile : 'Profilim' %>
                             </a>
-                        <a href="/admin/logout" class="mobile-logout-btn">
-                            <i class="fas fa-sign-out-alt"></i>
-                            <%= (typeof t !== 'undefined' && t.nav) ? t.nav.signOut : 'ÇIKIŞ YAP' %>
-                        </a>
+                            <a href="#" onclick="doLogout(); return false;" class="mobile-logout-btn">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <%= (typeof t !== 'undefined' && t.nav) ? t.nav.signOut : 'ÇIKIŞ YAP' %>
+                            </a>
                         <% } %>
                         <style>
                             .mobile-admin-btn {
@@ -704,6 +711,26 @@
                                 </li>
                                 <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
                                 <li>
+                                    <a href="/admin/appointments" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                        <i class="fas fa-calendar-check" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 500;">Randevular</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/admin/gallery" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                        <i class="fas fa-images" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 500;">Galeri</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/admin/ai-recommendations" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                        <i class="fas fa-magic" style="width: 20px; margin-right: 12px; color: #6f42c1;"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 500;">AI Önerileri</span>
+                                    </a>
+                                </li>
+                                <% } %>
+                                <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
+                                <li>
                                     <a href="/admin/backups" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
                                         <i class="fas fa-database" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
                                         <span style="font-size: 0.9rem; font-weight: 500;">Yedekleme</span>
@@ -733,6 +760,12 @@
                                     <a href="/user/services" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
                                         <i class="fas fa-credit-card" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
                                         <span style="font-size: 0.9rem; font-weight: 500;">Hizmetler & Ödemeler</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/user/appointments" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                        <i class="fas fa-calendar-check" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                        <span style="font-size: 0.9rem; font-weight: 500;">Randevularım</span>
                                     </a>
                                 </li>
                                 <li>
@@ -815,6 +848,12 @@
                             <a href="/blog" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
                                 <i class="fas fa-blog" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
                                 <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.nav) ? (t.nav.blog || 'Blog') : 'Blog' %></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/gallery" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                                <i class="fas fa-images" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
+                                <span style="font-size: 0.9rem; font-weight: 500;">Galeri</span>
                             </a>
                         </li>
                         <!-- Çözüm Ortakları - Tanışalım altında -->
@@ -1001,13 +1040,9 @@
                                 <span class="badge bg-warning text-dark" style="font-size: 9px; padding: 4px 10px; border-radius: 12px; font-weight: 600;">Çok Yakında</span>
                             </div>
                             <div class="d-flex align-items-center gap-2" style="opacity: 0.6;">
-                                <!-- Stripe -->
-                                <div style="background: #fff; padding: 6px 10px; border-radius: 6px; display: flex; align-items: center; justify-content: center; height: 32px;">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" style="height: 16px; width: auto;">
-                                </div>
                                 <!-- Visa -->
-                                <div style="background: #fff; padding: 6px 10px; border-radius: 6px; display: flex; align-items: center; justify-content: center; height: 32px;">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" style="height: 14px; width: auto;">
+                                <div style="background: #fff; padding: 6px 10px; border-radius: 6px; display: flex; align-items: center; justify-content: center; height: 32px; min-width: 50px;">
+                                    <span style="font-size: 16px; font-weight: 900; font-style: italic; color: #1a1f71; letter-spacing: -0.5px; font-family: 'Segoe UI', Arial, sans-serif;">VISA</span>
                                 </div>
                                 <!-- Mastercard -->
                                 <div style="background: #fff; padding: 6px 10px; border-radius: 6px; display: flex; align-items: center; justify-content: center; height: 32px;">
@@ -1065,24 +1100,27 @@
     
     <!-- Bootstrap 5 JS - Load with defer for better performance -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
-    <script src="/js/main.js?v=20241126-premium-popup-redesign"></script>
+    <script src="/js/main.js?v=20260225-font-reveal"></script>
     
-    <!-- Partner Logout Function -->
+    <!-- Logout Functions -->
     <script>
+        function doLogout() {
+            fetch('/api/auth/logout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include'
+            }).finally(function() {
+                window.location.replace('/login?_=' + Date.now());
+            });
+        }
+
         function partnerLogout() {
             fetch('/api/auth/partner-logout', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include'
-            })
-            .then(response => response.json())
-            .then(data => {
-                window.location.href = '/login';
-            })
-            .catch(error => {
-                console.error('Logout error:', error);
-                document.cookie = 'partnerToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-                window.location.href = '/login';
+            }).finally(function() {
+                window.location.replace('/login?_=' + Date.now());
             });
         }
     </script>
@@ -1619,22 +1657,44 @@
             scroll: false
         });
         
-        // Menü açılınca - scroll pozisyonunu kaydet
+        // Menü açılınca - scroll engelle
         mobileNav.addEventListener('show.bs.offcanvas', function() {
             savedScrollY = window.scrollY;
-            document.body.style.top = '-' + savedScrollY + 'px';
-            document.body.style.position = 'fixed';
-            document.body.style.width = '100%';
+            document.documentElement.style.overflow = 'hidden';
+            document.body.style.overflow = 'hidden';
             document.body.classList.add('mobile-menu-open');
         });
         
-        // Menü kapanınca - scroll pozisyonunu geri yükle
+        // Menü kapanınca - scroll geri aç
         mobileNav.addEventListener('hidden.bs.offcanvas', function() {
             document.body.classList.remove('mobile-menu-open');
-            document.body.style.position = '';
-            document.body.style.top = '';
-            document.body.style.width = '';
+            document.documentElement.style.overflow = '';
+            document.body.style.overflow = '';
             window.scrollTo(0, savedScrollY);
+        });
+    });
+
+    // Force reload if page restored from bfcache (fixes stale login state after logout)
+    window.addEventListener('pageshow', function(e) {
+        if (e.persisted) { window.location.reload(); }
+    });
+    </script>
+
+    <!-- Bootstrap Modal fix: move modals to body and fix z-index above navbar -->
+    <style>
+    .modal-backdrop { z-index: 10050 !important; }
+    .modal { z-index: 10055 !important; }
+    </style>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.modal').forEach(function(m) {
+            if (m.parentElement !== document.body) document.body.appendChild(m);
+        });
+        document.addEventListener('hidden.bs.modal', function() {
+            document.querySelectorAll('.modal-backdrop').forEach(function(b) { b.remove(); });
+            document.body.classList.remove('modal-open');
+            document.body.style.removeProperty('overflow');
+            document.body.style.removeProperty('padding-right');
         });
     });
     </script>

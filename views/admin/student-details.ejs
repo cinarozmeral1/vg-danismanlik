@@ -1,50 +1,6 @@
 <!-- Admin Student Details Content -->
 <div class="admin-container">
-    <!-- Sidebar -->
-    <div class="admin-sidebar">
-        <div class="sidebar-header">
-            <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Yönetim Paneli</h6>
-        </div>
-        <nav class="sidebar-nav">
-            <a href="/admin/dashboard" class="nav-item">
-                <i class="fas fa-tachometer-alt"></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="/admin/users" class="nav-item active">
-                <i class="fas fa-users"></i>
-                <span>Öğrenciler</span>
-                <span class="badge bg-primary ms-auto"><%= userCount %></span>
-            </a>
-            <a href="/admin/applications" class="nav-item">
-                <i class="fas fa-file-alt"></i>
-                <span>Başvurular</span>
-                <span class="badge bg-success ms-auto"><%= applicationCount %></span>
-            </a>
-            <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
-            <a href="/admin/partners" class="nav-item">
-                <i class="fas fa-handshake"></i>
-                <span>Partnerler</span>
-                <% if (typeof partnerCount !== 'undefined' && partnerCount > 0) { %>
-                    <span class="badge bg-info ms-auto"><%= partnerCount %></span>
-                <% } %>
-            </a>
-            <% } %>
-            <a href="/admin/universities" class="nav-item">
-                <i class="fas fa-university"></i>
-                <span>Üniversiteler</span>
-            </a>
-            <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
-            <a href="/admin/backups" class="nav-item">
-                <i class="fas fa-database"></i>
-                <span>Yedekleme</span>
-            </a>
-            <a href="/admin/admins" class="nav-item">
-                <i class="fas fa-user-shield"></i>
-                <span>Adminler</span>
-            </a>
-            <% } %>
-        </nav>
-    </div>
+    <%- include('partials/sidebar') %>
 
     <!-- Main Content Area -->
     <div class="admin-main">
@@ -193,7 +149,12 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label for="active_class" class="form-label">Aktif Sınıf *</label>
-                                        <input type="text" class="form-control" id="active_class" name="active_class" value="<%= user.active_class || '' %>" placeholder="Örn: 11" required>
+                                        <select class="form-select" id="active_class" name="active_class" required>
+                                            <option value="">Seçiniz</option>
+                                            <option value="11" <%= (user.active_class && (user.active_class === '11' || user.active_class === 11 || user.active_class.toString().includes('11'))) ? 'selected' : '' %>>11. Sınıf</option>
+                                            <option value="12" <%= (user.active_class && (user.active_class === '12' || user.active_class === 12 || user.active_class.toString().includes('12'))) ? 'selected' : '' %>>12. Sınıf</option>
+                                            <option value="Mezun" <%= (user.active_class && (user.active_class === 'Mezun' || user.active_class.toString().toLowerCase().includes('mezun'))) ? 'selected' : '' %>>Mezun</option>
+                                        </select>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="current_school" class="form-label">Aktif Olarak Okuduğu Okul</label>
@@ -312,11 +273,14 @@
                                             <div class="mb-3">
                                                 <label for="serviceName" class="form-label">Hizmet Adı *</label>
                                                 <!-- Dropdown for new service, will be changed to text input when editing -->
-                                                <select class="form-select" id="serviceNameSelect" required>
+                                                <select class="form-select" id="serviceNameSelect" required onchange="onServiceNameChange(this)">
                                                     <option value="">Hizmet Seçin</option>
                                                     <option value="Danismanlik Ucreti (Kabul Oncesi)">Danışmanlık Ücreti (Kabul Öncesi)</option>
                                                     <option value="Danismanlik Ucreti (Kabul Sonrasi)">Danışmanlık Ücreti (Kabul Sonrası)</option>
+                                                    <option value="11. Sinif Basvuruya Hazirlik Ucreti">11. Sınıf Başvuruya Hazırlık Ücreti</option>
+                                                    <option value="ESE Komisyon">ESE Komisyon (European School of Economics)</option>
                                                 </select>
+                                                <small class="text-muted mt-1" id="eseInfoText" style="display: none;"></small>
                                                 <input type="text" class="form-control" id="serviceName" placeholder="Hizmet adını girin" style="display: none;">
                                             </div>
                                         </div>
@@ -2621,6 +2585,32 @@ document.addEventListener('DOMContentLoaded', function() {
         showAlert('success', `${installmentCount} taksit planı hazırlandı ve önizleme gösterildi!`);
     };
 
+    // Auto-pricing for school partnership services (e.g., ESE)
+    window.onServiceNameChange = async function(selectEl) {
+        const infoText = document.getElementById('eseInfoText');
+        const amountInput = document.getElementById('serviceAmount');
+        const currencySelect = document.getElementById('serviceCurrency');
+        
+        if (selectEl.value === 'ESE Komisyon') {
+            try {
+                const response = await fetch(`/admin/api/school-partnership-price?service_keyword=ESE%20Komisyon`);
+                const data = await response.json();
+                if (data.success && data.amount) {
+                    amountInput.value = data.amount;
+                    currencySelect.value = data.currency || 'EUR';
+                    if (infoText) {
+                        infoText.style.display = 'block';
+                        infoText.textContent = data.message;
+                    }
+                }
+            } catch (err) {
+                console.error('ESE price fetch error:', err);
+            }
+        } else {
+            if (infoText) infoText.style.display = 'none';
+        }
+    };
+
     // Add/Edit service
     window.addService = async function() {
         try {
@@ -2833,7 +2823,7 @@ function showUpdateModal(){
     const modalContainer = document.getElementById('studentNoteModalContainer') || document.body;
     modalContainer.insertAdjacentHTML('beforeend', modalHtml);
     const modalElement = document.getElementById('confirmStudentUpdateModal');
-    const modalInstance = new bootstrap.Modal(modalElement);
+    const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
 
     modalElement.addEventListener('shown.bs.modal', () => {
         const confirmBtn = document.getElementById('confirmStudentUpdateBtn');
@@ -3261,7 +3251,7 @@ function showAddNoteModal(existingNote = null) {
     
     // Show modal
     const modalElement = document.getElementById('studentNoteModal');
-    const modal = new bootstrap.Modal(modalElement);
+    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
 
     const titleInput = document.getElementById('studentNoteTitle');
     const contentInput = document.getElementById('studentNoteContent');
@@ -3691,7 +3681,7 @@ async function loadGuardians() {
 function showEditGuardiansModal() {
     adminRenderGuardiansInModal(adminGuardiansList);
     const modalEl = document.getElementById('editGuardiansModal');
-    const modal = new bootstrap.Modal(modalEl);
+    const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
     modal.show();
     // Ensure backdrop is above navbar (z-index 1060)
     modalEl.addEventListener('shown.bs.modal', function () {

@@ -383,6 +383,40 @@ router.post('/complete-google-registration', async (req, res) => {
                 message: language === 'tr' ? 'TC kimlik numarası 11 haneli olmalıdır' : 'TC ID number must be 11 digits'
             });
         }
+
+        // Spam/garbage input detection
+        function isGarbageG(str, minLength) {
+            if (!str || str.replace(/\s/g, '').length < minLength) return true;
+            const cleaned = str.replace(/\s/g, '');
+            const uniqueChars = new Set(cleaned.toLowerCase()).size;
+            if (cleaned.length >= 5 && uniqueChars <= 1) return true;
+            if (cleaned.length >= 8 && uniqueChars <= 2) return true;
+            return false;
+        }
+        if (/\d/.test(first_name) || first_name.trim().length < 2 || isGarbageG(first_name, 2)) {
+            return res.status(400).json({ success: false, message: language === 'tr' ? 'Lütfen geçerli bir ad girin' : 'Please enter a valid first name' });
+        }
+        if (/\d/.test(last_name) || last_name.trim().length < 2 || isGarbageG(last_name, 2)) {
+            return res.status(400).json({ success: false, message: language === 'tr' ? 'Lütfen geçerli bir soyad girin' : 'Please enter a valid last name' });
+        }
+        if (/^(\d)\1{10}$/.test(tc_number)) {
+            return res.status(400).json({ success: false, message: language === 'tr' ? 'Lütfen geçerli bir TC kimlik numarası girin' : 'Please enter a valid TC number' });
+        }
+        if (phone) {
+            const pd = phone.replace(/\D/g, '');
+            if (pd.length >= 8 && new Set(pd).size <= 2) {
+                return res.status(400).json({ success: false, message: language === 'tr' ? 'Lütfen geçerli bir telefon numarası girin' : 'Please enter a valid phone number' });
+            }
+        }
+        if (isGarbageG(passport_number, 4)) {
+            return res.status(400).json({ success: false, message: language === 'tr' ? 'Lütfen geçerli bir pasaport numarası girin' : 'Please enter a valid passport number' });
+        }
+        if (isGarbageG(current_school, 3)) {
+            return res.status(400).json({ success: false, message: language === 'tr' ? 'Lütfen geçerli bir okul adı girin' : 'Please enter a valid school name' });
+        }
+        if (isGarbageG(home_address, 5)) {
+            return res.status(400).json({ success: false, message: language === 'tr' ? 'Lütfen geçerli bir ev adresi girin' : 'Please enter a valid home address' });
+        }
         
         // Check if user already exists (double check)
         const existingUser = await pool.query(
@@ -807,6 +841,77 @@ router.post('/register', async (req, res) => {
             });
         }
 
+        // Spam/garbage input detection
+        function isGarbageInput(str, minLength = 3) {
+            if (!str || str.length < minLength) return true;
+            const cleaned = str.replace(/\s/g, '');
+            if (cleaned.length < 2) return true;
+            const uniqueChars = new Set(cleaned.toLowerCase()).size;
+            if (cleaned.length >= 5 && uniqueChars <= 1) return true;
+            if (cleaned.length >= 8 && uniqueChars <= 2) return true;
+            return false;
+        }
+
+        function isValidName(name) {
+            if (!name || name.trim().length < 2) return false;
+            if (/\d/.test(name)) return false;
+            if (isGarbageInput(name, 2)) return false;
+            return true;
+        }
+
+        if (!isValidName(first_name)) {
+            return res.status(400).json({
+                success: false,
+                message: language === 'tr' ? 'Lütfen geçerli bir ad girin (en az 2 karakter, rakam içermemeli)' : 'Please enter a valid first name (at least 2 characters, no numbers)'
+            });
+        }
+
+        if (!isValidName(last_name)) {
+            return res.status(400).json({
+                success: false,
+                message: language === 'tr' ? 'Lütfen geçerli bir soyad girin (en az 2 karakter, rakam içermemeli)' : 'Please enter a valid last name (at least 2 characters, no numbers)'
+            });
+        }
+
+        if (tc_number && /^(\d)\1{10}$/.test(tc_number)) {
+            return res.status(400).json({
+                success: false,
+                message: language === 'tr' ? 'Lütfen geçerli bir TC kimlik numarası girin' : 'Please enter a valid TC number'
+            });
+        }
+
+        if (phone) {
+            const phoneDigits = phone.replace(/\D/g, '');
+            const uniquePhoneDigits = new Set(phoneDigits).size;
+            if (phoneDigits.length >= 8 && uniquePhoneDigits <= 2) {
+                return res.status(400).json({
+                    success: false,
+                    message: language === 'tr' ? 'Lütfen geçerli bir telefon numarası girin' : 'Please enter a valid phone number'
+                });
+            }
+        }
+
+        if (passport_number && isGarbageInput(passport_number, 4)) {
+            return res.status(400).json({
+                success: false,
+                message: language === 'tr' ? 'Lütfen geçerli bir pasaport numarası girin' : 'Please enter a valid passport number'
+            });
+        }
+
+        if (current_school && isGarbageInput(current_school, 3)) {
+            return res.status(400).json({
+                success: false,
+                message: language === 'tr' ? 'Lütfen geçerli bir okul adı girin' : 'Please enter a valid school name'
+            });
+        }
+
+        if (home_address && isGarbageInput(home_address, 5)) {
+            return res.status(400).json({
+                success: false,
+                message: language === 'tr' ? 'Lütfen geçerli bir ev adresi girin' : 'Please enter a valid home address'
+            });
+        }
+
         // Check if user already exists - only check email for simplified registration
         // tc_number and phone are placeholders, so don't check them
         const existingUser = await pool.query(
@@ -908,23 +1013,20 @@ router.post('/register', async (req, res) => {
             );
         }
 
-        // Send verification email (non-blocking) - use user.first_name from DB result
-        sendVerificationEmail(email, user.first_name, verificationToken, language)
-            .then(() => console.log('✅ Verification email sent to:', email))
-            .catch(err => {
-                console.error('⚠️ Email send error:', err.message);
-                console.error('⚠️ Email send error details:', err);
-            });
-
-        // Send new student notification to admin (non-blocking)
-        sendNewStudentNotificationEmail({
-            first_name: user.first_name,
-            last_name: user.last_name || last_name,
-            email: email,
-            phone: formattedPhone
-        }, 'email').catch(err => {
-            console.error('⚠️ Admin notification email error:', err.message);
-        });
+        // Send emails (must await in serverless environment)
+        await Promise.all([
+            sendVerificationEmail(email, user.first_name, verificationToken, language)
+                .then(() => console.log('Verification email sent to:', email))
+                .catch(err => console.error('Verification email failed:', err.message)),
+            sendNewStudentNotificationEmail({
+                first_name: user.first_name,
+                last_name: user.last_name || last_name,
+                email: email,
+                phone: formattedPhone
+            }, 'email')
+                .then(() => console.log('Admin notification sent for:', email))
+                .catch(err => console.error('Admin notification failed:', err.message))
+        ]);
 
         res.status(201).json({
             success: true,
@@ -1440,47 +1542,23 @@ router.post('/reset-password', async (req, res) => {
 
 // Logout
 router.post('/logout', (req, res) => {
-    // Clear both user, admin and partner tokens with proper options
-    res.clearCookie('userToken', {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        path: '/'
-    });
-    res.clearCookie('adminToken', {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        path: '/'
-    });
-    res.clearCookie('partnerToken', {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        path: '/'
-    });
-    
-    console.log('Logout endpoint called - cookies cleared'); // Debug log
-    
-    res.json({
-        success: true,
-        message: 'Logout successful'
-    });
+    const expireOpts = { httpOnly: true, secure: process.env.NODE_ENV === 'production', path: '/', maxAge: 0 };
+    res.cookie('userToken', '', expireOpts);
+    res.cookie('adminToken', '', expireOpts);
+    res.cookie('partnerToken', '', expireOpts);
+    res.clearCookie('userToken');
+    res.clearCookie('adminToken');
+    res.clearCookie('partnerToken');
+    console.log('Logout endpoint called - cookies expired');
+    res.json({ success: true, message: 'Logout successful' });
 });
 
 // Partner specific logout
 router.post('/partner-logout', (req, res) => {
-    res.clearCookie('partnerToken', {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        path: '/'
-    });
-    
-    res.json({
-        success: true,
-        message: 'Partner çıkışı başarılı'
-    });
+    const expireOpts = { httpOnly: true, secure: process.env.NODE_ENV === 'production', path: '/', maxAge: 0 };
+    res.cookie('partnerToken', '', expireOpts);
+    res.clearCookie('partnerToken');
+    res.json({ success: true, message: 'Partner çıkışı başarılı' });
 });
 
 // =====================================================

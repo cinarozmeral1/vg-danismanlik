@@ -1,0 +1,578 @@
+<div class="admin-container">
+    <%- include('partials/sidebar') %>
+
+    <div class="admin-main">
+        <div class="p-4">
+
+            <style>
+                .ac-card { background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border: 1px solid #e5e7eb; }
+                .ac-header { background: linear-gradient(135deg, #005A9E 0%, #003d6b 100%); color: white; padding: 24px 28px; border-radius: 16px 16px 0 0; }
+                .ac-body { padding: 28px; }
+                .ac-label { font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px; }
+                .ac-input { border: 1px solid #d1d5db; border-radius: 10px; padding: 10px 14px; font-size: 14px; width: 100%; transition: all 0.2s; }
+                .ac-input:focus { outline: none; border-color: #005A9E; box-shadow: 0 0 0 3px rgba(0,90,158,0.1); }
+                .ac-step { display: none; }
+                .ac-step.active { display: block; }
+                .student-result { padding: 12px 16px; border-bottom: 1px solid #f3f4f6; cursor: pointer; transition: background 0.15s; display: flex; justify-content: space-between; align-items: center; }
+                .student-result:hover { background: #f0f7ff; }
+                .student-result:last-child { border-bottom: none; }
+                .student-name { font-weight: 600; color: #1a1a1a; font-size: 14px; }
+                .student-email { color: #6b7280; font-size: 12px; }
+                .selected-student { background: #f0f7ff; border: 2px solid #005A9E; border-radius: 12px; padding: 16px; margin-top: 12px; }
+                .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+                .cal-header { text-align: center; font-size: 12px; font-weight: 700; color: #6b7280; padding: 8px 0; }
+                .cal-day { text-align: center; padding: 10px 4px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.15s; }
+                .cal-day:hover:not(.cal-disabled):not(.cal-empty) { background: #dbeafe; }
+                .cal-day.cal-available { color: #005A9E; font-weight: 700; }
+                .cal-day.cal-disabled { color: #d1d5db; cursor: default; }
+                .cal-day.cal-empty { cursor: default; }
+                .cal-day.cal-selected { background: #005A9E; color: white; font-weight: 700; }
+                .cal-day.cal-today { border: 2px solid #005A9E; }
+                .slot-btn { padding: 10px 20px; border: 2px solid #e5e7eb; border-radius: 10px; background: white; cursor: pointer; font-weight: 600; font-size: 14px; color: #374151; transition: all 0.15s; }
+                .slot-btn:hover { border-color: #005A9E; color: #005A9E; }
+                .slot-btn.selected { background: #005A9E; color: white; border-color: #005A9E; }
+                .step-indicator { display: flex; align-items: center; gap: 8px; }
+                .step-dot { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
+                .step-dot.active { background: white; color: #005A9E; }
+                .step-dot.inactive { background: rgba(255,255,255,0.3); color: rgba(255,255,255,0.8); }
+                .step-dot.done { background: #10b981; color: white; }
+                .step-line { width: 40px; height: 2px; background: rgba(255,255,255,0.3); }
+                .type-toggle { background: transparent; color: #6b7280; }
+                .type-toggle.active { background: #005A9E !important; color: white !important; box-shadow: 0 2px 8px rgba(0,90,158,0.25); }
+                @media (max-width: 768px) {
+                    .cal-day { padding: 8px 2px; font-size: 12px; }
+                    .slot-btn { padding: 8px 14px; font-size: 13px; }
+                    .type-toggle { font-size: 12px !important; padding: 6px 12px !important; }
+                }
+            </style>
+
+            <div class="mb-4">
+                <a href="/admin/appointments" class="text-decoration-none" style="color: #005A9E; font-size: 14px;">
+                    <i class="fas fa-arrow-left me-2"></i>Randevulara Dön
+                </a>
+            </div>
+
+            <div class="ac-card">
+                <div class="ac-header">
+                    <h5 class="mb-2 fw-bold"><i class="fas fa-calendar-plus me-2"></i>Yeni Randevu Oluştur</h5>
+                    <div class="step-indicator" id="stepIndicator">
+                        <div class="step-dot active" id="dot1">1</div>
+                        <span style="color: rgba(255,255,255,0.7); font-size: 12px;" id="stepLabel1">Öğrenci</span>
+                        <div class="step-line"></div>
+                        <div class="step-dot inactive" id="dot2">2</div>
+                        <span style="color: rgba(255,255,255,0.7); font-size: 12px;">Tarih</span>
+                        <div class="step-line"></div>
+                        <div class="step-dot inactive" id="dot3">3</div>
+                        <span style="color: rgba(255,255,255,0.7); font-size: 12px;">Saat</span>
+                        <div class="step-line"></div>
+                        <div class="step-dot inactive" id="dot4">4</div>
+                        <span style="color: rgba(255,255,255,0.7); font-size: 12px;">Onay</span>
+                    </div>
+                </div>
+
+                <div class="ac-body">
+                    <!-- Step 1: Student/Professional Selection -->
+                    <div class="ac-step active" id="step1">
+                        <!-- Meeting Type Toggle -->
+                        <div class="d-flex justify-content-center mb-4">
+                            <div class="d-inline-flex p-1" style="background: #f3f4f6; border-radius: 50px;">
+                                <button class="btn btn-sm px-4 py-2 type-toggle active" id="typeStudent" onclick="setMeetingType('student')" style="border-radius: 50px; font-weight: 600; font-size: 13px; border: none; transition: all 0.25s;">
+                                    <i class="fas fa-user-graduate me-1"></i>Öğrenci Görüşmesi
+                                </button>
+                                <button class="btn btn-sm px-4 py-2 type-toggle" id="typeProfessional" onclick="setMeetingType('professional')" style="border-radius: 50px; font-weight: 600; font-size: 13px; border: none; transition: all 0.25s;">
+                                    <i class="fas fa-briefcase me-1"></i>Profesyonel Görüşme
+                                </button>
+                            </div>
+                        </div>
+
+                        <h6 class="fw-bold mb-3" id="step1Title"><i class="fas fa-user-graduate me-2" style="color: #005A9E;"></i>Öğrenci Seçimi</h6>
+                        <p class="text-muted small mb-3" id="step1Desc">Kayıtlı öğrenci arayın veya bilgileri manuel girin.</p>
+
+                        <!-- Student search (only for student type) -->
+                        <div id="studentSearchSection">
+                            <div class="mb-3">
+                                <label class="ac-label">Öğrenci Ara</label>
+                                <input type="text" class="ac-input" id="studentSearch" placeholder="İsim, e-posta veya telefon ile arayın..." autocomplete="off">
+                                <div id="searchResults" style="border: 1px solid #e5e7eb; border-radius: 10px; max-height: 250px; overflow-y: auto; display: none; margin-top: 4px;"></div>
+                            </div>
+
+                            <div id="selectedStudentBox" style="display: none;" class="selected-student mb-3">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <div class="fw-bold" id="selStudentName"></div>
+                                        <div class="text-muted small" id="selStudentEmail"></div>
+                                        <div class="text-muted small" id="selStudentPhone"></div>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="clearStudent()"><i class="fas fa-times"></i></button>
+                                </div>
+                            </div>
+
+                            <hr class="my-3">
+                            <p class="text-muted small mb-3"><i class="fas fa-edit me-1"></i>veya bilgileri manuel girin:</p>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="ac-label" id="labelFullName">Ad Soyad *</label>
+                                <input type="text" class="ac-input" id="acFullName" placeholder="Ad Soyad">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="ac-label">E-posta *</label>
+                                <input type="email" class="ac-input" id="acEmail" placeholder="ornek@mail.com">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="ac-label">Telefon</label>
+                                <div class="d-flex gap-2">
+                                    <select class="ac-input" id="acCountryCode" style="max-width: 100px; padding: 10px 8px;">
+                                        <option value="+90" selected>+90</option>
+                                        <option value="+1">+1</option>
+                                        <option value="+44">+44</option>
+                                        <option value="+49">+49</option>
+                                        <option value="+43">+43</option>
+                                        <option value="+39">+39</option>
+                                        <option value="+420">+420</option>
+                                        <option value="+48">+48</option>
+                                        <option value="+36">+36</option>
+                                        <option value="+31">+31</option>
+                                        <option value="+33">+33</option>
+                                        <option value="+34">+34</option>
+                                    </select>
+                                    <input type="tel" class="ac-input" id="acPhone" placeholder="5XX XXX XX XX" style="flex: 1;">
+                                </div>
+                            </div>
+                            <!-- Student-only fields -->
+                            <div class="col-md-6 student-only-field">
+                                <label class="ac-label">Hedef Ülke</label>
+                                <select class="ac-input" id="acCountry">
+                                    <option value="">Seçiniz</option>
+                                    <option>Çekya</option>
+                                    <option>Almanya</option>
+                                    <option>İtalya</option>
+                                    <option>Avusturya</option>
+                                    <option>İngiltere</option>
+                                    <option>Polonya</option>
+                                    <option>Macaristan</option>
+                                    <option>Hollanda</option>
+                                    <option>Kanada</option>
+                                    <option>Diğer</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 student-only-field">
+                                <label class="ac-label">İlgilenilen Alan</label>
+                                <select class="ac-input" id="acField">
+                                    <option value="">Seçiniz</option>
+                                    <option>Tıp</option>
+                                    <option>Diş Hekimliği</option>
+                                    <option>Mühendislik</option>
+                                    <option>İşletme / Ekonomi</option>
+                                    <option>Hukuk</option>
+                                    <option>Mimarlık</option>
+                                    <option>Sanat / Tasarım</option>
+                                    <option>Bilgisayar Bilimleri</option>
+                                    <option>Dil Okulu</option>
+                                    <option>Diğer</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 student-only-field">
+                                <label class="ac-label">Eğitim Seviyesi</label>
+                                <select class="ac-input" id="acEducation">
+                                    <option value="">Seçiniz</option>
+                                    <option>Lise Öğrencisi</option>
+                                    <option>Lise Mezunu</option>
+                                    <option>Üniversite Öğrencisi</option>
+                                    <option>Üniversite Mezunu</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="ac-label" id="labelNotes">Not</label>
+                                <textarea class="ac-input" id="acNotes" rows="2" placeholder="Eklemek istediğiniz not..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="text-end mt-4">
+                            <button class="btn text-white fw-semibold px-4" style="background: #005A9E; border-radius: 10px;" onclick="goToStep(2)">
+                                Tarih Seçimi <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Date Selection -->
+                    <div class="ac-step" id="step2">
+                        <h6 class="fw-bold mb-3"><i class="fas fa-calendar-alt me-2" style="color: #005A9E;"></i>Tarih Seçimi</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <button class="btn btn-sm btn-outline-secondary" onclick="changeMonth(-1)"><i class="fas fa-chevron-left"></i></button>
+                            <h6 class="mb-0 fw-bold" id="calMonthYear"></h6>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="changeMonth(1)"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                        <div class="cal-grid mb-2">
+                            <div class="cal-header">Pzt</div><div class="cal-header">Sal</div><div class="cal-header">Çar</div>
+                            <div class="cal-header">Per</div><div class="cal-header">Cum</div><div class="cal-header">Cmt</div><div class="cal-header">Paz</div>
+                        </div>
+                        <div class="cal-grid" id="calDays"></div>
+                        <p class="text-muted text-center small mt-3"><i class="fas fa-clock me-1"></i>Saatler Türkiye saatine (TSİ) göredir</p>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <button class="btn btn-outline-secondary px-4" style="border-radius: 10px;" onclick="goToStep(1)">
+                                <i class="fas fa-arrow-left me-2"></i>Geri
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Time Selection -->
+                    <div class="ac-step" id="step3">
+                        <h6 class="fw-bold mb-3"><i class="fas fa-clock me-2" style="color: #005A9E;"></i>Saat Seçimi</h6>
+                        <p class="text-muted small mb-3">Seçili tarih: <strong id="selectedDateLabel"></strong></p>
+                        <div id="slotsContainer" class="d-flex flex-wrap gap-2"></div>
+                        <div id="slotsLoading" class="text-center py-4" style="display: none;">
+                            <div class="spinner-border text-primary" role="status"></div>
+                            <p class="text-muted mt-2 small">Müsait saatler yükleniyor...</p>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <button class="btn btn-outline-secondary px-4" style="border-radius: 10px;" onclick="goToStep(2)">
+                                <i class="fas fa-arrow-left me-2"></i>Geri
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Confirmation -->
+                    <div class="ac-step" id="step4">
+                        <h6 class="fw-bold mb-3"><i class="fas fa-check-circle me-2" style="color: #10b981;"></i>Görüşme Özeti</h6>
+                        <div style="background: #f0f7ff; border-radius: 12px; padding: 24px; border-left: 4px solid #005A9E;">
+                            <table style="width: 100%; font-size: 14px;">
+                                <tr><td style="padding: 6px 0; color: #6b7280; width: 130px;" id="sumNameLabel">Öğrenci</td><td style="padding: 6px 0; font-weight: 600;" id="sumName"></td></tr>
+                                <tr><td style="padding: 6px 0; color: #6b7280;">E-posta</td><td style="padding: 6px 0;" id="sumEmail"></td></tr>
+                                <tr><td style="padding: 6px 0; color: #6b7280;">Telefon</td><td style="padding: 6px 0;" id="sumPhone"></td></tr>
+                                <tr><td style="padding: 6px 0; color: #6b7280;">Tarih</td><td style="padding: 6px 0; font-weight: 600;" id="sumDate"></td></tr>
+                                <tr><td style="padding: 6px 0; color: #6b7280;">Saat</td><td style="padding: 6px 0; font-weight: 600;" id="sumTime"></td></tr>
+                                <tr class="student-only-summary"><td style="padding: 6px 0; color: #6b7280;">Hedef Ülke</td><td style="padding: 6px 0;" id="sumCountry"></td></tr>
+                                <tr class="student-only-summary"><td style="padding: 6px 0; color: #6b7280;">Alan</td><td style="padding: 6px 0;" id="sumField"></td></tr>
+                                <tr class="pro-only-summary" style="display: none;"><td style="padding: 6px 0; color: #6b7280;">Tür</td><td style="padding: 6px 0;"><span class="badge" style="background: #7c3aed; font-size: 11px;">Profesyonel Görüşme</span></td></tr>
+                            </table>
+                        </div>
+                        <p class="text-muted small mt-3" id="sumInfoNote"><i class="fas fa-info-circle me-1"></i>iCloud takvimine ve Zoom'a otomatik eklenecektir. Öğrenciye onay maili gönderilecektir.</p>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <button class="btn btn-outline-secondary px-4" style="border-radius: 10px;" onclick="goToStep(3)">
+                                <i class="fas fa-arrow-left me-2"></i>Geri
+                            </button>
+                            <button class="btn text-white fw-semibold px-4" id="createBtn" style="background: #005A9E; border-radius: 10px;" onclick="createAppointment()">
+                                <i class="fas fa-check me-2"></i>Randevu Oluştur
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Success -->
+                    <div class="ac-step" id="stepSuccess">
+                        <div class="text-center py-5">
+                            <div style="width: 80px; height: 80px; border-radius: 50%; background: #d1fae5; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-check" style="font-size: 36px; color: #10b981;"></i>
+                            </div>
+                            <h5 class="fw-bold mb-2" id="successTitle">Randevu Oluşturuldu</h5>
+                            <p class="text-muted" id="successDesc">iCloud takvime ve Zoom'a eklendi. Öğrenciye onay maili gönderildi.</p>
+                            <a href="/admin/appointments" class="btn text-white fw-semibold px-4 mt-2" style="background: #005A9E; border-radius: 10px;">
+                                <i class="fas fa-list me-2"></i>Randevulara Dön
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+let selectedStudentId = null;
+let selectedDate = null;
+let selectedSlot = null;
+let currentMonth = new Date().getMonth();
+let currentYear = new Date().getFullYear();
+let availableDatesCache = {};
+let meetingType = 'student';
+
+function setMeetingType(type) {
+    meetingType = type;
+    document.getElementById('typeStudent').classList.toggle('active', type === 'student');
+    document.getElementById('typeProfessional').classList.toggle('active', type === 'professional');
+
+    const isStudent = type === 'student';
+    document.getElementById('studentSearchSection').style.display = isStudent ? '' : 'none';
+    document.querySelectorAll('.student-only-field').forEach(el => el.style.display = isStudent ? '' : 'none');
+
+    document.getElementById('step1Title').innerHTML = isStudent
+        ? '<i class="fas fa-user-graduate me-2" style="color: #005A9E;"></i>Öğrenci Seçimi'
+        : '<i class="fas fa-briefcase me-2" style="color: #005A9E;"></i>Katılımcı Bilgileri';
+    document.getElementById('step1Desc').textContent = isStudent
+        ? 'Kayıtlı öğrenci arayın veya bilgileri manuel girin.'
+        : 'Görüşme yapılacak kişi veya kurumun bilgilerini girin.';
+    document.getElementById('stepLabel1').textContent = isStudent ? 'Öğrenci' : 'Katılımcı';
+    document.getElementById('labelFullName').textContent = isStudent ? 'Ad Soyad *' : 'Ad Soyad / Kurum Adı *';
+    document.getElementById('labelNotes').textContent = isStudent ? 'Not' : 'Görüşme Notu';
+    document.getElementById('acNotes').placeholder = isStudent ? 'Eklemek istediğiniz not...' : 'Görüşme konusu, detaylar...';
+
+    if (!isStudent) clearStudent();
+}
+
+const monthNames = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+
+// Student search
+let searchTimeout;
+document.getElementById('studentSearch').addEventListener('input', function() {
+    clearTimeout(searchTimeout);
+    const q = this.value.trim();
+    if (q.length < 2) { document.getElementById('searchResults').style.display = 'none'; return; }
+    searchTimeout = setTimeout(() => {
+        fetch('/admin/api/students-search?q=' + encodeURIComponent(q))
+            .then(r => r.json())
+            .then(data => {
+                const box = document.getElementById('searchResults');
+                if (!data.students || data.students.length === 0) {
+                    box.innerHTML = '<div class="p-3 text-muted small">Sonuç bulunamadı</div>';
+                } else {
+                    box.innerHTML = data.students.map(s => `
+                        <div class="student-result" onclick="selectStudent(${JSON.stringify(s).replace(/"/g, '&quot;')})">
+                            <div>
+                                <div class="student-name">${s.first_name} ${s.last_name || ''}</div>
+                                <div class="student-email">${s.email}</div>
+                            </div>
+                            <div class="student-email">${s.phone || ''}</div>
+                        </div>
+                    `).join('');
+                }
+                box.style.display = 'block';
+            });
+    }, 300);
+});
+
+function selectStudent(s) {
+    selectedStudentId = s.id;
+    document.getElementById('acFullName').value = (s.first_name + ' ' + (s.last_name || '')).trim();
+    document.getElementById('acEmail').value = s.email || '';
+    if (s.phone) {
+        const digits = s.phone.replace(/\D/g, '');
+        const codeSelect = document.getElementById('acCountryCode');
+        const codes = ['90','1','44','49','43','39','420','48','36','31','33','34'];
+        let matched = false;
+        for (const c of codes) {
+            if (digits.startsWith(c)) {
+                codeSelect.value = '+' + c;
+                document.getElementById('acPhone').value = digits.substring(c.length);
+                matched = true;
+                break;
+            }
+        }
+        if (!matched) document.getElementById('acPhone').value = s.phone;
+    } else {
+        document.getElementById('acPhone').value = '';
+    }
+    if (s.desired_country) document.getElementById('acCountry').value = s.desired_country;
+
+    document.getElementById('selStudentName').textContent = (s.first_name + ' ' + (s.last_name || '')).trim();
+    document.getElementById('selStudentEmail').textContent = s.email;
+    document.getElementById('selStudentPhone').textContent = s.phone || '';
+    document.getElementById('selectedStudentBox').style.display = 'block';
+    document.getElementById('searchResults').style.display = 'none';
+    document.getElementById('studentSearch').value = '';
+}
+
+function clearStudent() {
+    selectedStudentId = null;
+    document.getElementById('selectedStudentBox').style.display = 'none';
+    document.getElementById('acFullName').value = '';
+    document.getElementById('acEmail').value = '';
+    document.getElementById('acPhone').value = '';
+}
+
+// Step navigation
+function goToStep(n) {
+    if (n === 2) {
+        const name = document.getElementById('acFullName').value.trim();
+        const email = document.getElementById('acEmail').value.trim();
+        if (!name || !email) { alert('Ad Soyad ve E-posta zorunludur.'); return; }
+        loadCalendar();
+    }
+    if (n === 4) fillSummary();
+
+    document.querySelectorAll('.ac-step').forEach(s => s.classList.remove('active'));
+    document.getElementById('step' + n).classList.add('active');
+
+    for (let i = 1; i <= 4; i++) {
+        const dot = document.getElementById('dot' + i);
+        dot.className = 'step-dot ' + (i < n ? 'done' : i === n ? 'active' : 'inactive');
+        if (i < n) dot.innerHTML = '<i class="fas fa-check" style="font-size:12px;"></i>';
+        else dot.textContent = i;
+    }
+}
+
+// Calendar
+function loadCalendar() {
+    const key = currentYear + '-' + (currentMonth + 1);
+    document.getElementById('calMonthYear').textContent = monthNames[currentMonth] + ' ' + currentYear;
+
+    const start = new Date(currentYear, currentMonth, 1);
+    const end = new Date(currentYear, currentMonth + 1, 0);
+    const startStr = start.toISOString().split('T')[0];
+    const endStr = end.toISOString().split('T')[0];
+
+    if (availableDatesCache[key]) {
+        renderCalendar(availableDatesCache[key]);
+        return;
+    }
+
+    fetch('/api/appointments/available-dates?start=' + startStr + '&end=' + endStr)
+        .then(r => r.json())
+        .then(data => {
+            availableDatesCache[key] = data.dates || [];
+            renderCalendar(data.dates || []);
+        });
+}
+
+function renderCalendar(availableDates) {
+    const grid = document.getElementById('calDays');
+    grid.innerHTML = '';
+    const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    const startPad = (firstDay + 6) % 7;
+    const today = new Date().toISOString().split('T')[0];
+
+    for (let i = 0; i < startPad; i++) grid.innerHTML += '<div class="cal-day cal-empty"></div>';
+
+    for (let d = 1; d <= daysInMonth; d++) {
+        const dateStr = currentYear + '-' + String(currentMonth + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+        const av = availableDates.find(a => a.date === dateStr);
+        const isAvailable = av && av.slotsAvailable > 0;
+        const isToday = dateStr === today;
+        const isSelected = dateStr === selectedDate;
+        let cls = 'cal-day';
+        if (isAvailable) cls += ' cal-available';
+        else cls += ' cal-disabled';
+        if (isToday) cls += ' cal-today';
+        if (isSelected) cls += ' cal-selected';
+
+        grid.innerHTML += `<div class="${cls}" ${isAvailable ? 'onclick="pickDate(\'' + dateStr + '\')"' : ''}>${d}</div>`;
+    }
+}
+
+function changeMonth(dir) {
+    currentMonth += dir;
+    if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+    if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+    loadCalendar();
+}
+
+function pickDate(dateStr) {
+    selectedDate = dateStr;
+    selectedSlot = null;
+    loadCalendar();
+    loadSlots(dateStr);
+    goToStep(3);
+}
+
+function loadSlots(dateStr) {
+    const container = document.getElementById('slotsContainer');
+    const loading = document.getElementById('slotsLoading');
+    container.innerHTML = '';
+    loading.style.display = 'block';
+
+    const d = new Date(dateStr + 'T12:00:00');
+    document.getElementById('selectedDateLabel').textContent = d.toLocaleDateString('tr-TR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+    fetch('/api/appointments/available-slots/' + dateStr)
+        .then(r => r.json())
+        .then(data => {
+            loading.style.display = 'none';
+            if (!data.slots || data.slots.length === 0) {
+                container.innerHTML = '<p class="text-muted">Bu tarihte müsait saat bulunmuyor.</p>';
+                return;
+            }
+            data.slots.forEach(slot => {
+                const btn = document.createElement('button');
+                btn.className = 'slot-btn';
+                btn.textContent = slot.turkeyTime + ' TSİ';
+                btn.onclick = function() {
+                    document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedSlot = slot.czechTime + '|' + slot.turkeyTime + '|' + slot.startUTC + '|' + slot.endUTC;
+                    goToStep(4);
+                };
+                container.appendChild(btn);
+            });
+        });
+}
+
+function fillSummary() {
+    const isStudent = meetingType === 'student';
+    document.getElementById('sumNameLabel').textContent = isStudent ? 'Öğrenci' : 'Katılımcı';
+    document.getElementById('sumName').textContent = document.getElementById('acFullName').value;
+    document.getElementById('sumEmail').textContent = document.getElementById('acEmail').value;
+    document.getElementById('sumPhone').textContent = document.getElementById('acPhone').value || '-';
+    document.getElementById('sumCountry').textContent = document.getElementById('acCountry').value || '-';
+    document.getElementById('sumField').textContent = document.getElementById('acField').value || '-';
+
+    document.querySelectorAll('.student-only-summary').forEach(el => el.style.display = isStudent ? '' : 'none');
+    document.querySelectorAll('.pro-only-summary').forEach(el => el.style.display = isStudent ? 'none' : '');
+
+    document.getElementById('sumInfoNote').innerHTML = isStudent
+        ? '<i class="fas fa-info-circle me-1"></i>iCloud takvimine ve Zoom\'a otomatik eklenecektir. Öğrenciye onay maili gönderilecektir.'
+        : '<i class="fas fa-info-circle me-1"></i>iCloud takvimine ve Zoom\'a otomatik eklenecektir. Katılımcıya bilgilendirme maili gönderilecektir.';
+
+    if (selectedDate) {
+        const d = new Date(selectedDate + 'T12:00:00');
+        document.getElementById('sumDate').textContent = d.toLocaleDateString('tr-TR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    }
+    if (selectedSlot) {
+        document.getElementById('sumTime').textContent = selectedSlot.split('|')[1] + ' (Türkiye Saati)';
+    }
+}
+
+function createAppointment() {
+    const btn = document.getElementById('createBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Oluşturuluyor...';
+
+    fetch('/admin/appointments/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            meetingType: meetingType,
+            studentId: selectedStudentId,
+            fullName: document.getElementById('acFullName').value.trim(),
+            phone: document.getElementById('acPhone').value.trim() ? (document.getElementById('acCountryCode').value + document.getElementById('acPhone').value.trim().replace(/\D/g, '')) : '',
+            email: document.getElementById('acEmail').value.trim(),
+            targetCountry: meetingType === 'student' ? document.getElementById('acCountry').value : '',
+            fieldOfInterest: meetingType === 'student' ? document.getElementById('acField').value : '',
+            educationLevel: meetingType === 'student' ? document.getElementById('acEducation').value : '',
+            notes: document.getElementById('acNotes').value.trim(),
+            date: selectedDate,
+            timeSlot: selectedSlot
+        })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            document.querySelectorAll('.ac-step').forEach(s => s.classList.remove('active'));
+            document.getElementById('stepSuccess').classList.add('active');
+            for (let i = 1; i <= 4; i++) {
+                const dot = document.getElementById('dot' + i);
+                dot.className = 'step-dot done';
+                dot.innerHTML = '<i class="fas fa-check" style="font-size:12px;"></i>';
+            }
+            const isStudent = meetingType === 'student';
+            document.getElementById('successTitle').textContent = isStudent ? 'Randevu Oluşturuldu' : 'Görüşme Oluşturuldu';
+            document.getElementById('successDesc').textContent = isStudent
+                ? 'iCloud takvime ve Zoom\'a eklendi. Öğrenciye onay maili gönderildi.'
+                : 'iCloud takvime ve Zoom\'a eklendi. Katılımcıya bilgilendirme maili gönderildi.';
+        } else {
+            alert(data.message || 'Hata oluştu.');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-check me-2"></i>Randevu Oluştur';
+        }
+    })
+    .catch(() => {
+        alert('Bağlantı hatası.');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check me-2"></i>Randevu Oluştur';
+    });
+}
+</script>

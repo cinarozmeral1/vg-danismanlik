@@ -1,50 +1,6 @@
 <!-- Admin AI Recommendations Content -->
 <div class="admin-container">
-    <!-- Sidebar -->
-    <div class="admin-sidebar">
-        <div class="sidebar-header">
-            <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Yönetim Paneli</h6>
-        </div>
-        <nav class="sidebar-nav">
-            <a href="/admin/dashboard" class="nav-item">
-                <i class="fas fa-tachometer-alt"></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="/admin/users" class="nav-item">
-                <i class="fas fa-users"></i>
-                <span>Öğrenciler</span>
-                <% if (typeof userCount !== 'undefined' && userCount > 0) { %>
-                    <span class="badge bg-primary ms-auto"><%= userCount %></span>
-                <% } %>
-            </a>
-            <a href="/admin/applications" class="nav-item">
-                <i class="fas fa-file-alt"></i>
-                <span>Başvurular</span>
-                <% if (typeof applicationCount !== 'undefined' && applicationCount > 0) { %>
-                    <span class="badge bg-success ms-auto"><%= applicationCount %></span>
-                <% } %>
-            </a>
-            <a href="/admin/partners" class="nav-item">
-                <i class="fas fa-handshake"></i>
-                <span>Partnerler</span>
-                <% if (typeof partnerCount !== 'undefined' && partnerCount > 0) { %>
-                    <span class="badge bg-info ms-auto"><%= partnerCount %></span>
-                <% } %>
-            </a>
-            <a href="/admin/universities" class="nav-item">
-                <i class="fas fa-university"></i>
-                <span>Üniversiteler</span>
-            </a>
-            <a href="/admin/backups" class="nav-item">
-                <i class="fas fa-database"></i>
-                <span>Yedekleme</span>
-            </a>
-            <a href="/admin/admins" class="nav-item">
-                <i class="fas fa-user-shield"></i>
-                <span>Adminler</span>
-            </a>
-        </nav>
-    </div>
+    <%- include('partials/sidebar') %>
 
     <!-- Main Content Area -->
     <div class="admin-main">
@@ -126,9 +82,30 @@
     </div>
 </div>
 
+<style>
+    #detailModal {
+        z-index: 1080 !important;
+    }
+    #detailModal .modal-dialog {
+        max-height: 90vh;
+        margin: 2rem auto;
+    }
+    #detailModal .modal-body {
+        max-height: 65vh;
+        overflow-y: auto;
+    }
+    #detailModal .modal-content {
+        background: #fff !important;
+        opacity: 1 !important;
+    }
+    .modal-backdrop.show {
+        z-index: 1075 !important;
+    }
+</style>
+
 <!-- Detail Modal -->
 <div class="modal fade" id="detailModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header" style="background: linear-gradient(135deg, #6f42c1, #0056b3); color: white;">
                 <h5 class="modal-title"><i class="fas fa-magic me-2"></i>Öneri Detayı</h5>
@@ -156,6 +133,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     document.getElementById('searchInput').addEventListener('input', filterTable);
     document.getElementById('deleteBtn').addEventListener('click', deleteRecommendation);
+
+    const modal = document.getElementById('detailModal');
+    if (modal) document.body.appendChild(modal);
 });
 
 async function loadRecommendations() {
@@ -308,7 +288,7 @@ function showDetail(id) {
     `;
     
     document.getElementById('detailContent').innerHTML = content;
-    new bootstrap.Modal(document.getElementById('detailModal')).show();
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('detailModal')).show();
 }
 
 function confirmDelete(id) {
@@ -322,7 +302,7 @@ async function deleteRecommendation() {
     if (!currentRecommendationId) return;
     
     try {
-        const response = await fetch(`/admin/api/ai-recommendations/${currentRecommendationId}`, {
+        const response = await fetch(`/admin/ai-recommendations/${currentRecommendationId}`, {
             method: 'DELETE',
             credentials: 'include'
         });

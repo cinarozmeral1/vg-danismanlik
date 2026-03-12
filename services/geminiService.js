@@ -10,11 +10,11 @@ const pool = new Pool({
 
 // API Endpoints
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent';
 
 // Retry configuration
-const MAX_RETRIES = 2;
-const RETRY_DELAY = 1000; // 1 second
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 1500; // 1.5 seconds
 
 /**
  * Analyze student profile and generate university recommendation
@@ -266,20 +266,22 @@ function buildAnalysisPrompt(studentData, universities, prepSchools) {
         if (uni.world_ranking) universitiesSection += `Dünya Sıralaması: ${uni.world_ranking}\n`;
         universitiesSection += `${educationLevel} Programları:\n`;
         
-        programs.slice(0, 15).forEach(prog => {
+        programs.slice(0, 8).forEach(prog => {
             const price = prog.price ? `${prog.price} EUR` : 'Fiyat değişken';
             universitiesSection += `- ${prog.name_tr} (${price})\n`;
         });
         
-        if (programs.length > 15) {
-            universitiesSection += `... ve ${programs.length - 15} program daha\n`;
+        if (programs.length > 8) {
+            universitiesSection += `... ve ${programs.length - 8} program daha\n`;
         }
         
         universitiesSection += '\n';
         uniCount++;
         
-        if (uniCount >= 20) break; // Limit to 20 universities to keep prompt manageable
+        if (uniCount >= 50) break; // Limit to 50 universities to keep prompt within API limits
     }
+    
+    console.log(`📊 Prompt includes ${uniCount} universities`);
 
     // Prep schools section
     let prepSchoolsSection = `\n## HAZIRLIK OKULLARI\n\n`;
@@ -448,15 +450,20 @@ async function callGroqAPI(prompt) {
         throw new Error('GROQ_API_KEY is not configured');
     }
 
-    console.log('🤖 Calling Groq API (Llama 3.3 70B)...');
+    const promptLength = prompt.length;
+    console.log(`🤖 Calling Groq API (Llama 3.3 70B)... Prompt length: ${promptLength} chars`);
 
     try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000);
+        
         const response = await fetch(GROQ_API_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${apiKey}`
             },
+            signal: controller.signal,
             body: JSON.stringify({
                 model: 'llama-3.3-70b-versatile',
                 messages: [
@@ -474,6 +481,8 @@ async function callGroqAPI(prompt) {
                 top_p: 0.95
             })
         });
+        
+        clearTimeout(timeoutId);
 
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
@@ -508,14 +517,18 @@ async function callGeminiAPI(prompt) {
         throw new Error('GEMINI_API_KEY is not configured');
     }
 
-    console.log('🤖 Calling Gemini API (fallback)...');
+    console.log('🤖 Calling Gemini API (gemini-2.0-flash-lite fallback)...');
 
     try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
+    
     const response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
+        signal: controller.signal,
         body: JSON.stringify({
             contents: [{
                 parts: [{
@@ -530,6 +543,8 @@ async function callGeminiAPI(prompt) {
             }
         })
     });
+    
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
             const errorText = await response.text();
@@ -1345,14 +1360,18 @@ async function getAllRecommendations(limit = 50) {
  */
 async function getRecommendationStats() {
     try {
-        const totalResult = await pool.query('SELECT COUNT(*) FROM ai_recommendations');
+        const totalResult = await pool.query(
+            'SELECT COUNT(*) FROM ai_recommendations r JOIN users u ON r.user_id = u.id'
+        );
         const thisMonthResult = await pool.query(`
-            SELECT COUNT(*) FROM ai_recommendations 
-            WHERE created_at >= date_trunc('month', CURRENT_DATE)
+            SELECT COUNT(*) FROM ai_recommendations r
+            JOIN users u ON r.user_id = u.id
+            WHERE r.created_at >= date_trunc('month', CURRENT_DATE)
         `);
-        // Hazırlık gereken UNIQUE öğrenci sayısı (aynı öğrenciye birden fazla öneri yapılsa bile 1 sayılır)
         const prepNeededResult = await pool.query(`
-            SELECT COUNT(DISTINCT user_id) FROM ai_recommendations WHERE prep_school_needed = true
+            SELECT COUNT(DISTINCT r.user_id) FROM ai_recommendations r
+            JOIN users u ON r.user_id = u.id
+            WHERE r.prep_school_needed = true
         `);
         
         return {

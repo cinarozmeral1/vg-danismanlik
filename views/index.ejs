@@ -3,7 +3,20 @@
 
 <!-- Hero Section -->
 <section class="hero-section text-white main-hero">
-    <!-- Background Images -->
+    <!-- Video Background -->
+    <div class="hero-background">
+        <video id="heroVideo" class="hero-bg-video"
+               autoplay muted playsinline loop
+               webkit-playsinline
+               disableRemotePlayback
+               disablePictureInPicture
+               preload="auto"
+               poster="/images/backgrounds/hero-video-poster.jpg">
+            <source src="https://vgdanismanlik.b-cdn.net/hero-video.mp4?v=2" type="video/mp4">
+        </video>
+    </div>
+
+    <!-- ROLLBACK: Original image slider (uncomment to restore, remove video above)
     <div class="hero-background">
         <img src="/images/backgrounds/campus-location-hero.jpg" class="hero-bg-img active" alt="VG Danışmanlık - Yurt Dışı Üniversite Kampüsü">
         <img src="/images/backgrounds/campus-glasgow.jpg" class="hero-bg-img" alt="Glasgow Üniversitesi - Venture Global">
@@ -15,26 +28,76 @@
         <img src="/images/backgrounds/photo-1606761568499-6d2451b23c66.jpg" class="hero-bg-img" alt="Avrupa Eğitim Danışmanlığı - VG Danışmanlık">
         <img src="/images/backgrounds/photo-1607013407627-6ee814329547.jpg" class="hero-bg-img" alt="Yurt Dışı Danışmanlık - Venture Global">
     </div>
-    
-    <!-- Hero Text - Responsive -->
-    <div class="hero-text-container">
+    -->
+
+    <!-- Hero Text + Play Button -->
+    <div class="hero-text-container" id="heroTextContainer">
         <h1 class="hero-main-title">
             <%= t.home.hero.title %><br>
             <span><%- t.home.hero.subtitle %></span>
         </h1>
+        <button id="heroPlayBtn" class="hero-play-btn" title="<%= currentLanguage === 'en' ? 'Watch video' : 'Videoyu İzle' %>">
+            <i class="fas fa-play" id="heroPlayIcon"></i>
+        </button>
     </div>
 </section>
 
 <style>
-/* MASAÜSTÜ - Sol tarafta, dikey ortada */
+/* === HERO VIDEO BACKGROUND === */
+.hero-bg-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.75);
+    z-index: 2;
+    transition: filter 0.8s ease;
+}
+
+.hero-bg-video::-webkit-media-controls {
+    display: none !important;
+}
+.hero-bg-video::-webkit-media-controls-start-playback-button {
+    display: none !important;
+    -webkit-appearance: none;
+}
+.hero-bg-video::-webkit-media-controls-play-button {
+    display: none !important;
+    -webkit-appearance: none;
+}
+.hero-bg-video::-webkit-media-controls-overlay-play-button {
+    display: none !important;
+    -webkit-appearance: none;
+}
+
+.hero-bg-video.bright {
+    filter: brightness(0.95);
+}
+
+/* === HERO TEXT === */
 .hero-text-container {
     position: absolute;
-    top: 50%;
+    bottom: 3%;
     left: 120px;
-    transform: translateY(-50%);
     z-index: 10;
     text-align: left;
     max-width: 700px;
+    transition: opacity 0.8s ease;
+}
+
+.hero-text-container.faded {
+    opacity: 0.08;
+}
+
+.hero-text-container.faded .hero-main-title {
+    pointer-events: none;
+}
+
+.hero-text-container.faded .hero-play-btn {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 .hero-main-title {
@@ -50,36 +113,87 @@
     color: #ffffff;
 }
 
-/* MOBİL - Sol üst */
+/* === PLAY BUTTON === */
+.hero-play-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.8);
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(4px);
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+    animation: heroPulse 2.5s ease-in-out infinite;
+}
+
+.hero-play-btn:hover {
+    background: rgba(255,255,255,0.3);
+    border-color: #fff;
+    transform: scale(1.1);
+}
+
+.hero-play-btn.active {
+    animation: none;
+    background: rgba(255,255,255,0.25);
+}
+
+.hero-play-btn i {
+    padding-left: 3px;
+}
+
+@keyframes heroPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.4); }
+    50% { box-shadow: 0 0 0 12px rgba(255,255,255,0); }
+}
+
+/* === MOBILE === */
 @media (max-width: 991px) {
+    .main-hero {
+        min-height: 60vh;
+    }
     .hero-text-container {
         position: absolute;
-        top: 120px;
-        bottom: auto;
+        top: auto;
+        bottom: 2%;
         left: 20px;
-        transform: none;
         max-width: 450px;
         padding: 15px;
     }
-    
     .hero-main-title {
         font-size: 1.3rem;
         font-weight: 600;
         line-height: 1.5;
         text-shadow: 1px 1px 4px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.5);
     }
+    .hero-play-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 14px;
+        margin-top: 16px;
+    }
 }
 
 @media (max-width: 576px) {
     .hero-text-container {
-        top: 100px;
+        bottom: 1%;
         left: 15px;
         max-width: 90%;
         padding: 10px;
     }
-    
     .hero-main-title {
         font-size: 1.2rem;
+    }
+    .hero-play-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 13px;
+        margin-top: 14px;
     }
 }
 </style>
@@ -96,6 +210,31 @@
                 <span class="wizard-badge">YENİ</span>
             </a>
             <p class="text-muted mt-3 mb-0">Yapay zeka ile size en uygun üniversiteyi bulun!</p>
+            <a href="#randevu" class="wizard-cta-btn mt-3" style="background: linear-gradient(135deg, #005A9E, #003d6b);" onclick="event.preventDefault(); smoothScrollTo('randevu');">
+                <i class="fas fa-calendar-check me-2"></i>
+                <span>Randevu Al</span>
+            </a>
+            <script>
+            function smoothScrollTo(id) {
+                var el = document.getElementById(id);
+                if (!el) return;
+                var navH = document.querySelector('nav, .navbar');
+                var offset = navH ? navH.offsetHeight + 20 : 80;
+                var targetY = el.getBoundingClientRect().top + window.pageYOffset - offset;
+                var startY = window.pageYOffset;
+                var diff = targetY - startY;
+                var duration = Math.min(Math.max(Math.abs(diff) * 0.8, 800), 2000);
+                var start = null;
+                function step(ts) {
+                    if (!start) start = ts;
+                    var t = Math.min((ts - start) / duration, 1);
+                    var ease = t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2;
+                    window.scrollTo(0, startY + diff * ease);
+                    if (t < 1) requestAnimationFrame(step);
+                }
+                requestAnimationFrame(step);
+            }
+            </script>
         </div>
         <% } %>
         <style>
@@ -104,7 +243,7 @@
                 align-items: center;
                 justify-content: center;
                 gap: 8px;
-                background: linear-gradient(135deg, #0056b3 0%, #28a745 100%);
+                background: #005A9E;
                 color: white;
                 border-radius: 50px;
                 font-weight: 600;
@@ -143,13 +282,13 @@
             }
         </style>
 
-        <div class="section-title">
+        <div class="section-title reveal">
             <h2 class="text-black"><%= t.home.features.title %></h2>
             <p><%= t.home.features.subtitle %></p>
         </div>
         
         <!-- Hero Description - Venture Global® ile sayılar arasında -->
-        <div class="row justify-content-center mb-4">
+        <div class="row justify-content-center mb-4 reveal">
             <div class="col-lg-10">
                 <p class="text-center text-muted" style="font-size: 1.1rem; line-height: 1.7;"><%= t.home.hero.description %></p>
             </div>
@@ -165,7 +304,7 @@
             </div>
         <% } %>
         <!-- Stats Counter (Animated) -->
-        <div class="row mb-5">
+        <div class="row mb-5 reveal">
             <div class="col-12">
                 <div class="stats-counter-container d-flex justify-content-center gap-5 flex-wrap">
                     <div class="stat-counter text-center">
@@ -203,17 +342,17 @@
         </div>
 
         <!-- CTA Buttons -->
-        <div class="row g-4 justify-content-center">
+        <div class="row g-4 justify-content-center reveal">
             <!-- WhatsApp CTA -->
             <div class="col-lg-5 col-md-6 animate-fade-in-up animate-delay-2">
                 <a href="https://wa.me/message/O2KRAFDJAMX7F1" target="_blank" rel="noopener" class="text-decoration-none">
-                    <div class="cta-card h-100 text-center p-5" style="background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); border-radius: 20px; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(37, 211, 102, 0.3);">
+                    <div class="cta-card h-100 text-center p-5" style="background: #fff8f1; border-radius: 20px; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);">
                         <div class="mb-4">
-                            <i class="fab fa-whatsapp" style="font-size: 4rem; color: white;"></i>
+                            <i class="fab fa-whatsapp" style="font-size: 4rem; color: #1a365d;"></i>
                         </div>
-                        <h3 class="text-white fw-bold mb-3"><%= t.home.cta.whatsapp.title %></h3>
-                        <p class="text-white mb-4 lead"><%= t.home.cta.whatsapp.subtitle %></p>
-                        <div class="btn btn-light btn-lg px-5 py-3 rounded-pill fw-bold">
+                        <h3 class="fw-bold mb-3" style="color: #1a365d;"><%= t.home.cta.whatsapp.title %></h3>
+                        <p class="mb-4 lead" style="color: #1a365d;"><%= t.home.cta.whatsapp.subtitle %></p>
+                        <div class="btn btn-lg px-5 py-3 rounded-pill fw-bold" style="background: #005A9E; color: white;">
                             <i class="fab fa-whatsapp me-2"></i><%= t.home.cta.whatsapp.button %>
                         </div>
                     </div>
@@ -223,13 +362,13 @@
             <!-- Instagram DM CTA -->
             <div class="col-lg-5 col-md-6 animate-fade-in-up animate-delay-3">
                 <a href="https://ig.me/m/ventureglobal" target="_blank" rel="noopener" class="text-decoration-none">
-                    <div class="cta-card h-100 text-center p-5" style="background: linear-gradient(135deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); border-radius: 20px; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(225, 48, 108, 0.3);">
+                    <div class="cta-card h-100 text-center p-5" style="background: #fff8f1; border-radius: 20px; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);">
                         <div class="mb-4">
-                            <i class="fab fa-instagram" style="font-size: 4rem; color: white;"></i>
+                            <i class="fab fa-instagram" style="font-size: 4rem; color: #1a365d;"></i>
                         </div>
-                        <h3 class="text-white fw-bold mb-3"><%= t.home.cta.instagram.title %></h3>
-                        <p class="text-white mb-4 lead"><%= t.home.cta.instagram.subtitle %></p>
-                        <div class="btn btn-light btn-lg px-5 py-3 rounded-pill fw-bold">
+                        <h3 class="fw-bold mb-3" style="color: #1a365d;"><%= t.home.cta.instagram.title %></h3>
+                        <p class="mb-4 lead" style="color: #1a365d;"><%= t.home.cta.instagram.subtitle %></p>
+                        <div class="btn btn-lg px-5 py-3 rounded-pill fw-bold" style="background: #005A9E; color: white;">
                             <i class="fab fa-instagram me-2"></i><%= t.home.cta.instagram.button %>
                         </div>
                     </div>
@@ -251,7 +390,8 @@
         .stat-number {
             font-size: 3.5rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #005A9E;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -359,7 +499,7 @@
 <!-- Partner Universities Slider Section -->
 <section class="university-slider-section py-5" style="background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);">
     <div class="container">
-        <div class="text-center mb-5">
+        <div class="text-center mb-5 reveal">
             <h2 class="fw-bold mb-3" style="color: #1a365d;"><%= t.home.partnerUniversities?.title || 'Partner Üniversitelerimiz' %></h2>
             <p class="lead text-muted"><%= t.home.partnerUniversities?.subtitle || "Avrupa'nın en prestijli üniversiteleri ile işbirliği içindeyiz" %></p>
         </div>
@@ -403,7 +543,7 @@
         </div>
         
         <div class="text-center mt-5">
-            <a href="/universities" class="btn btn-primary btn-lg px-5 py-3 rounded-pill fw-bold" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);">
+            <a href="/universities" class="btn btn-primary btn-lg px-5 py-3 rounded-pill fw-bold" style="background: #005A9E; border: none; box-shadow: 0 10px 30px rgba(0, 90, 158, 0.3);">
                 <%= t.home.partnerUniversities?.button || 'Üniversitelerimiz' %>
                 <i class="fas fa-arrow-right ms-2"></i>
             </a>
@@ -585,7 +725,7 @@
 <!-- SEO Content Section -->
 <section class="section bg-white py-5">
     <div class="container">
-        <div class="row justify-content-center">
+        <div class="row justify-content-center reveal">
             <div class="col-lg-10">
                 <div class="text-center mb-5">
                     <h2 class="fw-bold mb-3"><%= t.home.seoContent.mainTitle %></h2>
@@ -610,16 +750,87 @@
     </div>
 </section>
 
+<!-- Danışmanlık Verdiğimiz Kurumlar Section -->
+<section class="section py-5" style="background: #ffffff;">
+    <div class="container">
+        <div class="text-center mb-5 reveal">
+            <h2 class="fw-bold mb-3" style="color: #1a365d;"><%= currentLanguage === 'tr' ? 'Danışmanlık Verdiğimiz Kurumlar' : 'Institutions We Consult' %></h2>
+            <p class="lead text-muted"><%= currentLanguage === 'tr' ? 'Türkiye\'nin önde gelen eğitim kurumları ile çalışıyoruz' : 'We work with Turkey\'s leading educational institutions' %></p>
+        </div>
+        <div class="row g-4 justify-content-center align-items-center reveal" id="clientLogosGrid">
+            <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                <div class="client-logo-card">
+                    <img src="https://res.cloudinary.com/dkhe6tjqo/image/upload/v1772473276/client-logos/cagaloglu-anadolu-lisesi.png" alt="Cağaloğlu Anadolu Lisesi" loading="lazy">
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-4 col-xl-3">
+                <div class="client-logo-card">
+                    <img src="https://res.cloudinary.com/dkhe6tjqo/image/upload/v1772473280/client-logos/yukselis-koleji.png" alt="Yükseliş Koleji" loading="lazy" style="max-height: 200px;">
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                <div class="client-logo-card">
+                    <img src="https://res.cloudinary.com/dkhe6tjqo/image/upload/v1772473279/client-logos/wcep.png" alt="WCEP" loading="lazy">
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                <div class="client-logo-card">
+                    <img src="https://res.cloudinary.com/dkhe6tjqo/image/upload/v1772473278/client-logos/uluslararasi-okullar-dernegi.png" alt="Uluslararası Okullar Derneği" loading="lazy">
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-4 col-xl-3">
+                <div class="client-logo-card">
+                    <img src="https://res.cloudinary.com/dkhe6tjqo/image/upload/v1772473277/client-logos/liseli-buyukelciler.png" alt="Liseli Büyükelçiler" loading="lazy" style="max-height: 180px;">
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                <div class="client-logo-card">
+                    <img src="https://res.cloudinary.com/dkhe6tjqo/image/upload/v1772473848/client-logos/tci_logo_transparent.png" alt="The Canadian Institute" loading="lazy">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+    .client-logo-card {
+        padding: 1rem;
+        height: 160px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .client-logo-card img {
+        max-height: 140px;
+        max-width: 100%;
+        object-fit: contain;
+        filter: grayscale(20%);
+        transition: filter 0.3s ease, transform 0.3s ease;
+    }
+    .client-logo-card:hover img {
+        filter: grayscale(0%);
+        transform: scale(1.05);
+    }
+    @media (max-width: 576px) {
+        .client-logo-card {
+            height: 120px;
+        }
+        .client-logo-card img {
+            max-height: 100px;
+        }
+    }
+    </style>
+</section>
+
 <!-- Çekya Ofisimiz Section -->
 <section class="section py-5" style="background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);">
     <div class="container">
-        <div class="text-center mb-5">
+        <div class="text-center mb-5 reveal">
             <h2 class="fw-bold text-white mb-2" style="font-size: 2.2rem;">
 <%= t.home.czechOffice?.title || 'Çekya Ofisimiz' %>
             </h2>
             <p class="lead" style="color: rgba(255,255,255,0.8);"><%= t.home.czechOffice?.subtitle || "Prag'daki ofisimizde sizleri bekliyoruz" %></p>
         </div>
-        <div class="row align-items-stretch g-4">
+        <div class="row align-items-stretch g-4 reveal">
             <!-- Sol - Harita -->
             <div class="col-lg-4">
                 <div class="rounded-4 overflow-hidden shadow-lg" style="height: 100%; min-height: 380px;">
@@ -684,79 +895,668 @@
     </div>
 </section>
 
-<!-- WCEP Canadian Diploma Advantage Section -->
-<section class="section py-5" style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);">
+<!-- Appointment Booking Section -->
+<section class="section py-5" style="background: #fff8f1; scroll-margin-top: 90px;" id="randevu">
     <div class="container">
-        <div class="row align-items-center g-4">
+        <div class="text-center mb-4 reveal">
+            <h2 class="fw-bold mb-2" style="color: #005A9E;">
+                <%= currentLanguage === 'en' ? 'Schedule a Free Interview' : 'Ücretsiz Mülakat Planla' %>
+            </h2>
+            <p class="text-muted mb-0" style="max-width: 650px; margin: 0 auto; line-height: 1.7;">
+                <%= currentLanguage === 'en'
+                    ? 'Take the first step towards your education abroad. Schedule a free 30-minute interview with our expert advisors to explore your options and build a personalized roadmap.'
+                    : 'Yurt dışı eğitim yolculuğunuzda ilk adımı atın. Uzman danışmanlarımızla 30 dakikalık ücretsiz mülakatınızı planlayarak size özel bir yol haritası oluşturun ve tüm seçeneklerinizi keşfedin.' %>
+            </p>
+            <div class="mt-3" style="max-width: 520px; margin: 0 auto;">
+                <div style="background: #e8f4fd; border: 1px solid #b6d4fe; border-radius: 10px; padding: 10px 16px; font-size: 13px; color: #084298; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-user-check" style="font-size: 15px;"></i>
+                    <span><%= currentLanguage === 'en'
+                        ? 'VG registered students can book instantly by logging in — no forms needed.'
+                        : 'VG Danışmanlık kayıtlı öğrencileri giriş yaparak form doldurmadan hızlıca randevu alabilir.' %></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card border-0 shadow-sm" style="border-radius: 16px; overflow: hidden;">
+
+                    <!-- Step Indicator -->
+                    <div style="background: #005A9E; padding: 16px 24px;" class="d-flex align-items-center justify-content-center gap-3 flex-wrap">
+                        <div class="booking-step active" data-step="1">
+                            <span class="step-num">1</span>
+                            <span class="step-label"><%= currentLanguage === 'en' ? 'Date' : 'Tarih' %></span>
+                        </div>
+                        <div class="step-divider"></div>
+                        <div class="booking-step" data-step="2">
+                            <span class="step-num">2</span>
+                            <span class="step-label"><%= currentLanguage === 'en' ? 'Time' : 'Saat' %></span>
+                        </div>
+                        <div class="step-divider"></div>
+                        <div class="booking-step" data-step="3">
+                            <span class="step-num">3</span>
+                            <span class="step-label"><%= currentLanguage === 'en' ? 'Info' : 'Bilgiler' %></span>
+                        </div>
+                        <div class="step-divider"></div>
+                        <div class="booking-step" data-step="4">
+                            <span class="step-num">4</span>
+                            <span class="step-label"><%= currentLanguage === 'en' ? 'Verify' : 'Doğrula' %></span>
+                        </div>
+                    </div>
+
+                    <div class="card-body p-4">
+
+                        <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn && !isAdmin) { %>
+                        <div class="alert alert-info mb-3 d-flex align-items-center" style="border-radius: 10px; background: #e8f4fd; border: 1px solid #b6d4fe; font-size: 14px;">
+                            <i class="fas fa-bolt text-primary me-2"></i>
+                            <span><strong><%= currentUser.first_name %></strong>, kayıtlı öğrenci olarak form doldurmadan hızlıca randevu alabilirsiniz.</span>
+                        </div>
+                        <% } %>
+
+                        <!-- Step 1: Calendar -->
+                        <div id="bookingStep1" class="booking-panel">
+                            <div id="bookingCalendar" class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <button class="btn btn-sm" style="color: #005A9E;" onclick="changeMonth(-1)" id="prevMonthBtn"><i class="fas fa-chevron-left"></i></button>
+                                    <h5 class="mb-0 fw-bold" id="calendarMonthLabel" style="color: #1a1a1a;"></h5>
+                                    <button class="btn btn-sm" style="color: #005A9E;" onclick="changeMonth(1)" id="nextMonthBtn"><i class="fas fa-chevron-right"></i></button>
+                                </div>
+                                <div class="booking-calendar-grid">
+                                    <div class="cal-header"><%= currentLanguage === 'en' ? 'Mon' : 'Pzt' %></div>
+                                    <div class="cal-header"><%= currentLanguage === 'en' ? 'Tue' : 'Sal' %></div>
+                                    <div class="cal-header"><%= currentLanguage === 'en' ? 'Wed' : 'Çar' %></div>
+                                    <div class="cal-header"><%= currentLanguage === 'en' ? 'Thu' : 'Per' %></div>
+                                    <div class="cal-header"><%= currentLanguage === 'en' ? 'Fri' : 'Cum' %></div>
+                                    <div class="cal-header"><%= currentLanguage === 'en' ? 'Sat' : 'Cmt' %></div>
+                                    <div class="cal-header"><%= currentLanguage === 'en' ? 'Sun' : 'Paz' %></div>
+                                </div>
+                                <div id="calendarDays" class="booking-calendar-grid"></div>
+                            </div>
+                            <div class="text-center mt-2">
+                                <small class="text-muted"><i class="fas fa-clock me-1"></i><%= currentLanguage === 'en' ? 'Times shown in Turkey time (TSİ)' : 'Saatler Türkiye saatine (TSİ) göredir' %></small>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Time Slots -->
+                        <div id="bookingStep2" class="booking-panel d-none">
+                            <div class="text-center mb-3">
+                                <p class="mb-1 text-muted"><%= currentLanguage === 'en' ? 'Selected Date' : 'Seçilen Tarih' %></p>
+                                <h5 class="fw-bold" id="selectedDateLabel" style="color: #005A9E;"></h5>
+                            </div>
+                            <div id="timeSlotsContainer" class="row g-2 justify-content-center"></div>
+                            <div class="text-center mt-3">
+                                <button class="btn btn-outline-secondary btn-sm" onclick="goToStep(1)"><i class="fas fa-arrow-left me-1"></i><%= currentLanguage === 'en' ? 'Back' : 'Geri' %></button>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Form -->
+                        <div id="bookingStep3" class="booking-panel d-none">
+                            <div class="text-center mb-3">
+                                <span class="badge" style="background: #005A9E; font-size: 13px; padding: 8px 16px;" id="selectedDateTimeBadge"></span>
+                            </div>
+                            <form id="bookingForm" onsubmit="return false;">
+                                <input type="text" name="website_url" style="display:none;" tabindex="-1" autocomplete="off">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold"><%= currentLanguage === 'en' ? 'Full Name' : 'Ad Soyad' %> *</label>
+                                        <input type="text" class="form-control" id="bkFullName" required placeholder="<%= currentLanguage === 'en' ? 'John Doe' : 'Adınız Soyadınız' %>">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">WhatsApp *</label>
+                                        <div class="input-group">
+                                            <select id="bkCountryCode" class="form-select" style="max-width: 110px; background: #e9ecef; font-weight: 600; color: #005A9E; border-right: none;">
+                                                <option value="+90" selected>+90</option>
+                                                <option value="+1">+1</option>
+                                                <option value="+44">+44</option>
+                                                <option value="+49">+49</option>
+                                                <option value="+43">+43</option>
+                                                <option value="+39">+39</option>
+                                                <option value="+420">+420</option>
+                                                <option value="+48">+48</option>
+                                                <option value="+36">+36</option>
+                                                <option value="+31">+31</option>
+                                                <option value="+33">+33</option>
+                                                <option value="+34">+34</option>
+                                            </select>
+                                            <input type="tel" class="form-control" id="bkPhone" required placeholder="5XX XXX XX XX" maxlength="13" style="border-left: none;">
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label fw-semibold"><%= currentLanguage === 'en' ? 'Email' : 'E-posta' %> *</label>
+                                        <input type="email" class="form-control" id="bkEmail" required placeholder="ornek@mail.com">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold"><%= currentLanguage === 'en' ? 'Target Country' : 'Hedef Ülke' %> *</label>
+                                        <select class="form-select" id="bkCountry" required>
+                                            <option value=""><%= currentLanguage === 'en' ? 'Select...' : 'Seçiniz...' %></option>
+                                            <option value="Almanya">Almanya</option>
+                                            <option value="Çekya">Çekya</option>
+                                            <option value="İtalya">İtalya</option>
+                                            <option value="İngiltere">İngiltere</option>
+                                            <option value="Macaristan">Macaristan</option>
+                                            <option value="Polonya">Polonya</option>
+                                            <option value="Avusturya">Avusturya</option>
+                                            <option value="Hollanda">Hollanda</option>
+                                            <option value="Henüz Karar Vermedim"><%= currentLanguage === 'en' ? 'Not Decided Yet' : 'Henüz Karar Vermedim' %></option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold"><%= currentLanguage === 'en' ? 'Field of Interest' : 'İlgilendiğiniz Alan' %> *</label>
+                                        <select class="form-select" id="bkField" required>
+                                            <option value=""><%= currentLanguage === 'en' ? 'Select...' : 'Seçiniz...' %></option>
+                                            <option value="Tıp"><%= currentLanguage === 'en' ? 'Medicine' : 'Tıp' %></option>
+                                            <option value="Diş Hekimliği"><%= currentLanguage === 'en' ? 'Dentistry' : 'Diş Hekimliği' %></option>
+                                            <option value="Mühendislik"><%= currentLanguage === 'en' ? 'Engineering' : 'Mühendislik' %></option>
+                                            <option value="İşletme/Ekonomi"><%= currentLanguage === 'en' ? 'Business/Economics' : 'İşletme/Ekonomi' %></option>
+                                            <option value="Hukuk"><%= currentLanguage === 'en' ? 'Law' : 'Hukuk' %></option>
+                                            <option value="Mimarlık/Tasarım"><%= currentLanguage === 'en' ? 'Architecture/Design' : 'Mimarlık/Tasarım' %></option>
+                                            <option value="Bilgisayar Bilimleri"><%= currentLanguage === 'en' ? 'Computer Science' : 'Bilgisayar Bilimleri' %></option>
+                                            <option value="Diğer"><%= currentLanguage === 'en' ? 'Other' : 'Diğer' %></option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold"><%= currentLanguage === 'en' ? 'Education Level' : 'Eğitim Seviyesi' %> *</label>
+                                        <select class="form-select" id="bkEducation" required onchange="toggleGradeField()">
+                                            <option value=""><%= currentLanguage === 'en' ? 'Select...' : 'Seçiniz...' %></option>
+                                            <option value="Lise Öğrencisi"><%= currentLanguage === 'en' ? 'High School Student' : 'Lise Öğrencisi' %></option>
+                                            <option value="Lise Mezunu"><%= currentLanguage === 'en' ? 'High School Graduate' : 'Lise Mezunu' %></option>
+                                            <option value="Üniversite Öğrencisi/Mezunu"><%= currentLanguage === 'en' ? 'University Student/Graduate' : 'Üniversite Öğrencisi/Mezunu' %></option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 d-none" id="gradeField">
+                                        <label class="form-label fw-semibold"><%= currentLanguage === 'en' ? 'Grade' : 'Sınıf' %></label>
+                                        <select class="form-select" id="bkGrade">
+                                            <option value="">-</option>
+                                            <option value="11">11</option>
+                                            <option value="12">12</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold"><%= currentLanguage === 'en' ? 'Budget Range' : 'Bütçe Aralığı' %> <small class="text-muted">(<%= currentLanguage === 'en' ? 'optional' : 'opsiyonel' %>)</small></label>
+                                        <select class="form-select" id="bkBudget">
+                                            <option value="">-</option>
+                                            <option value="0-5.000€">0 - 5.000€</option>
+                                            <option value="5.000-10.000€">5.000 - 10.000€</option>
+                                            <option value="10.000-20.000€">10.000 - 20.000€</option>
+                                            <option value="20.000€+">20.000€+</option>
+                                            <option value="Burs Arıyorum"><%= currentLanguage === 'en' ? 'Looking for Scholarship' : 'Burs Arıyorum' %></option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label fw-semibold"><%= currentLanguage === 'en' ? 'Notes' : 'Not/Mesaj' %> <small class="text-muted">(<%= currentLanguage === 'en' ? 'optional' : 'opsiyonel' %>)</small></label>
+                                        <textarea class="form-control" id="bkNotes" rows="2" placeholder="<%= currentLanguage === 'en' ? 'Anything you want to share...' : 'Eklemek istediğiniz bir şey varsa...' %>"></textarea>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-4 d-flex justify-content-center gap-2">
+                                    <button class="btn btn-outline-secondary" onclick="goToStep(2)"><i class="fas fa-arrow-left me-1"></i><%= currentLanguage === 'en' ? 'Back' : 'Geri' %></button>
+                                    <button class="btn text-white px-4" style="background: #005A9E;" onclick="submitFormAndVerify()"><%= currentLanguage === 'en' ? 'Verify Email' : 'E-postayı Doğrula' %> <i class="fas fa-arrow-right ms-1"></i></button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Step 4: Verification -->
+                        <div id="bookingStep4" class="booking-panel d-none">
+                            <div class="text-center">
+                                <div style="width: 64px; height: 64px; background: #f0f7ff; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px;">
+                                    <i class="fas fa-envelope" style="font-size: 28px; color: #005A9E;"></i>
+                                </div>
+                                <h5 class="fw-bold mb-2"><%= currentLanguage === 'en' ? 'Enter Verification Code' : 'Doğrulama Kodunu Girin' %></h5>
+                                <p class="text-muted mb-3" id="verificationEmailHint"></p>
+                                <div style="max-width: 300px; margin: 0 auto;">
+                                    <input type="text" class="form-control form-control-lg text-center" id="bkVerifyCode" maxlength="6" placeholder="______" style="letter-spacing: 8px; font-size: 24px; font-weight: 700;">
+                                </div>
+                                <div class="mt-3 d-flex justify-content-center gap-2">
+                                    <button class="btn btn-outline-secondary btn-sm" onclick="goToStep(3)"><i class="fas fa-arrow-left me-1"></i><%= currentLanguage === 'en' ? 'Back' : 'Geri' %></button>
+                                    <button class="btn text-white px-4" style="background: #005A9E;" onclick="verifyAndBook()" id="verifyBookBtn"><%= currentLanguage === 'en' ? 'Confirm Appointment' : 'Randevuyu Onayla' %></button>
+                                </div>
+                                <p class="mt-2 mb-0"><small class="text-muted" id="resendCodeLink" style="cursor:pointer; display:none;" onclick="resendCode()"><%= currentLanguage === 'en' ? 'Resend code' : 'Kodu tekrar gönder' %></small></p>
+                            </div>
+                        </div>
+
+                        <!-- Step Fast: Quick confirm for logged-in students -->
+                        <div id="bookingStepFast" class="booking-panel d-none">
+                            <div class="text-center py-3">
+                                <div style="width: 64px; height: 64px; background: #e8f4fd; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px;">
+                                    <i class="fas fa-bolt" style="font-size: 28px; color: #005A9E;"></i>
+                                </div>
+                                <h5 class="fw-bold mb-3">Randevunuzu Onaylayın</h5>
+                                <div class="card mx-auto" style="max-width: 360px; border-radius: 12px; border: 2px solid #005A9E;">
+                                    <div class="card-body p-3">
+                                        <p class="mb-2"><strong><i class="fas fa-user me-1"></i></strong> <span id="fastConfirmName"></span></p>
+                                        <p class="mb-2"><strong><i class="fas fa-envelope me-1"></i></strong> <span id="fastConfirmEmail"></span></p>
+                                        <p class="mb-0"><strong><i class="fas fa-calendar me-1"></i></strong> <span id="fastConfirmDateTime"></span></p>
+                                    </div>
+                                </div>
+                                <div class="mt-3 d-flex justify-content-center gap-2">
+                                    <button class="btn btn-outline-secondary btn-sm" onclick="goToStep(2)"><i class="fas fa-arrow-left me-1"></i>Geri</button>
+                                    <button class="btn text-white px-4" style="background: #005A9E;" onclick="fastBookConfirm()" id="fastBookBtn">
+                                        <i class="fas fa-check me-1"></i>Randevuyu Onayla
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Success -->
+                        <div id="bookingSuccess" class="booking-panel d-none">
+                            <div class="text-center py-4">
+                                <div style="width: 80px; height: 80px; background: #ecfdf5; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px;">
+                                    <i class="fas fa-check" style="font-size: 36px; color: #059669;"></i>
+                                </div>
+                                <h4 class="fw-bold mb-2" style="color: #059669;"><%= currentLanguage === 'en' ? 'Appointment Confirmed!' : 'Randevunuz Onaylandı!' %></h4>
+                                <p class="text-muted mb-3" id="successDetails"></p>
+                                <p class="mb-0"><small class="text-muted"><%= currentLanguage === 'en' ? 'You will receive a confirmation email shortly.' : 'Kısa süre içinde onay e-postanız gelecektir.' %></small></p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.booking-step{display:flex;align-items:center;gap:8px;opacity:0.5;transition:opacity .3s}
+.booking-step.active{opacity:1}
+.booking-step.done{opacity:0.8}
+.step-num{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.2);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.booking-step.active .step-num{background:#fff;color:#005A9E}
+.booking-step.done .step-num{background:#059669;color:#fff}
+.step-label{color:#fff;font-size:13px;font-weight:500}
+.step-divider{width:30px;height:2px;background:rgba(255,255,255,0.3);border-radius:1px}
+.booking-calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.cal-header{padding:8px 0;font-size:12px;font-weight:600;color:#6b7280}
+.cal-day{padding:10px 0;border-radius:10px;font-size:14px;cursor:pointer;transition:all .2s;border:none;background:transparent;width:100%;color:#1a1a1a}
+.cal-day:hover:not(.disabled):not(.empty){background:#e0efff}
+.cal-day.available{font-weight:600;color:#005A9E}
+.cal-day.selected{background:#005A9E!important;color:#fff!important;font-weight:700}
+.cal-day.disabled{color:#d1d5db;cursor:default}
+.cal-day.today{border:2px solid #005A9E}
+.cal-day.empty{cursor:default}
+.time-slot-btn{border:2px solid #e5e7eb;border-radius:12px;padding:14px 20px;background:#fff;cursor:pointer;transition:all .2s;text-align:center;width:100%}
+.time-slot-btn:hover{border-color:#005A9E;background:#f0f7ff}
+.time-slot-btn.selected{border-color:#005A9E;background:#005A9E;color:#fff}
+.time-slot-btn .slot-time{font-size:18px;font-weight:700}
+.time-slot-btn .slot-label{font-size:11px;opacity:0.7}
+.booking-panel{min-height:200px}
+@media(max-width:576px){.step-label{display:none}.step-divider{width:16px}.booking-calendar-grid{gap:2px}.cal-day{padding:8px 0;font-size:13px}}
+</style>
+
+<script>
+(function(){
+    let availableDates = [];
+    let currentMonth = new Date();
+    let selectedDate = null;
+    let selectedSlot = null;
+
+    currentMonth.setDate(1);
+
+    const months = ['<%= currentLanguage === "en" ? "January" : "Ocak" %>','<%= currentLanguage === "en" ? "February" : "Şubat" %>','<%= currentLanguage === "en" ? "March" : "Mart" %>','<%= currentLanguage === "en" ? "April" : "Nisan" %>','<%= currentLanguage === "en" ? "May" : "Mayıs" %>','<%= currentLanguage === "en" ? "June" : "Haziran" %>','<%= currentLanguage === "en" ? "July" : "Temmuz" %>','<%= currentLanguage === "en" ? "August" : "Ağustos" %>','<%= currentLanguage === "en" ? "September" : "Eylül" %>','<%= currentLanguage === "en" ? "October" : "Ekim" %>','<%= currentLanguage === "en" ? "November" : "Kasım" %>','<%= currentLanguage === "en" ? "December" : "Aralık" %>'];
+
+    fetch('/api/appointments/available-dates')
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) { availableDates = data.dates; renderCalendar(); }
+        });
+
+    window.changeMonth = function(dir) {
+        currentMonth.setMonth(currentMonth.getMonth() + dir);
+        renderCalendar();
+    };
+
+    function renderCalendar() {
+        const y = currentMonth.getFullYear();
+        const m = currentMonth.getMonth();
+        document.getElementById('calendarMonthLabel').textContent = months[m] + ' ' + y;
+
+        const firstDay = new Date(y, m, 1).getDay();
+        const offset = firstDay === 0 ? 6 : firstDay - 1;
+        const daysInMonth = new Date(y, m + 1, 0).getDate();
+        const today = new Date(); today.setHours(0,0,0,0);
+
+        const maxDate = new Date(); maxDate.setMonth(maxDate.getMonth() + 3);
+        const prevEnabled = new Date(y, m, 1) > new Date(today.getFullYear(), today.getMonth(), 1);
+        const nextEnabled = new Date(y, m + 1, 1) <= maxDate;
+        document.getElementById('prevMonthBtn').disabled = !prevEnabled;
+        document.getElementById('nextMonthBtn').disabled = !nextEnabled;
+
+        let html = '';
+        for (let i = 0; i < offset; i++) html += '<div class="cal-day empty"></div>';
+
+        for (let d = 1; d <= daysInMonth; d++) {
+            const dateStr = y + '-' + String(m+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+            const dateObj = new Date(y, m, d);
+            const isPast = dateObj <= today;
+            const av = availableDates.find(a => a.date === dateStr);
+            const isAvailable = av && av.slotsAvailable > 0;
+            const isToday = dateObj.getTime() === today.getTime();
+            const isSelected = selectedDate === dateStr;
+
+            let cls = 'cal-day';
+            if (isPast) cls += ' disabled';
+            else if (isAvailable) cls += ' available';
+            else cls += ' disabled';
+            if (isToday) cls += ' today';
+            if (isSelected) cls += ' selected';
+
+            if (isAvailable && !isPast) {
+                html += '<button class="'+cls+'" onclick="selectDate(\''+dateStr+'\')">'+d+'</button>';
+            } else {
+                html += '<div class="'+cls+'">'+d+'</div>';
+            }
+        }
+        document.getElementById('calendarDays').innerHTML = html;
+    }
+
+    window.selectDate = function(dateStr) {
+        selectedDate = dateStr;
+        renderCalendar();
+        const d = new Date(dateStr + 'T12:00:00');
+        const dayNames = ['<%= currentLanguage === "en" ? "Sunday" : "Pazar" %>','<%= currentLanguage === "en" ? "Monday" : "Pazartesi" %>','<%= currentLanguage === "en" ? "Tuesday" : "Salı" %>','<%= currentLanguage === "en" ? "Wednesday" : "Çarşamba" %>','<%= currentLanguage === "en" ? "Thursday" : "Perşembe" %>','<%= currentLanguage === "en" ? "Friday" : "Cuma" %>','<%= currentLanguage === "en" ? "Saturday" : "Cumartesi" %>'];
+        document.getElementById('selectedDateLabel').textContent = dayNames[d.getDay()] + ', ' + d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+
+        document.getElementById('timeSlotsContainer').innerHTML = '<div class="text-center py-3"><div class="spinner-border text-primary" role="status"></div></div>';
+        goToStep(2);
+
+        fetch('/api/appointments/available-slots/' + dateStr)
+            .then(r => r.json())
+            .then(data => {
+                if (!data.success || data.slots.length === 0) {
+                    document.getElementById('timeSlotsContainer').innerHTML = '<div class="col-12 text-center text-muted py-3"><%= currentLanguage === "en" ? "No available slots for this date." : "Bu tarih için müsait saat bulunmuyor." %></div>';
+                    return;
+                }
+                let html = '';
+                data.slots.forEach(s => {
+                    const val = s.czechTime + '|' + s.turkeyTime + '|' + s.startUTC + '|' + s.endUTC;
+                    html += '<div class="col-6 col-md-4 col-lg-3"><button class="time-slot-btn" onclick="selectSlot(this,\'' + val.replace(/'/g,"\\'") + '\')">' +
+                        '<div class="slot-time">' + s.turkeyTime + '</div>' +
+                        '<div class="slot-label">TSİ</div></button></div>';
+                });
+                document.getElementById('timeSlotsContainer').innerHTML = html;
+            });
+    };
+
+    const isStudentLoggedIn = <%= (typeof isLoggedIn !== 'undefined' && isLoggedIn && !isAdmin) ? 'true' : 'false' %>;
+    const studentData = isStudentLoggedIn ? {
+        name: '<%= typeof currentUser !== "undefined" && currentUser ? (currentUser.first_name || "") + " " + (currentUser.last_name || "") : "" %>',
+        email: '<%= typeof currentUser !== "undefined" && currentUser ? (currentUser.email || "") : "" %>'
+    } : null;
+
+    window.selectSlot = function(btn, val) {
+        document.querySelectorAll('.time-slot-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selectedSlot = val;
+        const parts = val.split('|');
+        const d = new Date(selectedDate + 'T12:00:00');
+        const dateTimeStr = d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear() + ' - ' + parts[1] + ' TSİ';
+        document.getElementById('selectedDateTimeBadge').textContent = dateTimeStr;
+
+        if (isStudentLoggedIn && studentData) {
+            document.getElementById('fastConfirmName').textContent = studentData.name;
+            document.getElementById('fastConfirmEmail').textContent = studentData.email;
+            document.getElementById('fastConfirmDateTime').textContent = dateTimeStr;
+            setTimeout(() => goToStepFast(), 300);
+        } else {
+            setTimeout(() => goToStep(3), 300);
+        }
+    };
+
+    function goToStepFast() {
+        document.querySelectorAll('.booking-panel').forEach(p => p.classList.add('d-none'));
+        document.getElementById('bookingStepFast').classList.remove('d-none');
+        document.querySelectorAll('.booking-step').forEach(s => {
+            const sn = parseInt(s.dataset.step);
+            s.classList.remove('active','done');
+            if (sn <= 2) s.classList.add('done');
+            else s.classList.add('done');
+        });
+    }
+
+    window.fastBookConfirm = function() {
+        const btn = document.getElementById('fastBookBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Oluşturuluyor...';
+
+        fetch('/api/appointments/create-fast', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ date: selectedDate, timeSlot: selectedSlot })
+        })
+        .then(r => r.json())
+        .then(data => {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-check me-1"></i>Randevuyu Onayla';
+            if (data.success) {
+                const d = new Date(selectedDate + 'T12:00:00');
+                document.getElementById('successDetails').textContent = d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear() + ' - ' + data.appointment.turkeyTime + ' TSİ';
+                document.querySelectorAll('.booking-panel').forEach(p => p.classList.add('d-none'));
+                document.getElementById('bookingSuccess').classList.remove('d-none');
+                document.querySelectorAll('.booking-step').forEach(s => s.classList.add('done'));
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(() => {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-check me-1"></i>Randevuyu Onayla';
+            alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+        });
+    };
+
+    window.goToStep = function(step) {
+        document.querySelectorAll('.booking-panel').forEach(p => p.classList.add('d-none'));
+        document.getElementById('bookingStep' + step).classList.remove('d-none');
+        document.querySelectorAll('.booking-step').forEach(s => {
+            const sn = parseInt(s.dataset.step);
+            s.classList.remove('active','done');
+            if (sn === step) s.classList.add('active');
+            else if (sn < step) s.classList.add('done');
+        });
+    };
+
+    window.toggleGradeField = function() {
+        const edu = document.getElementById('bkEducation').value;
+        document.getElementById('gradeField').classList.toggle('d-none', edu !== 'Lise Öğrencisi');
+    };
+
+    (function() {
+        const phoneInput = document.getElementById('bkPhone');
+        if (phoneInput) {
+            phoneInput.addEventListener('input', function() {
+                let v = this.value.replace(/\D/g, '');
+                if (v.length > 10) v = v.substring(0, 10);
+                if (v.length > 7) v = v.substring(0,3) + ' ' + v.substring(3,6) + ' ' + v.substring(6,8) + ' ' + v.substring(8);
+                else if (v.length > 6) v = v.substring(0,3) + ' ' + v.substring(3,6) + ' ' + v.substring(6);
+                else if (v.length > 3) v = v.substring(0,3) + ' ' + v.substring(3);
+                this.value = v;
+            });
+        }
+    })();
+
+    window.submitFormAndVerify = function() {
+        const form = document.getElementById('bookingForm');
+        const fullName = document.getElementById('bkFullName').value.trim();
+        const rawPhone = document.getElementById('bkPhone').value.trim().replace(/\D/g, '');
+        const phone = document.getElementById('bkCountryCode').value + rawPhone;
+        const email = document.getElementById('bkEmail').value.trim();
+        const country = document.getElementById('bkCountry').value;
+        const field = document.getElementById('bkField').value;
+        const education = document.getElementById('bkEducation').value;
+
+        if (!fullName || !rawPhone || !email || !country || !field || !education) {
+            alert('<%= currentLanguage === "en" ? "Please fill in all required fields." : "Lütfen tüm zorunlu alanları doldurun." %>');
+            return;
+        }
+        const selectedCode = document.getElementById('bkCountryCode').value;
+        if (selectedCode === '+90' && (rawPhone.length !== 10 || rawPhone[0] !== '5')) {
+            alert('<%= currentLanguage === "en" ? "Please enter a valid phone number starting with 5." : "Lütfen 5 ile başlayan 10 haneli geçerli bir telefon numarası girin." %>');
+            return;
+        }
+        if (selectedCode !== '+90' && rawPhone.length < 7) {
+            alert('<%= currentLanguage === "en" ? "Please enter a valid phone number." : "Lütfen geçerli bir telefon numarası girin." %>');
+            return;
+        }
+
+        const btn = event.target;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>';
+
+        fetch('/api/appointments/send-verification', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, fullName })
+        })
+        .then(r => r.json())
+        .then(data => {
+            btn.disabled = false;
+            btn.innerHTML = '<%= currentLanguage === "en" ? "Verify Email" : "E-postayı Doğrula" %> <i class="fas fa-arrow-right ms-1"></i>';
+            if (data.success) {
+                document.getElementById('verificationEmailHint').textContent = email + '<%= currentLanguage === "en" ? " - check your inbox" : " adresine kod gönderildi" %>';
+                goToStep(4);
+                setTimeout(() => { document.getElementById('resendCodeLink').style.display = 'inline'; }, 60000);
+            } else {
+                alert(data.message);
+            }
+        });
+    };
+
+    window.resendCode = function() {
+        const email = document.getElementById('bkEmail').value.trim();
+        const fullName = document.getElementById('bkFullName').value.trim();
+        document.getElementById('resendCodeLink').style.display = 'none';
+        fetch('/api/appointments/send-verification', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, fullName })
+        }).then(() => {
+            setTimeout(() => { document.getElementById('resendCodeLink').style.display = 'inline'; }, 60000);
+        });
+    };
+
+    window.verifyAndBook = function() {
+        const code = document.getElementById('bkVerifyCode').value.trim();
+        const email = document.getElementById('bkEmail').value.trim();
+        if (!code || code.length !== 6) {
+            alert('<%= currentLanguage === "en" ? "Please enter the 6-digit code." : "Lütfen 6 haneli doğrulama kodunu girin." %>');
+            return;
+        }
+        const btn = document.getElementById('verifyBookBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>';
+
+        fetch('/api/appointments/verify-code', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, code })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (!data.success) {
+                btn.disabled = false;
+                btn.innerHTML = '<%= currentLanguage === "en" ? "Confirm Appointment" : "Randevuyu Onayla" %>';
+                alert(data.message);
+                return;
+            }
+            const honeypot = document.querySelector('[name="website_url"]').value;
+            const body = {
+                fullName: document.getElementById('bkFullName').value.trim(),
+                phone: document.getElementById('bkCountryCode').value + document.getElementById('bkPhone').value.trim().replace(/\D/g, ''),
+                email,
+                targetCountry: document.getElementById('bkCountry').value,
+                fieldOfInterest: document.getElementById('bkField').value,
+                educationLevel: document.getElementById('bkEducation').value,
+                grade: document.getElementById('bkGrade') ? document.getElementById('bkGrade').value : '',
+                budget: document.getElementById('bkBudget').value,
+                notes: document.getElementById('bkNotes').value.trim(),
+                date: selectedDate,
+                timeSlot: selectedSlot,
+                honeypot
+            };
+            return fetch('/api/appointments/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            }).then(r => r.json());
+        })
+        .then(data => {
+            if (!data) return;
+            btn.disabled = false;
+            btn.innerHTML = '<%= currentLanguage === "en" ? "Confirm Appointment" : "Randevuyu Onayla" %>';
+            if (data.success) {
+                const d = new Date(selectedDate + 'T12:00:00');
+                document.getElementById('successDetails').textContent = d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear() + ' - ' + data.appointment.turkeyTime + ' TSİ';
+                document.querySelectorAll('.booking-panel').forEach(p => p.classList.add('d-none'));
+                document.getElementById('bookingSuccess').classList.remove('d-none');
+                document.querySelectorAll('.booking-step').forEach(s => s.classList.add('done'));
+            } else {
+                alert(data.message);
+            }
+        });
+    };
+})();
+</script>
+
+<!-- WCEP Canadian Diploma Advantage Section -->
+<section class="section py-5" style="background: #F3F4F6;">
+    <div class="container">
+        <div class="row align-items-center g-4 reveal">
             <!-- Sol Taraf - Bilgi -->
             <div class="col-lg-5">
-                <div class="text-white">
-                    <!-- Logo -->
-                    <div class="mb-3 p-2 d-inline-flex align-items-center" style="background: white; border-radius: 10px;">
-                        <img src="/images/partners/wcep/channels4_profile.jpg" alt="WCEP" style="height: 60px; border-radius: 6px;">
+                <div class="text-dark">
+                    <!-- Logo & Program Name -->
+                    <div class="mb-3 d-flex align-items-center gap-3">
+                        <div class="p-2" style="background: white; border-radius: 10px;">
+                            <img src="/images/partners/wcep/channels4_profile.jpg" alt="WCEP" style="height: 80px; border-radius: 6px;">
+                        </div>
+                        <h4 class="fw-bold mb-0" style="color: #1a365d; line-height: 1.35;"><%- currentLanguage === 'en' ? 'Ambassador High School<br>Exchange Program' : 'Liseli Büyükelçiler<br>Değişim Programı' %></h4>
                     </div>
                     
-                    <h2 class="fw-bold mb-3" style="font-size: 1.8rem;">
-                        <%= t.home.wcepBanner.title %> <span style="color: #fbbf24;"><%= t.home.wcepBanner.titleHighlight %></span>
+                    <h2 class="fw-bold mb-3" style="font-size: 1.8rem; color: #1a365d;">
+                        <%= t.home.wcepBanner.title %> <span><%= t.home.wcepBanner.titleHighlight %></span>
                     </h2>
                     
-                    <p class="mb-4" style="font-size: 1rem; line-height: 1.7;">
+                    <p class="mb-4 text-dark" style="font-size: 1rem; line-height: 1.7;">
                         <%= t.home.wcepBanner.description %>
                     </p>
                     
                     <!-- Avantaj Kartları -->
                     <div class="row g-2 mb-4">
                         <div class="col-6">
-                            <div class="p-2 rounded" style="background: rgba(255,255,255,0.15);">
-                                <i class="fas fa-university me-2" style="color: #fbbf24;"></i>
+                            <div class="p-2 rounded" style="background: rgba(0,90,158,0.1);">
                                 <strong><%= t.home.wcepBanner.germany %></strong><br>
                                 <small><%= t.home.wcepBanner.germanyBenefit %></small>
                             </div>
                         </div>
                         <div class="col-6">
-                            <div class="p-2 rounded" style="background: rgba(255,255,255,0.15);">
-                                <i class="fas fa-crown me-2" style="color: #fbbf24;"></i>
+                            <div class="p-2 rounded" style="background: rgba(0,90,158,0.1);">
                                 <strong><%= t.home.wcepBanner.uk %></strong><br>
                                 <small><%= t.home.wcepBanner.ukBenefit %></small>
                             </div>
                         </div>
                         <div class="col-6">
-                            <div class="p-2 rounded" style="background: rgba(255,255,255,0.15);">
-                                <i class="fas fa-stethoscope me-2" style="color: #fbbf24;"></i>
+                            <div class="p-2 rounded" style="background: rgba(0,90,158,0.1);">
                                 <strong><%= t.home.wcepBanner.czech %></strong><br>
                                 <small><%= t.home.wcepBanner.czechBenefit %></small>
                             </div>
                         </div>
                         <div class="col-6">
-                            <div class="p-2 rounded" style="background: rgba(255,255,255,0.15);">
-                                <i class="fas fa-globe-europe me-2" style="color: #fbbf24;"></i>
+                            <div class="p-2 rounded" style="background: rgba(0,90,158,0.1);">
                                 <strong><%= t.home.wcepBanner.europe %></strong><br>
                                 <small><%= t.home.wcepBanner.europeBenefit %></small>
                             </div>
                         </div>
                     </div>
 
-                    <div class="d-flex flex-wrap gap-2">
-                        <a href="/partners/wcep" class="btn btn-warning px-4">
-                            <i class="fas fa-info-circle me-2"></i><%= t.home.wcepBanner.aboutWcep %>
-                        </a>
-                        <a href="/contact" class="btn btn-outline-light px-4">
-                            <i class="fas fa-phone me-2"></i><%= t.home.wcepBanner.getInfo %>
-                        </a>
-                    </div>
+                    
                 </div>
             </div>
             
             <!-- Sağ Taraf - Video -->
             <div class="col-lg-7">
                 <div class="card shadow-lg border-0" style="border-radius: 12px; overflow: hidden;">
-                    <div class="card-header text-center text-white py-2" style="background: linear-gradient(90deg, #1f2937 0%, #374151 100%);">
-                        <h6 class="mb-0"><i class="fas fa-play-circle me-2"></i><%= t.home.wcepBanner.videoTitle %></h6>
-                    </div>
                     <div class="card-body p-0">
-                        <!-- YouTube Video - 16:9 ratio -->
                         <div class="ratio ratio-16x9">
-                            <iframe src="https://www.youtube.com/embed/JxVsYJCN2hs" 
+                            <iframe src="https://www.youtube.com/embed/TFW6kKAO0Rg?start=1520" 
                                     title="WCEP - Worldwide Cultural Exchange Program" 
                                     frameborder="0" 
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
@@ -767,15 +1567,15 @@
                     <div class="card-footer bg-white text-center py-2">
                         <div class="row text-center">
                             <div class="col-4">
-                                <div class="fw-bold text-danger">15+</div>
+                                <div class="fw-bold" style="color: #005A9E;">15+</div>
                                 <small class="text-muted"><%= t.home.wcepBanner.yearsExperience %></small>
                             </div>
                             <div class="col-4">
-                                <div class="fw-bold text-danger">1000+</div>
+                                <div class="fw-bold" style="color: #005A9E;">1000+</div>
                                 <small class="text-muted"><%= t.home.wcepBanner.successfulStudents %></small>
                             </div>
                             <div class="col-4">
-                                <div class="fw-bold text-danger">50+</div>
+                                <div class="fw-bold" style="color: #005A9E;">50+</div>
                                 <small class="text-muted"><%= t.home.wcepBanner.partnerSchools %></small>
                             </div>
                         </div>
@@ -789,24 +1589,21 @@
 <!-- Kanpus Early Preparation Banner -->
 <section class="section" style="background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%); padding: 4rem 0;">
     <div class="container">
-        <div class="row align-items-center">
+        <div class="row align-items-center reveal">
             <div class="col-lg-6 text-white mb-4 mb-lg-0">
                 <h2 class="fw-bold mb-3">Kanpus <%= t.home.kanpusBanner.title %></h2>
                 <p class="lead mb-4"><%= t.home.kanpusBanner.subtitle %></p>
-                <div class="alert alert-warning mb-4" style="background: rgba(251, 191, 36, 0.2); border: 2px solid #fbbf24; border-radius: 12px;">
-                    <strong style="color: white;"><i class="fas fa-gift me-2"></i><%= t.home.kanpusBanner.exclusiveOffer %></strong>
+                <div class="alert alert-warning mb-4" style="background: rgba(251, 191, 36, 0.2); border: 2px solid white; border-radius: 12px;">
+                    <strong style="color: white;"><%= t.home.kanpusBanner.exclusiveOffer %></strong>
                 </div>
                 <div class="d-flex flex-wrap gap-3 mb-4">
                     <div class="d-flex align-items-center">
-                        <i class="fas fa-check-circle me-2" style="font-size: 1.5rem; color: #fbbf24;"></i>
                         <span><%= t.home.kanpusBanner.benefit1 %></span>
                     </div>
                     <div class="d-flex align-items-center">
-                        <i class="fas fa-check-circle me-2" style="font-size: 1.5rem; color: #fbbf24;"></i>
                         <span><%= t.home.kanpusBanner.benefit2 %></span>
                     </div>
                     <div class="d-flex align-items-center">
-                        <i class="fas fa-check-circle me-2" style="font-size: 1.5rem; color: #fbbf24;"></i>
                         <span><%= t.home.kanpusBanner.benefit3 %></span>
                     </div>
                 </div>
@@ -837,8 +1634,8 @@
                         </div>
                     </div>
                     <div class="col-12">
-                        <div class="card shadow-lg text-center p-3" style="border: none; background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);">
-                            <div class="d-flex align-items-center justify-content-center text-white">
+                        <div class="card shadow-lg text-center p-3" style="border: none; background: white;">
+                            <div class="d-flex align-items-center justify-content-center">
                                 <h5 class="fw-bold mb-0">IELTS</h5>
                             </div>
                         </div>
@@ -1093,12 +1890,60 @@
 </div>
 
 <script>
-// Hero arka plan görsellerini döndür
-let currentImage = 0;
-setInterval(() => {
-    const images = document.querySelectorAll('.hero-bg-img');
-    images.forEach(img => img.classList.remove('active'));
-    currentImage = (currentImage + 1) % images.length;
-    images[currentImage].classList.add('active');
-}, 5000);
+(function() {
+    var video = document.getElementById('heroVideo');
+    var playBtn = document.getElementById('heroPlayBtn');
+    var playIcon = document.getElementById('heroPlayIcon');
+    var textContainer = document.getElementById('heroTextContainer');
+    if (!video || !playBtn) return;
+
+    var watching = false;
+    var playing = false;
+
+    function tryPlay() {
+        if (playing) return;
+        video.muted = true;
+        video.play().then(function() { playing = true; clearInterval(ri); }).catch(function() {});
+    }
+
+    var ri = setInterval(tryPlay, 500);
+
+    video.addEventListener('loadeddata', tryPlay);
+    video.addEventListener('canplay', tryPlay);
+    video.addEventListener('canplaythrough', tryPlay);
+    video.addEventListener('playing', function() { playing = true; clearInterval(ri); });
+    tryPlay();
+
+    playBtn.addEventListener('click', function() {
+        if (!watching) {
+            watching = true;
+            playBtn.classList.add('active');
+            playIcon.className = 'fas fa-eye-slash';
+            textContainer.classList.add('faded');
+            video.classList.add('bright');
+        } else {
+            watching = false;
+            playBtn.classList.remove('active');
+            playIcon.className = 'fas fa-play';
+            textContainer.classList.remove('faded');
+            video.classList.remove('bright');
+        }
+    });
+})();
+</script>
+
+<script>
+(function() {
+    var reveals = document.querySelectorAll('.reveal');
+    if (!reveals.length) return;
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry, i) {
+            if (entry.isIntersecting) {
+                setTimeout(function() { entry.target.classList.add('visible'); }, i * 80);
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.15 });
+    reveals.forEach(function(el) { observer.observe(el); });
+})();
 </script> 

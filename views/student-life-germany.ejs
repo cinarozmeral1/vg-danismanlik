@@ -1,10 +1,10 @@
 <!-- Hero Section -->
-<section class="bg-primary text-white py-5">
+<section class="py-5" style="background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);">
     <div class="container">
         <div class="row">
             <div class="col-12 text-center">
-                <h1 class="display-4 fw-bold"><%= t.studentLifePage.hero.germany.title %></h1>
-                <p class="lead"><%= t.studentLifePage.hero.germany.subtitle %></p>
+                <h1 class="display-4 fw-bold text-dark"><%= t.studentLifePage.hero.germany.title %></h1>
+                <p class="lead text-muted"><%= t.studentLifePage.hero.germany.subtitle %></p>
             </div>
         </div>
     </div>
@@ -15,7 +15,7 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-8">
-                <div class="card shadow-lg border-0 mb-4 overflow-hidden">
+                <div class="card shadow-lg border-0 mb-4 overflow-hidden reveal">
                     <div class="row g-0">
                         <div class="col-md-4">
                             <div class="student-life-card-img-wrapper">
@@ -25,9 +25,6 @@
                         <div class="col-md-8">
                             <div class="card-body p-4">
                                 <div class="d-flex align-items-center mb-3">
-                                    <div class="bg-primary rounded-circle p-3 me-3">
-                                        <i class="fas fa-graduation-cap text-white fs-4"></i>
-                                    </div>
                                     <h3 class="mb-0"><%= t.studentLifePage.sections.educationSystem.title %></h3>
                                 </div>
                                 <p class="lead text-dark"><%= t.studentLifePage.countries.germany.description1 %></p>
@@ -57,30 +54,27 @@
                     </div>
                 </div>
 
-                <div class="card shadow-lg border-0 mb-4 overflow-hidden">
+                <div class="card shadow-lg border-0 mb-4 overflow-hidden reveal">
                     <div class="row g-0">
                         <div class="col-md-8">
                             <div class="card-body p-4">
                                 <div class="d-flex align-items-center mb-3">
-                                    <div class="bg-success rounded-circle p-3 me-3">
-                                        <i class="fas fa-home text-white fs-4"></i>
-                                    </div>
                                     <h3 class="mb-0"><%= t.studentLifePage.sections.accommodation.title %></h3>
                                 </div>
                                 <p class="lead text-dark"><%= t.studentLifePage.countries.germany.livingDescription %></p>
                                 
                                 <div class="row mt-4">
                                     <div class="col-md-6">
-                                        <h5 class="text-success mb-3"><%= t.studentLifePage.sections.accommodation.title %></h5>
+                                        <h5 class="mb-3" style="color: #005A9E;"><%= t.studentLifePage.sections.accommodation.title %></h5>
                                         <ul class="list-unstyled">
-                                            <li class="mb-2"><i class="fas fa-building text-primary me-2"></i><strong><%= t.studentLifePage.sections.accommodation.studentDorms %>:</strong> 200-400€<%= t.studentLifePage.units.perMonth %></li>
-                                            <li class="mb-2"><i class="fas fa-home text-primary me-2"></i><strong><%= t.studentLifePage.sections.accommodation.privateDorms %>:</strong> 300-600€<%= t.studentLifePage.units.perMonth %></li>
-                                            <li class="mb-2"><i class="fas fa-users text-primary me-2"></i><strong><%= t.studentLifePage.sections.accommodation.sharedFlat %>:</strong> 400-800€<%= t.studentLifePage.units.perMonth %></li>
-                                            <li class="mb-2"><i class="fas fa-key text-primary me-2"></i><strong><%= t.studentLifePage.sections.accommodation.studio %>:</strong> 600-1200€<%= t.studentLifePage.units.perMonth %></li>
+                                            <li class="mb-2"><strong><%= t.studentLifePage.sections.accommodation.studentDorms %>:</strong> 200-400€<%= t.studentLifePage.units.perMonth %></li>
+                                            <li class="mb-2"><strong><%= t.studentLifePage.sections.accommodation.privateDorms %>:</strong> 300-600€<%= t.studentLifePage.units.perMonth %></li>
+                                            <li class="mb-2"><strong><%= t.studentLifePage.sections.accommodation.sharedFlat %>:</strong> 400-800€<%= t.studentLifePage.units.perMonth %></li>
+                                            <li class="mb-2"><strong><%= t.studentLifePage.sections.accommodation.studio %>:</strong> 600-1200€<%= t.studentLifePage.units.perMonth %></li>
                                         </ul>
                                     </div>
                                     <div class="col-md-6">
-                                        <h5 class="text-success mb-3"><%= t.studentLifePage.sections.accommodation.monthlyLiving %></h5>
+                                        <h5 class="mb-3" style="color: #005A9E;"><%= t.studentLifePage.sections.accommodation.monthlyLiving %></h5>
                                         <div class="d-flex flex-wrap gap-2 mb-3">
                                             <% const costBadges = [
                                                 {icon: 'fa-home', text: t.studentLifePage.sections.accommodation.costs.accommodation + ' 400-800€'},
@@ -90,7 +84,7 @@
                                             ]; %>
                                             <% costBadges.forEach(function(badge, idx) { %>
                                                 <span class="badge badge-style-<%= (idx % 3) + 1 %> p-2 bg-white text-dark fw-semibold border" style="font-size: 0.85rem;">
-                                                    <i class="fas <%= badge.icon %> me-1 text-primary"></i><%= badge.text %>
+                                                    <%= badge.text %>
                                                 </span>
                                             <% }); %>
                                         </div>
@@ -111,7 +105,7 @@
                     </div>
                 </div>
 
-                <div class="card shadow-lg border-0 mb-4 overflow-hidden">
+                <div class="card shadow-lg border-0 mb-4 overflow-hidden reveal">
                     <div class="row g-0">
                         <div class="col-md-4">
                             <div class="student-life-card-img-wrapper">
@@ -121,16 +115,13 @@
                         <div class="col-md-8">
                             <div class="card-body p-4">
                                 <div class="d-flex align-items-center mb-3">
-                                    <div class="bg-warning rounded-circle p-3 me-3">
-                                        <i class="fas fa-coins text-white fs-4"></i>
-                                    </div>
                                     <h3 class="mb-0"><%= t.studentLifePage.sections.costs.title %></h3>
                                 </div>
                                 <p class="lead text-dark"><%= t.studentLifePage.countries.germany.costsDescription %></p>
                                 
                                 <div class="row mt-4">
                                     <div class="col-md-6">
-                                        <h5 class="text-warning mb-3"><%= t.studentLifePage.sections.costs.educationCosts %></h5>
+                                        <h5 class="mb-3" style="color: #005A9E;"><%= t.studentLifePage.sections.costs.educationCosts %></h5>
                                         <div class="card bg-light mb-3">
                                             <div class="card-body">
                                                 <h6 class="card-title text-primary"><%= t.studentLifePage.sections.costs.stateUniversities %></h6>
@@ -147,11 +138,10 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <h5 class="text-warning mb-3"><%= t.studentLifePage.sections.costs.scholarships %></h5>
+                                        <h5 class="mb-3" style="color: #005A9E;"><%= t.studentLifePage.sections.costs.scholarships %></h5>
                                         <ul class="list-unstyled">
                                             <li class="mb-3">
                                                 <div class="d-flex align-items-center">
-                                                    <i class="fas fa-star text-warning me-2"></i>
                                                     <div>
                                                         <strong><%= t.studentLifePage.countries.germany.scholarships.daad.title %></strong><br>
                                                         <small class="text-muted"><%= t.studentLifePage.countries.germany.scholarships.daad.description %></small>
@@ -160,7 +150,6 @@
                                             </li>
                                             <li class="mb-3">
                                                 <div class="d-flex align-items-center">
-                                                    <i class="fas fa-graduation-cap text-primary me-2"></i>
                                                     <div>
                                                         <strong><%= t.studentLifePage.countries.germany.scholarships.university.title %></strong><br>
                                                         <small class="text-muted"><%= t.studentLifePage.countries.germany.scholarships.university.description %></small>
@@ -169,7 +158,6 @@
                                             </li>
                                             <li class="mb-3">
                                                 <div class="d-flex align-items-center">
-                                                    <i class="fas fa-handshake text-success me-2"></i>
                                                     <div>
                                                         <strong><%= t.studentLifePage.sections.costs.workPermit %></strong><br>
                                                         <small class="text-muted"><%= t.studentLifePage.sections.costs.workHours %></small>
@@ -181,7 +169,6 @@
                                 </div>
                                 
                                 <div class="alert alert-warning mt-4">
-                                    <i class="fas fa-exclamation-triangle me-2"></i>
                                     <strong><%= t.studentLifePage.alerts.attention %>:</strong> <%= t.studentLifePage.countries.germany.alerts.visaRequirement %>
                                 </div>
                             </div>
@@ -192,94 +179,10 @@
 
             <!-- Sidebar -->
             <div class="col-lg-4">
-                <!-- Quick Info -->
-                <div class="card shadow-lg border-0 mb-4">
-                    <div class="card-header bg-info text-white">
-                        <h5 class="mb-0">
-                            <i class="fas fa-info-circle me-2"></i>
-                            <%= t.studentLifePage.sections.quickInfo.title %>
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row text-center">
-                            <div class="col-6 mb-3">
-                                <div class="p-3 bg-primary rounded">
-                                    <h4 class="text-white mb-1">350€</h4>
-                                    <small class="text-white">Üni Ücreti/Dönem</small>
-                                </div>
-                            </div>
-                            <div class="col-6 mb-3">
-                                <div class="p-3 bg-success rounded">
-                                    <h4 class="text-white mb-1">950€</h4>
-                                    <small class="text-white"><%= t.studentLifePage.sections.quickInfo.minLiving %></small>
-                                </div>
-                            </div>
-                            <div class="col-6 mb-3">
-                                <div class="p-3 bg-warning rounded">
-                                    <h4 class="text-white mb-1">20 <%= t.studentLifePage.buttons.hours %></h4>
-                                    <small class="text-white"><%= t.studentLifePage.sections.quickInfo.weeklyWork %></small>
-                                </div>
-                            </div>
-                            <div class="col-6 mb-3">
-                                <div class="p-3 bg-info rounded">
-                                    <h4 class="text-white mb-1">400+</h4>
-                                    <small class="text-white"><%= t.studentLifePage.sections.quickInfo.universities %></small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Important Warning - Turkish Diploma -->
-                <div class="card shadow-lg border-0 mb-4">
-                    <div class="card-header bg-danger text-white">
-                        <h5 class="mb-0">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            <%= t.studentLifePage.diplomaWarnings.turkishWarningTitle %>
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="alert alert-danger mb-3" style="background: #fff5f5; border-left: 4px solid #dc3545;">
-                            <p class="mb-2"><strong><i class="fas fa-graduation-cap me-2"></i><%= t.studentLifePage.diplomaWarnings.studienkolleg %>:</strong></p>
-                            <p class="mb-0 text-dark"><%= t.studentLifePage.diplomaWarnings.germany.warning %></p>
-                        </div>
-                        <div class="alert alert-warning mb-0" style="background: #fffbeb; border-left: 4px solid #f59e0b;">
-                            <p class="mb-2"><strong><i class="fas fa-book me-2"></i><%= t.studentLifePage.diplomaWarnings.studienkollegWhat %></strong></p>
-                            <p class="mb-0 text-dark small"><%= t.studentLifePage.diplomaWarnings.studienkollegDesc %></p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Kanada Lise Diploması Avantajı -->
-                <div class="card shadow-lg border-0 mb-4">
-                    <div class="card-header text-white" style="background: linear-gradient(135deg, #059669 0%, #047857 100%);">
-                        <h5 class="mb-0">
-                            <i class="fas fa-maple-leaf me-2"></i>
-                            <%= t.studentLifePage.diplomaWarnings.canadianAdvantageTitle %>
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="alert alert-success mb-3" style="background: #f0fdf4; border-left: 4px solid #22c55e;">
-                            <p class="mb-2"><strong><i class="fas fa-check-circle me-2"></i>Studienkolleg <%= t.studentLifePage.diplomaWarnings.bypass %></strong></p>
-                            <p class="mb-0 text-dark"><%= t.studentLifePage.diplomaWarnings.germany.advantage %></p>
-                        </div>
-                        <ul class="list-unstyled mb-3">
-                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><%= t.studentLifePage.diplomaWarnings.germany.benefit1 %></li>
-                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><%= t.studentLifePage.diplomaWarnings.germany.benefit2 %></li>
-                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><%= t.studentLifePage.diplomaWarnings.germany.benefit3 %></li>
-                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><%= t.studentLifePage.diplomaWarnings.germany.benefit4 %></li>
-                        </ul>
-                        <a href="/partners/wcep" class="btn btn-success btn-sm w-100">
-                            <i class="fas fa-info-circle me-2"></i><%= t.studentLifePage.diplomaWarnings.aboutWcep %>
-                        </a>
-                    </div>
-                </div>
-
                 <!-- Consulting -->
-                <div class="card shadow-lg border-0">
-                    <div class="card-header bg-secondary text-white">
+                <div class="card shadow-lg border-0 mb-4 reveal">
+                    <div class="card-header text-white" style="background: #005A9E;">
                         <h5 class="mb-0">
-                            <i class="fas fa-headset me-2"></i>
                             <%= t.studentLifePage.sections.consulting.title %>
                         </h5>
                     </div>
@@ -290,9 +193,110 @@
                             <span class="d-none d-sm-inline"><%= t.studentLifePage.sections.consulting.freeConsulting %></span>
                             <span class="d-sm-none">Danışmanlık</span>
                         </a>
+                        <a href="/#randevu" class="btn btn-outline-primary btn-lg w-100" style="font-size: clamp(0.875rem, 2vw, 1rem);">
+                            <i class="fas fa-calendar-check me-2"></i><%= currentLanguage === 'en' ? 'Book an Appointment' : 'Randevu Al' %>
+                        </a>
+                        <p class="mt-2 mb-0 text-muted" style="font-size: 12px;"><%= currentLanguage === 'en' ? 'Want to study in Germany? Meet our expert advisors now!' : 'Almanya\'da okumak mı istiyorsun? Hemen uzman danışmanlarımızla görüş!' %></p>
                     </div>
                 </div>
+
+                <!-- Quick Info -->
+                <div class="card shadow-lg border-0 mb-4 reveal">
+                    <div class="card-header text-white" style="background: #005A9E;">
+                        <h5 class="mb-0">
+                            <%= t.studentLifePage.sections.quickInfo.title %>
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-6 mb-3">
+                                <div class="p-3 rounded" style="background: #005A9E;">
+                                    <h4 class="text-white mb-1">350€</h4>
+                                    <small class="text-white">Üni Ücreti/Dönem</small>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="p-3 rounded" style="background: #005A9E;">
+                                    <h4 class="text-white mb-1">950€</h4>
+                                    <small class="text-white"><%= t.studentLifePage.sections.quickInfo.minLiving %></small>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="p-3 rounded" style="background: #005A9E;">
+                                    <h4 class="text-white mb-1">20 <%= t.studentLifePage.buttons.hours %></h4>
+                                    <small class="text-white"><%= t.studentLifePage.sections.quickInfo.weeklyWork %></small>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="p-3 rounded" style="background: #005A9E;">
+                                    <h4 class="text-white mb-1">400+</h4>
+                                    <small class="text-white"><%= t.studentLifePage.sections.quickInfo.universities %></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Important Warning - Turkish Diploma -->
+                <div class="card shadow-lg border-0 mb-4 reveal">
+                    <div class="card-header text-white" style="background: #005A9E;">
+                        <h5 class="mb-0">
+                            <%= t.studentLifePage.diplomaWarnings.turkishWarningTitle %>
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert mb-3" style="background: #eef6ff; border-left: 4px solid #005A9E;">
+                            <p class="mb-2"><strong><%= t.studentLifePage.diplomaWarnings.studienkolleg %>:</strong></p>
+                            <p class="mb-0 text-dark"><%= t.studentLifePage.diplomaWarnings.germany.warning %></p>
+                        </div>
+                        <div class="alert mb-0" style="background: #eef6ff; border-left: 4px solid #005A9E;">
+                            <p class="mb-2"><strong><%= t.studentLifePage.diplomaWarnings.studienkollegWhat %></strong></p>
+                            <p class="mb-0 text-dark small"><%= t.studentLifePage.diplomaWarnings.studienkollegDesc %></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kanada Lise Diploması Avantajı -->
+                <div class="card shadow-lg border-0 mb-4 reveal">
+                    <div class="card-header text-white" style="background: #005A9E;">
+                        <h5 class="mb-0">
+                            <%= t.studentLifePage.diplomaWarnings.canadianAdvantageTitle %>
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert mb-3" style="background: #eef6ff; border-left: 4px solid #005A9E;">
+                            <p class="mb-2"><strong>Studienkolleg <%= t.studentLifePage.diplomaWarnings.bypass %></strong></p>
+                            <p class="mb-0 text-dark"><%= t.studentLifePage.diplomaWarnings.germany.advantage %></p>
+                        </div>
+                        <ul class="list-unstyled mb-3">
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><%= t.studentLifePage.diplomaWarnings.germany.benefit1 %></li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><%= t.studentLifePage.diplomaWarnings.germany.benefit2 %></li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><%= t.studentLifePage.diplomaWarnings.germany.benefit3 %></li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><%= t.studentLifePage.diplomaWarnings.germany.benefit4 %></li>
+                        </ul>
+                        <a href="/partners/wcep" class="btn btn-sm w-100" style="background: #005A9E; color: white;">
+                            <%= t.studentLifePage.diplomaWarnings.aboutWcep %>
+                        </a>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
-</section> 
+</section>
+
+<script>
+(function() {
+    var reveals = document.querySelectorAll('.reveal');
+    if (!reveals.length) return;
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry, i) {
+            if (entry.isIntersecting) {
+                setTimeout(function() { entry.target.classList.add('visible'); }, i * 80);
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.15 });
+    reveals.forEach(function(el) { observer.observe(el); });
+})();
+</script>

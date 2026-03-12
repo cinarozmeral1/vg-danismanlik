@@ -13,7 +13,7 @@
 <!-- Main Content Section -->
 <section class="py-5">
     <div class="container-fluid px-xxl-5 px-lg-4 px-md-3 px-3">
-        <div class="row align-items-stretch g-4 about-wrapper">
+        <div class="row align-items-stretch g-4 about-wrapper reveal">
             <div class="col-xxl-3 col-lg-3 d-none d-lg-flex flex-column about-gallery-col h-100">
                 <div class="about-pill-image">
                     <img src="/images/about/tanisalim-1.jpg?v=20250929-1" alt="Students celebrating with Turkish flag" class="img-fluid rounded-4">
@@ -59,7 +59,7 @@
                             </a>
                         </div>
 
-                        <div class="bg-white rounded-3 p-4 mb-4">
+                        <div class="bg-white rounded-3 p-4 mb-4 reveal">
                             <h4 class="text-primary mb-3"><i class="fas fa-quote-left me-2"></i><%= t.aboutUs.mainContent.ourStory %></h4>
                             <p class="lead mb-0"><%= t.aboutUs.mainContent.storyText %></p>
                         </div>
@@ -67,19 +67,19 @@
                         <div class="row mt-auto">
                             <div class="col-md-4 mb-3">
                                 <div class="text-center">
-                                    <i class="fas fa-handshake fa-2x text-success mb-2"></i>
+                                    <i class="fas fa-handshake fa-2x mb-2" style="color: #005A9E;"></i>
                                     <h6 class="fw-bold"><%= t.aboutUs.mainContent.studentCentered %></h6>
                                 </div>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <div class="text-center">
-                                    <i class="fas fa-globe-europe fa-2x text-info mb-2"></i>
+                                    <i class="fas fa-globe-europe fa-2x mb-2" style="color: #005A9E;"></i>
                                     <h6 class="fw-bold"><%= t.aboutUs.mainContent.europeanNetwork %></h6>
                                 </div>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <div class="text-center">
-                                    <i class="fas fa-trophy fa-2x text-warning mb-2"></i>
+                                    <i class="fas fa-trophy fa-2x mb-2" style="color: #005A9E;"></i>
                                     <h6 class="fw-bold"><%= t.aboutUs.mainContent.topUniversities %></h6>
                                 </div>
                             </div>
@@ -103,7 +103,7 @@
 <!-- Call to Action Section -->
 <section class="py-5">
     <div class="container">
-        <div class="row justify-content-center">
+        <div class="row justify-content-center reveal">
             <div class="col-lg-8 text-center">
                 <h2 class="display-6 fw-bold mb-4"><%= t.aboutUs.cta.title %></h2>
                 <p class="lead mb-4"><%= t.aboutUs.cta.subtitle %></p>
@@ -111,9 +111,28 @@
                     <a href="/contact" class="btn btn-primary btn-lg">
                         <i class="fas fa-phone me-2"></i><%= t.aboutUs.cta.contactUs %>
                     </a>
+                    <a href="/#randevu" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-calendar-check me-2"></i><%= currentLanguage === 'en' ? 'Book an Appointment' : 'Randevu Al' %>
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<script>
+(function() {
+    var reveals = document.querySelectorAll('.reveal');
+    if (!reveals.length) return;
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry, i) {
+            if (entry.isIntersecting) {
+                setTimeout(function() { entry.target.classList.add('visible'); }, i * 80);
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.15 });
+    reveals.forEach(function(el) { observer.observe(el); });
+})();
+</script>
 

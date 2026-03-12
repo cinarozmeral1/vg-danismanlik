@@ -354,11 +354,6 @@
     object-fit: cover;
     border-radius: 8px;
     cursor: pointer;
-    transition: transform 0.2s ease;
-}
-
-.gallery-item img:hover {
-    transform: scale(1.05);
 }
 
 @media (max-width: 768px) {
@@ -395,7 +390,7 @@ html {
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     line-height: 1.6;
   color: var(--gray-900);
   background-color: #fff8f2;
@@ -724,13 +719,13 @@ body {
 .main-hero {
     position: relative;
     min-height: 100vh;
-    background: var(--gradient-primary);
+    background: url('/images/backgrounds/hero-video-poster.jpg') center/cover no-repeat #1a365d;
     display: flex;
     align-items: center;
     color: white;
     overflow: hidden;
-    margin-top: -72px; /* Compensate for body padding-top */
-    padding-top: 72px; /* Add space for fixed navbar */
+    margin-top: -72px;
+    padding-top: 72px;
 }
 
 .hero-background {
@@ -767,8 +762,9 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-  background: var(--gradient-hero);
-    z-index: 1;
+    background: var(--gradient-hero);
+    z-index: 0;
+    display: none;
 }
 
 .hero-content {
@@ -1420,6 +1416,14 @@ section:not(.navbar),
 .admin-main {
   max-height: none;
   overflow: visible;
+}
+
+/* Bootstrap modal z-index fix: modals must appear above the fixed navbar (z-index: 9999) */
+.modal-backdrop {
+  z-index: 10050 !important;
+}
+.modal {
+  z-index: 10055 !important;
 }
 
 /* User pages height fix */
@@ -2229,11 +2233,6 @@ body {
     object-fit: cover;
     border-radius: 8px;
     cursor: pointer;
-    transition: transform 0.3s ease;
-}
-
-.gallery-item img:hover {
-    transform: scale(1.05);
 }
 
 .university-sidebar {
@@ -3798,262 +3797,89 @@ body {
     flex-direction: column;
     height: 100%;
     overflow-y: auto;
-    /* Hardware acceleration for smooth scrolling */
     -webkit-overflow-scrolling: touch;
     will-change: transform;
+    padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 60px);
 }
 
-/* Disable all offcanvas animations to prevent explosion effect */
-.offcanvas-end {
-    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
-    transform: translateZ(0);
-    -webkit-transform: translateZ(0);
+
+/* ===== MOBILE OFFCANVAS - CONSOLIDATED ===== */
+
+/* Base: white background, proper z-index */
+#mobileNav.offcanvas {
+    --bs-offcanvas-bg: #ffffff;
+    background: #ffffff !important;
+    z-index: 10001 !important;
+    position: fixed !important;
+    top: 0 !important;
+    height: 100vh !important;
+    border: none !important;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
     will-change: transform;
-    /* Completely disable all transitions and animations */
-    transition: none !important;
-    animation: none !important;
-}
-
-/* Override Bootstrap completely - disable all animations */
-.offcanvas {
-    transition: none !important;
-    animation: none !important;
-}
-
-.offcanvas.show {
-    transition: none !important;
-    animation: none !important;
-}
-
-/* Disable slide animations completely */
-.offcanvas-end {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.3s !important;
+    -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.3s !important;
+    visibility: hidden;
     transform: translateX(100%);
-    transition: none !important;
-    animation: none !important;
 }
 
-.offcanvas-end.show {
+/* Shown + showing: slide in */
+#mobileNav.offcanvas.show,
+#mobileNav.offcanvas.showing {
+    visibility: visible !important;
     transform: translateX(0) !important;
-    transition: none !important;
-    animation: none !important;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0s !important;
+    -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0s !important;
 }
 
-/* Mobile-specific optimizations */
-@media (max-width: 991px) {
-    /* Offcanvas navbar'in ustunde olmali */
-    #mobileNav,
-    .offcanvas,
-    .offcanvas-end {
-        z-index: 10001 !important;
-        top: 0 !important;
-        height: 100vh !important;
-        position: fixed !important;
-    }
-    
-    .offcanvas-end {
-        transform: translateX(100%);
-        transition: transform 0.2s ease-out !important;
-    }
-    
-    .offcanvas-end.show {
-        transform: translateX(0) !important;
-    }
-    
-    /* Menu acikken body scroll engelle */
-    body.offcanvas-open {
-        overflow: hidden !important;
-        position: fixed !important;
-        width: 100% !important;
-        height: 100% !important;
-    }
-    
-    /* Menu icerigi scrollable */
-    .offcanvas-body {
-        overflow-y: auto !important;
-        -webkit-overflow-scrolling: touch !important;
-        max-height: calc(100vh - 80px) !important;
-    }
+/* Hiding: slide out */
+#mobileNav.offcanvas.hiding {
+    visibility: visible !important;
+    transform: translateX(100%) !important;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.3s !important;
+    -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.3s !important;
 }
 
-/* Custom mobile menu backdrop - only on mobile */
-@media screen and (max-width: 991px) {
-    .mobile-menu-backdrop {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        z-index: 1039 !important;
-        width: 100% !important;
-        height: 100vh !important;
-        background-color: rgba(0, 0, 0, 0.5) !important;
-        transition: opacity 0.3s ease !important;
-        opacity: 1 !important;
-        display: block !important;
-        visibility: visible !important;
-        backdrop-filter: none !important;
-        -webkit-backdrop-filter: none !important;
-    }
+/* Offcanvas body scrollable */
+#mobileNav .offcanvas-body {
+    background: #ffffff !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    max-height: calc(100vh - 80px) !important;
 }
 
-/* Hide backdrop on desktop */
+/* Backdrop: white to avoid Safari toolbar darkening */
+.offcanvas-backdrop {
+    background-color: #ffffff !important;
+    opacity: 0;
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    z-index: 10000 !important;
+}
+
+.offcanvas-backdrop.show {
+    opacity: 0.7 !important;
+}
+
+/* Body scroll lock */
+body.mobile-menu-open,
+body.offcanvas-open {
+    overflow: hidden !important;
+}
+
+/* Hide offcanvas on desktop */
 @media screen and (min-width: 992px) {
-    .mobile-menu-backdrop {
+    #mobileNav, .offcanvas-backdrop, .mobile-menu-backdrop {
         display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
     }
-}
-
-/* Disable Bootstrap backdrops - only on mobile */
-@media screen and (max-width: 991px) {
-    .offcanvas-backdrop,
-    .modal-backdrop {
-        display: none !important;
-        opacity: 0 !important;
-        visibility: hidden !important;
-    }
-}
-
-/* Force remove any backdrop effects on desktop */
-@media screen and (min-width: 992px) {
-    body.modal-open,
     body.offcanvas-open {
         overflow: auto !important;
         padding-right: 0 !important;
     }
-    
-    .offcanvas-backdrop,
-    .modal-backdrop,
-    .mobile-menu-backdrop {
-        display: none !important;
-    }
 }
 
-/* Proper mobile offcanvas styling - Force solid white background */
+/* Mobile menu header */
 @media screen and (max-width: 991px) {
-    .offcanvas-end {
-        background: #ffffff !important;
-        background-color: #ffffff !important;
-        background-image: none !important;
-        border: none !important;
-        box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15) !important;
-        opacity: 1 !important;
-    }
-    
-    /* Force solid white background for all offcanvas elements */
-    .offcanvas, .offcanvas-end, .offcanvas.show {
-        background: #ffffff !important;
-        background-color: #ffffff !important;
-        background-image: none !important;
-        opacity: 1 !important;
-    }
-    
-    /* Force solid white background for offcanvas body */
-    .offcanvas-body {
-        background-color: #ffffff !important;
-        background: #ffffff !important;
-        background-image: none !important;
-        opacity: 1 !important;
-    }
-    
-    /* Mobile nav container - force solid background */
-    #mobileNav {
-        background-color: #ffffff !important;
-        background: #ffffff !important;
-        background-image: none !important;
-        opacity: 1 !important;
-    }
-    
-    /* Force all mobile nav elements to have solid white background */
-    #mobileNav * {
-        background-color: #ffffff !important;
-        background: #ffffff !important;
-        background-image: none !important;
-    }
-    
-    /* Override any transparent backgrounds */
-    .mobile-nav, .mobile-nav * {
-        background-color: #ffffff !important;
-        background: #ffffff !important;
-        background-image: none !important;
-    }
-    
-    /* Properly hide offcanvas when not shown */
-    .offcanvas:not(.show) {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-        transform: translateX(100%) !important;
-    }
-}
-
-/* Hide offcanvas completely on desktop */
-@media screen and (min-width: 992px) {
-    .offcanvas, .offcanvas-end, #mobileNav {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-    }
-}
-
-/* Bootstrap offcanvas override - Force solid backgrounds */
-.offcanvas {
-    --bs-offcanvas-bg: #ffffff;
-    background-color: #ffffff !important;
-    background: #ffffff !important;
-    background-image: none !important;
-}
-
-.offcanvas-end {
-    background-color: #ffffff !important;
-    background: #ffffff !important;
-    background-image: none !important;
-}
-
-/* Force solid white background for mobile nav */
-#mobileNav {
-    background-color: #ffffff !important;
-    background: #ffffff !important;
-    background-image: none !important;
-}
-
-#mobileNav .offcanvas-body {
-    background-color: #ffffff !important;
-    background: #ffffff !important;
-    background-image: none !important;
-}
-
-#mobileNav .mobile-nav {
-    background-color: #ffffff !important;
-    background: #ffffff !important;
-    background-image: none !important;
-}
-
-/* Override any potential transparency */
-.offcanvas.show {
-    background-color: #ffffff !important;
-    background: #ffffff !important;
-    background-image: none !important;
-    opacity: 1 !important;
-}
-
-/* Mobile menu header improvements */
-@media screen and (max-width: 991px) {
-    .offcanvas-header {
+    #mobileNav .offcanvas-header {
         background: var(--primary-600) !important;
-        background-color: var(--primary-600) !important;
-    }
-    
-    .offcanvas-title {
-        color: #000000 !important;
-        font-weight: 700 !important;
-        font-size: 1.1rem !important;
-    }
-    
-    .offcanvas-header small {
-        color: #000000 !important;
-        font-weight: 600 !important;
-        font-size: 0.85rem !important;
-        opacity: 1 !important;
     }
     
     .btn-close {
@@ -5280,65 +5106,36 @@ body[data-admin-page="true"] .site-footer {
     transform: scale(1.05);
 }
 
-/* ===== BODY SCROLL LOCK ===== */
-body.mobile-menu-open,
-body.mobile-menu-active {
-    overflow: hidden !important;
-    width: 100% !important;
-    touch-action: none !important;
-    -webkit-overflow-scrolling: none !important;
+/* ===== PLAYFAIR DISPLAY - BASLIK FONTU ===== */
+.hero-main-title,
+.section-title h2,
+.section-header h2,
+.cta-content h2,
+.content-section h2,
+section.section h2.fw-bold,
+section.section h2,
+section h2.fw-bold,
+section h3.fw-bold,
+section h3.h5.fw-bold {
+    font-family: 'Playfair Display', Georgia, serif;
 }
 
-body.mobile-menu-active {
-    height: 100vh !important;
+/* ===== SCROLL REVEAL ANIMASYONU ===== */
+.reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
 }
 
-/* ===== MOBILE MENU BACKDROP ===== */
-.mobile-menu-backdrop,
-#customMobileBackdrop {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    background: rgba(0, 0, 0, 0.5) !important;
-    z-index: 1040 !important;
-    touch-action: none !important;
-    -webkit-tap-highlight-color: transparent !important;
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
 }
 
-/* Menü açıkken sayfanın kaydırılmasını engelle */
-body.mobile-menu-open html,
-body.mobile-menu-active html {
-    overflow: hidden !important;
-    height: 100% !important;
-}
-
-/* ===== MOBILE MENU - BOOTSTRAP OFFCANVAS ANİMASYON ===== */
-#mobileNav.offcanvas {
-    transition: transform 0.35s ease-in-out !important;
-    -webkit-transition: transform 0.35s ease-in-out !important;
-}
-
-#mobileNav.offcanvas.offcanvas-end {
-    transform: translateX(100%);
-}
-
-#mobileNav.offcanvas.show {
-    transform: translateX(0) !important;
-}
-
-/* Backdrop animasyonu */
-.offcanvas-backdrop {
-    transition: opacity 0.35s ease-in-out !important;
-    -webkit-transition: opacity 0.35s ease-in-out !important;
-}
-
-.offcanvas-backdrop.show {
-    opacity: 0.5 !important;
-}
-
-/* Body scroll lock */
-body.mobile-menu-open {
-    overflow: hidden !important;
+@media (prefers-reduced-motion: reduce) {
+    .reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
 }
