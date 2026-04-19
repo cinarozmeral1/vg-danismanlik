@@ -1,606 +1,294 @@
-<!-- Hero Section -->
-<section class="bg-primary text-white py-5">
-    <div class="container">
-        <div class="row">
-            <div class="col-12 text-center">
-                <h1 class="display-4 fw-bold"><%= t.media.heroTitle %></h1>
-                <p class="lead"><%= t.media.heroSubtitle %></p>
-            </div>
-        </div>
-    </div>
-</section>
+<% const lang = typeof locals.lang !== 'undefined' ? locals.lang : (typeof locals.currentLanguage !== 'undefined' ? locals.currentLanguage : 'tr'); %>
 
-<!-- Tabs Section -->
-<section class="py-5">
-    <div class="container">
-        <!-- Nav Tabs -->
-        <ul class="nav nav-pills nav-fill mb-5" id="mediaTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="instagram-tab" data-bs-toggle="pill" data-bs-target="#instagram" type="button" role="tab" aria-controls="instagram" aria-selected="true">
-                    <i class="fab fa-instagram fa-2x mb-2 d-block" style="color: #005A9E;"></i>
-                    <h5 class="mb-0"><%= t.media.instagram.title %></h5>
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="linkedin-tab" data-bs-toggle="pill" data-bs-target="#linkedin" type="button" role="tab" aria-controls="linkedin" aria-selected="false">
-                    <i class="fab fa-linkedin fa-2x mb-2 d-block" style="color: #005A9E;"></i>
-                    <h5 class="mb-0"><%= t.media.linkedin.title %></h5>
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="youtube-tab" data-bs-toggle="pill" data-bs-target="#youtube" type="button" role="tab" aria-controls="youtube" aria-selected="false">
-                    <i class="fab fa-youtube fa-2x mb-2 d-block" style="color: #005A9E;"></i>
-                    <h5 class="mb-0"><%= t.media.youtube.title %></h5>
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="stories-tab" data-bs-toggle="pill" data-bs-target="#stories" type="button" role="tab" aria-controls="stories" aria-selected="false">
-                    <i class="fas fa-graduation-cap fa-2x mb-2 d-block" style="color: #005A9E;"></i>
-                    <h5 class="mb-0"><%= t.media.stories.title %></h5>
-                </button>
-            </li>
-        </ul>
-
-        <!-- Tab Content -->
-        <div class="tab-content" id="mediaTabContent">
-            <!-- Instagram Tab -->
-            <div class="tab-pane fade show active" id="instagram" role="tabpanel" aria-labelledby="instagram-tab">
-                <div class="text-center mb-4">
-                    <p class="text-muted lead"><%= t.media.instagram.subtitle %></p>
-                </div>
-                
-                <div class="row g-4 justify-content-center" id="instagram-feed">
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DU-v6V1DQEP/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-                    </div>
-
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DVJRuAxjXQH/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-                    </div>
-
-                    <!-- Post 1 -->
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DRSZOC8jae7/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-                    </div>
-
-                    <!-- Post 2 -->
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DRNDv0Wjd_c/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-                    </div>
-
-                    <!-- Post 3 -->
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DRpUoXDDW8g/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-                    </div>
-
-                    <!-- Post 4 -->
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DRIAsAbDeHc/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-                    </div>
-
-                    <!-- Post 5 -->
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DRAXDiRjY7b/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-                    </div>
-
-                    <!-- Post 6 -->
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DQtt_ocDfPB/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-                    </div>
-
-                    <!-- Post 7 -->
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DQttVOIDVS3/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-                    </div>
-
-                    <!-- Post 8 -->
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DQtspGojeyL/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-                    </div>
-
-                    <!-- Post 9 -->
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DQtsKKlDW0Z/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-                    </div>
-
-                    <!-- Post 10 -->
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DQtrthTjXdE/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-                    </div>
-
-                    <!-- Post 11 -->
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DQtrU_njcz1/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-                    </div>
-
-                    <!-- Post 12 -->
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DN5-9uGjcRl/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-                    </div>
-
-                    <!-- Post 13 -->
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DNgKNKqoJBe/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-                    </div>
-
-                    <!-- Post 14 -->
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DNi3eZAI438/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-                    </div>
-
-                    <!-- Post 15 -->
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DORFIDMDREZ/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-                    </div>
-
-                    <!-- Post 16 -->
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DQ5APpEDabd/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-                    </div>
-
-                    <!-- Post 17 -->
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DQ4_nsZDQO-/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-                    </div>
-
-                    <!-- Post 18 -->
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DQ4-XGpjV7u/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>
-                    </div>
-
-                </div>
-                
-                <div class="text-center mt-5">
-                    <a href="https://www.instagram.com/ventureglobal" target="_blank" rel="noopener" class="btn btn-lg" style="background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); color: white; border: none;">
-                        <i class="fab fa-instagram me-2"></i><%= t.media.instagram.followButton %>
-                    </a>
-                </div>
-            </div>
-
-            <!-- LinkedIn Tab -->
-            <div class="tab-pane fade" id="linkedin" role="tabpanel" aria-labelledby="linkedin-tab">
-                <div class="text-center mb-4">
-                    <p class="text-muted lead"><%= t.media.linkedin.subtitle %></p>
-                </div>
-                
-                <div class="row g-4" id="linkedin-feed">
-                    <!-- LinkedIn Post - CTU Prague -->
-                    <div class="col-lg-6 col-md-6 mb-4">
-                        <div class="linkedin-post-card">
-                            <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:activity:7432077469555298304" height="600" width="100%" frameborder="0" allowfullscreen="" title="LinkedIn Post"></iframe>
-                        </div>
-                    </div>
-
-                    <!-- LinkedIn Post - ESE Partnership -->
-                    <div class="col-lg-6 col-md-6 mb-4">
-                        <div class="linkedin-post-card">
-                            <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:activity:7430595273472720897" height="600" width="100%" frameborder="0" allowfullscreen="" title="LinkedIn Post"></iframe>
-                        </div>
-                    </div>
-
-                    <!-- LinkedIn Post - VG Danışmanlık Genel -->
-                    <div class="col-lg-6 col-md-6 mb-4">
-                        <div class="linkedin-post-card">
-                            <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:activity:7419693642375909376" height="600" width="100%" frameborder="0" allowfullscreen="" title="LinkedIn Post"></iframe>
-                        </div>
-                    </div>
-
-                    <!-- LinkedIn Post 1 -->
-                    <div class="col-lg-6 col-md-6 mb-4">
-                        <div class="linkedin-post-card">
-                            <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:activity:7385337874440855552" height="600" width="100%" frameborder="0" allowfullscreen="" title="LinkedIn Post"></iframe>
-                        </div>
-                    </div>
-
-                    <!-- LinkedIn Post 2 -->
-                    <div class="col-lg-6 col-md-6 mb-4">
-                        <div class="linkedin-post-card">
-                            <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:activity:7371216059351154688" height="600" width="100%" frameborder="0" allowfullscreen="" title="LinkedIn Post"></iframe>
-                        </div>
-                    </div>
-
-                    <!-- LinkedIn Post 3 -->
-                    <div class="col-lg-6 col-md-6 mb-4">
-                        <div class="linkedin-post-card">
-                            <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:activity:7370125918977220608" height="600" width="100%" frameborder="0" allowfullscreen="" title="LinkedIn Post"></iframe>
-                        </div>
-                    </div>
-
-                    <!-- LinkedIn Post 4 -->
-                    <div class="col-lg-6 col-md-6 mb-4">
-                        <div class="linkedin-post-card">
-                            <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:activity:7365809672303316992" height="600" width="100%" frameborder="0" allowfullscreen="" title="LinkedIn Post"></iframe>
-                        </div>
-                    </div>
-
-                    <!-- LinkedIn Post 5 -->
-                    <div class="col-lg-6 col-md-6 mb-4">
-                        <div class="linkedin-post-card">
-                            <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:activity:7365122942835339264" height="600" width="100%" frameborder="0" allowfullscreen="" title="LinkedIn Post"></iframe>
-                        </div>
-                    </div>
-
-                    <!-- LinkedIn Post 6 -->
-                    <div class="col-lg-6 col-md-6 mb-4">
-                        <div class="linkedin-post-card">
-                            <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:activity:7364715633646743552" height="600" width="100%" frameborder="0" allowfullscreen="" title="LinkedIn Post"></iframe>
-                        </div>
-                    </div>
-
-                    <!-- LinkedIn Post 7 -->
-                    <div class="col-lg-6 col-md-6 mb-4">
-                        <div class="linkedin-post-card">
-                            <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:activity:7361789034114834432" height="600" width="100%" frameborder="0" allowfullscreen="" title="LinkedIn Post"></iframe>
-                        </div>
-                    </div>
-
-                    <!-- LinkedIn Post 8 -->
-                    <div class="col-lg-6 col-md-6 mb-4">
-                        <div class="linkedin-post-card">
-                            <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:activity:7360339710667296768" height="600" width="100%" frameborder="0" allowfullscreen="" title="LinkedIn Post"></iframe>
-                        </div>
-                    </div>
-
-                    <!-- LinkedIn Post 9 -->
-                    <div class="col-lg-6 col-md-6 mb-4">
-                        <div class="linkedin-post-card">
-                            <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:activity:7360339220973895681" height="600" width="100%" frameborder="0" allowfullscreen="" title="LinkedIn Post"></iframe>
-                        </div>
-                    </div>
-
-                    <!-- LinkedIn Post 10 -->
-                    <div class="col-lg-6 col-md-6 mb-4">
-                        <div class="linkedin-post-card">
-                            <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:activity:7358981234846294016" height="600" width="100%" frameborder="0" allowfullscreen="" title="LinkedIn Post"></iframe>
-                        </div>
-                    </div>
-
-                    <!-- LinkedIn Post 11 -->
-                    <div class="col-lg-6 col-md-6 mb-4">
-                        <div class="linkedin-post-card">
-                            <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:activity:7354487531062681600" height="600" width="100%" frameborder="0" allowfullscreen="" title="LinkedIn Post"></iframe>
-                        </div>
-                    </div>
-
-                    <!-- LinkedIn Post 12 -->
-                    <div class="col-lg-6 col-md-6 mb-4">
-                        <div class="linkedin-post-card">
-                            <iframe src="https://www.linkedin.com/embed/feed/update/urn:li:activity:7354066526443835393" height="600" width="100%" frameborder="0" allowfullscreen="" title="LinkedIn Post"></iframe>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="text-center mt-5">
-                    <a href="https://www.linkedin.com/company/venture-global-consultancy-start-up/" target="_blank" rel="noopener" class="btn btn-primary btn-lg">
-                        <i class="fab fa-linkedin me-2"></i><%= t.media.linkedin.followButton %>
-                    </a>
-                </div>
-            </div>
-
-            <!-- YouTube Tab -->
-            <div class="tab-pane fade" id="youtube" role="tabpanel" aria-labelledby="youtube-tab">
-                <div class="text-center mb-4">
-                    <p class="text-muted lead"><%= t.media.youtube.subtitle %></p>
-                </div>
-                
-                <div class="row g-4 justify-content-center" id="youtube-feed">
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                        <div class="youtube-short-card">
-                            <iframe width="100%" height="500" src="https://www.youtube.com/embed/GF6aOzB72og" title="YouTube Shorts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                        <div class="youtube-short-card">
-                            <iframe width="100%" height="500" src="https://www.youtube.com/embed/fVuZgMm1JQ8" title="YouTube Shorts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                        <div class="youtube-short-card">
-                            <iframe width="100%" height="500" src="https://www.youtube.com/embed/pNj5EMNSSaE" title="YouTube Shorts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                        <div class="youtube-short-card">
-                            <iframe width="100%" height="500" src="https://www.youtube.com/embed/dgao11VKd3E" title="YouTube Shorts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                        <div class="youtube-short-card">
-                            <iframe width="100%" height="500" src="https://www.youtube.com/embed/Jht5FjvOC-s" title="YouTube Shorts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                        <div class="youtube-short-card">
-                            <iframe width="100%" height="500" src="https://www.youtube.com/embed/JFMODyS17J8" title="YouTube Shorts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                        <div class="youtube-short-card">
-                            <iframe width="100%" height="500" src="https://www.youtube.com/embed/XKaOobmneNg" title="YouTube Shorts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                        <div class="youtube-short-card">
-                            <iframe width="100%" height="500" src="https://www.youtube.com/embed/eoca6qNT0dE" title="YouTube Shorts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                        <div class="youtube-short-card">
-                            <iframe width="100%" height="500" src="https://www.youtube.com/embed/UCU-vobO0w8" title="YouTube Shorts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                        <div class="youtube-short-card">
-                            <iframe width="100%" height="500" src="https://www.youtube.com/embed/SRrGtm-oY9Y" title="YouTube Shorts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                        <div class="youtube-short-card">
-                            <iframe width="100%" height="500" src="https://www.youtube.com/embed/F-C04P965l0" title="YouTube Shorts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                        <div class="youtube-short-card">
-                            <iframe width="100%" height="500" src="https://www.youtube.com/embed/GXpgfj8Xc8E" title="YouTube Shorts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                        <div class="youtube-short-card">
-                            <iframe width="100%" height="500" src="https://www.youtube.com/embed/Jp12DV4f-h8" title="YouTube Shorts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-                    </div>
-
-                    <!-- YouTube Short 1 -->
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                        <div class="youtube-short-card">
-                            <iframe width="100%" height="500" src="https://www.youtube.com/embed/gqRr6TWyPaw" title="YouTube Shorts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-                    </div>
-
-                    <!-- YouTube Short 2 -->
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                        <div class="youtube-short-card">
-                            <iframe width="100%" height="500" src="https://www.youtube.com/embed/tnVTzhoF_yo" title="YouTube Shorts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-                    </div>
-
-                    <!-- YouTube Short 3 -->
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                        <div class="youtube-short-card">
-                            <iframe width="100%" height="500" src="https://www.youtube.com/embed/HXXmQqxqDcg" title="YouTube Shorts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-                    </div>
-
-                    <!-- YouTube Short 4 -->
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                        <div class="youtube-short-card">
-                            <iframe width="100%" height="500" src="https://www.youtube.com/embed/CUvF3fzTsB8" title="YouTube Shorts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-                    </div>
-
-                    <!-- YouTube Short 5 -->
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                        <div class="youtube-short-card">
-                            <iframe width="100%" height="500" src="https://www.youtube.com/embed/rK7LggkoWSI" title="YouTube Shorts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-                    </div>
-
-                    <!-- YouTube Short 6 -->
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                        <div class="youtube-short-card">
-                            <iframe width="100%" height="500" src="https://www.youtube.com/embed/S8kMX3-egpI" title="YouTube Shorts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-                    </div>
-
-                    <!-- YouTube Short 7 -->
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                        <div class="youtube-short-card">
-                            <iframe width="100%" height="500" src="https://www.youtube.com/embed/oW_-sy-CLxY" title="YouTube Shorts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-                    </div>
-
-                    <!-- YouTube Short 8 -->
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                        <div class="youtube-short-card">
-                            <iframe width="100%" height="500" src="https://www.youtube.com/embed/dkcORoVdbiY" title="YouTube Shorts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-                    </div>
-
-                    <!-- YouTube Short 9 -->
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                        <div class="youtube-short-card">
-                            <iframe width="100%" height="500" src="https://www.youtube.com/embed/RZ9GC-_9j_A" title="YouTube Shorts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="text-center mt-5">
-                    <a href="https://www.youtube.com/@VentureGlobal" target="_blank" rel="noopener" class="btn btn-lg" style="background: #FF0000; color: white; border: none;">
-                        <i class="fab fa-youtube me-2"></i><%= t.media.youtube.subscribeButton %>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Student Stories Tab -->
-            <div class="tab-pane fade" id="stories" role="tabpanel" aria-labelledby="stories-tab">
-                <div class="text-center mb-5">
-                    <p class="text-muted lead"><%= t.media.stories.subtitle %></p>
-                </div>
-                
-                <div class="row g-4">
-                    <!-- Story 1 -->
-                    <div class="col-lg-4 col-md-6">
-                        <div class="card h-100 border-0 shadow-sm">
-                            <div class="card-body p-4">
-                                <div class="text-center mb-3">
-                                    <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                                        <i class="fas fa-user fa-2x"></i>
-                                    </div>
-                                </div>
-                                <h5 class="card-title text-center fw-bold mb-3"><%= t.media.stories.story1.name %></h5>
-                                <p class="text-muted text-center mb-3"><i class="fas fa-graduation-cap me-2"></i><%= t.media.stories.story1.university %></p>
-                                <p class="card-text"><%= t.media.stories.story1.content %></p>
-                                <div class="text-center mt-3">
-                                    <span class="badge bg-success"><i class="fas fa-star me-1"></i><%= t.media.stories.story1.country %></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Story 2 -->
-                    <div class="col-lg-4 col-md-6">
-                        <div class="card h-100 border-0 shadow-sm">
-                            <div class="card-body p-4">
-                                <div class="text-center mb-3">
-                                    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                                        <i class="fas fa-user fa-2x"></i>
-                                    </div>
-                                </div>
-                                <h5 class="card-title text-center fw-bold mb-3"><%= t.media.stories.story2.name %></h5>
-                                <p class="text-muted text-center mb-3"><i class="fas fa-graduation-cap me-2"></i><%= t.media.stories.story2.university %></p>
-                                <p class="card-text"><%= t.media.stories.story2.content %></p>
-                                <div class="text-center mt-3">
-                                    <span class="badge bg-primary"><i class="fas fa-star me-1"></i><%= t.media.stories.story2.country %></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Story 3 -->
-                    <div class="col-lg-4 col-md-6">
-                        <div class="card h-100 border-0 shadow-sm">
-                            <div class="card-body p-4">
-                                <div class="text-center mb-3">
-                                    <div class="rounded-circle bg-warning text-white d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                                        <i class="fas fa-user fa-2x"></i>
-                                    </div>
-                                </div>
-                                <h5 class="card-title text-center fw-bold mb-3"><%= t.media.stories.story3.name %></h5>
-                                <p class="text-muted text-center mb-3"><i class="fas fa-graduation-cap me-2"></i><%= t.media.stories.story3.university %></p>
-                                <p class="card-text"><%= t.media.stories.story3.content %></p>
-                                <div class="text-center mt-3">
-                                    <span class="badge bg-warning"><i class="fas fa-star me-1"></i><%= t.media.stories.story3.country %></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="text-center mt-5">
-                    <p class="lead text-muted mb-4"><%= t.media.stories.cta %></p>
-                    <a href="/contact" class="btn btn-success btn-lg">
-                        <i class="fas fa-envelope me-2"></i><%= t.media.stories.contactButton %>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Custom Tab Styles -->
 <style>
-.nav-pills .nav-link {
-    border-radius: 15px;
-    padding: 1.5rem 2rem;
-    transition: all 0.3s ease;
-    background-color: #f8f9fa;
-    color: #6c757d;
-    border: 2px solid transparent;
-}
-
-.nav-pills .nav-link:hover {
-    background-color: #e9ecef;
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-
-.nav-pills .nav-link.active {
-    background-color: white;
-    color: #0d6efd;
-    border-color: #0d6efd;
-    box-shadow: 0 10px 25px rgba(13,110,253,0.2);
-}
-
-.linkedin-post-card {
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 119, 181, 0.15);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    background: white;
-}
-
-.linkedin-post-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 119, 181, 0.25);
-}
-
-.linkedin-post-card iframe {
-    display: block;
-    border-radius: 12px;
-}
-
-.youtube-short-card {
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(255, 0, 0, 0.15);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    background: white;
+.m-hero {
+    background: linear-gradient(135deg, #003d6b 0%, #005A9E 50%, #0078D7 100%);
+    padding: 80px 0 50px;
     position: relative;
+    overflow: hidden;
 }
-
-.youtube-short-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(255, 0, 0, 0.25);
-}
-
-.youtube-short-card iframe {
-    display: block;
-    border-radius: 16px;
-}
-
-.youtube-short-card::before {
+.m-hero::after {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: 16px;
-    pointer-events: none;
-    z-index: 1;
+    top: -40%;
+    right: -10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+    border-radius: 50%;
+}
+.m-hero h1 { font-size: 3.5rem; font-weight: 800; position: relative; z-index: 1; }
+.m-hero .lead { opacity: 0.92; max-width: 680px; margin: 0 auto; position: relative; z-index: 1; font-size: 1.15rem; }
+
+.m-section { padding: 60px 0; }
+.m-section-alt { background: #f8f9fa; }
+
+.m-section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+.m-section-title h2 {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 0;
+}
+.m-section-desc {
+    color: #666;
+    margin-bottom: 32px;
+    max-width: 550px;
 }
 
-@media (max-width: 768px) {
-    .nav-pills .nav-link {
-        padding: 1rem 1.5rem;
-        margin-bottom: 0.5rem;
-    }
-    
-    .nav-pills .nav-link i {
-        font-size: 1.5rem !important;
-    }
-    
-    .nav-pills .nav-link h5 {
-        font-size: 0.9rem;
-    }
-    
-    .linkedin-post-card iframe {
-        height: 500px !important;
-    }
+/* Instagram embed cards */
+.ig-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+.ig-embed-card {
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+    transition: transform 0.25s, box-shadow 0.25s;
+}
+.ig-embed-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.12);
+}
+.ig-embed-card {
+    max-height: 520px;
+    overflow: hidden;
+}
+.ig-embed-card .instagram-media {
+    margin: 0 !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+}
+
+/* YouTube shorts */
+.yt-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+}
+.yt-short {
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 14px rgba(0,0,0,0.08);
+    background: #000;
+    transition: transform 0.25s, box-shadow 0.25s;
+}
+.yt-short:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(255,0,0,0.16);
+}
+.yt-short iframe {
+    display: block;
+    width: 100%;
+    aspect-ratio: 9/16;
+    border: 0;
+}
+
+/* CTA buttons */
+.btn-ig {
+    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+    color: #fff;
+    border: none;
+    font-weight: 600;
+    padding: 14px 36px;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+    max-width: 100%;
+    white-space: normal;
+}
+.btn-ig:hover { transform: scale(1.04); box-shadow: 0 6px 20px rgba(225,48,108,0.35); color: #fff; }
+.btn-yt {
+    background: #FF0000;
+    color: #fff;
+    border: none;
+    font-weight: 600;
+    padding: 14px 36px;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+    max-width: 100%;
+    white-space: normal;
+}
+.btn-yt:hover { transform: scale(1.04); box-shadow: 0 6px 20px rgba(255,0,0,0.3); color: #fff; }
+
+/* SEO links */
+.seo-section { background: linear-gradient(135deg, #eef4fb 0%, #e3ecf7 100%); padding: 60px 0; }
+.seo-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 28px 22px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-align: center;
+    height: 100%;
+}
+.seo-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+.seo-card .icon-circle {
+    width: 56px; height: 56px;
+    background: linear-gradient(135deg, #0078D7, #00BCF2);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.3rem;
+    margin-bottom: 14px;
+}
+.seo-card h5 { font-weight: 700; color: #1a1a2e; font-size: 1rem; }
+.seo-card a { color: #005A9E; font-weight: 600; text-decoration: none; font-size: 0.9rem; }
+.seo-card a:hover { text-decoration: underline; }
+
+@media (max-width: 991px) {
+    .ig-row { grid-template-columns: repeat(2, 1fr); }
+    .yt-row { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 767px) {
+    .ig-row { grid-template-columns: 1fr; }
+    .yt-row { grid-template-columns: repeat(2, 1fr); }
+    .m-hero h1 { font-size: 2rem; }
+    .btn-ig, .btn-yt { padding: 12px 20px; font-size: 0.93rem; }
+}
+@media (max-width: 480px) {
+    .yt-row { grid-template-columns: 1fr; }
 }
 </style>
 
-<!-- Instagram Embed Script -->
-<script async src="//www.instagram.com/embed.js"></script>
+<!-- Hero -->
+<section class="m-hero text-white text-center">
+    <div class="container">
+        <h1><%= t.media.heroTitle %></h1>
+        <p class="lead mt-3"><%= lang === 'en' ? 'Campus tours, student experiences and study abroad tips.' : 'Kampüs turları, öğrenci deneyimleri ve yurt dışı eğitim ipuçları.' %></p>
+    </div>
+</section>
+
+<!-- Instagram -->
+<section class="m-section">
+    <div class="container">
+        <div class="m-section-title">
+            <i class="fab fa-instagram fa-lg" style="color:#E1306C;"></i>
+            <h2>Instagram</h2>
+        </div>
+        <p class="m-section-desc"><%= lang === 'en' ? 'Latest posts from our Instagram — student stories, campus highlights and more.' : 'Instagram\'dan son paylaşımlarımız — öğrenci hikayeleri, kampüs görüntüleri ve daha fazlası.' %></p>
+
+        <div class="ig-row">
+            <div class="ig-embed-card">
+                <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DU-v6V1DQEP/" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:none; margin:0; padding:0; width:100%;"></blockquote>
+            </div>
+            <div class="ig-embed-card">
+                <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DVJRuAxjXQH/" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:none; margin:0; padding:0; width:100%;"></blockquote>
+            </div>
+            <div class="ig-embed-card">
+                <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DRSZOC8jae7/" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:none; margin:0; padding:0; width:100%;"></blockquote>
+            </div>
+            <div class="ig-embed-card">
+                <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DRNDv0Wjd_c/" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:none; margin:0; padding:0; width:100%;"></blockquote>
+            </div>
+            <div class="ig-embed-card">
+                <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DRpUoXDDW8g/" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:none; margin:0; padding:0; width:100%;"></blockquote>
+            </div>
+            <div class="ig-embed-card">
+                <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/DRIAsAbDeHc/" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:none; margin:0; padding:0; width:100%;"></blockquote>
+            </div>
+        </div>
+
+        <div class="text-center mt-5">
+            <a href="https://www.instagram.com/ventureglobal" target="_blank" rel="noopener" class="btn btn-ig">
+                <i class="fab fa-instagram me-2"></i><%= t.media.instagram.followButton %>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- YouTube Shorts -->
+<section class="m-section m-section-alt">
+    <div class="container">
+        <div class="m-section-title">
+            <i class="fab fa-youtube fa-lg" style="color:#FF0000;"></i>
+            <h2>YouTube Shorts</h2>
+        </div>
+        <p class="m-section-desc"><%= lang === 'en' ? 'Quick tips and campus tours — subscribe for study abroad content.' : 'Kısa videolarımız ile yurt dışı eğitim hakkında her şey — abone olun.' %></p>
+
+        <div class="yt-row">
+            <% const ytShorts = [
+                'GF6aOzB72og', 'fVuZgMm1JQ8', 'pNj5EMNSSaE', 'dgao11VKd3E',
+                'Jht5FjvOC-s', 'JFMODyS17J8', 'XKaOobmneNg', 'eoca6qNT0dE'
+            ]; %>
+            <% ytShorts.forEach(function(id) { %>
+            <div class="yt-short">
+                <iframe src="https://www.youtube-nocookie.com/embed/<%= id %>" title="VG Danışmanlık YouTube Short" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+            </div>
+            <% }); %>
+        </div>
+
+        <div class="text-center mt-5">
+            <a href="https://www.youtube.com/@VentureGlobal" target="_blank" rel="noopener" class="btn btn-yt">
+                <i class="fab fa-youtube me-2"></i><%= t.media.youtube.subscribeButton %>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- SEO Internal Links -->
+<section class="seo-section">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 style="font-weight:700; color:#003d6b;"><%= lang === 'en' ? 'Your Study Abroad Journey' : 'Yurt Dışı Eğitim Yolculuğunuz' %></h2>
+            <p class="text-muted mt-2"><%= lang === 'en' ? 'Explore our comprehensive resources for studying abroad' : 'Yurt dışında eğitim almak için kapsamlı kaynaklarımızı keşfedin' %></p>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="seo-card">
+                    <div class="icon-circle"><i class="fas fa-globe-europe"></i></div>
+                    <h5><%= lang === 'en' ? 'Country Guides' : 'Ülke Rehberleri' %></h5>
+                    <p class="text-muted small mb-2"><%= lang === 'en' ? 'Detailed guides for 8 countries' : '8 ülke için detaylı rehberler' %></p>
+                    <a href="/ulkede-universite/almanya"><%= lang === 'en' ? 'Explore' : 'İncele' %> <i class="fas fa-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="seo-card">
+                    <div class="icon-circle"><i class="fas fa-university"></i></div>
+                    <h5><%= lang === 'en' ? 'Universities' : 'Üniversiteler' %></h5>
+                    <p class="text-muted small mb-2"><%= lang === 'en' ? 'Browse partner universities' : 'Partner üniversiteleri inceleyin' %></p>
+                    <a href="/universities"><%= lang === 'en' ? 'Browse' : 'Gör' %> <i class="fas fa-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="seo-card">
+                    <div class="icon-circle"><i class="fas fa-newspaper"></i></div>
+                    <h5>Blog</h5>
+                    <p class="text-muted small mb-2"><%= lang === 'en' ? 'Study abroad articles' : 'Yurt dışı eğitim makaleleri' %></p>
+                    <a href="/blog"><%= lang === 'en' ? 'Read' : 'Oku' %> <i class="fas fa-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="seo-card">
+                    <div class="icon-circle"><i class="fas fa-comments"></i></div>
+                    <h5><%= lang === 'en' ? 'Contact Us' : 'İletişim' %></h5>
+                    <p class="text-muted small mb-2"><%= lang === 'en' ? 'Free initial consultation' : 'Ücretsiz ön görüşme' %></p>
+                    <a href="/contact"><%= lang === 'en' ? 'Contact' : 'İletişim' %> <i class="fas fa-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Deferred Instagram embed.js for performance -->
+<script>
+(function() {
+    var s = document.createElement('script');
+    s.async = true;
+    s.defer = true;
+    s.src = '//www.instagram.com/embed.js';
+    document.body.appendChild(s);
+})();
+</script>

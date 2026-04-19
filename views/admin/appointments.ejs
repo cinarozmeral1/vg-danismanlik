@@ -176,6 +176,8 @@
                                                     <i class="fas fa-ellipsis-v text-muted"></i>
                                                 </button>
                                                 <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                                    <li><a class="dropdown-item" href="#" onclick="openEditModal(<%= apt.id %>); return false;"><i class="fas fa-edit me-2" style="color: #005A9E;"></i>Düzenle</a></li>
+                                                    <li><hr class="dropdown-divider"></li>
                                                     <li><a class="dropdown-item" href="#" onclick="updateStatus(<%= apt.id %>, 'confirmed'); return false;"><i class="fas fa-check me-2" style="color: #005A9E;"></i>Onayla</a></li>
                                                     <li><a class="dropdown-item" href="#" onclick="updateStatus(<%= apt.id %>, 'completed'); return false;"><i class="fas fa-check-circle me-2" style="color: #059669;"></i>Tamamlandı</a></li>
                                                     <li><hr class="dropdown-divider"></li>
@@ -233,6 +235,91 @@
                     <% }); %>
                 </div>
             <% } %>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Appointment Modal -->
+<div class="modal fade" id="editAptModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" style="border-radius: 16px; overflow: hidden;">
+            <div class="modal-header text-white" style="background: linear-gradient(135deg, #005A9E 0%, #003d6b 100%);">
+                <h5 class="modal-title fw-bold"><i class="fas fa-edit me-2"></i>Randevu Düzenle</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" style="padding: 24px;">
+                <input type="hidden" id="editAptId">
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold" style="font-size: 13px;">Ad Soyad *</label>
+                        <input type="text" class="form-control" id="editFullName">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold" style="font-size: 13px;">E-posta *</label>
+                        <input type="email" class="form-control" id="editEmail">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold" style="font-size: 13px;">Telefon</label>
+                        <input type="tel" class="form-control" id="editPhone">
+                    </div>
+                    <div class="col-md-6 student-edit-field">
+                        <label class="form-label fw-semibold" style="font-size: 13px;">Hedef Ülke</label>
+                        <input type="text" class="form-control" id="editCountry">
+                    </div>
+                    <div class="col-md-6 student-edit-field">
+                        <label class="form-label fw-semibold" style="font-size: 13px;">İlgilenilen Alan</label>
+                        <input type="text" class="form-control" id="editField">
+                    </div>
+                    <div class="col-md-6 student-edit-field">
+                        <label class="form-label fw-semibold" style="font-size: 13px;">Eğitim Seviyesi</label>
+                        <input type="text" class="form-control" id="editEducation">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-semibold" style="font-size: 13px;">Not</label>
+                        <textarea class="form-control" id="editNotes" rows="2"></textarea>
+                    </div>
+                </div>
+
+                <hr class="my-3">
+
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" id="editDateToggle">
+                    <label class="form-check-label fw-semibold" for="editDateToggle">Tarih/Saat Değiştir</label>
+                </div>
+
+                <div id="editDateSection" style="display: none;">
+                    <div class="alert alert-warning py-2 mb-3" style="font-size: 13px;">
+                        <i class="fas fa-exclamation-triangle me-1"></i>
+                        Tarih veya saat değiştirildiğinde iCloud takvimi ve Zoom toplantısı otomatik güncellenir, öğrenciye bilgilendirme maili gider.
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold" style="font-size: 13px;">Yeni Tarih *</label>
+                            <input type="text" class="form-control" id="editDate" placeholder="GG/AA/YYYY" maxlength="10" autocomplete="off">
+                            <small class="text-muted">Önce gün, sonra ay (örn: 18/03/2026)</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold" style="font-size: 13px;">Yeni Saat *</label>
+                            <select class="form-select" id="editTimeSlot">
+                                <option value="">Önce tarih seçin...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="editSlotsLoading" style="display: none;" class="text-center py-2">
+                        <div class="spinner-border spinner-border-sm text-primary"></div>
+                        <small class="text-muted ms-2">Saatler yükleniyor...</small>
+                    </div>
+                </div>
+
+                <div class="mt-3 p-3 rounded" style="background: #f8f9fa; font-size: 13px;" id="editCurrentInfo"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn text-white fw-semibold" style="background: #005A9E;" onclick="saveAppointmentEdit()" id="editSaveBtn">
+                    <i class="fas fa-save me-2"></i>Kaydet
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -380,5 +467,177 @@ function sendZoomInvite(id) {
         btn.innerHTML = originalText;
         btn.disabled = false;
     });
+}
+
+// ===================== EDIT APPOINTMENT =====================
+let currentEditApt = null;
+
+document.getElementById('editDateToggle').addEventListener('change', function() {
+    document.getElementById('editDateSection').style.display = this.checked ? 'block' : 'none';
+});
+
+// GG/AA/YYYY veya YYYY-MM-DD -> YYYY-MM-DD (API için)
+function parseEditDateToISO(inputStr) {
+    if (!inputStr || !inputStr.trim()) return null;
+    const s = inputStr.trim();
+    const slashMatch = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (slashMatch) {
+        const [, d, m, y] = slashMatch;
+        const day = parseInt(d, 10);
+        const month = parseInt(m, 10);
+        if (month < 1 || month > 12 || day < 1 || day > 31) return null;
+        return `${y}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    }
+    const dashMatch = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (dashMatch) return s;
+    return null;
+}
+
+document.getElementById('editDate').addEventListener('input', async function() {
+    const dateVal = parseEditDateToISO(this.value);
+    if (!dateVal) {
+        document.getElementById('editTimeSlot').innerHTML = '<option value="">Önce geçerli tarih girin (GG/AA/YYYY)</option>';
+        return;
+    }
+    const slotSelect = document.getElementById('editTimeSlot');
+    const loading = document.getElementById('editSlotsLoading');
+    slotSelect.innerHTML = '<option value="">Yükleniyor...</option>';
+    slotSelect.disabled = true;
+    loading.style.display = 'block';
+
+    try {
+        const resp = await fetch(`/api/appointments/available-slots/${dateVal}`);
+        const data = await resp.json();
+        loading.style.display = 'none';
+
+        if (data.success && data.slots && data.slots.length > 0) {
+            slotSelect.innerHTML = '<option value="">Saat seçin...</option>';
+            data.slots.forEach(s => {
+                const czech = s.czechTime != null ? s.czechTime : s.czech_time;
+                const turkey = s.turkeyTime != null ? s.turkeyTime : s.turkey_time;
+                const startU = s.startUTC != null ? s.startUTC : s.start_utc;
+                const endU = s.endUTC != null ? s.endUTC : s.end_utc;
+                const val = `${czech}|${turkey}|${startU}|${endU}`;
+                slotSelect.innerHTML += `<option value="${val}">${turkey} (TSİ) / ${czech} (CZ)</option>`;
+            });
+        } else {
+            slotSelect.innerHTML = '<option value="">Bu tarihte müsait saat yok</option>';
+        }
+        slotSelect.disabled = false;
+    } catch (err) {
+        loading.style.display = 'none';
+        slotSelect.innerHTML = '<option value="">Hata oluştu</option>';
+        slotSelect.disabled = false;
+    }
+});
+document.getElementById('editDate').addEventListener('blur', function() {
+    if (this.value.trim()) this.dispatchEvent(new Event('input'));
+});
+
+async function openEditModal(aptId) {
+    try {
+        const resp = await fetch(`/admin/appointments/${aptId}/details`, { credentials: 'include' });
+        const data = await resp.json();
+        if (!data.success) {
+            alert(data.message || 'Randevu yüklenemedi.');
+            return;
+        }
+        const apt = data.appointment;
+        currentEditApt = apt;
+
+        document.getElementById('editAptId').value = apt.id;
+        document.getElementById('editFullName').value = apt.full_name;
+        document.getElementById('editEmail').value = apt.email;
+        document.getElementById('editPhone').value = apt.phone || '';
+        document.getElementById('editNotes').value = apt.notes || '';
+        document.getElementById('editCountry').value = apt.target_country || '';
+        document.getElementById('editField').value = apt.field_of_interest || '';
+        document.getElementById('editEducation').value = apt.education_level || '';
+
+        document.getElementById('editDateToggle').checked = false;
+        document.getElementById('editDateSection').style.display = 'none';
+        document.getElementById('editDate').value = '';
+        document.getElementById('editTimeSlot').innerHTML = '<option value="">Önce tarih seçin...</option>';
+
+        const isPro = apt.meeting_type === 'professional';
+        document.querySelectorAll('.student-edit-field').forEach(el => {
+            el.style.display = isPro ? 'none' : '';
+        });
+
+        const aptDate = new Date(apt.appointment_date);
+        const dateStr = aptDate.toLocaleDateString('tr-TR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        document.getElementById('editCurrentInfo').innerHTML = `
+            <i class="fas fa-info-circle me-1 text-primary"></i>
+            <strong>Mevcut:</strong> ${dateStr} — ${apt.turkey_time} (TSİ)
+            ${apt.zoom_link ? ' | <i class="fas fa-video text-primary"></i> Zoom mevcut' : ''}
+            ${apt.calendar_event_id ? ' | <i class="fas fa-calendar text-primary"></i> iCloud mevcut' : ''}
+        `;
+
+        const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editAptModal'));
+        modal.show();
+    } catch (err) {
+        console.error('Open edit modal error:', err);
+        alert('Randevu bilgileri yüklenirken hata oluştu.');
+    }
+}
+
+async function saveAppointmentEdit() {
+    const id = document.getElementById('editAptId').value;
+    const btn = document.getElementById('editSaveBtn');
+    const origText = btn.innerHTML;
+
+    const payload = {
+        full_name: document.getElementById('editFullName').value.trim(),
+        email: document.getElementById('editEmail').value.trim(),
+        phone: document.getElementById('editPhone').value.trim(),
+        notes: document.getElementById('editNotes').value.trim(),
+        target_country: document.getElementById('editCountry').value.trim(),
+        field_of_interest: document.getElementById('editField').value.trim(),
+        education_level: document.getElementById('editEducation').value.trim()
+    };
+
+    if (!payload.full_name || !payload.email) {
+        alert('Ad soyad ve e-posta zorunludur.');
+        return;
+    }
+
+    if (document.getElementById('editDateToggle').checked) {
+        const newDateRaw = document.getElementById('editDate').value.trim();
+        const newDate = parseEditDateToISO(newDateRaw);
+        const newSlot = document.getElementById('editTimeSlot').value;
+        if (!newDate || !newSlot) {
+            alert('Tarih değişikliği için tarih (GG/AA/YYYY) ve saat seçmelisiniz.');
+            return;
+        }
+        payload.date = newDate;
+        payload.timeSlot = newSlot;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Kaydediliyor...';
+
+    try {
+        const resp = await fetch(`/admin/appointments/${id}/edit`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(payload)
+        });
+        const data = await resp.json();
+
+        if (data.success) {
+            btn.innerHTML = '<i class="fas fa-check me-2"></i>Kaydedildi!';
+            btn.style.background = '#059669';
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            alert(data.message || 'Güncelleme başarısız.');
+            btn.innerHTML = origText;
+            btn.disabled = false;
+        }
+    } catch (err) {
+        alert('Bağlantı hatası.');
+        btn.innerHTML = origText;
+        btn.disabled = false;
+    }
 }
 </script>

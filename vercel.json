@@ -5,7 +5,15 @@
       "src": "server.js",
       "use": "@vercel/node",
       "config": {
-        "maxLambdaSize": "50mb"
+        "maxLambdaSize": "50mb",
+        "includeFiles": [
+          "public/favicon.ico",
+          "public/favicon.png",
+          "public/favicon-48.png",
+          "public/favicon-192.png",
+          "public/apple-touch-icon.png",
+          "public/images/signature.png"
+        ]
       }
     },
     {
@@ -24,15 +32,26 @@
     },
     {
       "src": "/favicon.ico",
-      "dest": "/public/favicon.ico"
+      "dest": "/server.js"
     },
     {
       "src": "/favicon.png",
-      "dest": "/public/favicon.png"
+      "dest": "/server.js"
+    },
+    {
+      "src": "/favicon-48.png",
+      "dest": "/server.js"
     },
     {
       "src": "/favicon-192.png",
-      "dest": "/public/favicon-192.png"
+      "dest": "/server.js"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "dest": "/server.js"
+    },
+    {
+      "handle": "filesystem"
     },
     {
       "src": "/api/cron/(.*)",
@@ -52,16 +71,16 @@
       "schedule": "0 9 */3 * *"
     },
     {
-      "path": "/api/cron/backup-database",
-      "schedule": "0 3 * * *"
-    },
-    {
       "path": "/api/cron/profile-reminder",
       "schedule": "0 */6 * * *"
     },
     {
       "path": "/api/cron/zoom-reminder",
       "schedule": "*/10 * * * *"
+    },
+    {
+      "path": "/api/cron/zoom-meeting-check",
+      "schedule": "*/15 * * * *"
     }
   ],
   "env": {

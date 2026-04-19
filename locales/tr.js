@@ -140,35 +140,85 @@ module.exports = {
         hero: {
             germany: {
                 title: "Almanya'da Öğrenci Olmak",
-                subtitle: "Dünya çapında tanınan kaliteli eğitim sistemi ve ücretsiz üniversite eğitimi"
+                subtitle: "Dünya çapında tanınan kaliteli eğitim sistemi ve ücretsiz üniversite eğitimi",
+                intro: "Almanya'da okumak ve Almanya'da üniversite okumak isteyenler için rehber: bu ülkede eğitim, yaşam maliyetleri, vize ve konaklama."
             },
             uk: {
                 title: "İngiltere'de Öğrenci Olmak",
-                subtitle: "Dünya çapında tanınan üniversitelerde kaliteli eğitim ve kariyer fırsatları"
+                subtitle: "Dünya çapında tanınan üniversitelerde kaliteli eğitim ve kariyer fırsatları",
+                intro: "İngiltere'de okumak ve bu ülkede üniversite hayatı hakkında bilmeniz gerekenler: UCAS başvuru, yaşam maliyetleri ve vize."
             },
             czech: {
                 title: "Çek Cumhuriyeti'nde Öğrenci Olmak",
-                subtitle: "Prag'ın büyüleyici atmosferinde kaliteli eğitim ve uygun maliyetler"
+                subtitle: "Prag'ın büyüleyici atmosferinde kaliteli eğitim ve uygun maliyetler",
+                intro: "Çekya'da okumak ve Çek Cumhuriyeti'nde üniversite okumak isteyenler için: Prag'da eğitim, yaşam maliyetleri ve vize rehberi."
             },
             austria: {
                 title: "Avusturya'da Öğrenci Olmak",
-                subtitle: "Viyana'nın kültürel başkentinde kaliteli eğitim ve yaşam standartları"
+                subtitle: "Viyana'nın kültürel başkentinde kaliteli eğitim ve yaşam standartları",
+                intro: "Avusturya'da okumak ve bu ülkede üniversite okumak isteyenler için: Viyana'da eğitim, yaşam maliyetleri ve vize."
             },
             italy: {
                 title: "İtalya'da Öğrenci Olmak",
-                subtitle: "Tarihi ve kültürel zenginliklerin yanında kaliteli eğitim fırsatları"
+                subtitle: "Tarihi ve kültürel zenginliklerin yanında kaliteli eğitim fırsatları",
+                intro: "İtalya'da okumak ve İtalya'da üniversite okumak isteyenler için rehber: yaşam maliyetleri, vize süreci ve konaklama seçenekleri."
             },
             hungary: {
                 title: "Macaristan'da Öğrenci Olmak",
-                subtitle: "Budapeşte'nin tarihi atmosferinde kaliteli eğitim ve uygun yaşam maliyetleri"
+                subtitle: "Budapeşte'nin tarihi atmosferinde kaliteli eğitim ve uygun yaşam maliyetleri",
+                intro: "Macaristan'da okumak ve bu ülkede üniversite okumak isteyenler için: Budapeşte'de eğitim, yaşam maliyetleri ve vize."
             },
             poland: {
                 title: "Polonya'da Öğrenci Olmak",
-                subtitle: "Varşova ve Kraków'un tarihi atmosferinde kaliteli eğitim ve uygun yaşam maliyetleri"
+                subtitle: "Varşova ve Kraków'un tarihi atmosferinde kaliteli eğitim ve uygun yaşam maliyetleri",
+                intro: "Polonya'da okumak ve Polonya'da üniversite okumak isteyenler için: yaşam maliyetleri, vize ve konaklama rehberi."
             },
             netherlands: {
                 title: "Hollanda'da Öğrenci Olmak",
-                subtitle: "Amsterdam ve Rotterdam'ın modern atmosferinde dünya standartlarında eğitim"
+                subtitle: "Amsterdam ve Rotterdam'ın modern atmosferinde dünya standartlarında eğitim.",
+                intro: "Hollanda'da okumak ve bu ülkede üniversite okumak isteyenler için: Amsterdam, Rotterdam'da eğitim, yaşam maliyetleri ve vize."
+            }
+        },
+        seo: {
+            germany: {
+                title: "Almanya'da Okumak | Almanya'da Üniversite ve Öğrenci Hayatı 2025 | Venture Global",
+                description: "Almanya'da okumak ve Almanya'da üniversite okumak isteyenler için rehber. Ücretsiz eğitim, yaşam maliyetleri, vize, konaklama, Studienkolleg. Venture Global ile bu ülkede eğitim danışmanlığı.",
+                keywords: "almanya da okumak, almanya da universite, almanya ogrenci hayati, almanya yasam maliyeti, almanya vize, venture global almanya, bu ulkede okumak, yurtdisi egitim"
+            },
+            uk: {
+                title: "İngiltere'de Okumak | İngiltere'de Üniversite ve Öğrenci Hayatı 2025 | Venture Global",
+                description: "İngiltere'de okumak ve İngiltere'de üniversite okumak isteyenler için rehber. UCAS başvuru, yaşam maliyetleri, vize, konaklama. Venture Global ile bu ülkede eğitim danışmanlığı.",
+                keywords: "ingiltere de okumak, ingiltere de universite, ingiltere ogrenci hayati, uk universite, venture global ingiltere, bu ulkede okumak, yurtdisi egitim"
+            },
+            czech: {
+                title: "Çekya'da Okumak | Çek Cumhuriyeti'nde Üniversite ve Öğrenci Hayatı 2025 | Venture Global",
+                description: "Çekya'da okumak ve Çek Cumhuriyeti'nde üniversite okumak isteyenler için rehber. Prag'da eğitim, yaşam maliyetleri, vize, konaklama. Venture Global ile bu ülkede eğitim danışmanlığı.",
+                keywords: "cekya da okumak, ce cumhuriyeti universite, prag universite, cekya ogrenci hayati, venture global cekya, bu ulkede okumak, yurtdisi egitim"
+            },
+            austria: {
+                title: "Avusturya'da Okumak | Avusturya'da Üniversite ve Öğrenci Hayatı 2025 | Venture Global",
+                description: "Avusturya'da okumak ve Avusturya'da üniversite okumak isteyenler için rehber. Viyana'da eğitim, yaşam maliyetleri, vize, MedAT. Venture Global ile bu ülkede eğitim danışmanlığı.",
+                keywords: "avusturya da okumak, avusturya universite, viyana universite, avusturya ogrenci hayati, venture global avusturya, bu ulkede okumak, yurtdisi egitim"
+            },
+            italy: {
+                title: "İtalya'da Okumak | İtalya'da Üniversite ve Öğrenci Hayatı 2025 | Venture Global",
+                description: "İtalya'da okumak ve İtalya'da üniversite okumak isteyenler için rehber. Bologna, Milano, Roma'da eğitim, yaşam maliyetleri, vize, IMAT. Venture Global ile bu ülkede eğitim danışmanlığı.",
+                keywords: "italya da okumak, italya da universite, italya ogrenci hayati, italya yasam maliyeti, venture global italya, bu ulkede okumak, yurtdisi egitim"
+            },
+            hungary: {
+                title: "Macaristan'da Okumak | Macaristan'da Üniversite ve Öğrenci Hayatı 2025 | Venture Global",
+                description: "Macaristan'da okumak ve Macaristan'da üniversite okumak isteyenler için rehber. Budapeşte'de eğitim, Semmelweis, yaşam maliyetleri, vize. Venture Global ile bu ülkede eğitim danışmanlığı.",
+                keywords: "macaristan da okumak, macaristan universite, budapest universite, macaristan ogrenci hayati, venture global macaristan, bu ulkede okumak, yurtdisi egitim"
+            },
+            poland: {
+                title: "Polonya'da Okumak | Polonya'da Üniversite ve Öğrenci Hayatı 2025 | Venture Global",
+                description: "Polonya'da okumak ve Polonya'da üniversite okumak isteyenler için rehber. Varşova, Kraków'da eğitim, yaşam maliyetleri, vize. Venture Global ile bu ülkede eğitim danışmanlığı.",
+                keywords: "polonya da okumak, polonya universite, polonya ogrenci hayati, venture global polonya, bu ulkede okumak, yurtdisi egitim"
+            },
+            netherlands: {
+                title: "Hollanda'da Okumak | Hollanda'da Üniversite ve Öğrenci Hayatı 2025 | Venture Global",
+                description: "Hollanda'da okumak ve Hollanda'da üniversite okumak isteyenler için rehber. Amsterdam, Rotterdam'da eğitim, yaşam maliyetleri, vize. Venture Global ile bu ülkede eğitim danışmanlığı.",
+                keywords: "hollanda da okumak, hollanda universite, hollanda ogrenci hayati, venture global hollanda, bu ulkede okumak, yurtdisi egitim"
             }
         },
         sections: {
@@ -682,7 +732,7 @@ module.exports = {
             whatsapp: {
                 title: "Danışmanlık Al",
                 subtitle: "Hemen WhatsApp üzerinden bizimle iletişime geç, uzman danışmanlarımız seni bekliyor!",
-                button: "WhatsApp'tan Yaz"
+                button: "Mesaj Gönder"
             },
             instagram: {
                 title: "Instagram'dan Mesaj Gönder",
@@ -1932,7 +1982,10 @@ module.exports = {
             earlyPrepTitle: "Erken Hazırlığın Avantajlarını Keşfedin",
             earlyPrepBody: "9, 10 veya 11. sınıf öğrencileri için IB, AP, SAT, TOEFL ve IELTS'e şimdiden hazırlanma fırsatı. Uzman öğretmenlerle online birebir dersler.",
             ctaButton: "Detaylı Bilgi",
-            exclusiveOffer: "Kanpus'tan ders alanlar Venture Global'de, Venture Global'den danışmanlık alanlar Kanpus'ta ayrıcalıklı indirimlerden yararlanır!"
+            exclusiveOffer: "Kanpus'tan ders alanlar Venture Global'de, Venture Global'den danışmanlık alanlar Kanpus'ta ayrıcalıklı indirimlerden yararlanır!",
+            preziTitle: "Venture Global Tanıtım Sunumu",
+            preziSubtitle: "VG Danışmanlık hizmetleri ve vizyonumuz hakkında interaktif sunum.",
+            preziIframeTitle: "Venture Global (VG Danışmanlık) Tanıtım Sunumu"
         },
         whyChooseUs: {
             title: "Neden Bizi Seçmelisiniz?",
@@ -2054,7 +2107,7 @@ module.exports = {
                 },
                 {
                     question: "Dil bilmeden yurt dışında eğitim alabilir miyim?",
-                    answer: "Evet, birçok ülkede İngilizce eğitim veren programlar mevcuttur. Ayrıca bazı üniversiteler koşullu kabul vererek dil hazırlık programına yönlendirebilir. Almanya'da Studienkolleg, İngiltere'de Foundation Year gibi hazırlık programları da bulunmaktadır. Partner kurumlarımız Kanpus aracılığıyla IELTS, TOEFL ve diğer dil sınavlarına da hazırlanabilirsiniz."
+                    answer: "Evet, birçok ülkede İngilizce eğitim veren programlar mevcuttur. Ayrıca bazı üniversiteler koşullu kabul vererek dil hazırlık programına yönlendirebilir. Almanya'da Studienkolleg, İngiltere'de Foundation Year gibi hazırlık programları da bulunmaktadır. IELTS, TOEFL ve diğer dil sınavlarına hazırlık konusunda da destek sağlıyoruz."
                 },
                 {
                     question: "Yurt dışında eğitim masrafları ne kadar tutar?",
@@ -2075,10 +2128,6 @@ module.exports = {
                 {
                     question: "WCEP Kanada programı nedir?",
                     answer: "WCEP (World Canadian Education Program) ortaklığımız sayesinde 12. sınıfı Kanada'nın prestijli okullarında tamamlayarak Kanada lise diploması alabilirsiniz. Bu diploma ile Almanya'da Studienkolleg'i atlayabilir, İngiltere'de Foundation Year'ı bypass edebilir ve Çekya'da tıp fakültesine sınavsız kabul alabilirsiniz."
-                },
-                {
-                    question: "Kanpus ile ortaklığınız ne sağlıyor?",
-                    answer: "Kanpus ortaklığımız sayesinde öğrencilerimiz IB Diploma, AP Courses, SAT, TOEFL ve IELTS sınavlarına uzman öğretmenlerle birebir online derslerle hazırlanabilir. Kanpus'tan ders alan öğrenciler Venture Global'de, Venture Global'den danışmanlık alan öğrenciler Kanpus'ta ayrıcalıklı indirimlerden yararlanır."
                 },
                 {
                     question: "Başvuru sürecinde ne kadar destek alırım?",
@@ -2238,6 +2287,498 @@ module.exports = {
         }
     },
     
+    // Country Guide Pages (/ulkede-universite/)
+    countryGuide: {
+        germany: {
+            heroStats: { uniCount: '400+', intStudents: '400.000+' },
+            educationSystem: {
+                title: "Almanya Eğitim Sistemi",
+                content: "<p>Almanya, dünyada en çok tercih edilen eğitim destinasyonlarından biridir. <strong>Devlet üniversitelerinde eğitim ücretsizdir</strong> — yalnızca dönemlik 150-350 EUR civarında bir sosyal katkı payı ödenir. Almanya'da üniversiteler Fachhochschule (uygulamalı bilimler) ve Universität (araştırma üniversiteleri) olarak ikiye ayrılır.</p><p>Eğitim dili programlara göre Almanca veya İngilizce olabilir. Özellikle lisans düzeyinde İngilizce programların sayısı her yıl artmaktadır. QS dünya sıralamasında çok sayıda Alman üniversitesi ilk 200'de yer almaktadır.</p>"
+            },
+            whyStudy: {
+                title: "Neden Almanya'da Okumalısınız?",
+                reasons: [
+                    "Devlet üniversitelerinde ücretsiz eğitim (sadece ~300 EUR/dönem katkı payı)",
+                    "QS ilk 100'de birden fazla üniversite (TUM, LMU, Heidelberg)",
+                    "Mezuniyet sonrası 18 aylık iş arama vizesi",
+                    "Avrupa'nın en güçlü ekonomisi — iş bulma olanağı yüksek",
+                    "Mühendislik, otomotiv ve teknoloji sektöründe dünya lideri",
+                    "Yaşam maliyetleri İngiltere ve Hollanda'ya göre uygun",
+                    "DAAD bursları ile ek finansal destek imkânı"
+                ]
+            },
+            costs: {
+                title: "Yaşam Maliyetleri (Aylık Tahmini)",
+                tableHeaders: ["Kalem", "Tutar (EUR)"],
+                rows: [
+                    ["Kira (paylaşımlı daire)", "350–600"],
+                    ["Yemek ve market", "200–300"],
+                    ["Ulaşım (öğrenci bileti)", "30–90"],
+                    ["Sağlık sigortası", "110–120"],
+                    ["Kişisel harcamalar", "100–150"],
+                    ["Toplam tahmini", "800–1.250"]
+                ]
+            },
+            application: {
+                title: "Başvuru Süreci",
+                steps: [
+                    "Üniversite ve program araştırması yapın, dil gereksinimlerini kontrol edin",
+                    "Gerekli belgeleri hazırlayın: transkript, diploma, dil sertifikası (IELTS/TOEFL veya TestDaF)",
+                    "uni-assist veya üniversitenin kendi portalı üzerinden online başvuru yapın",
+                    "Kabul mektubunu aldıktan sonra bloke hesap açın (~11.208 EUR/yıl)",
+                    "Almanya Büyükelçiliği'ne öğrenci vizesi başvurusu yapın",
+                    "Konaklama ayarlayın ve Almanya'ya uçun!"
+                ]
+            },
+            visa: {
+                title: "Vize ve Oturma İzni",
+                content: "<p>Türk vatandaşları Almanya'da okumak için <strong>öğrenci vizesi (Studienvisum)</strong> başvurusu yapmalıdır. Vize süreci ortalama 6-12 hafta sürer. Başvuru için bloke hesap (Sperrkonto), sağlık sigortası, kabul mektubu ve yeterli finansal kaynak kanıtı gereklidir.</p><p>Almanya'ya vardıktan sonra yerel yabancılar dairesinden (Ausländerbehörde) oturma izni alınır. Öğrenci vizesiyle yılda 120 tam gün veya 240 yarım gün çalışma hakkınız vardır.</p>"
+            },
+            faq: {
+                title: "Sık Sorulan Sorular",
+                items: [
+                    { q: "Almanya'da üniversite eğitimi gerçekten ücretsiz mi?", a: "Evet, devlet üniversitelerinde eğitim ücretsizdir. Yalnızca dönemlik 150-350 EUR sosyal katkı payı ödenir. Özel üniversitelerde ücretler değişkendir." },
+                    { q: "Almanca bilmeden Almanya'da okuyabilir miyim?", a: "Evet, özellikle yüksek lisans düzeyinde çok sayıda İngilizce program mevcuttur. Lisans düzeyinde de artan sayıda İngilizce program bulunmaktadır." },
+                    { q: "Almanya'da öğrenciyken çalışabilir miyim?", a: "Evet, öğrenci vizesiyle yılda 120 tam gün veya 240 yarım gün çalışabilirsiniz. Kampüs içi işlerde genellikle sınırlama yoktur." },
+                    { q: "VG Danışmanlık başvuru sürecinde nasıl yardımcı oluyor?", a: "VG Danışmanlık, üniversite seçiminden vize başvurusuna, konaklama desteğinden oryantasyona kadar tüm süreci profesyonel olarak yönetir." },
+                    { q: "Almanya'da aylık yaşam masrafları ne kadar?", a: "Almanya'da bir öğrenci aylık 850-1.100 EUR harcama yapabilir. Bu; konaklama (300-500 EUR), yemek (200-300 EUR), ulaşım (semesterticket ile ücretsiz veya indirimli), sağlık sigortası (~110 EUR) ve kişisel harcamaları kapsar. Münih ve Frankfurt gibi büyük şehirlerde maliyetler daha yüksek olabilir." },
+                    { q: "Almanya'da hangi burslar mevcut?", a: "En bilinen burs programı DAAD (Alman Akademik Değişim Servisi) burslarıdır. Bunun yanı sıra Erasmus+, Deutschland Stipendium (aylık 300 EUR), eyalet bazlı burslar ve üniversitelerin kendi burs programları mevcuttur. VG Danışmanlık olarak burs başvurularınızda da destek sağlıyoruz." },
+                    { q: "Almanya'da mezuniyet sonrası çalışma izni var mı?", a: "Evet! Mezuniyet sonrası 18 aylık iş arama vizesi (Job Seeker Visa) alabilirsiniz. Bu sürede tam zamanlı çalışabilir, iş bulduğunuzda çalışma iznine geçiş yapabilirsiniz. 5 yıl sonra kalıcı oturum izni alma hakkınız doğar." },
+                    { q: "Almanya'da konaklama seçenekleri nelerdir?", a: "Studentenwerk (öğrenci yurtları, 250-400 EUR/ay), WG (ortak daire, 350-600 EUR/ay) ve özel daire (500-900 EUR/ay) seçenekleri mevcuttur. Yurtlara erken başvuru önemlidir çünkü bekleme listesi uzun olabilir. VG Danışmanlık konaklama desteği de sağlamaktadır." },
+                    { q: "Almanya'ya öğrenci vizesi için bloke hesap zorunlu mu?", a: "Evet, Almanya öğrenci vizesi için bloke hesap (Sperrkonto) zorunludur. 2024-2025 itibariyle minimum 11.904 EUR (aylık 992 EUR) yatırılması gerekmektedir. Bu hesaptan her ay belirlenen miktar serbest kalır." },
+                    { q: "Studienkolleg nedir, kimler için gereklidir?", a: "Studienkolleg, Türk lise diploması Almanya'da doğrudan kabul için yeterli görülmediğinde katılmanız gereken 1 yıllık hazırlık programıdır. Program sonunda Feststellungsprüfung sınavına girilir. Başarılı olunursa Alman üniversitelerine başvurulabilir. Bazı üniversiteler Studienkolleg şartı aramamaktadır." }
+                ]
+            }
+        },
+        czech: {
+            heroStats: { uniCount: '70+', intStudents: '50.000+' },
+            educationSystem: {
+                title: "Çek Cumhuriyeti Eğitim Sistemi",
+                content: "<p>Çek Cumhuriyeti, Avrupa'nın en eski ve köklü üniversitelerine ev sahipliği yapan bir eğitim merkezidir. <strong>Charles University (1348)</strong> Orta Avrupa'nın en eski üniversitesidir. Çekçe eğitim veren devlet üniversiteleri ücretsizdir; İngilizce programlarda ücretler yıllık 2.000-10.000 EUR arasında değişir.</p><p>Prag, öğrenci dostu atmosferi ve uygun yaşam maliyetleriyle Batı Avrupa'ya kıyasla çok daha ekonomik bir seçenektir.</p>"
+            },
+            whyStudy: {
+                title: "Neden Çekya'da Okumalısınız?",
+                reasons: [
+                    "Çekçe eğitim veren devlet üniversitelerinde ücretsiz eğitim",
+                    "Batı Avrupa'ya kıyasla düşük yaşam maliyetleri (~600-900 EUR/ay)",
+                    "Prag — Avrupa'nın en güzel ve güvenli başkentlerinden biri",
+                    "Tıp, mühendislik ve sosyal bilimler alanlarında güçlü programlar",
+                    "Schengen bölgesinde — tüm Avrupa'ya kolay seyahat",
+                    "Uluslararası öğrenci topluluğu — 50.000+ uluslararası öğrenci",
+                    "Mezuniyet sonrası AB iş piyasasına erişim"
+                ]
+            },
+            costs: {
+                title: "Yaşam Maliyetleri (Aylık Tahmini)",
+                tableHeaders: ["Kalem", "Tutar (EUR)"],
+                rows: [
+                    ["Kira (paylaşımlı daire, Prag)", "300–500"],
+                    ["Yemek ve market", "150–250"],
+                    ["Ulaşım (öğrenci bileti)", "15–25"],
+                    ["Sağlık sigortası", "50–80"],
+                    ["Kişisel harcamalar", "80–120"],
+                    ["Toplam tahmini", "600–950"]
+                ]
+            },
+            application: {
+                title: "Başvuru Süreci",
+                steps: [
+                    "Program ve üniversite seçimi — dil ve ücret gereksinimlerini kontrol edin",
+                    "Belgeleri hazırlayın: transkript, diploma, dil sertifikası, motivasyon mektubu",
+                    "Üniversitenin online başvuru portalından başvurun (son tarihler genelde Şubat-Nisan)",
+                    "Kabul mektubunu alın ve ücretleri ödeyin",
+                    "Çek Büyükelçiliği'ne uzun süreli vize başvurusu yapın",
+                    "Konaklama ayarlayın ve Çekya macerası başlasın!"
+                ]
+            },
+            visa: {
+                title: "Vize ve Oturma İzni",
+                content: "<p>Türk vatandaşları 90 günden uzun eğitim için <strong>uzun süreli öğrenci vizesi (Dlouhodobé vízum)</strong> başvurusu yapmalıdır. Başvuru süreci ortalama 60-90 gün sürer.</p><p>Gerekli belgeler: kabul mektubu, finansal yeterlilik kanıtı, sağlık sigortası, temiz adli sicil belgesi ve konaklama kanıtı. Çekya'ya vardıktan sonra oturma izni (pobyt) alınır.</p>"
+            },
+            faq: {
+                title: "Sık Sorulan Sorular",
+                items: [
+                    { q: "Çekya'da eğitim dili nedir?", a: "Devlet üniversitelerinde Çekçe eğitim ücretsizdir. İngilizce programlar ücretlidir (yıllık 2.000-10.000 EUR). Tıp ve mühendislik gibi alanlarda İngilizce seçenekler mevcuttur." },
+                    { q: "Prag'da yaşam maliyetleri ne kadar?", a: "Aylık ortalama 600-950 EUR ile rahat bir öğrenci yaşamı sürdürebilirsiniz. Bu, Batı Avrupa başkentlerine göre %40-50 daha uygun fiyatlıdır." },
+                    { q: "Çekya'da tıp okuyabilir miyim?", a: "Evet! Charles University ve Masaryk University başta olmak üzere birçok üniversite İngilizce tıp programı sunmaktadır." },
+                    { q: "VG Danışmanlık Çekya'da hangi hizmetleri sunuyor?", a: "VG Danışmanlık'ın Prag'da ofisi bulunmaktadır. Üniversite başvurusu, vize süreci, konaklama ve yerleşim desteği dahil kapsamlı hizmet sunuyoruz." },
+                    { q: "Çekya'da öğrenci vizesi nasıl alınır?", a: "Türk vatandaşları için Çekya öğrenci vizesi Ankara veya İstanbul'daki Çek Büyükelçiliği'nden alınır. Başvuru için kabul mektubu, mali yeterlilik belgesi (en az 4.660 EUR/yıl), sağlık sigortası, konaklama belgesi ve temiz adli sicil gereklidir. Süreç 60-90 gün sürebilir." },
+                    { q: "Çekya'da İngilizce tıp eğitimi veren üniversiteler hangileri?", a: "Charles University (1. ve 3. Tıp Fakültesi), Masaryk University, Palacky University ve Czech Technical University tıp ve sağlık bilimleri alanında İngilizce programlar sunmaktadır. Yıllık ücretler tıp için 10.000-15.000 EUR arasındadır." },
+                    { q: "Prag'da öğrenci hayatı nasıl?", a: "Prag, Avrupa'nın en canlı öğrenci şehirlerinden biridir. 130.000'den fazla üniversite öğrencisi barındırır. Zengin kültürel yaşam, uygun fiyatlı kafeler ve restoranlar, güvenli ortam ve merkezi Avrupa konumu sayesinde hafta sonları Berlin, Viyana veya Münih'e kolayca gidebilirsiniz." },
+                    { q: "Çekya'da öğrenciyken çalışabilir miyim?", a: "Evet, öğrenci vizesiyle haftada 20 saate kadar yarı zamanlı çalışabilirsiniz. Yaz döneminde bu sınır kalkar. Prag'da İngilizce bilen öğrenciler için iş bulmak nispeten kolaydır. Ortalama yarı zamanlı ücret saatte 120-180 CZK (5-7 EUR) civarındadır." },
+                    { q: "Çekya'da konaklama maliyetleri ne kadar?", a: "Prag'da öğrenci yurtları aylık 150-350 EUR, paylaşımlı daireler 300-500 EUR, özel daireler 500-800 EUR civarındadır. Brno ve Olomouc gibi şehirlerde fiyatlar %30-40 daha uygun olabilir." },
+                    { q: "VG Danışmanlık'ın Çekya'daki avantajı nedir?", a: "VG Danışmanlık'ın Prag'da fiziksel ofisi bulunmaktadır. Bu sayede öğrencilerimize yerleşim desteği, havalimanı karşılama, banka hesabı açma, oturum izni süreçleri ve günlük yaşam oryantasyonu gibi yerinde hizmetler sunabiliyoruz." }
+                ]
+            }
+        },
+        italy: {
+            heroStats: { uniCount: '90+', intStudents: '120.000+' },
+            educationSystem: {
+                title: "İtalya Eğitim Sistemi",
+                content: "<p>İtalya, Avrupa'nın en eski üniversite geleneğine sahip ülkelerden biridir. <strong>University of Bologna (1088)</strong> dünyanın en eski üniversitesidir. Devlet üniversitelerinde yıllık ücretler gelir bazlı olup 150-4.000 EUR arasında değişir (ISEE belgesiyle).</p><p>Mühendislik, mimarlık, sanat, tasarım ve tıp alanlarında dünya çapında tanınan programlar sunar. Politecnico di Milano ve Bocconi gibi üniversiteler QS sıralamasında üst sıralarda yer almaktadır.</p>"
+            },
+            whyStudy: {
+                title: "Neden İtalya'da Okumalısınız?",
+                reasons: [
+                    "Dünyanın en eski üniversite geleneği — 900+ yıllık akademik miras",
+                    "Uygun fiyatlı devlet üniversiteleri (yıllık 150-4.000 EUR)",
+                    "Mühendislik, mimarlık, tasarım ve sanat alanlarında dünya lideri",
+                    "Zengin kültürel deneyim — sanat, tarih, yemek ve moda",
+                    "Artan sayıda İngilizce program (özellikle lisansüstü düzey)",
+                    "DSU bursları ile ücretsiz eğitim ve barınma imkânı",
+                    "Schengen bölgesi — Avrupa'yı keşfetme fırsatı"
+                ]
+            },
+            costs: {
+                title: "Yaşam Maliyetleri (Aylık Tahmini)",
+                tableHeaders: ["Kalem", "Tutar (EUR)"],
+                rows: [
+                    ["Kira (paylaşımlı daire)", "300–600"],
+                    ["Yemek ve market", "200–300"],
+                    ["Ulaşım", "25–50"],
+                    ["Sağlık sigortası", "Devlet kapsamında"],
+                    ["Kişisel harcamalar", "100–150"],
+                    ["Toplam tahmini", "650–1.100"]
+                ]
+            },
+            application: {
+                title: "Başvuru Süreci",
+                steps: [
+                    "Universitaly portalı üzerinden ön kayıt yapın",
+                    "Gerekli belgeleri hazırlayın: diploma, transkript, dil sertifikası",
+                    "İtalyan Konsolosluğu'ndan Dichiarazione di Valore alın",
+                    "Üniversitenin kendi başvuru portalından başvurun",
+                    "Kabul sonrası İtalyan Büyükelçiliği'ne vize başvurusu yapın",
+                    "DSU burs başvurusu yapın (hak sahipliği durumuna göre)"
+                ]
+            },
+            visa: {
+                title: "Vize ve Oturma İzni",
+                content: "<p>Türk vatandaşları İtalya'da eğitim için <strong>D tipi öğrenci vizesi</strong> başvurusu yapmalıdır. Vize süreci ortalama 4-8 hafta sürer.</p><p>İtalya'ya vardıktan sonra 8 gün içinde Questura'ya (polis merkezi) oturma izni (Permesso di Soggiorno) başvurusu yapılmalıdır. Öğrenci vizesiyle haftada 20 saate kadar çalışabilirsiniz.</p>"
+            },
+            faq: {
+                title: "Sık Sorulan Sorular",
+                items: [
+                    { q: "İtalya'da eğitim pahalı mı?", a: "Hayır! Devlet üniversitelerinde yıllık 150-4.000 EUR arasında ücret uygulanır. DSU burslarıyla eğitim tamamen ücretsiz olabilir." },
+                    { q: "İtalyanca bilmeden İtalya'da okuyabilir miyim?", a: "Evet, özellikle yüksek lisans düzeyinde birçok İngilizce program mevcuttur. Politecnico di Milano, Bocconi, Bologna gibi üniversitelerde İngilizce seçenekler zengindir." },
+                    { q: "DSU bursu nedir?", a: "Diritto allo Studio Universitario (DSU), İtalya'nın gelir bazlı burs programıdır. Eğitim ücreti muafiyeti, aylık burs ödemesi ve yurt imkânı sağlar." },
+                    { q: "VG Danışmanlık İtalya başvurularında nasıl yardımcı oluyor?", a: "Üniversite seçimi, Universitaly kaydı, belge hazırlığı, vize süreci ve DSU burs başvurusu dahil tüm aşamalarda destek sağlıyoruz." },
+                    { q: "İtalya'da öğrenci vizesi süreci nasıldır?", a: "İtalya öğrenci vizesi için Ankara veya İstanbul'daki İtalyan Konsolosluğu'na başvurulur. Kabul mektubu, mali yeterlilik belgesi (en az 6.000 EUR/yıl), konaklama kanıtı ve sağlık sigortası gereklidir. Vize süreci genellikle 2-4 hafta sürer. Ülkeye girdikten sonra 8 gün içinde oturum izni (Permesso di Soggiorno) başvurusu yapılmalıdır." },
+                    { q: "İtalya'da aylık yaşam masrafları ne kadar?", a: "İtalya'da öğrenci aylık 700-1.200 EUR harcayabilir. Milano ve Roma'da maliyetler daha yüksek (900-1.400 EUR), Bologna ve Torino'da daha uygun (600-900 EUR). Konaklama en büyük gider kalemidir (300-600 EUR/ay)." },
+                    { q: "İtalya'da burs imkanları nelerdir?", a: "İtalya'da DSU (Diritto allo Studio Universitario) bursları gelir bazlı olup eğitim ücreti muafiyeti, konaklama ve yemek desteği sağlar. Ayrıca üniversitelerin kendi merit bursları, Invest Your Talent in Italy bursları ve Erasmus+ programı mevcuttur. ISEE belgesi ile ücret indirimi alabilirsiniz." },
+                    { q: "İtalya'da hangi bölümler popülerdir?", a: "Mühendislik (Politecnico di Milano/Torino), İşletme (Bocconi, LUISS), Mimarlık, Moda Tasarım (Istituto Marangoni, Polimoda), Tıp, Hukuk ve Güzel Sanatlar en popüler alanlardır. İngilizce programların sayısı her yıl artmaktadır." },
+                    { q: "ISEE belgesi nedir ve nasıl alınır?", a: "ISEE (Indicatore della Situazione Economica Equivalente), ailenizin gelir durumunu gösteren ve İtalya'da eğitim ücreti ile burs hesaplamalarında kullanılan bir belgedir. Bu belge İtalyan konsoloslukları veya CAF ofisleri aracılığıyla alınır. Düşük gelirli aileler için eğitim ücretleri önemli ölçüde azaltılabilir." },
+                    { q: "İtalya'da öğrenciyken çalışma izni var mı?", a: "Evet, öğrenci vizesiyle haftada 20 saate kadar çalışabilirsiniz. Akademik dönem dışında (yaz tatili) bu süre artırılabilir. İngilizce ve Türkçe bilen öğrenciler özellikle turizm sektöründe iş bulabilir." }
+                ]
+            }
+        },
+        austria: {
+            heroStats: { uniCount: '70+', intStudents: '80.000+' },
+            educationSystem: {
+                title: "Avusturya Eğitim Sistemi",
+                content: "<p>Avusturya, köklü üniversiteleri ve yüksek yaşam kalitesiyle öne çıkan bir eğitim merkezi. <strong>University of Vienna (1365)</strong> Almanca konuşulan dünyanın en eski üniversitesidir. Devlet üniversitelerinde AB dışı öğrenciler için yıllık ücret yaklaşık 1.500 EUR'dur.</p><p>Viyana, birçok küresel yaşanabilirlik endeksinde dünya birincisi seçilmiştir. Tıp, müzik, teknik bilimler ve hukuk alanlarında güçlü programlar sunulmaktadır.</p>"
+            },
+            whyStudy: {
+                title: "Neden Avusturya'da Okumalısınız?",
+                reasons: [
+                    "Dünya birincisi yaşam kalitesi (Viyana — Mercer sıralaması)",
+                    "Uygun eğitim ücretleri (~1.500 EUR/yıl devlet üniversiteleri)",
+                    "Tıp, teknik bilimler ve müzik alanlarında dünya çapında tanınırlık",
+                    "Almanca ve İngilizce program seçenekleri",
+                    "Güvenli, temiz ve organize bir yaşam ortamı",
+                    "Avrupa'nın kalbinde coğrafi konum — kolay seyahat",
+                    "Mezuniyet sonrası Avusturya iş piyasasına erişim"
+                ]
+            },
+            costs: {
+                title: "Yaşam Maliyetleri (Aylık Tahmini)",
+                tableHeaders: ["Kalem", "Tutar (EUR)"],
+                rows: [
+                    ["Kira (paylaşımlı daire, Viyana)", "400–650"],
+                    ["Yemek ve market", "250–350"],
+                    ["Ulaşım (öğrenci Semester Ticket)", "75"],
+                    ["Sağlık sigortası", "60–70"],
+                    ["Kişisel harcamalar", "100–150"],
+                    ["Toplam tahmini", "900–1.300"]
+                ]
+            },
+            application: {
+                title: "Başvuru Süreci",
+                steps: [
+                    "Üniversite ve program araştırması — dil gereksinimlerini kontrol edin",
+                    "Belgeleri hazırlayın: apostilli diploma, transkript, dil sertifikası",
+                    "Üniversitenin online başvuru portalından başvurun",
+                    "Kabul mektubunu alın",
+                    "Avusturya Büyükelçiliği'ne öğrenci vizesi başvurusu yapın",
+                    "Viyana'ya varışta kayıt ve oturma izni işlemleri"
+                ]
+            },
+            visa: {
+                title: "Vize ve Oturma İzni",
+                content: "<p>Türk vatandaşları Avusturya'da 6 aydan uzun eğitim için <strong>Aufenthaltsbewilligung Studierende</strong> (öğrenci oturma izni) başvurusu yapmalıdır. Başvuru süreci 8-12 hafta sürebilir.</p><p>Gerekli belgeler: kabul mektubu, yeterli finansal kaynak kanıtı (~1.100 EUR/ay), sağlık sigortası ve temiz adli sicil. Öğrenci izniyle haftada 20 saate kadar çalışabilirsiniz.</p>"
+            },
+            faq: {
+                title: "Sık Sorulan Sorular",
+                items: [
+                    { q: "Avusturya'da eğitim dili nedir?", a: "Birçok program Almanca'dır, ancak özellikle yüksek lisans düzeyinde İngilizce programlar mevcuttur. TU Wien, WU Wien ve University of Vienna İngilizce seçenekler sunar." },
+                    { q: "Viyana'da yaşam pahalı mı?", a: "Viyana, diğer Batı Avrupa başkentlerine göre daha uygun fiyatlıdır. Aylık ~900-1.300 EUR ile rahat yaşayabilirsiniz." },
+                    { q: "Avusturya'da tıp okuyabilir miyim?", a: "Evet, Medical University of Vienna ve Medical University of Innsbruck İngilizce tıp programları sunmaktadır. Giriş sınavı (MedAT) gereklidir." },
+                    { q: "VG Danışmanlık Avusturya başvurularında nasıl yardımcı oluyor?", a: "Program seçimi, belge hazırlığı, başvuru takibi, vize desteği ve Viyana'da yerleşim desteği sağlıyoruz." },
+                    { q: "Avusturya'da üniversite eğitim ücretleri ne kadar?", a: "AB/AEA vatandaşları için devlet üniversitelerinde eğitim ücretsizdir (dönemlik ~21 EUR ÖH üyelik ücreti). Türk öğrenciler (AB dışı) için dönemlik 726,72 EUR ücret uygulanır. Özel üniversitelerde ücretler yıllık 3.000-15.000 EUR arasında değişir." },
+                    { q: "Avusturya'da dil şartı nedir?", a: "Almanca programlar için genellikle B2-C1 seviye dil belgesi (ÖSD, Goethe-Zertifikat veya TestDaF) gereklidir. İngilizce programlar için IELTS 6.0-6.5 veya TOEFL 80-100 aranır. Bazı üniversiteler kendi dil sınavlarını uygular. Viyana'da dil hazırlık kursları mevcuttur." },
+                    { q: "Avusturya'da öğrenciyken çalışabilir miyim?", a: "Evet, öğrenci vizesiyle haftada 20 saate kadar çalışabilirsiniz. Avusturya'da asgari ücret sektöre göre değişir ancak öğrenci işleri genellikle saatte 10-13 EUR arası ücret sunar. Viyana'da İngilizce bilen öğrenciler için iş olanakları nispeten fazladır." },
+                    { q: "Viyana'da yaşam maliyetleri ne kadar?", a: "Viyana'da öğrenci aylık 900-1.300 EUR harcayabilir. Öğrenci yurtları 250-450 EUR, paylaşımlı daireler 400-600 EUR civarındadır. Viyana'nın semester ticket'ı (150 EUR/dönem) ile toplu taşıma indirimli kullanılır. Viyana, yaşam kalitesi sıralamasında sürekli dünya birincisi seçilmektedir." },
+                    { q: "Avusturya'da Studienplatznachweis nedir?", a: "Studienplatznachweis, Türk öğrencilerin Avusturya üniversitelerine başvururken sunması gereken bir ön kabul belgesidir. Bu belge, Türkiye'deki üniversiteye yerleştirildiğinizi veya yerleşme hakkınızın olduğunu kanıtlar. YKS'ye girmiş olmak ve ilgili bölüme yerleşme hakkı kazanmak yeterlidir." },
+                    { q: "VG Danışmanlık Avusturya sürecinde nasıl destek oluyor?", a: "VG Danışmanlık, Avusturya üniversitelerine başvuru, Studienplatznachweis hazırlama, vize süreci, konaklama bulma ve yerleşim oryantasyonu konularında kapsamlı destek sunmaktadır. Viyana'daki partner kurumlarımız aracılığıyla yerinde destek de sağlıyoruz." }
+                ]
+            }
+        },
+        uk: {
+            heroStats: { uniCount: '160+', intStudents: '600.000+' },
+            educationSystem: {
+                title: "İngiltere Eğitim Sistemi",
+                content: "<p>İngiltere, dünya genelinde en çok tercih edilen eğitim destinasyonlarından biridir. <strong>Oxford ve Cambridge</strong> gibi dünyanın en prestijli üniversitelerine ev sahipliği yapar. İngiliz üniversiteleri genellikle 3 yıllık lisans programları sunar (İskoçya'da 4 yıl).</p><p>UCAS merkezi başvuru sistemi üzerinden yapılan başvurular standart ve organize bir süreç izler. Russell Group üniversiteleri araştırma odaklı en prestijli kurumlardır.</p>"
+            },
+            whyStudy: {
+                title: "Neden İngiltere'de Okumalısınız?",
+                reasons: [
+                    "Dünya sıralamasında en üst sıralarda yer alan üniversiteler",
+                    "3 yıllık lisans programları — zaman ve maliyet avantajı",
+                    "İngilizce eğitim — ek dil öğrenme gerekliliği yok",
+                    "Mezuniyet sonrası 2 yıllık Graduate Route çalışma vizesi",
+                    "Güçlü sanayi-üniversite işbirliği ve staj imkânları",
+                    "Çok kültürlü ortam — dünyadan 600.000+ uluslararası öğrenci",
+                    "Chevening, Commonwealth ve üniversite bursları"
+                ]
+            },
+            costs: {
+                title: "Yaşam Maliyetleri (Aylık Tahmini)",
+                tableHeaders: ["Kalem", "Tutar (GBP)"],
+                rows: [
+                    ["Kira (paylaşımlı daire)", "500–900"],
+                    ["Yemek ve market", "200–350"],
+                    ["Ulaşım", "50–100"],
+                    ["Sağlık (NHS IHS ücreti)", "Vize ile birlikte"],
+                    ["Kişisel harcamalar", "100–200"],
+                    ["Toplam tahmini", "900–1.550"]
+                ]
+            },
+            application: {
+                title: "Başvuru Süreci",
+                steps: [
+                    "UCAS üzerinden en fazla 5 programa başvurun (son tarih: 31 Ocak)",
+                    "Personal Statement (kişisel beyanname) hazırlayın",
+                    "Referans mektupları ve transkriptlerinizi hazırlayın",
+                    "IELTS/TOEFL sınavı puanınızı gönderin",
+                    "Kabul tekliflerini değerlendirin (Firm ve Insurance seçimi)",
+                    "CAS numarası ile İngiliz Büyükelçiliği'ne Student Visa başvurusu yapın"
+                ]
+            },
+            visa: {
+                title: "Vize ve Oturma İzni",
+                content: "<p>Türk vatandaşları İngiltere'de eğitim için <strong>Student Visa (Tier 4)</strong> başvurusu yapmalıdır. CAS numarası, finansal yeterlilik kanıtı, IELTS puanı ve IHS (Immigration Health Surcharge) ödemesi gereklidir.</p><p>Öğrenci vizesiyle dönem boyunca haftada 20 saat, tatillerde tam zamanlı çalışabilirsiniz. Mezuniyet sonrası 2 yıllık Graduate Route vizesi hakkınız vardır.</p>"
+            },
+            faq: {
+                title: "Sık Sorulan Sorular",
+                items: [
+                    { q: "İngiltere'de eğitim ücreti ne kadar?", a: "Uluslararası öğrenciler için yıllık 12.000-38.000 GBP arasında değişir. Burslar ve finansal destek seçenekleri mevcuttur." },
+                    { q: "UCAS nedir?", a: "Universities and Colleges Admissions Service — İngiltere'deki tüm lisans başvuruları bu merkezi sistem üzerinden yapılır." },
+                    { q: "Graduate Route nedir?", a: "Mezuniyet sonrası İngiltere'de 2 yıl (doktora için 3 yıl) herhangi bir işte çalışmanıza izin veren vizedir." },
+                    { q: "VG Danışmanlık İngiltere başvurularında nasıl yardımcı oluyor?", a: "UCAS başvurusu, Personal Statement hazırlığı, IELTS hazırlık desteği, vize süreci ve konaklama konularında profesyonel danışmanlık sunuyoruz." },
+                    { q: "İngiltere'de üniversite eğitim ücretleri ne kadar?", a: "Uluslararası öğrenciler için yıllık 10.000-38.000 GBP arasında değişmektedir. Sanat ve sosyal bilimler daha uygun, tıp ve mühendislik daha pahalıdır. Foundation Year programları yıllık 8.000-15.000 GBP civarındadır. Bazı üniversiteler yüksek başarılı öğrencilere %10-50 burs sunmaktadır." },
+                    { q: "İngiltere'de Graduate Route vizesi nedir?", a: "Graduate Route, mezuniyet sonrası lisans mezunlarına 2 yıl, doktora mezunlarına 3 yıl İngiltere'de çalışma izni veren bir vize türüdür. Bu sürede herhangi bir alanda çalışabilirsiniz. Sponsor gerektirmez ve herhangi bir iş türünde çalışmanıza izin verir." },
+                    { q: "İngiltere'de UCAS başvuru sistemi nasıl çalışır?", a: "UCAS (Universities and Colleges Admissions Service), İngiltere'deki üniversitelere başvurular için merkezi platformdur. Aynı anda 5 programa başvurabilirsiniz (tıp/veteriner için 4). Başvuru dönemleri Ekim-Ocak arasındadır. VG Danışmanlık olarak UCAS başvurunuzun her aşamasında destek sağlıyoruz." },
+                    { q: "İngiltere'de aylık yaşam masrafları ne kadar?", a: "Londra'da aylık 1.200-1.800 GBP, Londra dışında 800-1.200 GBP civarındadır. Konaklama en büyük giderdir: üniversite yurtları haftada 120-300 GBP, özel daireler daha pahalıdır. Öğrenci indirimleri yaygındır (16-25 Railcard, NUS kartı vb.)." },
+                    { q: "Foundation Year nedir?", a: "Foundation Year, lise diploması doğrudan kabul için yeterli olmayan uluslararası öğrenciler için 1 yıllık hazırlık programıdır. Akademik İngilizce, çalışma becerileri ve seçtiğiniz alana özel dersler içerir. Başarılı tamamlayanlar doğrudan lisans 1. sınıfa geçer." },
+                    { q: "İngiltere'de öğrenciyken çalışabilir miyim?", a: "Tier 4 öğrenci vizesiyle dönem içinde haftada 20 saate kadar, tatillerde tam zamanlı çalışabilirsiniz. Saatlik ücret ulusal asgari ücretten (18+ için £11.44) az olamaz. Üniversite kampüslerinde de iş olanakları mevcuttur." }
+                ]
+            }
+        },
+        poland: {
+            heroStats: { uniCount: '450+', intStudents: '85.000+' },
+            educationSystem: {
+                title: "Polonya Eğitim Sistemi",
+                content: "<p>Polonya, AB üyeliği ile birlikte hızla büyüyen eğitim sektörüyle dikkat çeken bir ülkedir. <strong>Jagiellonian University (1364)</strong> dünyanın en eski üniversitelerinden biridir. Lehçe eğitim veren devlet üniversiteleri AB vatandaşları için ücretsizdir; uluslararası öğrenciler için İngilizce programlar yıllık 2.000-6.000 EUR arasında ücretlendirilir.</p><p>Tıp, mühendislik ve bilgisayar bilimleri alanlarında güçlü programlar sunan Polonya, özellikle tıp eğitimi için AB genelinde popüler bir seçenektir.</p>"
+            },
+            whyStudy: {
+                title: "Neden Polonya'da Okumalısınız?",
+                reasons: [
+                    "Avrupa'nın en uygun fiyatlı eğitim destinasyonlarından biri",
+                    "Tıp, diş hekimliği ve eczacılık programlarında güçlü itibar",
+                    "Düşük yaşam maliyetleri (~500-800 EUR/ay)",
+                    "İngilizce eğitim veren çok sayıda program",
+                    "AB üyesi — Schengen bölgesinde seyahat kolaylığı",
+                    "Güvenli ve öğrenci dostu şehirler (Varşova, Kraków, Gdańsk)",
+                    "Stipendium Polonium bursları ile finansal destek"
+                ]
+            },
+            costs: {
+                title: "Yaşam Maliyetleri (Aylık Tahmini)",
+                tableHeaders: ["Kalem", "Tutar (EUR)"],
+                rows: [
+                    ["Kira (paylaşımlı daire)", "250–450"],
+                    ["Yemek ve market", "150–250"],
+                    ["Ulaşım (öğrenci bileti)", "15–30"],
+                    ["Sağlık sigortası", "30–50"],
+                    ["Kişisel harcamalar", "80–120"],
+                    ["Toplam tahmini", "500–900"]
+                ]
+            },
+            application: {
+                title: "Başvuru Süreci",
+                steps: [
+                    "Üniversite ve program araştırması yapın",
+                    "Belgeleri hazırlayın: transkript, diploma, dil sertifikası, motivasyon mektubu",
+                    "Üniversitenin online başvuru portalından başvurun",
+                    "Bazı programlar için giriş sınavı/mülakat olabilir",
+                    "Kabul mektubunu alın ve ücretleri ödeyin",
+                    "Polonya Büyükelçiliği'ne ulusal vize başvurusu yapın"
+                ]
+            },
+            visa: {
+                title: "Vize ve Oturma İzni",
+                content: "<p>Türk vatandaşları Polonya'da eğitim için <strong>ulusal D tipi öğrenci vizesi</strong> başvurusu yapmalıdır. Vize süreci ortalama 2-4 hafta sürer.</p><p>Polonya'ya vardıktan sonra geçici oturma izni (karta pobytu) başvurusu yapılır. Öğrenci izniyle çalışma kısıtlaması yoktur — tam zamanlı veya yarı zamanlı çalışabilirsiniz.</p>"
+            },
+            faq: {
+                title: "Sık Sorulan Sorular",
+                items: [
+                    { q: "Polonya'da tıp eğitimi kaliteli mi?", a: "Evet! Polonya'da tıp diplomaları AB genelinde tanınır. Medical University of Warsaw, Poznan ve Lublin güçlü İngilizce tıp programları sunar." },
+                    { q: "Polonya'da yaşam maliyetleri ne kadar?", a: "Aylık 500-900 EUR ile rahat bir öğrenci yaşamı sürdürebilirsiniz. Polonya, Batı Avrupa'ya göre %50-60 daha ekonomiktir." },
+                    { q: "Öğrenciyken çalışabilir miyim?", a: "Evet, Polonya'da öğrenci oturma izniyle çalışma kısıtlaması yoktur." },
+                    { q: "VG Danışmanlık Polonya başvurularında nasıl destek sağlıyor?", a: "Üniversite seçimi, başvuru süreç yönetimi, vize desteği ve Polonya'da yerleşim desteği sunuyoruz." },
+                    { q: "Polonya'da eğitim dili nedir?", a: "Polonya üniversitelerinde hem Lehçe hem İngilizce programlar mevcuttur. Lehçe programlar genellikle ücretsiz veya çok düşük ücretlidir. İngilizce programların yıllık ücreti 2.000-6.000 EUR arasında değişir. Tıp programlarında bu ücret 10.000-14.000 EUR'ya çıkabilir." },
+                    { q: "Polonya'da yaşam masrafları ne kadar?", a: "Polonya, Avrupa'nın en uygun fiyatlı ülkelerinden biridir. Öğrenci aylık 500-800 EUR ile rahat yaşayabilir. Varşova'da maliyetler biraz daha yüksek (600-1.000 EUR), Krakow ve Wroclaw'da daha uygun. Yurt ücretleri aylık 100-250 EUR gibi çok düşük fiyatlardadır." },
+                    { q: "Polonya'da tıp eğitimi nasıl?", a: "Polonya, uluslararası öğrenciler için İngilizce tıp eğitiminde Avrupa'nın en popüler destinasyonlarından biridir. Medical University of Warsaw, Jagiellonian University (Krakow), Medical University of Gdansk ve Poznan University of Medical Sciences önde gelen kurumlardır. Programlar 6 yıl sürer ve AB genelinde tanınır." },
+                    { q: "Polonya'da öğrenci vizesi nasıl alınır?", a: "Türk öğrenciler Polonya öğrenci vizesini Ankara veya İstanbul'daki Polonya Büyükelçiliği'nden alır. Kabul mektubu, mali yeterlilik (min. 800 PLN/ay), sağlık sigortası ve konaklama belgesi gereklidir. Vize süreci genellikle 2-4 hafta sürer." },
+                    { q: "Polonya'da hangi burslar mevcut?", a: "Polish National Agency for Academic Exchange (NAWA) bursları, Erasmus+ programı, üniversitelerin kendi burs programları ve Türkiye Bursları kapsamında Polonya seçenekleri mevcuttur. Bazı üniversiteler yüksek akademik başarı gösteren öğrencilere %20-50 indirim uygular." },
+                    { q: "Polonya'da öğrenciyken çalışabilir miyim?", a: "Evet, öğrenci vizesiyle herhangi bir saat sınırlaması olmadan çalışabilirsiniz. Bu, Polonya'yı diğer Avrupa ülkelerinden ayıran önemli bir avantajdır. Asgari ücret saatte 28,10 PLN (yaklaşık 6,5 EUR) civarındadır." }
+                ]
+            }
+        },
+        hungary: {
+            heroStats: { uniCount: '65+', intStudents: '40.000+' },
+            educationSystem: {
+                title: "Macaristan Eğitim Sistemi",
+                content: "<p>Macaristan, <strong>Stipendium Hungaricum</strong> bursu sayesinde uluslararası öğrenciler için en cazip Avrupa ülkelerinden biri haline gelmiştir. Budapeşte, Debrecen ve Szeged gibi şehirlerde köklü üniversiteler yer almaktadır.</p><p>Tıp, diş hekimliği, mühendislik ve müzik alanlarında dünya çapında tanınan programlar sunar. Semmelweis University tıp alanında, University of Debrecen ise çok disiplinli yapısıyla öne çıkmaktadır.</p>"
+            },
+            whyStudy: {
+                title: "Neden Macaristan'da Okumalısınız?",
+                reasons: [
+                    "Stipendium Hungaricum — Türk öğrencilere açık tam burs programı",
+                    "Avrupa'nın en uygun yaşam maliyetleri (~500-750 EUR/ay)",
+                    "Tıp ve diş hekimliği alanlarında uluslararası itibar",
+                    "İngilizce ve Almanca eğitim seçenekleri",
+                    "Budapeşte — Avrupa'nın en güzel başkentlerinden biri",
+                    "AB üyesi — Schengen bölgesinde seyahat kolaylığı",
+                    "Türk öğrenci topluluğu — güçlü destek ağı"
+                ]
+            },
+            costs: {
+                title: "Yaşam Maliyetleri (Aylık Tahmini)",
+                tableHeaders: ["Kalem", "Tutar (EUR)"],
+                rows: [
+                    ["Kira (paylaşımlı daire, Budapeşte)", "250–450"],
+                    ["Yemek ve market", "150–220"],
+                    ["Ulaşım (öğrenci bileti)", "15–25"],
+                    ["Sağlık sigortası", "Burslu öğrenciler için ücretsiz"],
+                    ["Kişisel harcamalar", "80–120"],
+                    ["Toplam tahmini", "500–800"]
+                ]
+            },
+            application: {
+                title: "Başvuru Süreci",
+                steps: [
+                    "Stipendium Hungaricum başvurusu yapın (son tarih genelde Ocak-Şubat)",
+                    "Veya doğrudan üniversitelere başvurun (self-funded)",
+                    "Belgeleri hazırlayın: transkript, diploma, dil sertifikası, motivasyon mektubu",
+                    "Kabul sonrası Macar Büyükelçiliği'ne vize başvurusu yapın",
+                    "Konaklama ayarlayın (burslu öğrencilere yurt tahsis edilir)",
+                    "Macaristan macerası başlasın!"
+                ]
+            },
+            visa: {
+                title: "Vize ve Oturma İzni",
+                content: "<p>Türk vatandaşları Macaristan'da eğitim için <strong>D tipi öğrenci vizesi</strong> başvurusu yapmalıdır. Vize süreci ortalama 30-60 gün sürer.</p><p>Macaristan'ya vardıktan sonra 30 gün içinde oturma izni başvurusu yapılmalıdır. Stipendium Hungaricum bursluları için sağlık sigortası ve barınma karşılanır. Öğrenci izniyle haftada 24 saate kadar çalışabilirsiniz.</p>"
+            },
+            faq: {
+                title: "Sık Sorulan Sorular",
+                items: [
+                    { q: "Stipendium Hungaricum bursu neyi kapsıyor?", a: "Eğitim ücreti, aylık maaş (43.700 HUF lisans, 140.000 HUF doktora), sağlık sigortası ve yurt imkânı. Türk vatandaşlarına açıktır." },
+                    { q: "Macaristan'da tıp okuyabilir miyim?", a: "Evet! Semmelweis University, University of Debrecen, University of Pécs ve University of Szeged İngilizce tıp programları sunmaktadır." },
+                    { q: "Budapeşte'de yaşam nasıl?", a: "Budapeşte uygun fiyatlı, güvenli ve kültürel açıdan zengin bir şehirdir. Aylık 500-800 EUR ile rahat yaşayabilirsiniz." },
+                    { q: "VG Danışmanlık burs başvurularında yardımcı oluyor mu?", a: "Evet! Stipendium Hungaricum başvurusu dahil tüm burs ve üniversite başvurularında profesyonel destek sağlıyoruz." },
+                    { q: "Macaristan'da Stipendium Hungaricum bursu nedir?", a: "Stipendium Hungaricum, Macar hükümetinin uluslararası öğrencilere sunduğu tam burslu bir programdır. Eğitim ücreti, aylık 150.000 HUF (~400 EUR) burs, yurt desteği ve sağlık sigortasını kapsar. Türkiye kontenjanı her yıl artmaktadır. Başvurular genellikle Ocak-Şubat aylarında açılır." },
+                    { q: "Macaristan'da İngilizce tıp eğitimi nasıl?", a: "Macaristan, İngilizce tıp eğitiminde dünya çapında tanınan üniversitelere sahiptir. Semmelweis University (Budapeşte), University of Szeged, University of Debrecen ve University of Pécs tıp programları sunmaktadır. 6 yıllık program AB genelinde tanınır. Yıllık ücret 13.000-18.000 EUR arasındadır." },
+                    { q: "Budapeşte'de yaşam masrafları ne kadar?", a: "Budapeşte'de öğrenci aylık 500-800 EUR ile rahat yaşayabilir. Yurt ücretleri 100-250 EUR, paylaşımlı daire 200-400 EUR civarındadır. Öğrenci kartıyla toplu taşıma %50 indirimli. Yemek ve eğlence maliyetleri Batı Avrupa'ya göre çok daha uygun." },
+                    { q: "Macaristan'da öğrenci vizesi süreci nasıl?", a: "Türk öğrenciler Ankara'daki Macar Büyükelçiliği'nden D tipi öğrenci vizesi alır. Kabul mektubu, mali yeterlilik belgesi, sağlık sigortası ve konaklama belgesi gereklidir. Vize süreci 2-4 hafta sürer. Ülkeye girdikten sonra oturum izni başvurusu yapılır." },
+                    { q: "Macaristan'da hazırlık yılı var mı?", a: "Evet, birçok üniversite Foundation Year (hazırlık yılı) programı sunmaktadır. Bu programlar İngilizce veya Macarca dil hazırlığı ve akademik hazırlık içerir. Başarılı tamamlayanlar doğrudan lisans programına geçer." },
+                    { q: "Macaristan'da öğrenciyken çalışabilir miyim?", a: "Evet, öğrenci vizesiyle dönem içinde haftada 24 saate kadar, tatillerde 90 gün tam zamanlı çalışabilirsiniz. Budapeşte'de İngilizce bilen öğrenciler için call center, turizm ve IT sektöründe iş olanakları mevcuttur." }
+                ]
+            }
+        },
+        netherlands: {
+            heroStats: { uniCount: '50+', intStudents: '115.000+' },
+            educationSystem: {
+                title: "Hollanda Eğitim Sistemi",
+                content: "<p>Hollanda, İngilizce eğitim veren program sayısında Avrupa lideridir. Üniversiteler ikiye ayrılır: Research Universities (WO) ve Universities of Applied Sciences (HBO). <strong>QS sıralamasında 13 Hollanda üniversitesi ilk 200'de</strong> yer almaktadır.</p><p>Yıllık eğitim ücretleri AB dışı öğrenciler için 6.000-20.000 EUR arasında değişir. Holland Scholarship ve Orange Tulip programları önemli burs fırsatları sunar.</p>"
+            },
+            whyStudy: {
+                title: "Neden Hollanda'da Okumalısınız?",
+                reasons: [
+                    "Avrupa'da en fazla İngilizce program sunan ülke (2.100+)",
+                    "QS ilk 200'de 13 üniversite",
+                    "İnovasyon ve girişimcilik odaklı eğitim sistemi",
+                    "Problem-based learning (PBL) yaklaşımı",
+                    "Mezuniyet sonrası 1 yıllık Zoekjaar (iş arama) izni",
+                    "Bisiklet dostu, güvenli ve çok kültürlü yaşam",
+                    "Holland Scholarship ve Orange Tulip bursları"
+                ]
+            },
+            costs: {
+                title: "Yaşam Maliyetleri (Aylık Tahmini)",
+                tableHeaders: ["Kalem", "Tutar (EUR)"],
+                rows: [
+                    ["Kira (öğrenci odası)", "400–700"],
+                    ["Yemek ve market", "250–350"],
+                    ["Ulaşım (bisiklet + OV-chipkaart)", "30–80"],
+                    ["Sağlık sigortası", "50–120"],
+                    ["Kişisel harcamalar", "100–150"],
+                    ["Toplam tahmini", "850–1.400"]
+                ]
+            },
+            application: {
+                title: "Başvuru Süreci",
+                steps: [
+                    "Studyinholland.nl üzerinden program araştırması yapın",
+                    "Studielink üzerinden başvurun (lisans) veya üniversite portalından (yüksek lisans)",
+                    "Belgeleri hazırlayın: transkript, diploma, IELTS/TOEFL, motivasyon mektubu",
+                    "Nuffic sertifikası (diploma denkliği) alın",
+                    "Kabul sonrası üniversite MVV (giriş izni) sponsorluğu başlatır",
+                    "Hollanda'ya varışta belediyeye kayıt ve BSN numarası alın"
+                ]
+            },
+            visa: {
+                title: "Vize ve Oturma İzni",
+                content: "<p>Türk vatandaşları Hollanda'da eğitim için <strong>MVV (Machtiging tot Voorlopig Verblijf)</strong> ve oturma izni gereklidir. Üniversite sizin adınıza MVV başvurusu yapar — bu süreci kolaylaştırır.</p><p>Hollanda'ya vardıktan sonra IND'den (Göç İdaresi) oturma izni kartı alırsınız. Öğrenci izniyle yılda en fazla 16 saat/hafta çalışabilirsiniz. Mezuniyet sonrası 1 yıllık Zoekjaar (Orientation year) vizesi hakkınız vardır.</p>"
+            },
+            faq: {
+                title: "Sık Sorulan Sorular",
+                items: [
+                    { q: "Hollanda'da eğitim dili nedir?", a: "Hollanda, Avrupa'da en fazla İngilizce program sunan ülkedir. 2.100'den fazla İngilizce lisans ve yüksek lisans programı mevcuttur." },
+                    { q: "Hollanda'da yaşam pahalı mı?", a: "Amsterdam gibi büyük şehirlerde yaşam maliyetleri yüksek olabilir ancak Groningen, Leiden gibi şehirlerde daha uygun fiyatlıdır. Aylık 850-1.400 EUR yeterlidir." },
+                    { q: "Holland Scholarship nedir?", a: "AB dışı öğrencilere yönelik tek seferlik 5.000 EUR burs programıdır. Birçok Hollanda üniversitesi bu bursu desteklemektedir." },
+                    { q: "VG Danışmanlık Hollanda başvurularında nasıl yardımcı oluyor?", a: "Program eşleştirme, Studielink/Nuffic başvuruları, burs rehberliği, MVV süreci ve yerleşim desteği konularında profesyonel danışmanlık sunuyoruz." },
+                    { q: "Hollanda'da eğitim dili nedir?", a: "Hollanda, İngilizce eğitim veren program sayısında Avrupa lideridir. 2.100'den fazla İngilizce program mevcuttur. Lisans düzeyinde çoğu program İngilizce sunulur. Hollandaca bilmek zorunlu değildir ancak günlük yaşamda kolaylık sağlar." },
+                    { q: "Hollanda'da yaşam masrafları ne kadar?", a: "Hollanda'da öğrenci aylık 1.000-1.400 EUR harcayabilir. Amsterdam'da konaklama 500-900 EUR, diğer şehirlerde 400-700 EUR civarındadır. Bisiklet ulaşımın temel aracıdır ve maliyetleri düşürür. Öğrenci aylık toplu taşıma kartı ~100 EUR'dur." },
+                    { q: "Hollanda'da Numerus Fixus sistemi nedir?", a: "Numerus Fixus, bazı popüler programlarda (tıp, psikoloji, fizyoterapi vb.) kontenjan sınırlaması uygulanan bir seçim sistemidir. Başvurular 15 Ocak'a kadar yapılmalıdır. Seçim kriterleri üniversiteye göre değişir; mülakatlar, motivasyon mektubu veya ek sınavlar içerebilir." },
+                    { q: "Hollanda'da mezuniyet sonrası çalışma izni var mı?", a: "Evet! Zoekjaar (arama yılı) vizesi ile mezuniyet sonrası 1 yıl iş arama hakkınız vardır. Bu sürede herhangi bir işte çalışabilirsiniz. Hollanda'da STEM mezunları için iş olanakları çok iyi düzeydedir." },
+                    { q: "Hollanda'da burs imkanları nelerdir?", a: "Holland Scholarship (5.000 EUR), Orange Tulip Scholarship (Türk öğrencilere özel), Erasmus+, üniversitelerin kendi burs programları mevcuttur. Bazı üniversiteler (TU Delft, Leiden, Utrecht) yüksek başarılı öğrencilere tam veya yarı burs sunmaktadır." },
+                    { q: "Hollanda'da öğrenciyken çalışabilir miyim?", a: "Evet, öğrenci vizesiyle haftada 16 saate kadar çalışabilirsiniz veya Haziran-Ağustos arasında tam zamanlı çalışabilirsiniz. İşvereniniz TWV (çalışma izni) başvurusu yapmalıdır. Saatlik asgari ücret 21+ yaş için €13,27'dir." }
+                ]
+            }
+        }
+    },
+
     // Media Page
     media: {
         heroTitle: "Medyada Biz",

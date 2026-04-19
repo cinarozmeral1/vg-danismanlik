@@ -16,12 +16,11 @@ const getEmailSignature = () => {
             <table cellpadding="0" cellspacing="0" border="0" style="margin-top: 15px;">
                 <tr>
                     <td style="vertical-align: middle; padding-right: 15px;">
-                        <img src="https://vgdanismanlik.com/images/logos/venture-global-logo.png" alt="Venture Global" style="height: 80px; width: auto;">
+                        <img src="https://vgdanismanlik.com/images/logos/01-1%20copy.png" alt="VG Danışmanlık" style="height: 80px; width: auto;">
                     </td>
                     <td style="vertical-align: middle;">
-                        <p style="margin: 0; color: #1e40af; font-size: 18px; font-weight: bold;">VENTURE GLOBAL <sup style="font-size: 10px;">®</sup></p>
+                        <p style="margin: 0; color: #1e40af; font-size: 18px; font-weight: bold;">VG DANIŞMANLIK</p>
                         <p style="margin: 0; color: #3b82f6; font-size: 14px; font-weight: 600;">YURT DIŞI EĞİTİM</p>
-                        <p style="margin: 0; color: #3b82f6; font-size: 14px; font-weight: 600;">DANIŞMANLIĞI</p>
                     </td>
                 </tr>
             </table>
@@ -108,11 +107,11 @@ const sendVerificationEmail = async (email, firstName, verificationToken, langua
     
     const emailContent = {
         tr: {
-            subject: 'Venture Global - E-posta Doğrulama',
+            subject: 'VG Danışmanlık - E-posta Doğrulama',
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
                     <div style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-                        <h1 style="margin: 0; font-size: 28px;">Venture Global</h1>
+                        <h1 style="margin: 0; font-size: 28px;">VG Danışmanlık</h1>
                         <p style="margin: 10px 0 0 0; opacity: 0.9;">E-posta Doğrulama</p>
                     </div>
                     
@@ -120,7 +119,7 @@ const sendVerificationEmail = async (email, firstName, verificationToken, langua
                         <h2 style="color: #333; margin-bottom: 20px;">Merhaba ${firstName},</h2>
                         
                         <p style="color: #666; line-height: 1.6; margin-bottom: 25px;">
-                            Venture Global hesabınızı doğrulamak için aşağıdaki butona tıklayın:
+                            VG Danışmanlık hesabınızı doğrulamak için aşağıdaki butona tıklayın:
                         </p>
                         
                         <div style="text-align: center; margin: 30px 0;">
@@ -141,11 +140,11 @@ const sendVerificationEmail = async (email, firstName, verificationToken, langua
             `
         },
         en: {
-            subject: 'Venture Global - Email Verification',
+            subject: 'VG Danışmanlık - Email Verification',
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
                     <div style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-                        <h1 style="margin: 0; font-size: 28px;">Venture Global</h1>
+                        <h1 style="margin: 0; font-size: 28px;">VG Danışmanlık</h1>
                         <p style="margin: 10px 0 0 0; opacity: 0.9;">Email Verification</p>
                     </div>
                     
@@ -153,7 +152,7 @@ const sendVerificationEmail = async (email, firstName, verificationToken, langua
                         <h2 style="color: #333; margin-bottom: 20px;">Hello ${firstName},</h2>
                         
                         <p style="color: #666; line-height: 1.6; margin-bottom: 25px;">
-                            Please click the button below to verify your Venture Global account:
+                            Please click the button below to verify your VG Danışmanlık account:
                         </p>
                         
                         <div style="text-align: center; margin: 30px 0;">
@@ -178,7 +177,7 @@ const sendVerificationEmail = async (email, firstName, verificationToken, langua
     const content = emailContent[language] || emailContent.tr;
     
     const mailOptions = {
-        from: `"Venture Global" <${process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com'}>`,
+        from: `"VG Danışmanlık" <${process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com'}>`,
         to: email,
         subject: content.subject,
         html: content.html
@@ -221,11 +220,11 @@ const sendPasswordResetEmail = async (email, firstName, resetToken, language = '
     
     const emailContent = {
         tr: {
-            subject: 'Venture Global - Şifre Sıfırlama',
+            subject: 'VG Danışmanlık - Şifre Sıfırlama',
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
                     <div style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-                        <h1 style="margin: 0; font-size: 28px;">Venture Global</h1>
+                        <h1 style="margin: 0; font-size: 28px;">VG Danışmanlık</h1>
                         <p style="margin: 10px 0 0 0; opacity: 0.9;">Şifre Sıfırlama</p>
                     </div>
                     
@@ -252,11 +251,11 @@ const sendPasswordResetEmail = async (email, firstName, resetToken, language = '
             `
         },
         en: {
-            subject: 'Venture Global - Password Reset',
+            subject: 'VG Danışmanlık - Password Reset',
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
                     <div style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-                        <h1 style="margin: 0; font-size: 28px;">Venture Global</h1>
+                        <h1 style="margin: 0; font-size: 28px;">VG Danışmanlık</h1>
                         <p style="margin: 10px 0 0 0; opacity: 0.9;">Password Reset</p>
                     </div>
                     
@@ -287,7 +286,7 @@ const sendPasswordResetEmail = async (email, firstName, resetToken, language = '
     const content = emailContent[language] || emailContent.tr;
     
     const mailOptions = {
-        from: `"Venture Global" <${process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com'}>`,
+        from: `"VG Danışmanlık" <${process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com'}>`,
         to: email,
         subject: content.subject,
         html: content.html
@@ -311,16 +310,16 @@ const sendApplicationCreationEmail = async (email, firstName, lastName, universi
     
     const emailContent = {
         tr: {
-            subject: 'Venture Global - Başvurunuz Oluşturuldu',
+            subject: 'VG Danışmanlık - Başvurunuz Oluşturuldu',
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
                     <div style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-                        <h1 style="margin: 0; font-size: 28px;">Venture Global</h1>
+                        <h1 style="margin: 0; font-size: 28px;">VG Danışmanlık</h1>
                         <p style="margin: 10px 0 0 0; opacity: 0.9;">Başvuru Oluşturuldu</p>
                     </div>
                     
                     <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
-                        <h2 style="color: #333; margin-bottom: 20px;">Merhaba ${firstName} ${lastName},</h2>
+                        <h2 style="color: #333; margin-bottom: 20px;">Merhaba ${firstName},</h2>
                         
                         <p style="color: #666; line-height: 1.6; margin-bottom: 25px;">
                             Başvurunuz başarıyla oluşturulmuştur. Şu anda beklemede durumundadır ve değerlendirilmektedir.
@@ -354,11 +353,11 @@ const sendApplicationCreationEmail = async (email, firstName, lastName, universi
             `
         },
         en: {
-            subject: 'Venture Global - Your Application Has Been Created',
+            subject: 'VG Danışmanlık - Your Application Has Been Created',
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
                     <div style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-                        <h1 style="margin: 0; font-size: 28px;">Venture Global</h1>
+                        <h1 style="margin: 0; font-size: 28px;">VG Danışmanlık</h1>
                         <p style="margin: 10px 0 0 0; opacity: 0.9;">Application Created</p>
                     </div>
                     
@@ -401,7 +400,7 @@ const sendApplicationCreationEmail = async (email, firstName, lastName, universi
     const content = emailContent[language] || emailContent.tr;
     
     const mailOptions = {
-        from: `"Venture Global" <${process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com'}>`,
+        from: `"VG Danışmanlık" <${process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com'}>`,
         to: email,
         subject: content.subject,
         html: content.html
@@ -446,16 +445,16 @@ const sendApplicationStatusEmail = async (email, firstName, lastName, university
     
     const emailContent = {
         tr: {
-            subject: `Venture Global - Başvuru Durumu Güncellendi: ${statusText}`,
+            subject: `VG Danışmanlık - Başvuru Durumu Güncellendi: ${statusText}`,
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
                     <div style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-                        <h1 style="margin: 0; font-size: 28px;">Venture Global</h1>
+                        <h1 style="margin: 0; font-size: 28px;">VG Danışmanlık</h1>
                         <p style="margin: 10px 0 0 0; opacity: 0.9;">Başvuru Durumu Güncellendi</p>
                     </div>
                     
                     <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
-                        <h2 style="color: #333; margin-bottom: 20px;">Merhaba ${firstName} ${lastName},</h2>
+                        <h2 style="color: #333; margin-bottom: 20px;">Merhaba ${firstName},</h2>
                         
                         <p style="color: #666; line-height: 1.6; margin-bottom: 25px;">
                             Başvurunuzun durumu güncellenmiştir. Detaylar aşağıdadır:
@@ -488,11 +487,11 @@ const sendApplicationStatusEmail = async (email, firstName, lastName, university
             `
         },
         en: {
-            subject: `Venture Global - Application Status Updated: ${statusText}`,
+            subject: `VG Danışmanlık - Application Status Updated: ${statusText}`,
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
                     <div style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-                        <h1 style="margin: 0; font-size: 28px;">Venture Global</h1>
+                        <h1 style="margin: 0; font-size: 28px;">VG Danışmanlık</h1>
                         <p style="margin: 10px 0 0 0; opacity: 0.9;">Application Status Updated</p>
                     </div>
                     
@@ -534,7 +533,7 @@ const sendApplicationStatusEmail = async (email, firstName, lastName, university
     const content = emailContent[language] || emailContent.tr;
     
     const mailOptions = {
-        from: `"Venture Global" <${process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com'}>`,
+        from: `"VG Danışmanlık" <${process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com'}>`,
         to: email,
         subject: content.subject,
         html: content.html
@@ -578,19 +577,19 @@ const sendPartnerVerificationEmail = async (email, name, verificationToken, lang
     
     const emailContent = {
         tr: {
-            subject: 'Venture Global - Partner Hesabı Doğrulama',
+            subject: 'VG Danışmanlık - Partner Hesabı Doğrulama',
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
                     <div style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-                        <h1 style="margin: 0; font-size: 28px;">Venture Global</h1>
+                        <h1 style="margin: 0; font-size: 28px;">VG Danışmanlık</h1>
                         <p style="margin: 10px 0 0 0; opacity: 0.9;">Partner Hesabı Aktivasyonu</p>
                     </div>
                     
                     <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
-                        <h2 style="color: #333; margin-bottom: 20px;">Merhaba ${name},</h2>
+                        <h2 style="color: #333; margin-bottom: 20px;">Merhaba ${name.split(' ')[0]},</h2>
                         
                         <p style="color: #666; line-height: 1.6; margin-bottom: 25px;">
-                            Venture Global partner programına davet edildiniz. Hesabınızı aktifleştirmek ve şifrenizi belirlemek için aşağıdaki butona tıklayın:
+                            VG Danışmanlık partner programına davet edildiniz. Hesabınızı aktifleştirmek ve şifrenizi belirlemek için aşağıdaki butona tıklayın:
                         </p>
                         
                         <div style="text-align: center; margin: 30px 0;">
@@ -618,11 +617,11 @@ const sendPartnerVerificationEmail = async (email, name, verificationToken, lang
             `
         },
         en: {
-            subject: 'Venture Global - Partner Account Verification',
+            subject: 'VG Danışmanlık - Partner Account Verification',
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
                     <div style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-                        <h1 style="margin: 0; font-size: 28px;">Venture Global</h1>
+                        <h1 style="margin: 0; font-size: 28px;">VG Danışmanlık</h1>
                         <p style="margin: 10px 0 0 0; opacity: 0.9;">Partner Account Activation</p>
                     </div>
                     
@@ -630,7 +629,7 @@ const sendPartnerVerificationEmail = async (email, name, verificationToken, lang
                         <h2 style="color: #333; margin-bottom: 20px;">Hello ${name},</h2>
                         
                         <p style="color: #666; line-height: 1.6; margin-bottom: 25px;">
-                            You have been invited to join the Venture Global partner program. Click the button below to activate your account and set your password:
+                            You have been invited to join the VG Danışmanlık partner program. Click the button below to activate your account and set your password:
                         </p>
                         
                         <div style="text-align: center; margin: 30px 0;">
@@ -662,7 +661,7 @@ const sendPartnerVerificationEmail = async (email, name, verificationToken, lang
     const content = emailContent[language] || emailContent.tr;
     
     const mailOptions = {
-        from: `"Venture Global" <${process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com'}>`,
+        from: `"VG Danışmanlık" <${process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com'}>`,
         to: email,
         subject: content.subject,
         html: content.html
@@ -714,7 +713,7 @@ const sendVisaApplicationEmail = async (user, country, consulateCity, status) =>
     const html = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <div style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-                <h1 style="margin: 0; font-size: 28px;">Venture Global</h1>
+                <h1 style="margin: 0; font-size: 28px;">VG Danışmanlık</h1>
                 <p style="margin: 10px 0 0 0; opacity: 0.9;">Vize Başvuru Bildirimi</p>
             </div>
             
@@ -762,7 +761,7 @@ const sendVisaApplicationEmail = async (user, country, consulateCity, status) =>
     
     try {
         const result = await transporter.sendMail({
-            from: `"Venture Global" <${process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com'}>`,
+            from: `"VG Danışmanlık" <${process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com'}>`,
             to: user.email,
             subject: subject,
             html: html
@@ -817,7 +816,7 @@ const sendProfileReminderEmail = async (user) => {
         <div class="email-bg" style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f0f4f8;">
             <div style="background: linear-gradient(135deg, #0056b3, #003d82); padding: 30px 20px; text-align: center; border-radius: 8px 8px 0 0;">
                 <div style="display: inline-block; background-color: #ffffff; border-radius: 50%; padding: 10px; margin-bottom: 12px;">
-                    <img src="https://vgdanismanlik.com/images/logos/venture-global-logo.png" alt="Venture Global" style="height: 55px; width: auto; display: block;">
+                    <img src="https://vgdanismanlik.com/images/logos/01-1%20copy.png" alt="VG Danışmanlık" style="height: 55px; width: auto; display: block;">
                 </div>
                 <h1 style="color: #ffffff; margin: 0; font-size: 22px; font-weight: bold;">Profilinizi Tamamlayın</h1>
             </div>
@@ -827,7 +826,7 @@ const sendProfileReminderEmail = async (user) => {
                 </p>
                 
                 <p class="dark-text" style="color: #333333; line-height: 1.6;">
-                    Venture Global ailesine hoş geldiniz!
+                    VG Danışmanlık ailesine hoş geldiniz!
                 </p>
                 
                 <!--[if mso]><table width="100%" cellpadding="20" cellspacing="0" style="background-color:#fff3cd;border:2px solid #ffc107;border-radius:8px;"><tr><td><![endif]-->
@@ -875,9 +874,9 @@ const sendProfileReminderEmail = async (user) => {
     
     try {
         const result = await transporter.sendMail({
-            from: `"Venture Global" <${process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com'}>`,
+            from: `"VG Danışmanlık" <${process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com'}>`,
             to: user.email,
-            subject: '⚠️ Venture Global - Profil Bilgilerinizi Tamamlayın',
+            subject: '⚠️ VG Danışmanlık - Profil Bilgilerinizi Tamamlayın',
             html: html
         });
         
@@ -902,7 +901,7 @@ const sendNewStudentNotificationEmail = async (student, registrationMethod = 'em
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
             <div style="background: linear-gradient(135deg, #0056b3 0%, #004494 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
                 <h1 style="margin: 0; font-size: 24px;">Yeni Öğrenci Kaydı</h1>
-                <p style="margin: 10px 0 0 0; opacity: 0.9;">Venture Global Danışmanlık</p>
+                <p style="margin: 10px 0 0 0; opacity: 0.9;">VG Danışmanlık</p>
             </div>
             
             <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
@@ -948,7 +947,7 @@ const sendNewStudentNotificationEmail = async (student, registrationMethod = 'em
         console.log('   Student:', student.email);
         
         const result = await transporter.sendMail({
-            from: `"Venture Global" <${emailUser}>`,
+            from: `"VG Danışmanlık" <${emailUser}>`,
             to: 'info@vgdanismanlik.com',
             subject: `🆕 Yeni Öğrenci Kaydı - ${student.first_name || ''} ${student.last_name || ''} (${methodLabel})`,
             html: html
@@ -965,6 +964,241 @@ const sendNewStudentNotificationEmail = async (student, registrationMethod = 'em
     }
 };
 
+// Send partner payment completed email
+const sendPartnerPaymentEmail = async (partnerEmail, partnerName, studentName, amount, currency) => {
+    console.log(`📧 Sending partner payment email to: ${partnerEmail}`);
+
+    const mailOptions = {
+        from: `"VG Danışmanlık" <${process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com'}>`,
+        to: partnerEmail,
+        subject: `VG Danışmanlık - Komisyon Ödemeniz Tamamlandı`,
+        html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                <div style="background: linear-gradient(135deg, #005A9E 0%, #003d6b 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+                    <h1 style="margin: 0; font-size: 24px;">VG Danışmanlık</h1>
+                    <p style="margin: 10px 0 0 0; opacity: 0.9;">Partner Ödeme Bildirimi</p>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
+                    <h2 style="color: #333; margin-bottom: 20px;">Merhaba ${partnerName.split(' ')[0]},</h2>
+
+                    <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+                        Komisyon ödemeniz hesabınıza gönderilmiştir.
+                    </p>
+
+                    <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #198754;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 8px 0; color: #666;">Öğrenci:</td>
+                                <td style="padding: 8px 0; color: #333; font-weight: bold; text-align: right;">${studentName}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px 0; color: #666;">Ödeme Tutarı:</td>
+                                <td style="padding: 8px 0; color: #198754; font-weight: bold; font-size: 18px; text-align: right;">${parseFloat(amount).toFixed(2)} ${currency}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px 0; color: #666;">Tarih:</td>
+                                <td style="padding: 8px 0; color: #333; text-align: right;">${new Date().toLocaleDateString('tr-TR')}</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div style="text-align: center; margin: 25px 0;">
+                        <a href="https://vgdanismanlik.com/partner/dashboard" style="background: #005A9E; color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
+                            Partner Panelini Görüntüle
+                        </a>
+                    </div>
+
+                    ${getEmailSignature()}
+                </div>
+            </div>
+        `
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log(`✅ Partner payment email sent to ${partnerEmail}`);
+        return true;
+    } catch (error) {
+        console.error('❌ Partner payment email failed:', error.message);
+        return false;
+    }
+};
+
+// Send partner new student assigned email
+const sendPartnerNewStudentEmail = async (partnerEmail, partnerName, studentName) => {
+    console.log(`📧 Sending partner new student email to: ${partnerEmail}`);
+
+    const mailOptions = {
+        from: `"VG Danışmanlık" <${process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com'}>`,
+        to: partnerEmail,
+        subject: `VG Danışmanlık - Yeni Öğrenci Atandı`,
+        html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                <div style="background: linear-gradient(135deg, #005A9E 0%, #003d6b 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+                    <h1 style="margin: 0; font-size: 24px;">VG Danışmanlık</h1>
+                    <p style="margin: 10px 0 0 0; opacity: 0.9;">Yeni Öğrenci Bildirimi</p>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
+                    <h2 style="color: #333; margin-bottom: 20px;">Merhaba ${partnerName.split(' ')[0]},</h2>
+
+                    <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+                        Size yeni bir öğrenci atandı.
+                    </p>
+
+                    <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #005A9E;">
+                        <h3 style="color: #333; margin-top: 0; font-size: 16px;">
+                            <i style="color: #005A9E;">&#128100;</i> ${studentName}
+                        </h3>
+                        <p style="color: #666; margin: 0;">Bu öğrenci sizin partner hesabınıza atanmıştır. Detayları partner panelinizden takip edebilirsiniz.</p>
+                    </div>
+
+                    <div style="text-align: center; margin: 25px 0;">
+                        <a href="https://vgdanismanlik.com/partner/dashboard" style="background: #005A9E; color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
+                            Partner Panelini Görüntüle
+                        </a>
+                    </div>
+
+                    ${getEmailSignature()}
+                </div>
+            </div>
+        `
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log(`✅ Partner new student email sent to ${partnerEmail}`);
+        return true;
+    } catch (error) {
+        console.error('❌ Partner new student email failed:', error.message);
+        return false;
+    }
+};
+
+// Send partner new earning assigned email
+const sendPartnerNewEarningEmail = async (partnerEmail, partnerName, studentName, amount, currency) => {
+    console.log(`📧 Sending partner new earning email to: ${partnerEmail}`);
+
+    const mailOptions = {
+        from: `"VG Danışmanlık" <${process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com'}>`,
+        to: partnerEmail,
+        subject: `VG Danışmanlık - Yeni Kazanç Tanımlandı`,
+        html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                <div style="background: linear-gradient(135deg, #005A9E 0%, #003d6b 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+                    <h1 style="margin: 0; font-size: 24px;">VG Danışmanlık</h1>
+                    <p style="margin: 10px 0 0 0; opacity: 0.9;">Kazanç Bildirimi</p>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
+                    <h2 style="color: #333; margin-bottom: 20px;">Merhaba ${partnerName.split(' ')[0]},</h2>
+
+                    <p style="color: #666; line-height: 1.6; margin-bottom: 20px;">
+                        Hesabınıza yeni bir kazanç tanımlanmıştır.
+                    </p>
+
+                    <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f0ad4e;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 8px 0; color: #666;">Öğrenci:</td>
+                                <td style="padding: 8px 0; color: #333; font-weight: bold; text-align: right;">${studentName}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px 0; color: #666;">Kazanç Tutarı:</td>
+                                <td style="padding: 8px 0; color: #f0ad4e; font-weight: bold; font-size: 18px; text-align: right;">${parseFloat(amount).toFixed(2)} ${currency}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px 0; color: #666;">Durum:</td>
+                                <td style="padding: 8px 0; text-align: right;"><span style="background: #fff3cd; color: #856404; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 600;">Ödeme Bekliyor</span></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <p style="color: #666; font-size: 14px;">
+                        Ödeme yapıldığında ayrıca bilgilendirileceksiniz.
+                    </p>
+
+                    <div style="text-align: center; margin: 25px 0;">
+                        <a href="https://vgdanismanlik.com/partner/dashboard" style="background: #005A9E; color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
+                            Partner Panelini Görüntüle
+                        </a>
+                    </div>
+
+                    ${getEmailSignature()}
+                </div>
+            </div>
+        `
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log(`✅ Partner new earning email sent to ${partnerEmail}`);
+        return true;
+    } catch (error) {
+        console.error('❌ Partner new earning email failed:', error.message);
+        return false;
+    }
+};
+
+// =====================================================
+// GOOGLE REVIEW REQUEST EMAIL (Post-meeting & Post-acceptance)
+// =====================================================
+const sendReviewRequestEmail = async (email, firstName, type = 'meeting') => {
+    const czReviewUrl = 'https://g.page/r/CRz-bfL0IjttEBM/review';
+    const trReviewUrl = 'https://g.page/r/CcdwdU_f8l7lEBM/review';
+
+    const isAcceptance = type === 'acceptance';
+    const subject = isAcceptance ? 'VG Danışmanlık - Deneyiminizi Paylaşın' : 'VG Danışmanlık - Görüşmemiz Nasıldı?';
+    const subtitle = isAcceptance ? 'Deneyiminizi Paylaşın' : 'Görüşme Geri Bildirimi';
+    const intro = isAcceptance
+        ? 'Üniversiteye kabul sürecinizde yanınızda olduğumuz için çok mutluyuz! Deneyiminizi diğer öğrencilerle paylaşarak onlara da ilham verebilirsiniz.'
+        : 'Danışmanlık görüşmemizin sizin için faydalı olduğunu umuyoruz. Deneyiminizi Google üzerinden paylaşabilirsiniz.';
+
+    const html = `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                    <div style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+                        <h1 style="margin: 0; font-size: 28px;">VG Danışmanlık</h1>
+                        <p style="margin: 10px 0 0 0; opacity: 0.9;">${subtitle}</p>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
+                        <h2 style="color: #333; margin-bottom: 20px;">Merhaba ${firstName},</h2>
+                        <p style="color: #666; line-height: 1.6; margin-bottom: 25px;">
+                            ${intro}
+                        </p>
+                        <div style="text-align: center; margin: 30px 0;">
+                            <a href="${czReviewUrl}" style="background: #0078D7; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
+                                Google'da Değerlendir (Çekya)
+                            </a>
+                        </div>
+                        <div style="text-align: center; margin: 20px 0;">
+                            <a href="${trReviewUrl}" style="background: #0078D7; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
+                                Google'da Değerlendir (Türkiye)
+                            </a>
+                        </div>
+                        <p style="color: #666; font-size: 14px; margin-top: 25px;">
+                            Her iki ofisimiz için de yorum yazarsanız çok seviniriz!
+                        </p>
+                        ${getEmailSignature()}
+                    </div>
+                </div>
+    `;
+
+    try {
+        await transporter.sendMail({
+            from: `"VG Danışmanlık" <${process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com'}>`,
+            to: email,
+            subject: subject,
+            html: html
+        });
+        console.log(`Review request email (${type}) sent to: ${email}`);
+        return true;
+    } catch (error) {
+        console.error(`Review request email failed for ${email}:`, error.message);
+        return false;
+    }
+};
+
 module.exports = {
     transporter,
     sendVerificationEmail,
@@ -975,6 +1209,10 @@ module.exports = {
     sendVisaApplicationEmail,
     sendProfileReminderEmail,
     sendNewStudentNotificationEmail,
+    sendPartnerPaymentEmail,
+    sendPartnerNewStudentEmail,
+    sendPartnerNewEarningEmail,
+    sendReviewRequestEmail,
     generateVerificationToken,
     generateResetToken
-}; 
+};

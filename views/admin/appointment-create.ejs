@@ -40,9 +40,21 @@
                 .type-toggle { background: transparent; color: #6b7280; }
                 .type-toggle.active { background: #005A9E !important; color: white !important; box-shadow: 0 2px 8px rgba(0,90,158,0.25); }
                 @media (max-width: 768px) {
+                    .ac-header { padding: 16px 14px; }
+                    .ac-header h5 { font-size: 16px; }
+                    .ac-body { padding: 18px 14px; }
+                    .step-indicator { gap: 4px; flex-wrap: nowrap; justify-content: center; }
+                    .step-indicator span { font-size: 10px !important; }
+                    .step-dot { width: 24px; height: 24px; font-size: 11px; }
+                    .step-line { width: 16px; }
                     .cal-day { padding: 8px 2px; font-size: 12px; }
                     .slot-btn { padding: 8px 14px; font-size: 13px; }
-                    .type-toggle { font-size: 12px !important; padding: 6px 12px !important; }
+                    .type-toggle { font-size: 11px !important; padding: 6px 10px !important; }
+                    .col-md-6 { margin-bottom: 0; }
+                }
+                @media (max-width: 400px) {
+                    .step-indicator span { display: none; }
+                    .step-line { width: 12px; }
                 }
             </style>
 

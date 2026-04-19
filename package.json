@@ -12,15 +12,19 @@
     "migrate:vercel": "node scripts/migrate-to-vercel.js",
     "db:test": "node scripts/test-database.js",
     "db:check": "node -e \"console.log('Database URL:', process.env.DATABASE_URL || 'Not set')\"",
-    "backup": "node scripts/backup-to-ftp.js",
-    "backup:restore": "node scripts/restore-from-backup.js",
-    "backup:test-email": "node -e \"require('./services/backupNotificationService').testEmailConfiguration()\""
+    "report:export": "node scripts/export-universities-for-report.js",
+    "report:html": "node scripts/build-report-html.js",
+    "report:html:populer": "node scripts/build-report-html.js --populer",
+    "report:pdf": "node scripts/generate-report-pdf.js",
+    "report:short": "node scripts/export-universities-for-report.js && node scripts/build-report-html.js --populer && node scripts/generate-report-pdf.js",
+    "deploy": "vercel --yes",
+    "deploy:preview": "vercel --yes",
+    "deploy:prod": "vercel --prod"
   },
   "dependencies": {
     "@pdf-lib/fontkit": "^1.1.1",
     "archiver": "^7.0.1",
     "axios": "^1.13.2",
-    "basic-ftp": "^5.0.5",
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.2",
     "body-parser": "^1.20.2",
@@ -52,7 +56,9 @@
   "devDependencies": {
     "eslint": "^9.33.0",
     "html-minifier-terser": "^7.2.0",
-    "nodemon": "^3.1.10"
+    "marked": "^17.0.6",
+    "nodemon": "^3.1.10",
+    "puppeteer": "^23.11.1"
   },
   "keywords": [
     "venture-global",

@@ -1,4 +1,15 @@
 <!-- Main Content -->
+    <% 
+    // PostgreSQL DATE gelir string "YYYY-MM-DD"; Date objesi de olabilir. İkisini de güvenle GG/AA/YYYY yap.
+    function formatDateDisplay(d) {
+        if (!d) return '';
+        var s = '';
+        if (typeof d === 'string' && /^\d{4}-\d{2}-\d{2}/.test(d)) s = d.slice(0, 10);
+        else if (typeof d === 'object' && d && typeof d.toISOString === 'function') s = d.toISOString().slice(0, 10);
+        else return '';
+        return s ? s.split('-').reverse().join('/') : '';
+    }
+    %>
     <section class="section bg-light text-dark" style="min-height: 80vh;">
         <div class="container">
             <div class="row">
@@ -103,18 +114,6 @@
                     </div>
                     <% } %>
                     
-                    <!-- AI Öneri Kartı -->
-                    <div id="aiRecommendationCard" class="card shadow-sm mb-4" style="display: none;">
-                        <div class="card-header text-white" style="background: linear-gradient(135deg, #0056b3, #28a745);">
-                            <h5 class="mb-0"><i class="fas fa-magic me-2"></i>AI Üniversite Öneriniz</h5>
-                        </div>
-                        <div class="card-body">
-                            <div id="aiRecommendationContent">
-                                <!-- Content will be loaded dynamically -->
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="card shadow-sm">
                         <div class="card-header bg-primary text-white">
                             <h4 class="mb-0"><i class="fas fa-user me-2"></i>Profil Bilgileri</h4>
@@ -155,14 +154,18 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label for="high_school_graduation_date" class="form-label">Lise Mezuniyet Tarihi *</label>
-                                    <input type="text" class="form-control" id="high_school_graduation_date" name="high_school_graduation_date" value="<%= profile && profile.high_school_graduation_date ? profile.high_school_graduation_date.toISOString().split('T')[0].split('-').reverse().join('/') : '' %>" placeholder="GG/AA/YYYY" required>
+                                    <input type="text" class="form-control" id="high_school_graduation_date" name="high_school_graduation_date" value="<%= formatDateDisplay(profile && profile.high_school_graduation_date) %>" placeholder="GG/AA/YYYY" required>
                                     <small class="text-muted">GG/AA/YYYY formatında slash (/) kullanarak giriniz.</small>
                                 </div>
  
                                 <div class="col-md-6">
                                     <label for="birth_date" class="form-label">Doğum Tarihi *</label>
-                                    <input type="text" class="form-control" id="birth_date" name="birth_date" value="<%= profile && profile.birth_date ? profile.birth_date.toISOString().split('T')[0].split('-').reverse().join('/') : '' %>" placeholder="GG/AA/YYYY" required>
+                                    <input type="text" class="form-control" id="birth_date" name="birth_date" value="<%= formatDateDisplay(profile && profile.birth_date) %>" placeholder="GG/AA/YYYY" required>
                                     <small class="text-muted">GG/AA/YYYY formatında slash (/) kullanarak giriniz.</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="gpa" class="form-label">Aktif Not Ortalaması</label>
+                                    <input type="text" class="form-control" id="gpa" name="gpa" value="<%= profile && profile.gpa ? profile.gpa : '' %>" placeholder="Örn: 85.50">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="passport_type" class="form-label">Pasaport Türü *</label>
@@ -343,6 +346,7 @@
                 english_level: formData.get('english_level'),
                 high_school_graduation_date: formatDate(formData.get('high_school_graduation_date')),
                 birth_date: formatDate(formData.get('birth_date')),
+                gpa: formData.get('gpa'),
                 passport_type: formData.get('passport_type'),
                 passport_number: formData.get('passport_number'),
                 desired_country: formData.get('desired_country'),
@@ -408,6 +412,7 @@
             setValue('english_level', user.english_level);
             setValue('high_school_graduation_date', formatDate(user.high_school_graduation_date));
             setValue('birth_date', formatDate(user.birth_date));
+            setValue('gpa', user.gpa);
             setValue('passport_type', user.passport_type);
             setValue('passport_number', user.passport_number);
             setValue('desired_country', user.desired_country);
@@ -458,6 +463,48 @@
         const relationships = ['Anne', 'Baba', 'Kardes', 'Diger'];
         const relationshipLabels = { 'Anne': 'Anne', 'Baba': 'Baba', 'Kardes': 'Kardeş', 'Diger': 'Diğer' };
 
+        const COUNTRY_CODES = [
+            { code: '+90', label: '+90' },
+            { code: '+1', label: '+1' },
+            { code: '+44', label: '+44' },
+            { code: '+49', label: '+49' },
+            { code: '+43', label: '+43' },
+            { code: '+39', label: '+39' },
+            { code: '+420', label: '+420' },
+            { code: '+48', label: '+48' },
+            { code: '+36', label: '+36' },
+            { code: '+31', label: '+31' },
+            { code: '+33', label: '+33' },
+            { code: '+34', label: '+34' }
+        ];
+
+        function detectCountryCode(phone) {
+            if (!phone) return '+90';
+            const digits = phone.replace(/\D/g, '');
+            const codeDigits = ['420','90','44','49','43','39','48','36','31','33','34','1'];
+            for (const c of codeDigits) {
+                if (digits.startsWith(c)) return '+' + c;
+            }
+            return '+90';
+        }
+
+        function parseLocalPhone(phone) {
+            if (!phone) return '';
+            const digits = phone.replace(/\D/g, '');
+            const codeDigits = ['420','90','44','49','43','39','48','36','31','33','34','1'];
+            for (const c of codeDigits) {
+                if (digits.startsWith(c)) return digits.substring(c.length);
+            }
+            return digits;
+        }
+
+        function guardianCountryCodeOptions(phone) {
+            const detected = detectCountryCode(phone);
+            return COUNTRY_CODES.map(c => 
+                `<option value="${c.code}" ${c.code === detected ? 'selected' : ''}>${c.label}</option>`
+            ).join('');
+        }
+
         function createGuardianCardHTML(guardian, index, isRequired) {
             const rel = guardian.relationship || (index === 0 ? 'Anne' : index === 1 ? 'Baba' : 'Diger');
             const veliNo = index + 1;
@@ -488,7 +535,12 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Telefon</label>
-                            <input type="tel" class="form-control guardian-phone" value="${guardian.phone || ''}" placeholder="Örn: +90 555 123 45 67">
+                            <div class="d-flex gap-1">
+                                <select class="form-select guardian-country-code" style="max-width: 95px; font-size: 0.9rem;">
+                                    ${guardianCountryCodeOptions(guardian.phone)}
+                                </select>
+                                <input type="tel" class="form-control guardian-phone" value="${parseLocalPhone(guardian.phone)}" placeholder="5XX XXX XX XX">
+                            </div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">E-posta</label>
@@ -544,11 +596,14 @@
             const guardians = [];
             cards.forEach((card, i) => {
                 const fullName = card.querySelector('.guardian-fullname').value.trim();
+                const countryCode = card.querySelector('.guardian-country-code').value;
+                const localPhone = card.querySelector('.guardian-phone').value.trim().replace(/\D/g, '');
+                const fullPhone = localPhone ? countryCode + localPhone : '';
                 guardians.push({
                     full_name: fullName,
                     relationship: card.querySelector('.guardian-relationship').value,
                     tc_number: card.querySelector('.guardian-tc').value.trim(),
-                    phone: card.querySelector('.guardian-phone').value.trim(),
+                    phone: fullPhone,
                     email: card.querySelector('.guardian-email').value.trim(),
                     address: card.querySelector('.guardian-address').value.trim(),
                     is_required: i < 2,
@@ -656,363 +711,5 @@
             });
 
             fetchProfile();
-            loadAIRecommendation();
         });
-
-        // Load AI Recommendation
-        async function loadAIRecommendation() {
-            try {
-                const response = await fetch('/api/wizard/my-recommendation');
-                const result = await response.json();
-                
-                if (result.success && result.data) {
-                    const rec = result.data;
-                    const card = document.getElementById('aiRecommendationCard');
-                    const content = document.getElementById('aiRecommendationContent');
-                    
-                    const countryFlags = {
-                        'Germany': '🇩🇪', 'Almanya': '🇩🇪',
-                        'Czech Republic': '🇨🇿', 'Çekya': '🇨🇿', 'Çek Cumhuriyeti': '🇨🇿',
-                        'Italy': '🇮🇹', 'İtalya': '🇮🇹',
-                        'Austria': '🇦🇹', 'Avusturya': '🇦🇹',
-                        'UK': '🇬🇧', 'İngiltere': '🇬🇧', 'United Kingdom': '🇬🇧',
-                        'Poland': '🇵🇱', 'Polonya': '🇵🇱',
-                        'Hungary': '🇭🇺', 'Macaristan': '🇭🇺',
-                        'Netherlands': '🇳🇱', 'Hollanda': '🇳🇱', 'Holland': '🇳🇱',
-                        'Spain': '🇪🇸', 'İspanya': '🇪🇸',
-                        'France': '🇫🇷', 'Fransa': '🇫🇷',
-                        'Portugal': '🇵🇹', 'Portekiz': '🇵🇹',
-                        'Belgium': '🇧🇪', 'Belçika': '🇧🇪',
-                        'Switzerland': '🇨🇭', 'İsviçre': '🇨🇭',
-                        'Denmark': '🇩🇰', 'Danimarka': '🇩🇰',
-                        'Sweden': '🇸🇪', 'İsveç': '🇸🇪',
-                        'Norway': '🇳🇴', 'Norveç': '🇳🇴',
-                        'Finland': '🇫🇮', 'Finlandiya': '🇫🇮',
-                        'Ireland': '🇮🇪', 'İrlanda': '🇮🇪',
-                        'Greece': '🇬🇷', 'Yunanistan': '🇬🇷'
-                    };
-                    
-                    // Fix country names - normalize variations
-                    const normalizeCountry = (country) => {
-                        const countryMap = {
-                            'Holland': 'Netherlands', 'Hollanda': 'Netherlands', 'The Netherlands': 'Netherlands',
-                            'Çekya': 'Czech Republic', 'Çek Cumhuriyeti': 'Czech Republic',
-                            'Almanya': 'Germany', 'İngiltere': 'UK', 'United Kingdom': 'UK',
-                            'İtalya': 'Italy', 'Avusturya': 'Austria',
-                            'Polonya': 'Poland', 'Macaristan': 'Hungary'
-                        };
-                        return countryMap[country] || country;
-                    };
-                    
-                    // Parse recommendation data (new format or legacy)
-                    const rec1 = rec.recommendation_1 || {
-                        university_name: rec.recommended_university_name,
-                        program_name: rec.recommended_program_name,
-                        country: rec.recommended_country,
-                        city: rec.recommended_city,
-                        tuition: rec.recommended_tuition,
-                        why_this_university: rec.ai_reasoning,
-                        city_info: rec.city_info,
-                        career_prospects: rec.career_prospects
-                    };
-                    const rec2 = rec.recommendation_2;
-                    const hasCanadianDiploma = rec.has_canadian_diploma;
-                    
-                    let html = '';
-                    
-                    // Kanada diploması avantaj banner'ı
-                    if (hasCanadianDiploma) {
-                        html += `
-                            <div class="alert mb-3" style="background: linear-gradient(135deg, #dc2626, #991b1b); border: none; color: white; border-radius: 12px;">
-                                <div class="d-flex align-items-start">
-                                    <span style="font-size: 2rem; margin-right: 12px;">🍁</span>
-                                    <div>
-                                        <h6 class="alert-heading mb-1"><i class="fas fa-check-circle me-2"></i>Kanada Lise Diploması Avantajı!</h6>
-                                        <p class="mb-2" style="font-size: 0.9rem;">${rec.wcep_advantage_summary || 'Kanada lise diplomanız sayesinde Avrupa üniversitelerinde özel avantajlardan yararlanabilirsiniz!'}</p>
-                                        <a href="/partners/wcep" class="btn btn-warning btn-sm"><i class="fas fa-info-circle me-1"></i>WCEP Hakkında</a>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    }
-                    
-                    // Hazırlık uyarısı
-                    if (rec.prep_school_needed) {
-                        html += `
-                            <div class="alert alert-warning mb-3">
-                                <h6 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i>Hazırlık Önerisi</h6>
-                                <p class="mb-0">${rec.prep_school_suggestion || 'İngilizce seviyenizi geliştirmek için bir hazırlık programı öneriyoruz.'}</p>
-                            </div>
-                        `;
-                    } else if (hasCanadianDiploma) {
-                        html += `
-                            <div class="alert alert-success mb-3">
-                                <h6 class="alert-heading"><i class="fas fa-check-circle me-2"></i>Harika Haber!</h6>
-                                <p class="mb-0">Kanada lise diplomanız sayesinde çoğu hazırlık programından muafsınız! 🎉</p>
-                            </div>
-                        `;
-                    }
-                    
-                    // Summary view (always visible)
-                    html += `
-                        <div class="row" id="aiSummaryView">
-                            <div class="col-md-6">
-                                <div class="d-flex align-items-center mb-3">
-                                    <span style="font-size: 2.5rem; margin-right: 15px;">${countryFlags[rec1.country] || '🌍'}</span>
-                                    <div>
-                                        <h5 class="mb-0">${rec1.country || 'Ülke'}</h5>
-                                        <small class="text-muted">${rec1.city || 'Şehir'}</small>
-                                    </div>
-                                </div>
-                                <p><strong><i class="fas fa-university me-2"></i>Üniversite:</strong><br>${rec1.university_name || 'Önerilen Üniversite'}</p>
-                                <p><strong><i class="fas fa-book me-2"></i>Program:</strong><br>${rec1.program_name || 'Önerilen Program'}</p>
-                                <p><strong><i class="fas fa-euro-sign me-2"></i>Tahmini Ücret:</strong><br>${rec1.tuition || 'Değişken'}</p>
-                            </div>
-                            <div class="col-md-6">
-                                <p><strong><i class="fas fa-lightbulb me-2"></i>Öneri Gerekçesi:</strong></p>
-                                <p class="text-muted" style="font-size: 0.9rem;">${rec1.why_this_university ? rec1.why_this_university.substring(0, 200) + '...' : 'Profilinize en uygun seçenek.'}</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Detailed view (hidden by default) -->
-                        <div id="aiDetailedView" style="display: none;">
-                            <hr class="my-3">
-                            
-                            <!-- First Recommendation Details -->
-                            <div class="mb-4" style="background: linear-gradient(135deg, #e3f2fd, #e8f5e9); border-radius: 15px; padding: 20px;">
-                                <h5 class="text-primary mb-3"><i class="fas fa-star me-2"></i>1. Öneri: ${rec1.university_name}</h5>
-                                
-                                ${rec1.canadian_diploma_advantage && hasCanadianDiploma ? `
-                                    <div class="mb-3 p-3" style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 10px;">
-                                        <strong><i class="fas fa-maple-leaf me-2" style="color: #d97706;"></i>🍁 Kanada Diploması Avantajınız</strong>
-                                        <p class="mt-2 mb-0">${rec1.canadian_diploma_advantage}</p>
-                                    </div>
-                                ` : ''}
-                                
-                                ${rec1.why_this_university ? `
-                                    <div class="mb-3">
-                                        <strong><i class="fas fa-university me-2 text-primary"></i>Neden Bu Üniversite?</strong>
-                                        <p class="mt-2 mb-0">${rec1.why_this_university}</p>
-                                    </div>
-                                ` : ''}
-                                
-                                ${rec1.why_this_program ? `
-                                    <div class="mb-3">
-                                        <strong><i class="fas fa-book me-2 text-info"></i>Neden Bu Program?</strong>
-                                        <p class="mt-2 mb-0">${rec1.why_this_program}</p>
-                                    </div>
-                                ` : ''}
-                                
-                                ${rec1.country_info ? `
-                                    <div class="mb-3">
-                                        <strong><i class="fas fa-globe me-2 text-success"></i>Ülke Hakkında</strong>
-                                        <p class="mt-2 mb-0">${rec1.country_info}</p>
-                                    </div>
-                                ` : ''}
-                                
-                                ${rec1.city_info ? `
-                                    <div class="mb-3">
-                                        <strong><i class="fas fa-city me-2 text-warning"></i>Şehir Hakkında</strong>
-                                        <p class="mt-2 mb-0">${rec1.city_info}</p>
-                                    </div>
-                                ` : ''}
-                                
-                                ${rec1.career_prospects ? `
-                                    <div class="mb-0">
-                                        <strong><i class="fas fa-briefcase me-2 text-danger"></i>Kariyer Fırsatları</strong>
-                                        <p class="mt-2 mb-0">${rec1.career_prospects}</p>
-                                    </div>
-                                ` : ''}
-                            </div>
-                            
-                            ${rec2 ? `
-                                <!-- Second Recommendation Details -->
-                                <div class="mb-4" style="background: linear-gradient(135deg, #fff3e0, #fce4ec); border-radius: 15px; padding: 20px;">
-                                    <h5 class="text-success mb-3"><i class="fas fa-star me-2"></i>2. Öneri: ${rec2.university_name}</h5>
-                                    
-                                    <div class="row mb-3">
-                                        <div class="col-6">
-                                            <small class="text-muted">Ülke</small>
-                                            <div><strong>${countryFlags[rec2.country] || ''} ${rec2.country}</strong></div>
-                                        </div>
-                                        <div class="col-6">
-                                            <small class="text-muted">Şehir</small>
-                                            <div><strong>${rec2.city}</strong></div>
-                                        </div>
-                                        <div class="col-6 mt-2">
-                                            <small class="text-muted">Program</small>
-                                            <div><strong>${rec2.program_name}</strong></div>
-                                        </div>
-                                        <div class="col-6 mt-2">
-                                            <small class="text-muted">Ücret</small>
-                                            <div><strong>${rec2.tuition}</strong></div>
-                                        </div>
-                                    </div>
-                                    
-                                    ${rec2.canadian_diploma_advantage && hasCanadianDiploma ? `
-                                        <div class="mb-3 p-3" style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 10px;">
-                                            <strong><i class="fas fa-maple-leaf me-2" style="color: #d97706;"></i>🍁 Kanada Diploması Avantajınız</strong>
-                                            <p class="mt-2 mb-0">${rec2.canadian_diploma_advantage}</p>
-                                        </div>
-                                    ` : ''}
-                                    
-                                    ${rec2.why_this_university ? `
-                                        <div class="mb-3">
-                                            <strong><i class="fas fa-university me-2 text-primary"></i>Neden Bu Üniversite?</strong>
-                                            <p class="mt-2 mb-0">${rec2.why_this_university}</p>
-                                        </div>
-                                    ` : ''}
-                                    
-                                    ${rec2.country_info ? `
-                                        <div class="mb-3">
-                                            <strong><i class="fas fa-globe me-2 text-success"></i>Ülke Hakkında</strong>
-                                            <p class="mt-2 mb-0">${rec2.country_info}</p>
-                                        </div>
-                                    ` : ''}
-                                    
-                                    ${rec2.city_info ? `
-                                        <div class="mb-3">
-                                            <strong><i class="fas fa-city me-2 text-warning"></i>Şehir Hakkında</strong>
-                                            <p class="mt-2 mb-0">${rec2.city_info}</p>
-                                        </div>
-                                    ` : ''}
-                                    
-                                    ${rec2.career_prospects ? `
-                                        <div class="mb-0">
-                                            <strong><i class="fas fa-briefcase me-2 text-danger"></i>Kariyer Fırsatları</strong>
-                                            <p class="mt-2 mb-0">${rec2.career_prospects}</p>
-                                        </div>
-                                    ` : ''}
-                                </div>
-                            ` : ''}
-                            
-                            ${rec.comparison ? `
-                                <div class="mb-3" style="background: #f5f5f5; border-radius: 10px; padding: 15px;">
-                                    <strong><i class="fas fa-balance-scale me-2"></i>Karşılaştırma</strong>
-                                    <p class="mt-2 mb-0">${rec.comparison}</p>
-                                </div>
-                            ` : ''}
-                            
-                            ${rec.overall_advice ? `
-                                <div class="mb-3" style="background: #e8f5e9; border-radius: 10px; padding: 15px;">
-                                    <strong><i class="fas fa-lightbulb me-2 text-success"></i>Genel Tavsiyeler</strong>
-                                    <p class="mt-2 mb-0">${rec.overall_advice}</p>
-                                </div>
-                            ` : ''}
-                            
-                            ${hasCanadianDiploma ? `
-                                <!-- Detaylı Kanada Diploması Avantajları -->
-                                <div class="mb-0" style="background: linear-gradient(135deg, #fef2f2, #fee2e2); border: 2px solid #dc2626; border-radius: 15px; padding: 20px;">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <span style="font-size: 2rem; margin-right: 12px;">🍁</span>
-                                        <div>
-                                            <h5 class="mb-0 text-danger"><i class="fas fa-award me-2"></i>Kanada Diploması Avantajlarınız</h5>
-                                            <small class="text-muted">WCEP ortaklığımız kapsamında size özel fırsatlar</small>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="row g-3">
-                                        <div class="col-md-6">
-                                            <div class="p-3" style="background: white; border-radius: 10px; border-left: 4px solid #dc2626;">
-                                                <strong>🇩🇪 Almanya</strong>
-                                                <p class="mb-0 mt-1 small">Studienkolleg (hazırlık yılı) programından <strong>muafiyet</strong>. Doğrudan üniversiteye başvuru hakkı.</p>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="p-3" style="background: white; border-radius: 10px; border-left: 4px solid #dc2626;">
-                                                <strong>🇬🇧 İngiltere</strong>
-                                                <p class="mb-0 mt-1 small">Foundation Year programından <strong>muafiyet</strong>. Direkt lisans programına kabul.</p>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="p-3" style="background: white; border-radius: 10px; border-left: 4px solid #dc2626;">
-                                                <strong>🇨🇿 Çekya</strong>
-                                                <p class="mb-0 mt-1 small">Charles Üniversitesi Tıp ve Diş Hekimliği Fakültesi'ne <strong>sınavsız kabul</strong> imkanı!</p>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="p-3" style="background: white; border-radius: 10px; border-left: 4px solid #dc2626;">
-                                                <strong>🇦🇹 Avusturya</strong>
-                                                <p class="mb-0 mt-1 small">Vorstudienlehrgang (hazırlık) programından <strong>muafiyet</strong>.</p>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="p-3" style="background: white; border-radius: 10px; border-left: 4px solid #dc2626;">
-                                                <strong>🇮🇹 İtalya</strong>
-                                                <p class="mb-0 mt-1 small">Ek sınav gereksinimlerinden <strong>muafiyet</strong>. Doğrudan kabul.</p>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="p-3" style="background: white; border-radius: 10px; border-left: 4px solid #dc2626;">
-                                                <strong>🇵🇱 Polonya & 🇭🇺 Macaristan</strong>
-                                                <p class="mb-0 mt-1 small"><strong>Öncelikli değerlendirme</strong> ve doğrudan kabul avantajı.</p>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="p-3" style="background: white; border-radius: 10px; border-left: 4px solid #dc2626;">
-                                                <strong>🇳🇱 Hollanda</strong>
-                                                <p class="mb-0 mt-1 small">Research University'ler için <strong>AP şartı kalkar</strong>. Tüm üniversitelere direkt başvuru.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="mt-3 text-center">
-                                        <a href="/partners/wcep" class="btn btn-danger">
-                                            <i class="fas fa-info-circle me-2"></i>WCEP Hakkında Detaylı Bilgi
-                                        </a>
-                                    </div>
-                                </div>
-                            ` : ''}
-                        </div>
-                        
-                        <div class="mt-3 d-flex gap-2 flex-wrap">
-                            <button class="btn btn-primary btn-sm" onclick="toggleDetailedView()" id="toggleDetailBtn">
-                                <i class="fas fa-chevron-down me-1"></i>Daha Fazla Göster
-                            </button>
-                            <a href="/student-wizard" class="btn btn-outline-primary btn-sm">
-                                <i class="fas fa-redo me-1"></i>Yeniden Değerlendir
-                            </a>
-                            <a href="https://wa.me/message/O2KRAFDJAMX7F1" target="_blank" class="btn btn-success btn-sm">
-                                <i class="fab fa-whatsapp me-1"></i>Danışman ile Görüş
-                            </a>
-                        </div>
-                    `;
-                    
-                    content.innerHTML = html;
-                    card.style.display = 'block';
-                } else {
-                    // Öneri yoksa sihirbaz önerisi göster
-                    const card = document.getElementById('aiRecommendationCard');
-                    const content = document.getElementById('aiRecommendationContent');
-                    
-                    content.innerHTML = `
-                        <div class="text-center py-3">
-                            <i class="fas fa-magic text-primary" style="font-size: 3rem; margin-bottom: 15px;"></i>
-                            <h5>Henüz bir üniversite öneriniz yok!</h5>
-                            <p class="text-muted">Öğrenci Sihirbazı ile size en uygun üniversiteyi bulalım.</p>
-                            <a href="/student-wizard" class="btn btn-primary">
-                                <i class="fas fa-magic me-2"></i>Sihirbazı Başlat
-                            </a>
-                        </div>
-                    `;
-                    card.style.display = 'block';
-                }
-            } catch (error) {
-                console.error('AI recommendation load error:', error);
-            }
-        }
-        
-        // Toggle detailed view
-        function toggleDetailedView() {
-            const detailedView = document.getElementById('aiDetailedView');
-            const btn = document.getElementById('toggleDetailBtn');
-            
-            if (detailedView.style.display === 'none') {
-                detailedView.style.display = 'block';
-                btn.innerHTML = '<i class="fas fa-chevron-up me-1"></i>Daha Az Göster';
-            } else {
-                detailedView.style.display = 'none';
-                btn.innerHTML = '<i class="fas fa-chevron-down me-1"></i>Daha Fazla Göster';
-            }
-        }
     </script> 

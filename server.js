@@ -152,7 +152,6 @@ const userRoutes = require('./routes/user');
 const partnerRoutes = require('./routes/partner');
 const guardianRoutes = require('./routes/guardians');
 const stripeWebhookRoutes = require('./routes/stripe-webhook');
-const wizardRoutes = require('./routes/wizard');
 const blogRoutes = require('./routes/blog');
 const appointmentRoutes = require('./routes/appointments');
 
@@ -204,15 +203,33 @@ app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
 // Favicon routes (before static files)
 app.get('/favicon.png', (req, res) => {
-    res.setHeader('Cache-Control', 'public, max-age=86400');
+    res.setHeader('Cache-Control', 'public, max-age=604800');
     res.setHeader('Content-Type', 'image/png');
     res.sendFile(path.join(__dirname, 'public', 'favicon.png'));
 });
 
 app.get('/favicon.ico', (req, res) => {
-    res.setHeader('Cache-Control', 'public, max-age=86400');
+    res.setHeader('Cache-Control', 'public, max-age=604800');
     res.setHeader('Content-Type', 'image/x-icon');
     res.sendFile(path.join(__dirname, 'public', 'favicon.ico'));
+});
+
+app.get('/favicon-48.png', (req, res) => {
+    res.setHeader('Cache-Control', 'public, max-age=604800');
+    res.setHeader('Content-Type', 'image/png');
+    res.sendFile(path.join(__dirname, 'public', 'favicon-48.png'));
+});
+
+app.get('/favicon-192.png', (req, res) => {
+    res.setHeader('Cache-Control', 'public, max-age=604800');
+    res.setHeader('Content-Type', 'image/png');
+    res.sendFile(path.join(__dirname, 'public', 'favicon-192.png'));
+});
+
+app.get('/apple-touch-icon.png', (req, res) => {
+    res.setHeader('Cache-Control', 'public, max-age=604800');
+    res.setHeader('Content-Type', 'image/png');
+    res.sendFile(path.join(__dirname, 'public', 'apple-touch-icon.png'));
 });
 
 // Static files with optimized caching
@@ -570,9 +587,8 @@ app.use('/api/user', userRoutes);
 app.use('/admin', adminRoutes);
 app.use('/user', userRoutes);
 app.use('/partner', partnerRoutes);
-app.use('/student-wizard', wizardRoutes);
-app.use('/wizard', wizardRoutes);  // Kısa yol
-app.use('/api/wizard', wizardRoutes);
+app.get('/student-wizard', (req, res) => res.redirect(301, '/'));
+app.get('/wizard', (req, res) => res.redirect(301, '/'));
 app.use('/blog', blogRoutes);  // SEO Blog
 app.use('/api/appointments', appointmentRoutes);
 
@@ -599,6 +615,37 @@ app.post('/api/maintenance/delete-unverified', async (req, res) => {
         console.log('✅ Admin reset_token columns ensured');
     } catch (err) {
         console.log('⚠️ Admin migration skipped:', err.message);
+    }
+})();
+
+// Auto-migrate: iCloud contact UID columns
+(async () => {
+    try {
+        await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS icloud_contact_uid VARCHAR(255)`);
+        await pool.query(`ALTER TABLE guardians ADD COLUMN IF NOT EXISTS icloud_contact_uid VARCHAR(255)`);
+        console.log('✅ iCloud contact UID columns ensured');
+    } catch (err) {
+        console.log('⚠️ iCloud contact migration skipped:', err.message);
+    }
+})();
+
+// Auto-migrate: GPA column
+(async () => {
+    try {
+        await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS gpa VARCHAR(20)`);
+        console.log('✅ GPA column ensured');
+    } catch (err) {
+        console.log('⚠️ GPA migration skipped:', err.message);
+    }
+})();
+
+// Auto-migrate: zoom_meeting_id column for appointments
+(async () => {
+    try {
+        await pool.query(`ALTER TABLE appointments ADD COLUMN IF NOT EXISTS zoom_meeting_id VARCHAR(100)`);
+        console.log('✅ zoom_meeting_id column ensured');
+    } catch (err) {
+        console.log('⚠️ zoom_meeting_id migration skipped:', err.message);
     }
 })();
 
@@ -712,9 +759,9 @@ app.get('/universities/:slug', async (req, res) => {
         const programsResult = { rows: [] };
         const imagesResult = { rows: [] };
 
-        res.locals.seoTitle = `${university.name} - ${university.country} | Venture Global`;
-        res.locals.seoDescription = `${university.name} (${university.city}, ${university.country}) hakkında bilgiler, bölümler, programlar ve başvuru süreci. ${university.country} üniversite başvurunuzda profesyonel destek alın. Yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı ve Avrupa eğitim danışmanlığı hizmetlerimiz.`;
-        res.locals.seoKeywords = `${university.name.toLowerCase()}, ${university.country.toLowerCase()} üniversite, ${university.city.toLowerCase()} üniversite, ${university.country.toLowerCase()} eğitim, ${university.country.toLowerCase()} başvuru, yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı`;
+        res.locals.seoTitle = `${university.name} - ${university.country} Üniversite | VG Danışmanlık`;
+        res.locals.seoDescription = `${university.name} (${university.city}, ${university.country}) bölümleri, programları, ücretleri ve başvuru süreci. ${university.country}'da üniversite okumak ve yurt dışı eğitim danışmanlığı için VG Danışmanlık'a başvurun.`;
+        res.locals.seoKeywords = `${university.name.toLowerCase()}, ${university.name.toLowerCase()} bölümleri, ${university.name.toLowerCase()} ücretleri, ${university.city.toLowerCase()} üniversite, ${university.country.toLowerCase()} üniversite, ${university.country.toLowerCase()}'da eğitim, ${university.country.toLowerCase()}'da üniversite okumak, yurt dışı eğitim danışmanlığı, yurtdışı üniversite başvurusu, VG Danışmanlık`;
         res.locals.canonicalUrl = `${res.locals.baseUrl || 'https://vgdanismanlik.com'}/universities/${slug}`;
         res.locals.schemaType = 'CollegeOrUniversity';
         res.locals.ogType = 'article';
@@ -1000,56 +1047,66 @@ app.get('/sitemap.xml', async (req, res) => {
         <xhtml:link rel="alternate" hreflang="en" href="${baseUrl}/change-language/en"/>
     </url>
     
-    <!-- Student Life Pages -->
+    <!-- Öğrenci Yaşamı (Türkçe URL) -->
     <url>
-        <loc>${baseUrl}/student-life/germany</loc>
+        <loc>${baseUrl}/ogrenci-yasami/almanya</loc>
         <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>${baseUrl}/student-life/czech</loc>
+        <loc>${baseUrl}/ogrenci-yasami/cekya</loc>
         <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>${baseUrl}/student-life/italy</loc>
+        <loc>${baseUrl}/ogrenci-yasami/italya</loc>
         <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>${baseUrl}/student-life/austria</loc>
+        <loc>${baseUrl}/ogrenci-yasami/avusturya</loc>
         <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>${baseUrl}/student-life/uk</loc>
+        <loc>${baseUrl}/ogrenci-yasami/ingiltere</loc>
         <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>${baseUrl}/student-life/poland</loc>
+        <loc>${baseUrl}/ogrenci-yasami/polonya</loc>
         <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>${baseUrl}/student-life/hungary</loc>
+        <loc>${baseUrl}/ogrenci-yasami/macaristan</loc>
         <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>${baseUrl}/student-life/netherlands</loc>
+        <loc>${baseUrl}/ogrenci-yasami/hollanda</loc>
         <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     
+    <!-- Ülke Rehber Sayfaları -->
+    <url><loc>${baseUrl}/ulkede-universite/almanya</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+    <url><loc>${baseUrl}/ulkede-universite/cekya</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+    <url><loc>${baseUrl}/ulkede-universite/italya</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+    <url><loc>${baseUrl}/ulkede-universite/avusturya</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+    <url><loc>${baseUrl}/ulkede-universite/ingiltere</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+    <url><loc>${baseUrl}/ulkede-universite/polonya</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+    <url><loc>${baseUrl}/ulkede-universite/macaristan</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+    <url><loc>${baseUrl}/ulkede-universite/hollanda</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+
     <!-- Partners -->
     <url>
         <loc>${baseUrl}/partners/wcep</loc>
@@ -1065,12 +1122,6 @@ app.get('/sitemap.xml', async (req, res) => {
     </url>
     <url>
         <loc>${baseUrl}/partners/bestschool</loc>
-        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.7</priority>
-    </url>
-    <url>
-        <loc>${baseUrl}/partners/kanpus</loc>
         <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
@@ -1284,7 +1335,7 @@ app.get('/partners/bestschool', (req, res) => {
 });
 
 app.get('/partners/kanpus', (req, res) => {
-    res.render('partners/kanpus', { title: 'Kanpus - Venture Global' });
+    res.redirect(301, '/services');
 });
 
 
@@ -2417,60 +2468,154 @@ app.get('/assessment', (req, res) => {
     res.render('assessment', { title: res.locals.t.nav.assessment });
 });
 
-// Yurtdışında Öğrenci Olmak Route'ları
-app.get('/student-life/germany', (req, res) => {
-    res.render('student-life-germany', { 
-        title: res.locals.t.studentLifePage.hero.germany.title,
-        t: res.locals.t 
+// Öğrenci yaşamı sayfaları — Türkçe URL'ler (SEO: /ogrenci-yasami/almanya vb.)
+const OGRENCI_YASAMI_BASE = '/ogrenci-yasami';
+const STUDENT_LIFE_COUNTRIES = [
+    { key: 'germany', trSlug: 'almanya', view: 'student-life-germany' },
+    { key: 'czech', trSlug: 'cekya', view: 'student-life-czech' },
+    { key: 'italy', trSlug: 'italya', view: 'student-life-italy' },
+    { key: 'austria', trSlug: 'avusturya', view: 'student-life-austria' },
+    { key: 'uk', trSlug: 'ingiltere', view: 'student-life-uk' },
+    { key: 'poland', trSlug: 'polonya', view: 'student-life-poland' },
+    { key: 'hungary', trSlug: 'macaristan', view: 'student-life-hungary' },
+    { key: 'netherlands', trSlug: 'hollanda', view: 'student-life-netherlands' }
+];
+const STUDENT_LIFE_EN_TO_TR = { germany: 'almanya', czech: 'cekya', italy: 'italya', austria: 'avusturya', uk: 'ingiltere', poland: 'polonya', hungary: 'macaristan', netherlands: 'hollanda' };
+
+function setStudentLifeSeo(res, countryKey, pathSlug) {
+    const t = res.locals.t || {};
+    const seo = t.studentLifePage?.seo?.[countryKey];
+    if (!seo) return;
+    const baseUrl = res.locals.baseUrl || 'https://ventureglobal.com.tr';
+    const path = OGRENCI_YASAMI_BASE + '/' + pathSlug;
+    res.locals.seoTitle = seo.title;
+    res.locals.seoDescription = seo.description;
+    res.locals.seoKeywords = seo.keywords;
+    res.locals.canonicalUrl = baseUrl + path;
+    res.locals.currentPath = path;
+    res.locals.ogTitle = seo.title;
+    res.locals.ogDescription = seo.description;
+    res.locals.ogUrl = baseUrl + path;
+    res.locals.ogType = 'website';
+    res.locals.schemaType = 'WebPage';
+    res.locals.structuredDataPage = JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        name: seo.title,
+        description: seo.description,
+        url: baseUrl + path,
+        publisher: { '@type': 'Organization', name: 'VG Danışmanlık', url: baseUrl },
+        inLanguage: res.locals.currentLanguage === 'en' ? 'en' : 'tr'
+    });
+}
+
+STUDENT_LIFE_COUNTRIES.forEach(({ key, trSlug, view }) => {
+    app.get(OGRENCI_YASAMI_BASE + '/' + trSlug, (req, res) => {
+        setStudentLifeSeo(res, key, trSlug);
+        res.render(view, { title: res.locals.t.studentLifePage.hero[key].title, t: res.locals.t });
     });
 });
 
-app.get('/student-life/czech', (req, res) => {
-    res.render('student-life-czech', { 
-        title: res.locals.t.studentLifePage.hero.czech.title,
-        t: res.locals.t 
+// ─── Ülke Rehber Sayfaları (/ulkede-universite/:slug) ───
+const COUNTRY_GUIDE_MAP = [
+    { key: 'germany',      slug: 'almanya',    nameTR: 'Almanya',          nameEN: 'Germany',        dbCountry: 'Germany',            flag: '🇩🇪' },
+    { key: 'czech',         slug: 'cekya',      nameTR: 'Çek Cumhuriyeti',  nameEN: 'Czech Republic', dbCountry: 'Czech Republic',     flag: '🇨🇿' },
+    { key: 'italy',         slug: 'italya',     nameTR: 'İtalya',           nameEN: 'Italy',          dbCountry: 'Italy',              flag: '🇮🇹' },
+    { key: 'austria',       slug: 'avusturya',  nameTR: 'Avusturya',        nameEN: 'Austria',        dbCountry: 'Austria',            flag: '🇦🇹' },
+    { key: 'uk',            slug: 'ingiltere',  nameTR: 'İngiltere',        nameEN: 'United Kingdom', dbCountry: 'UK',                 flag: '🇬🇧' },
+    { key: 'poland',        slug: 'polonya',    nameTR: 'Polonya',          nameEN: 'Poland',         dbCountry: 'Poland',             flag: '🇵🇱' },
+    { key: 'hungary',       slug: 'macaristan', nameTR: 'Macaristan',       nameEN: 'Hungary',        dbCountry: 'Hungary',            flag: '🇭🇺' },
+    { key: 'netherlands',   slug: 'hollanda',   nameTR: 'Hollanda',         nameEN: 'Netherlands',    dbCountry: 'Netherlands',        flag: '🇳🇱' }
+];
+
+const _ytCache = {};
+const COUNTRY_FALLBACK_VIDEOS = {
+    germany:     ['GF6aOzB72og', 'fVuZgMm1JQ8', 'pNj5EMNSSaE'],
+    czech:       ['dgao11VKd3E', 'Jht5FjvOC-s', 'JFMODyS17J8'],
+    italy:       ['XKaOobmneNg', 'eoca6qNT0dE', 'UCU-vobO0w8'],
+    austria:     ['SRrGtm-oY9Y', 'F-C04P965l0', 'GXpgfj8Xc8E'],
+    uk:          ['GF6aOzB72og', 'dgao11VKd3E', 'XKaOobmneNg'],
+    poland:      ['fVuZgMm1JQ8', 'Jht5FjvOC-s', 'eoca6qNT0dE'],
+    hungary:     ['pNj5EMNSSaE', 'JFMODyS17J8', 'SRrGtm-oY9Y'],
+    netherlands: ['UCU-vobO0w8', 'F-C04P965l0', 'GXpgfj8Xc8E']
+};
+async function getCountryYouTubeVideos(countryNameTR, countryKey) {
+    const fallback = COUNTRY_FALLBACK_VIDEOS[countryKey] || [];
+    if (_ytCache[countryKey] && Date.now() - _ytCache[countryKey].ts < 86400000) {
+        return _ytCache[countryKey].ids;
+    }
+    const apiKey = process.env.YOUTUBE_API_KEY;
+    if (!apiKey) return fallback;
+    try {
+        const query = encodeURIComponent(`${countryNameTR} üniversite eğitim yurt dışı`);
+        const https = require('https');
+        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${query}&type=video&maxResults=3&relevanceLanguage=tr&key=${apiKey}`;
+        const data = await new Promise((resolve, reject) => {
+            https.get(url, r => {
+                let d = '';
+                r.on('data', c => d += c);
+                r.on('end', () => { try { resolve(JSON.parse(d)); } catch { resolve({}); } });
+            }).on('error', reject);
+        });
+        const ids = (data.items || []).map(i => i.id?.videoId).filter(Boolean);
+        if (ids.length > 0) {
+            _ytCache[countryKey] = { ts: Date.now(), ids };
+            return ids;
+        }
+        return fallback;
+    } catch (e) {
+        console.error('YouTube search error for', countryKey, e.message);
+        return fallback;
+    }
+}
+
+COUNTRY_GUIDE_MAP.forEach(cd => {
+    app.get('/ulkede-universite/' + cd.slug, async (req, res) => {
+        try {
+            const t = res.locals.t || {};
+            const guideContent = t.countryGuide?.[cd.key] || {};
+            const lang = res.locals.currentLanguage || 'tr';
+            const countryName = lang === 'en' ? cd.nameEN : cd.nameTR;
+            const baseUrl = 'https://vgdanismanlik.com';
+
+            const [uniResult, blogResult, deptResult] = await Promise.all([
+                pool.query(`SELECT id, name, city, slug, logo_url, (SELECT COUNT(*) FROM university_departments WHERE university_id = u.id AND is_active = true) AS department_count FROM universities u WHERE u.country = $1 AND u.is_active = true ORDER BY u.name`, [cd.dbCountry]),
+                pool.query(`SELECT id, title_tr, title_en, slug, excerpt_tr, excerpt_en, published_at FROM blog_posts WHERE is_published = true AND related_country = $1 ORDER BY published_at DESC LIMIT 6`, [cd.dbCountry]),
+                pool.query(`SELECT d.name_tr, d.name_en, d.price, d.currency, u.name as university_name, u.slug as university_slug FROM university_departments d JOIN universities u ON d.university_id = u.id WHERE u.country = $1 AND d.is_active = true AND u.is_active = true ORDER BY u.name, d.name_tr LIMIT 200`, [cd.dbCountry])
+            ]);
+
+            res.locals.seoTitle = lang === 'en'
+                ? `Studying in ${cd.nameEN}: 2026 Complete University Guide | VG Danışmanlık`
+                : `${cd.nameTR}'da Üniversite Okumak: 2026 Tam Rehber | VG Danışmanlık`;
+            res.locals.seoDescription = lang === 'en'
+                ? `Complete guide to studying in ${cd.nameEN}. Universities, tuition fees, scholarships, application process, visa and cost of living. Free consultation by VG Danışmanlık.`
+                : `${cd.nameTR}'da üniversite eğitimi rehberi. Üniversiteler, ücretler, burslar, başvuru süreci, vize ve yaşam maliyetleri. VG Danışmanlık ile ücretsiz danışmanlık.`;
+            res.locals.seoKeywords = `${cd.nameTR.toLowerCase()}'da üniversite, ${cd.nameTR.toLowerCase()}'da eğitim, ${cd.nameTR.toLowerCase()} üniversiteleri, ${cd.nameTR.toLowerCase()} burs, yurt dışı eğitim, VG Danışmanlık`;
+            res.locals.canonicalUrl = baseUrl + '/ulkede-universite/' + cd.slug;
+            res.locals.currentPath = '/ulkede-universite/' + cd.slug;
+
+            const countryVideos = await getCountryYouTubeVideos(cd.nameTR, cd.key);
+
+            res.render('country-guide', {
+                title: res.locals.seoTitle,
+                countryData: { ...cd, studentLifeSlug: cd.slug },
+                universities: uniResult.rows,
+                departments: deptResult.rows,
+                blogPosts: blogResult.rows,
+                countryVideos,
+                guideContent
+            });
+        } catch (err) {
+            console.error('Country guide error:', err);
+            res.status(500).render('error', { title: 'Error', message: err.message });
+        }
     });
 });
 
-app.get('/student-life/italy', (req, res) => {
-    res.render('student-life-italy', { 
-        title: res.locals.t.studentLifePage.hero.italy.title,
-        t: res.locals.t 
-    });
-});
-
-app.get('/student-life/austria', (req, res) => {
-    res.render('student-life-austria', { 
-        title: res.locals.t.studentLifePage.hero.austria.title,
-        t: res.locals.t 
-    });
-});
-
-app.get('/student-life/uk', (req, res) => {
-    res.render('student-life-uk', { 
-        title: res.locals.t.studentLifePage.hero.uk.title,
-        t: res.locals.t 
-    });
-});
-
-app.get('/student-life/poland', (req, res) => {
-    res.render('student-life-poland', { 
-        title: res.locals.t.studentLifePage.hero.poland.title,
-        t: res.locals.t 
-    });
-});
-
-app.get('/student-life/hungary', (req, res) => {
-    res.render('student-life-hungary', { 
-        title: res.locals.t.studentLifePage.hero.hungary.title,
-        t: res.locals.t 
-    });
-});
-
-app.get('/student-life/netherlands', (req, res) => {
-    res.render('student-life-netherlands', { 
-        title: res.locals.t.studentLifePage.hero.netherlands.title,
-        t: res.locals.t 
+// Eski İngilizce URL'ler → Türkçe URL'e 301 (mevcut linkler kırılmasın, SEO değeri taşınsın)
+Object.entries(STUDENT_LIFE_EN_TO_TR).forEach(([enSlug, trSlug]) => {
+    app.get('/student-life/' + enSlug, (req, res) => {
+        res.redirect(301, OGRENCI_YASAMI_BASE + '/' + trSlug);
     });
 });
 
@@ -3164,11 +3309,11 @@ const sendContactEmail = async (formData, language = 'tr') => {
         
         const emailContent = {
             tr: {
-                subject: 'Yeni İletişim Formu - Venture Global',
+                subject: 'Yeni İletişim Formu - VG Danışmanlık',
                 html: `
                     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
                         <div style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-                            <h1 style="margin: 0; font-size: 28px;">Venture Global</h1>
+                            <h1 style="margin: 0; font-size: 28px;">VG Danışmanlık</h1>
                             <p style="margin: 10px 0 0 0; opacity: 0.9;">Yeni İletişim Formu</p>
                         </div>
                         
@@ -3190,18 +3335,18 @@ const sendContactEmail = async (formData, language = 'tr') => {
                             <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
                             
                             <p style="color: #999; font-size: 12px; text-align: center;">
-                                Venture Global - Avrupa Üniversite ve Dil Okulu Danışmanlığı
+                                VG Danışmanlık - Avrupa Üniversite ve Dil Okulu Danışmanlığı
                             </p>
                         </div>
                     </div>
                 `
             },
             en: {
-                subject: 'New Contact Form - Venture Global',
+                subject: 'New Contact Form - VG Danışmanlık',
                 html: `
                     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
                         <div style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-                            <h1 style="margin: 0; font-size: 28px;">Venture Global</h1>
+                            <h1 style="margin: 0; font-size: 28px;">VG Danışmanlık</h1>
                             <p style="margin: 10px 0 0 0; opacity: 0.9;">New Contact Form</p>
                         </div>
                         
@@ -3223,7 +3368,7 @@ const sendContactEmail = async (formData, language = 'tr') => {
                             <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
                             
                             <p style="color: #999; font-size: 12px; text-align: center;">
-                                Venture Global - European University and Language School Consultancy
+                                VG Danışmanlık - European University and Language School Consultancy
                             </p>
                         </div>
                     </div>
@@ -3293,11 +3438,11 @@ const sendAssessmentEmail = async (formData, language = 'tr') => {
         
         const emailContent = {
             tr: {
-                subject: 'Yeni Eğitim Değerlendirme Formu - Venture Global',
+                subject: 'Yeni Eğitim Değerlendirme Formu - VG Danışmanlık',
                 html: `
                     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
                         <div style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-                            <h1 style="margin: 0; font-size: 28px;">Venture Global</h1>
+                            <h1 style="margin: 0; font-size: 28px;">VG Danışmanlık</h1>
                             <p style="margin: 10px 0 0 0; opacity: 0.9;">Yeni Eğitim Değerlendirme Formu</p>
                         </div>
                         
@@ -3321,18 +3466,18 @@ const sendAssessmentEmail = async (formData, language = 'tr') => {
                             <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
                             
                             <p style="color: #999; font-size: 12px; text-align: center;">
-                                Venture Global - Avrupa Üniversite ve Dil Okulu Danışmanlığı
+                                VG Danışmanlık - Avrupa Üniversite ve Dil Okulu Danışmanlığı
                             </p>
                         </div>
                     </div>
                 `
             },
             en: {
-                subject: 'New Education Assessment Form - Venture Global',
+                subject: 'New Education Assessment Form - VG Danışmanlık',
                 html: `
                     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
                         <div style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-                            <h1 style="margin: 0; font-size: 28px;">Venture Global</h1>
+                            <h1 style="margin: 0; font-size: 28px;">VG Danışmanlık</h1>
                             <p style="margin: 10px 0 0 0; opacity: 0.9;">New Education Assessment Form</p>
                         </div>
                         
@@ -3356,7 +3501,7 @@ const sendAssessmentEmail = async (formData, language = 'tr') => {
                             <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
                             
                             <p style="color: #999; font-size: 12px; text-align: center;">
-                                Venture Global - European University and Language School Consultancy
+                                VG Danışmanlık - European University and Language School Consultancy
                             </p>
                         </div>
                     </div>
@@ -3425,7 +3570,7 @@ app.post('/api/career-application', cvUpload.single('cvFile'), async (req, res) 
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f5f5f5;">
                     <div style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-                        <h1 style="margin: 0; font-size: 28px;">Venture Global</h1>
+                        <h1 style="margin: 0; font-size: 28px;">VG Danışmanlık</h1>
                         <p style="margin: 10px 0 0 0; opacity: 0.9;">Yeni Kariyer Başvurusu</p>
                     </div>
                     

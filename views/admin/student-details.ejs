@@ -1,4 +1,14 @@
 <!-- Admin Student Details Content -->
+<% 
+function formatDateDisplay(d) {
+    if (!d) return '';
+    var s = '';
+    if (typeof d === 'string' && /^\d{4}-\d{2}-\d{2}/.test(d)) s = d.slice(0, 10);
+    else if (typeof d === 'object' && d && typeof d.toISOString === 'function') s = d.toISOString().slice(0, 10);
+    else return '';
+    return s ? s.split('-').reverse().join('/') : '';
+}
+%>
 <div class="admin-container">
     <%- include('partials/sidebar') %>
 
@@ -73,11 +83,6 @@
                             </button>
                         </li>
                         <% } %>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="ai-recommendation-tab" data-bs-toggle="tab" data-bs-target="#ai-recommendation" type="button" role="tab" style="white-space: nowrap;">
-                                <i class="fas fa-magic me-2"></i>AI
-                            </button>
-                        </li>
                     </ul>
                 </div>
             </div>
@@ -125,13 +130,17 @@
 
                                     <div class="col-md-6">
                                         <label for="high_school_graduation_date" class="form-label">Lise Mezuniyet Tarihi *</label>
-                                        <input type="text" class="form-control" id="high_school_graduation_date" name="high_school_graduation_date" value="<%= user.high_school_graduation_date ? new Date(user.high_school_graduation_date).toLocaleDateString('tr-TR').replace(/\./g, '/') : '' %>" placeholder="GG/AA/YYYY" required>
+                                        <input type="text" class="form-control" id="high_school_graduation_date" name="high_school_graduation_date" value="<%= formatDateDisplay(user.high_school_graduation_date) %>" placeholder="GG/AA/YYYY" required>
                                         <small class="text-muted">GG/AA/YYYY formatında slash (/) kullanarak giriniz.</small>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="birth_date" class="form-label">Doğum Tarihi *</label>
-                                        <input type="text" class="form-control" id="birth_date" name="birth_date" value="<%= user.birth_date ? new Date(user.birth_date).toLocaleDateString('tr-TR').replace(/\./g, '/') : '' %>" placeholder="GG/AA/YYYY" required>
+                                        <input type="text" class="form-control" id="birth_date" name="birth_date" value="<%= formatDateDisplay(user.birth_date) %>" placeholder="GG/AA/YYYY" required>
                                         <small class="text-muted">GG/AA/YYYY formatında slash (/) kullanarak giriniz.</small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="gpa" class="form-label">Aktif Not Ortalaması</label>
+                                        <input type="text" class="form-control" id="gpa" name="gpa" value="<%= user.gpa || '' %>" placeholder="Örn: 85.50">
                                     </div>
 
                                     <div class="col-md-6">
@@ -380,7 +389,27 @@
                                     </div>
                                     <div class="card-body">
                                         <p class="text-muted mb-3">Öğrencinin mevcut bilgileri kullanılarak otomatik danışmanlık sözleşmesi PDF'i oluşturulur ve dosyalara eklenir.</p>
-                                        <button type="button" class="btn btn-primary btn-lg w-100" id="generateContractBtn" onclick="generateContract()">
+
+                                        <!-- Dönem Seçici -->
+                                        <div class="mb-3">
+                                            <label class="form-label fw-semibold text-dark"><i class="fas fa-calendar-alt me-1 text-primary"></i>Hedef Dönem <span class="text-danger">*</span></label>
+                                            <select class="form-select" id="contractPeriodSelect" onchange="onPeriodChange()">
+                                                <option value="">— Dönem seçin —</option>
+                                                <%
+                                                    const baseYear = new Date().getFullYear();
+                                                    const savedPeriod = user.target_period || '';
+                                                    for (let y = baseYear - 1; y <= baseYear + 3; y++) {
+                                                        const val = `${y}-${y+1}`;
+                                                %>
+                                                <option value="<%= val %>" <%= savedPeriod === val ? 'selected' : '' %>><%= val %></option>
+                                                <% } %>
+                                            </select>
+                                            <div id="periodWarning" class="text-danger small mt-1" style="display:none;">
+                                                <i class="fas fa-exclamation-circle me-1"></i>Sözleşme oluşturmadan önce dönem seçilmelidir.
+                                            </div>
+                                        </div>
+
+                                        <button type="button" class="btn btn-primary btn-lg w-100" id="generateContractBtn" onclick="generateContract()" <%= (user.target_period ? '' : 'disabled') %>>
                                             <i class="fas fa-file-pdf me-2"></i>Danışmanlık Sözleşmesi Oluştur
                                         </button>
                                         <div id="contractProgress" style="display: none;" class="mt-3">
@@ -506,22 +535,6 @@
                         </div>
                     </div>
                     <% } %>
-                    
-                    <!-- AI Recommendation Tab -->
-                    <div class="tab-pane fade" id="ai-recommendation" role="tabpanel" style="overflow: visible; max-height: none;">
-                        <div class="container-fluid px-0">
-                            <h5 class="mb-4 text-center"><strong>AI Önerisi</strong></h5>
-                            
-                            <div id="aiRecommendationContent">
-                                <div class="text-center py-4">
-                                    <div class="spinner-border text-primary" role="status">
-                                        <span class="visually-hidden">Yükleniyor...</span>
-                                    </div>
-                                    <p class="text-muted mt-2">AI önerisi yükleniyor...</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     
                 </div>
             </div>
@@ -1804,9 +1817,29 @@ document.addEventListener('DOMContentLoaded', function() {
     // File Management Functions
 
     // Contract Generation
+    window.onPeriodChange = function() {
+        const select = document.getElementById('contractPeriodSelect');
+        const btn = document.getElementById('generateContractBtn');
+        const warning = document.getElementById('periodWarning');
+        if (select.value) {
+            btn.disabled = false;
+            warning.style.display = 'none';
+        } else {
+            btn.disabled = true;
+        }
+    };
+
     window.generateContract = async function() {
         const btn = document.getElementById('generateContractBtn');
         const progress = document.getElementById('contractProgress');
+        const periodSelect = document.getElementById('contractPeriodSelect');
+        const warning = document.getElementById('periodWarning');
+
+        const selectedPeriod = periodSelect ? periodSelect.value : '';
+        if (!selectedPeriod) {
+            if (warning) warning.style.display = 'block';
+            return;
+        }
         
         try {
             // Show loading state
@@ -1819,7 +1852,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json'
-                }
+                },
+                body: JSON.stringify({ targetPeriod: selectedPeriod })
             });
             
             const data = await response.json();
@@ -1835,8 +1869,9 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Contract generation error:', error);
             showAlert('danger', '<i class="fas fa-exclamation-circle me-2"></i>Sözleşme oluşturulurken hata: ' + error.message);
         } finally {
-            // Reset button state
-            btn.disabled = false;
+            // Reset button — only re-enable if a period is still selected
+            const periodVal = document.getElementById('contractPeriodSelect')?.value;
+            btn.disabled = !periodVal;
             btn.innerHTML = '<i class="fas fa-file-pdf me-2"></i>Danışmanlık Sözleşmesi Oluştur';
             if (progress) progress.style.display = 'none';
         }
@@ -1925,13 +1960,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            // Get filename from Content-Disposition header
+            // Get filename from Content-Disposition header (supports both RFC 5987 and legacy format)
             const contentDisposition = response.headers.get('Content-Disposition');
-            let filename = 'document';
+            let filename = 'dosya.pdf';
             if (contentDisposition) {
-                const filenameMatch = contentDisposition.match(/filename="(.+)"/);
-                if (filenameMatch) {
-                    filename = filenameMatch[1];
+                const rfc5987Match = contentDisposition.match(/filename\*=UTF-8''([^\s;]+)/i);
+                const legacyMatch = contentDisposition.match(/filename="([^"]+)"/);
+                if (rfc5987Match) {
+                    filename = decodeURIComponent(rfc5987Match[1]);
+                } else if (legacyMatch) {
+                    filename = legacyMatch[1];
                 }
             }
 
@@ -2873,6 +2911,7 @@ function saveStudent(){
         english_level: document.getElementById('english_level').value,
         high_school_graduation_date: formatDate(document.getElementById('high_school_graduation_date').value),
         birth_date: formatDate(document.getElementById('birth_date').value),
+        gpa: document.getElementById('gpa').value,
         tc_number: document.getElementById('tc_number').value,
         passport_type: document.getElementById('passport_type').value,
         passport_number: document.getElementById('passport_number').value,
@@ -3778,6 +3817,15 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('partnerSearchInput')?.addEventListener('input', function() {
         filterPartners(this.value);
     });
+
+    // Auto-activate partner tab if URL hash is #partner-section
+    if (window.location.hash === '#partner-section') {
+        const partnerTab = document.getElementById('partner-tab');
+        if (partnerTab) {
+            const tab = new bootstrap.Tab(partnerTab);
+            tab.show();
+        }
+    }
 });
 
 // Load all partner data for this student
@@ -3865,12 +3913,12 @@ function displayPartnersGrid() {
                     ${isAssigned ? `<div class="card-header text-white py-1 text-center" style="${headerStyle}"><small><i class="fas fa-check-circle me-1"></i>Atanmış Partner</small></div>` : ''}
                     <div class="card-body">
                         <div class="d-flex align-items-center mb-2">
-                            <div class="avatar-circle me-3" style="width: 45px; height: 45px; border-radius: 50%; background: linear-gradient(135deg, ${isAssigned ? '#0d6efd, #0056b3' : '#667eea, #764ba2'}); display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-user-tie text-white"></i>
+                            <div class="me-3" style="width: 45px; height: 45px; min-width: 45px; border-radius: 50%; background: linear-gradient(135deg, ${isAssigned ? '#0d6efd, #0056b3' : '#667eea, #764ba2'}); display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                                <i class="fas fa-user-tie text-white" style="font-size: 18px;"></i>
                             </div>
-                            <div class="flex-grow-1">
-                                <h6 class="mb-0 fw-bold">${partner.first_name} ${partner.last_name}</h6>
-                                <small class="text-muted">${partner.company_name || partner.email}</small>
+                            <div class="flex-grow-1" style="min-width: 0;">
+                                <h6 class="mb-0 fw-bold text-truncate">${partner.first_name} ${partner.last_name}</h6>
+                                <small class="text-muted text-truncate d-block">${partner.company_name || partner.email}</small>
                             </div>
                         </div>
                         <div class="d-flex justify-content-between align-items-center mt-2 mb-3">
@@ -4073,9 +4121,15 @@ function displayPartnerEarnings(partnerId) {
                 </td>
                 <td>${earning.notes || '-'}</td>
                 <td>
-                    <button class="btn btn-sm btn-outline-danger" onclick="deleteEarning(${earning.id})">
-                        <i class="fas fa-trash"></i>
-                    </button>
+                    <div class="btn-group" role="group">
+                        ${earning.is_paid
+                            ? `<button class="btn btn-sm btn-outline-warning" onclick="toggleEarningPaid(${earning.id}, false)" title="Ödemeyi Geri Al"><i class="fas fa-undo"></i></button>`
+                            : `<button class="btn btn-sm btn-success" onclick="toggleEarningPaid(${earning.id}, true)" title="Ödendi İşaretle"><i class="fas fa-check"></i></button>`
+                        }
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteEarning(${earning.id})" title="Sil">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
                 </td>
             </tr>
         `;
@@ -4107,7 +4161,7 @@ function displayPartnerEarnings(partnerId) {
     `;
 }
 
-// Display all earnings summary
+// Display all earnings summary with individual earning rows and action buttons
 function displayAllEarningsSummary() {
     const container = document.getElementById('allEarningsContent');
     
@@ -4121,44 +4175,57 @@ function displayAllEarningsSummary() {
         return;
     }
     
-    // Group earnings by partner
-    const earningsByPartner = {};
     let grandTotal = 0;
+    let grandPaid = 0;
+    let grandPending = 0;
     
-    allEarnings.forEach(earning => {
-        const partnerName = earning.partner_name || 'Bilinmeyen Partner';
-        if (!earningsByPartner[partnerName]) {
-            earningsByPartner[partnerName] = { total: 0, count: 0, paid: 0, pending: 0 };
-        }
-        const amount = parseFloat(earning.amount);
-        earningsByPartner[partnerName].total += amount;
-        earningsByPartner[partnerName].count++;
-        if (earning.is_paid) {
-            earningsByPartner[partnerName].paid += amount;
-        } else {
-            earningsByPartner[partnerName].pending += amount;
-        }
-        grandTotal += amount;
-    });
-    
-    let html = '<div class="table-responsive"><table class="table table-sm mb-0">';
-    html += '<thead class="table-light"><tr><th>Partner</th><th>Kazanç Sayısı</th><th>Ödenen</th><th>Bekleyen</th><th>Toplam</th></tr></thead>';
+    let html = '<div class="table-responsive"><table class="table table-sm table-hover mb-0">';
+    html += '<thead class="table-light"><tr><th>Partner</th><th>Tutar</th><th>Tarih</th><th>Durum</th><th>Not</th><th style="width:120px;">İşlem</th></tr></thead>';
     html += '<tbody>';
     
-    for (const [partnerName, data] of Object.entries(earningsByPartner)) {
+    allEarnings.forEach(earning => {
+        const amount = parseFloat(earning.amount);
+        grandTotal += amount;
+        if (earning.is_paid) { grandPaid += amount; } else { grandPending += amount; }
+
+        const earningDate = earning.earning_date
+            ? (() => { const d = new Date(earning.earning_date); return String(d.getUTCDate()).padStart(2,'0') + '.' + String(d.getUTCMonth()+1).padStart(2,'0') + '.' + d.getUTCFullYear(); })()
+            : '-';
+
         html += `
             <tr>
-                <td><strong>${partnerName}</strong></td>
-                <td>${data.count}</td>
-                <td class="text-success">${data.paid.toFixed(2)} €</td>
-                <td class="text-warning">${data.pending.toFixed(2)} €</td>
-                <td><strong>${data.total.toFixed(2)} €</strong></td>
+                <td><strong>${earning.partner_name || '-'}</strong></td>
+                <td><strong>${amount.toFixed(2)} ${earning.currency || 'EUR'}</strong></td>
+                <td><small>${earningDate}</small></td>
+                <td>
+                    ${earning.is_paid 
+                        ? '<span class="badge bg-success"><i class="fas fa-check me-1"></i>Ödendi</span>' 
+                        : '<span class="badge bg-warning text-dark"><i class="fas fa-clock me-1"></i>Beklemede</span>'}
+                </td>
+                <td><small>${earning.notes || '-'}</small></td>
+                <td>
+                    <div class="btn-group" role="group">
+                        ${earning.is_paid
+                            ? `<button class="btn btn-sm btn-outline-warning" onclick="toggleEarningPaid(${earning.id}, false)" title="Ödemeyi Geri Al"><i class="fas fa-undo"></i></button>`
+                            : `<button class="btn btn-sm btn-success" onclick="toggleEarningPaid(${earning.id}, true)" title="Ödendi İşaretle"><i class="fas fa-check"></i></button>`
+                        }
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteEarning(${earning.id})" title="Sil"><i class="fas fa-trash"></i></button>
+                    </div>
+                </td>
             </tr>
         `;
-    }
+    });
     
     html += '</tbody>';
-    html += `<tfoot class="table-success"><tr><th colspan="4">Genel Toplam</th><th><strong>${grandTotal.toFixed(2)} €</strong></th></tr></tfoot>`;
+    html += `<tfoot class="table-light">
+        <tr>
+            <th>Toplam</th>
+            <th>${grandTotal.toFixed(2)} €</th>
+            <th></th>
+            <th><span class="text-success">${grandPaid.toFixed(2)} €</span> / <span class="text-warning">${grandPending.toFixed(2)} €</span></th>
+            <th colspan="2"></th>
+        </tr>
+    </tfoot>`;
     html += '</table></div>';
     
     container.innerHTML = html;
@@ -4265,6 +4332,41 @@ async function saveEarning() {
     }
 }
 
+// Toggle earning paid status
+async function toggleEarningPaid(earningId, markAsPaid) {
+    const action = markAsPaid ? 'ödendi olarak işaretlemek' : 'ödeme durumunu geri almak';
+    if (!confirm(`Bu kazancı ${action} istediğinizden emin misiniz?`)) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`/admin/partner-earnings/${earningId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+                is_paid: markAsPaid,
+                payment_date: markAsPaid ? new Date().toISOString().split('T')[0] : null
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            alert(markAsPaid ? 'Kazanç ödendi olarak işaretlendi!' : 'Ödeme durumu geri alındı!');
+            await loadAllPartnerData();
+            if (selectedPartnerId) {
+                displayPartnerEarnings(selectedPartnerId);
+            }
+        } else {
+            alert(data.message || 'İşlem başarısız!');
+        }
+    } catch (error) {
+        console.error('Toggle earning paid error:', error);
+        alert('İşlem sırasında bir hata oluştu!');
+    }
+}
+
 // Delete earning
 async function deleteEarning(earningId) {
     if (!confirm('Bu kazanç kaydını silmek istediğinizden emin misiniz?')) {
@@ -4295,371 +4397,8 @@ async function deleteEarning(earningId) {
     }
 }
 
-// =============== AI RECOMMENDATION FUNCTIONS ===============
 
-// Load AI recommendation when tab is clicked
-document.getElementById('ai-recommendation-tab')?.addEventListener('shown.bs.tab', function() {
-    loadAIRecommendation();
-});
 
-// Load AI recommendation
-async function loadAIRecommendation() {
-    const container = document.getElementById('aiRecommendationContent');
-    
-    try {
-        const response = await fetch(`/api/admin/users/${studentId}/ai-recommendation`, {
-            credentials: 'include'
-        });
-        const data = await response.json();
-        
-        if (data.success && data.recommendation) {
-            displayAIRecommendation(data.recommendation);
-        } else {
-            container.innerHTML = `
-                <div class="alert alert-info text-center">
-                    <i class="fas fa-info-circle fa-2x mb-3"></i>
-                    <h5>AI Önerisi Bulunamadı</h5>
-                    <p class="text-muted mb-0">Bu öğrenci henüz AI sihirbazını kullanmamış.</p>
-                </div>
-            `;
-        }
-    } catch (error) {
-        console.error('Load AI recommendation error:', error);
-        container.innerHTML = `
-            <div class="alert alert-danger">
-                <i class="fas fa-exclamation-circle me-2"></i>
-                AI önerisi yüklenirken bir hata oluştu.
-            </div>
-        `;
-    }
-}
 
-// Display AI recommendation
-function displayAIRecommendation(rec) {
-    const container = document.getElementById('aiRecommendationContent');
-    
-    const countryFlags = {
-        'Germany': '🇩🇪', 'Almanya': '🇩🇪',
-        'Czech Republic': '🇨🇿', 'Çekya': '🇨🇿', 'Çek Cumhuriyeti': '🇨🇿',
-        'Italy': '🇮🇹', 'İtalya': '🇮🇹',
-        'Austria': '🇦🇹', 'Avusturya': '🇦🇹',
-        'UK': '🇬🇧', 'İngiltere': '🇬🇧', 'United Kingdom': '🇬🇧',
-        'Poland': '🇵🇱', 'Polonya': '🇵🇱',
-        'Hungary': '🇭🇺', 'Macaristan': '🇭🇺',
-        'Netherlands': '🇳🇱', 'Hollanda': '🇳🇱', 'Holland': '🇳🇱',
-        'Spain': '🇪🇸', 'İspanya': '🇪🇸',
-        'France': '🇫🇷', 'Fransa': '🇫🇷',
-        'Portugal': '🇵🇹', 'Portekiz': '🇵🇹',
-        'Belgium': '🇧🇪', 'Belçika': '🇧🇪',
-        'Switzerland': '🇨🇭', 'İsviçre': '🇨🇭',
-        'Denmark': '🇩🇰', 'Danimarka': '🇩🇰',
-        'Sweden': '🇸🇪', 'İsveç': '🇸🇪',
-        'Norway': '🇳🇴', 'Norveç': '🇳🇴',
-        'Finland': '🇫🇮', 'Finlandiya': '🇫🇮',
-        'Ireland': '🇮🇪', 'İrlanda': '🇮🇪',
-        'Greece': '🇬🇷', 'Yunanistan': '🇬🇷'
-    };
-    
-    // Normalize country name to English
-    const normalizeCountry = (country) => {
-        if (!country) return country;
-        const map = {
-            'Hollanda': 'Netherlands', 'Holland': 'Netherlands', 'The Netherlands': 'Netherlands',
-            'Polonya': 'Poland', 'Almanya': 'Germany', 'İngiltere': 'UK',
-            'İtalya': 'Italy', 'Avusturya': 'Austria', 'Macaristan': 'Hungary',
-            'Çekya': 'Czech Republic', 'Çek Cumhuriyeti': 'Czech Republic'
-        };
-        return map[country] || country;
-    };
-    
-    // Parse ai_reasoning if it's JSON (new format)
-    let rec1 = null, rec2 = null, comparison = null, overall_advice = null, hasCanadianDiploma = false, wcepSummary = null;
-    
-    if (rec.ai_reasoning) {
-        try {
-            const fullData = JSON.parse(rec.ai_reasoning);
-            rec1 = fullData.recommendation_1;
-            rec2 = fullData.recommendation_2;
-            comparison = fullData.comparison;
-            overall_advice = fullData.overall_advice;
-            hasCanadianDiploma = fullData.has_canadian_diploma || false;
-            wcepSummary = fullData.wcep_advantage_summary || null;
-        } catch (e) {
-            // Eski format - düz metin
-            console.log('Using legacy format');
-        }
-    }
-    
-    // Helper function to render recommendation card (same as wizard)
-    function renderRecommendationCard(recData, number, isPrimary) {
-        if (!recData) return '';
-        
-        // Normalize country name for flag lookup
-        const normalizedCountry = normalizeCountry(recData.country);
-        const flag = countryFlags[recData.country] || countryFlags[normalizedCountry] || '🌍';
-        const cardStyle = isPrimary 
-            ? 'background: linear-gradient(135deg, #0056b3, #004494);' 
-            : 'background: linear-gradient(135deg, #28a745, #20903d);';
-        
-        return `
-            <div class="recommendation-card mb-4" style="${cardStyle} color: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
-                <div class="d-flex align-items-center mb-3">
-                    <span class="badge bg-white text-dark me-2" style="font-size: 1rem; padding: 8px 15px;">
-                        ${isPrimary ? '⭐ 1. Öneri' : '🔷 2. Öneri'}
-                    </span>
-                    <span style="font-size: 2rem;">${flag}</span>
-                </div>
-                
-                <h3 class="mb-1">${recData.university_name || 'Üniversite'}</h3>
-                <h5 class="mb-3 opacity-75">${recData.program_name || 'Program'}</h5>
-                
-                <div class="row mb-3">
-                    <div class="col-6 col-md-3 mb-2">
-                        <small class="opacity-75">Ülke</small>
-                        <div class="fw-bold">${recData.country}</div>
-                    </div>
-                    <div class="col-6 col-md-3 mb-2">
-                        <small class="opacity-75">Şehir</small>
-                        <div class="fw-bold">${recData.city}</div>
-                    </div>
-                    <div class="col-6 col-md-3 mb-2">
-                        <small class="opacity-75">Yıllık Ücret</small>
-                        <div class="fw-bold">${recData.tuition || 'Değişken'}</div>
-                    </div>
-                    <div class="col-6 col-md-3 mb-2">
-                        <small class="opacity-75">Dil</small>
-                        <div class="fw-bold">İngilizce</div>
-                    </div>
-                </div>
-            </div>
-            
-            ${recData.why_this_university ? `
-                <div class="info-section mb-3" style="background: #f8f9fa; border-radius: 15px; padding: 20px; border-left: 4px solid ${isPrimary ? '#0056b3' : '#28a745'};">
-                    <h6 class="mb-2"><i class="fas fa-university me-2" style="color: ${isPrimary ? '#0056b3' : '#28a745'};"></i>Neden Bu Üniversite?</h6>
-                    <p class="mb-0 text-dark">${recData.why_this_university}</p>
-                </div>
-            ` : ''}
-            
-            ${recData.why_this_program ? `
-                <div class="info-section mb-3" style="background: #f8f9fa; border-radius: 15px; padding: 20px; border-left: 4px solid #6f42c1;">
-                    <h6 class="mb-2"><i class="fas fa-book me-2" style="color: #6f42c1;"></i>Neden Bu Program?</h6>
-                    <p class="mb-0 text-dark">${recData.why_this_program}</p>
-                </div>
-            ` : ''}
-            
-            ${recData.country_info ? `
-                <div class="info-section mb-3" style="background: #f8f9fa; border-radius: 15px; padding: 20px; border-left: 4px solid #fd7e14;">
-                    <h6 class="mb-2"><i class="fas fa-globe me-2" style="color: #fd7e14;"></i>Ülke Hakkında</h6>
-                    <p class="mb-0 text-dark">${recData.country_info}</p>
-                </div>
-            ` : ''}
-            
-            ${recData.city_info ? `
-                <div class="info-section mb-3" style="background: #f8f9fa; border-radius: 15px; padding: 20px; border-left: 4px solid #17a2b8;">
-                    <h6 class="mb-2"><i class="fas fa-city me-2" style="color: #17a2b8;"></i>Şehir Hakkında</h6>
-                    <p class="mb-0 text-dark">${recData.city_info}</p>
-                </div>
-            ` : ''}
-            
-            ${recData.career_prospects ? `
-                <div class="info-section mb-3" style="background: #f8f9fa; border-radius: 15px; padding: 20px; border-left: 4px solid #28a745;">
-                    <h6 class="mb-2"><i class="fas fa-briefcase me-2" style="color: #28a745;"></i>Kariyer Fırsatları</h6>
-                    <p class="mb-0 text-dark">${recData.career_prospects}</p>
-                </div>
-            ` : ''}
-        `;
-    }
-    
-    let html = `
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <span class="badge bg-primary me-2">${rec.education_level === 'bachelor' ? 'Lisans' : 'Yüksek Lisans'}</span>
-                <span class="badge bg-secondary">İngilizce: ${rec.english_level || '-'}</span>
-                ${hasCanadianDiploma ? '<span class="badge bg-danger ms-2">🍁 Kanada Diploması</span>' : ''}
-            </div>
-            <button class="btn btn-outline-danger btn-sm" onclick="deleteAIRecommendation(${rec.id})">
-                <i class="fas fa-trash me-1"></i>Sil
-            </button>
-        </div>
-        
-        ${hasCanadianDiploma && wcepSummary ? `
-            <div class="mb-4" style="background: linear-gradient(135deg, #dc2626, #991b1b); border-radius: 15px; padding: 20px; color: white;">
-                <div class="d-flex align-items-center mb-2">
-                    <span style="font-size: 2rem; margin-right: 12px;">🍁</span>
-                    <div>
-                        <h6 class="mb-0"><i class="fas fa-check-circle me-1"></i>Kanada Lise Diploması Avantajı!</h6>
-                        <small class="opacity-75">WCEP Ortaklığı</small>
-                    </div>
-                </div>
-                <p class="mb-0" style="font-size: 0.9rem;">${wcepSummary}</p>
-            </div>
-        ` : ''}
-        
-        ${rec.prep_school_needed ? `
-            <div class="prep-warning mb-4" style="background: linear-gradient(135deg, #fff3cd, #ffe69c); border: none; border-radius: 15px; padding: 20px;">
-                <h5 class="text-dark"><i class="fas fa-exclamation-triangle me-2 text-warning"></i>Hazırlık Önerisi</h5>
-                <p class="mb-0 text-dark">${rec.prep_school_suggestion || 'İngilizce seviyesine göre hazırlık programı önerilmektedir.'}</p>
-            </div>
-        ` : `
-            <div class="mb-4" style="background: linear-gradient(135deg, #d4edda, #c3e6cb); border: none; border-radius: 15px; padding: 15px;">
-                <i class="fas fa-check-circle me-2 text-success"></i>Hazırlık programı gerekli değil
-            </div>
-        `}
-    `;
-    
-    // Yeni format (JSON) varsa detaylı göster
-    if (rec1) {
-        html += renderRecommendationCard(rec1, 1, true);
-        
-        if (rec2) {
-            html += `<hr class="my-4">`;
-            html += renderRecommendationCard(rec2, 2, false);
-        }
-        
-        if (comparison) {
-            html += `
-                <div class="info-section mb-3" style="background: linear-gradient(135deg, #e9ecef, #dee2e6); border-radius: 15px; padding: 20px;">
-                    <h6 class="mb-2"><i class="fas fa-balance-scale me-2" style="color: #495057;"></i>Karşılaştırma</h6>
-                    <p class="mb-0 text-dark">${comparison}</p>
-                </div>
-            `;
-        }
-        
-        if (overall_advice) {
-            html += `
-                <div class="info-section mb-3" style="background: linear-gradient(135deg, #d4edda, #c3e6cb); border-radius: 15px; padding: 20px;">
-                    <h6 class="mb-2"><i class="fas fa-lightbulb me-2" style="color: #155724;"></i>Genel Tavsiyeler</h6>
-                    <p class="mb-0 text-dark">${overall_advice}</p>
-                </div>
-            `;
-        }
-        
-        // Kanada Diploması Avantajları Detaylı Bölümü
-        if (hasCanadianDiploma) {
-            html += `
-                <div class="info-section mb-3" style="background: linear-gradient(135deg, #fef2f2, #fee2e2); border: 2px solid #dc2626; border-radius: 15px; padding: 20px;">
-                    <div class="d-flex align-items-center mb-3">
-                        <span style="font-size: 2rem; margin-right: 12px;">🍁</span>
-                        <div>
-                            <h5 class="mb-0 text-danger"><i class="fas fa-award me-2"></i>Kanada Diploması Avantajları</h5>
-                            <small class="text-muted">WCEP ortaklığı kapsamında öğrenciye sağlanan fırsatlar</small>
-                        </div>
-                    </div>
-                    
-                    <div class="row g-2">
-                        <div class="col-md-6">
-                            <div class="p-2" style="background: white; border-radius: 8px; border-left: 3px solid #dc2626;">
-                                <strong class="small">🇩🇪 Almanya</strong>
-                                <p class="mb-0 small">Studienkolleg'den <strong>muafiyet</strong></p>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="p-2" style="background: white; border-radius: 8px; border-left: 3px solid #dc2626;">
-                                <strong class="small">🇬🇧 İngiltere</strong>
-                                <p class="mb-0 small">Foundation Year'dan <strong>muafiyet</strong></p>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="p-2" style="background: white; border-radius: 8px; border-left: 3px solid #dc2626;">
-                                <strong class="small">🇨🇿 Çekya</strong>
-                                <p class="mb-0 small">Charles Üni. Tıp/Diş'e <strong>sınavsız kabul</strong></p>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="p-2" style="background: white; border-radius: 8px; border-left: 3px solid #dc2626;">
-                                <strong class="small">🇦🇹 Avusturya</strong>
-                                <p class="mb-0 small">Vorstudienlehrgang'dan <strong>muafiyet</strong></p>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="p-2" style="background: white; border-radius: 8px; border-left: 3px solid #dc2626;">
-                                <strong class="small">🇮🇹 İtalya</strong>
-                                <p class="mb-0 small">Ek sınavlardan <strong>muafiyet</strong></p>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="p-2" style="background: white; border-radius: 8px; border-left: 3px solid #dc2626;">
-                                <strong class="small">🇵🇱 🇭🇺 Polonya & Macaristan</strong>
-                                <p class="mb-0 small"><strong>Öncelikli değerlendirme</strong></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-    } else {
-        // Eski format (düz metin ai_reasoning)
-        html += `
-            <div class="card mb-3" style="border-left: 3px solid #28a745;">
-                <div class="card-body">
-                    <h6 class="card-title"><span class="badge bg-success me-2">Öneri</span></h6>
-                    <p class="mb-2"><strong>Ülke:</strong> ${rec.recommended_country || '-'}</p>
-                    <p class="mb-2"><strong>Şehir:</strong> ${rec.recommended_city || '-'}</p>
-                    <p class="mb-0"><strong>Ücret:</strong> ${rec.recommended_tuition || '-'}</p>
-                </div>
-            </div>
-            
-            ${rec.ai_reasoning ? `
-                <div class="mt-4">
-                    <h6 class="text-info mb-3"><i class="fas fa-brain me-2"></i>AI Açıklaması</h6>
-                    <div class="bg-light p-3 rounded">
-                        ${rec.ai_reasoning}
-                    </div>
-                </div>
-            ` : ''}
-        `;
-    }
-    
-    html += `
-        <hr class="my-4">
-        <div class="text-muted small">
-            <i class="fas fa-calendar me-1"></i>Oluşturulma: ${new Date(rec.created_at).toLocaleString('tr-TR')}
-        </div>
-    `;
-    
-    container.innerHTML = html;
-}
-
-// Toggle AI reasoning text
-let isReasoningExpanded = false;
-function toggleAIReasoning() {
-    const content = document.getElementById('aiReasoningContent');
-    const toggleText = document.getElementById('toggleReasoningText');
-    
-    if (isReasoningExpanded) {
-        content.textContent = window.fullAIReasoning.substring(0, 300) + '...';
-        toggleText.textContent = 'Daha fazla göster';
-    } else {
-        content.textContent = window.fullAIReasoning;
-        toggleText.textContent = 'Daha az göster';
-    }
-    isReasoningExpanded = !isReasoningExpanded;
-}
-
-// Delete AI recommendation
-async function deleteAIRecommendation(id) {
-    if (!confirm('Bu AI önerisini silmek istediğinizden emin misiniz? Bu işlem öğrencinin portalından da silinmesine neden olacaktır.')) {
-        return;
-    }
-    
-    try {
-        const response = await fetch(`/api/admin/ai-recommendations/${id}`, {
-            method: 'DELETE',
-            credentials: 'include'
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            alert('AI önerisi başarıyla silindi!');
-            loadAIRecommendation();
-        } else {
-            alert(data.message || 'AI önerisi silinemedi!');
-        }
-    } catch (error) {
-        console.error('Delete AI recommendation error:', error);
-        alert('AI önerisi silinirken bir hata oluştu!');
-    }
-}
 
 </script>

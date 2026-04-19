@@ -78,8 +78,90 @@ async function createZoomMeeting({ topic, startTime, duration = 30, agenda = '' 
     };
 }
 
+async function updateZoomMeeting(meetingId, { topic, startTime, duration = 30, agenda = '' }) {
+    const token = await getAccessToken();
+
+    const response = await fetch(`https://api.zoom.us/v2/meetings/${meetingId}`, {
+        method: 'PATCH',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            topic,
+            start_time: startTime,
+            duration,
+            timezone: 'UTC',
+            agenda,
+            settings: {
+                host_video: false,
+                participant_video: false,
+                join_before_host: true,
+                waiting_room: true
+            }
+        })
+    });
+
+    if (!response.ok) {
+        const error = await response.text();
+        throw new Error(`Zoom meeting update failed: ${response.status} - ${error}`);
+    }
+
+    return true;
+}
+
+async function deleteZoomMeeting(meetingId) {
+    const token = await getAccessToken();
+
+    const response = await fetch(`https://api.zoom.us/v2/meetings/${meetingId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (!response.ok && response.status !== 404) {
+        const error = await response.text();
+        throw new Error(`Zoom meeting delete failed: ${response.status} - ${error}`);
+    }
+
+    return true;
+}
+
+async function getMeetingDetails(meetingId) {
+    const token = await getAccessToken();
+
+    const response = await fetch(`https://api.zoom.us/v2/meetings/${meetingId}`, {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (!response.ok) {
+        if (response.status === 404) return null;
+        const error = await response.text();
+        throw new Error(`Zoom meeting details failed: ${response.status} - ${error}`);
+    }
+
+    return await response.json();
+}
+
+async function getPastMeetingDetails(meetingId) {
+    const token = await getAccessToken();
+
+    const response = await fetch(`https://api.zoom.us/v2/past_meetings/${meetingId}`, {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (!response.ok) {
+        if (response.status === 404) return null;
+        const error = await response.text();
+        throw new Error(`Zoom past meeting details failed: ${response.status} - ${error}`);
+    }
+
+    return await response.json();
+}
+
 function isConfigured() {
     return !!(ZOOM_ACCOUNT_ID && ZOOM_CLIENT_ID && ZOOM_CLIENT_SECRET);
 }
 
-module.exports = { createZoomMeeting, isConfigured };
+module.exports = { createZoomMeeting, updateZoomMeeting, deleteZoomMeeting, getMeetingDetails, getPastMeetingDetails, isConfigured };

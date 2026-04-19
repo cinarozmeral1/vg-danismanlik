@@ -52,7 +52,6 @@
                                 <select class="form-select" id="contactInquiryType" name="inquiryType" required>
                                     <option value="" selected disabled><%= t.contact.form.selectInquiry %></option>
                                     <option value="university"><%= t.contact.form.inquiryOptions.university %></option>
-                                    <option value="kanpus"><%= t.contact.form.inquiryOptions.kanpus %></option>
                                     <option value="language"><%= t.contact.form.inquiryOptions.language %></option>
                                     <option value="visa"><%= t.contact.form.inquiryOptions.visa %></option>
                                     <option value="accommodation"><%= t.contact.form.inquiryOptions.accommodation %></option>
@@ -112,7 +111,7 @@
                 </div>
             </div>
 
-            <!-- Contact Information + Kanpus (Sağ Taraf) -->
+            <!-- Contact Information (Sağ Taraf) -->
             <div class="col-lg-4">
                 <div class="card shadow mb-4 reveal">
                     <div class="card-header text-white" style="background: #005A9E;">
@@ -130,8 +129,37 @@
                         <p class="mb-2">
                             <i class="fas fa-envelope me-2"></i>
                             <strong><%= t.contact.info.email %>:</strong><br>
-                            info@vgdanismanlik.com
+                            info@vgedu.org
                         </p>
+                    </div>
+                </div>
+
+                <!-- Google Yorumları -->
+                <div class="card shadow mb-4 reveal" style="border: 2px solid #fbbc04; border-radius: 12px; overflow: hidden;">
+                    <div style="background: #fff; padding: 14px 18px; border-bottom: 1px solid #f0f0f0;">
+                        <h5 class="mb-0" style="font-size: 15px; font-weight: 700; color: #333;">
+                            <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google" style="height: 16px; vertical-align: middle; margin-right: 6px;">
+                            <%= currentLanguage === 'en' ? 'Rate Us on Google' : 'Google\'da Bizi Değerlendirin' %>
+                        </h5>
+                    </div>
+                    <div class="card-body" style="padding: 16px 18px;">
+                        <p class="mb-3" style="font-size: 13px; color: #555;">
+                            <%= currentLanguage === 'en' ? 'Your reviews help other students find us. Share your experience!' : 'Yorumlarınız diğer öğrencilerin bizi bulmasına yardımcı olur. Deneyiminizi paylaşın!' %>
+                        </p>
+                        <div class="d-flex flex-column gap-2">
+                            <a href="https://g.page/r/CcdwdU_f8l7lEBM/review" target="_blank" rel="noopener noreferrer"
+                               class="btn btn-sm w-100 fw-semibold d-flex align-items-center justify-content-center gap-2"
+                               style="background: #fbbc04; color: #1a1a1a; border: none; border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; white-space: normal; word-break: break-word;">
+                                <i class="fas fa-star" style="flex-shrink:0"></i>
+                                <%= currentLanguage === 'en' ? 'Rate VG Danışmanlık (Turkey)' : 'VG Danışmanlık\'ı Değerlendir (Türkiye)' %>
+                            </a>
+                            <a href="https://g.page/r/CRz-bfL0IjttEBM/review" target="_blank" rel="noopener noreferrer"
+                               class="btn btn-sm w-100 fw-semibold d-flex align-items-center justify-content-center gap-2"
+                               style="background: #4285f4; color: #fff; border: none; border-radius: 8px; padding: 8px 12px; font-size: 0.8rem; white-space: normal; word-break: break-word;">
+                                <i class="fas fa-star" style="flex-shrink:0"></i>
+                                <%= currentLanguage === 'en' ? 'Rate VG Danışmanlık (Czechia)' : 'VG Danışmanlık Çekya\'yı Değerlendir' %>
+                            </a>
+                        </div>
                     </div>
                 </div>
                 <div class="card shadow mb-4 reveal" style="border: 2px solid #005A9E; border-radius: 12px; overflow: hidden;">
@@ -166,25 +194,6 @@
                     </div>
                 </div>
                 
-                <!-- Kanpus Tanıtım Kutucuğu (Sağ Tarafta) -->
-                <div class="card shadow reveal" style="background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%); border: none;">
-                    <div class="card-body text-white">
-                        <h5 class="fw-bold text-center mb-3">Kanpus <%= t.contact.kanpus.title %></h5>
-                        <p class="small mb-3"><%= t.contact.kanpus.description %></p>
-                        <div class="alert alert-warning mb-3" style="background: rgba(251, 191, 36, 0.2); border: 2px solid white;">
-                            <small style="color: white;"><strong><%= t.contact.kanpus.exclusiveOffer %></strong></small>
-                        </div>
-                        <ul class="list-unstyled small mb-3">
-                            <li class="mb-2"><i class="fas fa-check-circle me-2"></i><%= t.contact.kanpus.feature1 %></li>
-                            <li class="mb-2"><i class="fas fa-check-circle me-2"></i><%= t.contact.kanpus.feature2 %></li>
-                            <li class="mb-2"><i class="fas fa-check-circle me-2"></i><%= t.contact.kanpus.feature3 %></li>
-                            <li class="mb-2"><i class="fas fa-check-circle me-2"></i><%= t.contact.kanpus.feature4 %></li>
-                        </ul>
-                        <a href="/partners/kanpus" class="btn btn-light w-100">
-                            <i class="fas fa-arrow-right me-2"></i><%= t.contact.kanpus.learnMore %>
-                        </a>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -292,4 +301,69 @@ document.getElementById('contactForm').addEventListener('submit', async function
     }, { threshold: 0.15 });
     reveals.forEach(function(el) { observer.observe(el); });
 })();
+</script>
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "Hangi ülkelerde yurt dışı eğitim danışmanlığı hizmeti veriyorsunuz?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Almanya, Avusturya, İngiltere, İtalya, Çek Cumhuriyeti, Polonya, Macaristan ve Hollanda'da hizmet veriyoruz. Bu 8 ülkedeki 50'den fazla prestijli üniversite ile doğrudan işbirliği yapıyoruz."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Yurt dışı eğitim danışmanlık ücreti nedir?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Hizmet ücretlerimiz seçtiğiniz program, ülke ve hizmet paketine göre değişmektedir. Temel danışmanlık, kapsamlı başvuru yönetimi ve premium paketlerimiz mevcuttur. Ücretsiz ön görüşme ile size en uygun paketi birlikte belirleyebiliriz."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Yurt dışı üniversite başvurusu için hangi belgeler gereklidir?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Temel olarak lise diploması veya transkript, dil yeterlilik belgesi (IELTS/TOEFL), pasaport, motivasyon mektubu ve özgeçmiş gerekmektedir. Ülke ve üniversiteye özel belge listesini danışmanlık sürecinde sizinle paylaşıyoruz."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Dil bilmeden yurt dışında üniversite okuyabilir miyim?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Evet, birçok ülkede İngilizce eğitim veren programlar mevcuttur. Almanya'da Studienkolleg, İngiltere'de Foundation Year gibi hazırlık programları da bulunmaktadır. IELTS ve TOEFL gibi dil sınavlarına hazırlık desteği de sağlıyoruz."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Yurt dışında eğitim ne kadar tutar?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Eğitim masrafları ülke ve üniversiteye göre değişir. Almanya'da devlet üniversiteleri ücretsizdir (dönemlik ~300€ harç), Çek Cumhuriyeti'nde yıllık 5.000-15.000€, İtalya'da 1.000-4.000€, İngiltere'de 10.000-25.000£ arasındadır. Aylık yaşam masrafları 500-1.500€ arasındadır."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Yurt dışı eğitim için burs imkanları var mı?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Evet, Almanya'da DAAD bursları, İtalya'da DSU bursları, Macaristan'da Stipendium Hungaricum, Polonya'da hükümet bursları gibi seçenekler mevcuttur. Burs başvuru sürecinde de size destek sağlıyoruz."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Ne zaman yurt dışı üniversite başvurusu yapmalıyım?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Eğitime başlamak istediğiniz tarihten en az 6-12 ay önce süreci başlatmanızı öneriyoruz. Kış dönemi için Haziran-Eylül, yaz dönemi için Ocak-Mart arasında iletişime geçmeniz idealdir. Erken başvuru burs fırsatlarını artırır."
+            }
+        }
+    ]
+}
 </script> 

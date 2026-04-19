@@ -140,35 +140,85 @@ module.exports = {
         hero: {
             germany: {
                 title: "Being a Student in Germany",
-                subtitle: "World-renowned quality education system and free university education"
+                subtitle: "World-renowned quality education system and free university education",
+                intro: "Guide for studying in Germany: education, living costs, visa and accommodation in this country."
             },
             uk: {
                 title: "Being a Student in the UK",
-                subtitle: "Quality education and career opportunities at world-renowned universities"
+                subtitle: "Quality education and career opportunities at world-renowned universities",
+                intro: "Guide for studying in the UK: UCAS application, living costs and visa."
             },
             czech: {
                 title: "Being a Student in Czech Republic",
-                subtitle: "Quality education and affordable costs in Prague's enchanting atmosphere"
+                subtitle: "Quality education and affordable costs in Prague's enchanting atmosphere",
+                intro: "Guide for studying in Czech Republic: education in Prague, living costs and visa."
             },
             austria: {
                 title: "Being a Student in Austria",
-                subtitle: "Quality education and living standards in Vienna's cultural capital"
+                subtitle: "Quality education and living standards in Vienna's cultural capital",
+                intro: "Guide for studying in Austria: education in Vienna, living costs and visa."
             },
             italy: {
                 title: "Being a Student in Italy",
-                subtitle: "Quality education opportunities alongside historical and cultural richness"
+                subtitle: "Quality education opportunities alongside historical and cultural richness",
+                intro: "Guide for studying in Italy: living costs, visa process and accommodation."
             },
             hungary: {
                 title: "Being a Student in Hungary",
-                subtitle: "Quality education and affordable living costs in Budapest's historic atmosphere"
+                subtitle: "Quality education and affordable living costs in Budapest's historic atmosphere",
+                intro: "Guide for studying in Hungary: education in Budapest, living costs and visa."
             },
             poland: {
                 title: "Being a Student in Poland",
-                subtitle: "Quality education and affordable living costs in the historic atmosphere of Warsaw and Kraków"
+                subtitle: "Quality education and affordable living costs in the historic atmosphere of Warsaw and Kraków",
+                intro: "Guide for studying in Poland: living costs, visa and accommodation."
             },
             netherlands: {
                 title: "Being a Student in Netherlands",
-                subtitle: "World-class education in the modern atmosphere of Amsterdam and Rotterdam"
+                subtitle: "World-class education in the modern atmosphere of Amsterdam and Rotterdam",
+                intro: "Guide for studying in Netherlands: education in Amsterdam and Rotterdam, living costs and visa."
+            }
+        },
+        seo: {
+            germany: {
+                title: "Study in Germany | University & Student Life 2025 | Venture Global",
+                description: "Guide for studying in Germany: free tuition, living costs, visa, accommodation, Studienkolleg. Education consultancy with Venture Global.",
+                keywords: "study in germany, germany university, student life germany, venture global germany, study abroad"
+            },
+            uk: {
+                title: "Study in UK | University & Student Life 2025 | Venture Global",
+                description: "Guide for studying in the UK: UCAS application, living costs, visa, accommodation. Education consultancy with Venture Global.",
+                keywords: "study in uk, uk university, student life uk, venture global uk, study abroad"
+            },
+            czech: {
+                title: "Study in Czech Republic | University & Student Life Prague 2025 | Venture Global",
+                description: "Guide for studying in Czech Republic: Prague education, living costs, visa. Education consultancy with Venture Global.",
+                keywords: "study in czech republic, prague university, student life czech, venture global czech, study abroad"
+            },
+            austria: {
+                title: "Study in Austria | University & Student Life Vienna 2025 | Venture Global",
+                description: "Guide for studying in Austria: Vienna education, living costs, visa, MedAT. Education consultancy with Venture Global.",
+                keywords: "study in austria, vienna university, student life austria, venture global austria, study abroad"
+            },
+            italy: {
+                title: "Study in Italy | University & Student Life 2025 | Venture Global",
+                description: "Guide for studying in Italy: Bologna, Milan, Rome education, living costs, visa, IMAT. Education consultancy with Venture Global.",
+                keywords: "study in italy, italy university, student life italy, venture global italy, study abroad"
+            },
+            hungary: {
+                title: "Study in Hungary | University & Student Life Budapest 2025 | Venture Global",
+                description: "Guide for studying in Hungary: Budapest education, Semmelweis, living costs, visa. Education consultancy with Venture Global.",
+                keywords: "study in hungary, budapest university, student life hungary, venture global hungary, study abroad"
+            },
+            poland: {
+                title: "Study in Poland | University & Student Life 2025 | Venture Global",
+                description: "Guide for studying in Poland: Warsaw, Krakow education, living costs, visa. Education consultancy with Venture Global.",
+                keywords: "study in poland, poland university, student life poland, venture global poland, study abroad"
+            },
+            netherlands: {
+                title: "Study in Netherlands | University & Student Life 2025 | Venture Global",
+                description: "Guide for studying in Netherlands: Amsterdam, Rotterdam education, living costs, visa. Education consultancy with Venture Global.",
+                keywords: "study in netherlands, netherlands university, student life netherlands, venture global netherlands, study abroad"
             }
         },
         sections: {
@@ -678,7 +728,7 @@ module.exports = {
             whatsapp: {
                 title: "Get Consultation",
                 subtitle: "Contact us now via WhatsApp, our expert consultants are waiting for you!",
-                button: "Message on WhatsApp"
+                button: "Send Message"
             },
             instagram: {
                 title: "Send a Message on Instagram",
@@ -1904,7 +1954,10 @@ module.exports = {
             earlyPrepTitle: "Discover the Advantages of Early Preparation",
             earlyPrepBody: "For students in grades 9, 10, or 11, get the opportunity to start preparing for IB, AP, SAT, TOEFL, and IELTS now. One-on-one online lessons with expert teachers.",
             ctaButton: "Learn More",
-            exclusiveOffer: "Kanpus students get exclusive discounts at Venture Global, and Venture Global clients get exclusive discounts at Kanpus!"
+            exclusiveOffer: "Kanpus students get exclusive discounts at Venture Global, and Venture Global clients get exclusive discounts at Kanpus!",
+            preziTitle: "Venture Global Presentation",
+            preziSubtitle: "Interactive overview of VG Danışmanlık services and our vision.",
+            preziIframeTitle: "Venture Global (VG Danışmanlık) Presentation"
         },
         whyChooseUs: {
             title: "Why Choose Us?",
@@ -2026,7 +2079,7 @@ module.exports = {
                 },
                 {
                     question: "Can I study abroad without knowing the local language?",
-                    answer: "Yes, many countries offer programs taught in English. Some universities also provide conditional admission and direct you to language preparation programs. Preparatory programs like Studienkolleg in Germany and Foundation Year in the UK are also available. Through our partner Kanpus, you can also prepare for IELTS, TOEFL and other language exams."
+                    answer: "Yes, many countries offer programs taught in English. Some universities also provide conditional admission and direct you to language preparation programs. Preparatory programs like Studienkolleg in Germany and Foundation Year in the UK are also available. We also provide support for preparing for IELTS, TOEFL and other language exams."
                 },
                 {
                     question: "How much does studying abroad cost?",
@@ -2047,10 +2100,6 @@ module.exports = {
                 {
                     question: "What is the WCEP Canada program?",
                     answer: "Through our WCEP (World Canadian Education Program) partnership, you can complete your 12th grade at prestigious schools in Canada and earn a Canadian high school diploma. With this diploma, you can skip Studienkolleg in Germany, bypass Foundation Year in the UK, and gain direct admission to medical schools in Czech Republic."
-                },
-                {
-                    question: "What does the Kanpus partnership offer?",
-                    answer: "Through our Kanpus partnership, students can prepare for IB Diploma, AP Courses, SAT, TOEFL and IELTS exams with expert teachers in one-on-one online classes. Kanpus students get exclusive discounts at Venture Global, and Venture Global clients get exclusive discounts at Kanpus."
                 },
                 {
                     question: "How much support will I receive during the application process?",
@@ -2210,6 +2259,82 @@ module.exports = {
         }
     },
     
+    // Country Guide Pages (/ulkede-universite/)
+    countryGuide: {
+        germany: {
+            heroStats: { uniCount: '400+', intStudents: '400,000+' },
+            educationSystem: { title: "German Education System", content: "<p>Germany is one of the most popular education destinations worldwide. <strong>Public universities offer tuition-free education</strong> — only a semester contribution of ~150-350 EUR is required. German universities are divided into Fachhochschulen (applied sciences) and Universitäten (research universities).</p><p>The language of instruction varies by program — German or English. The number of English-taught programs is growing every year. Many German universities rank in the QS World Top 200.</p>" },
+            whyStudy: { title: "Why Study in Germany?", reasons: ["Tuition-free education at public universities (~300 EUR/semester fee only)","Multiple universities in QS Top 100 (TUM, LMU, Heidelberg)","18-month post-graduation job search visa","Europe's strongest economy — high employment potential","World leader in engineering, automotive and technology","Lower cost of living compared to UK and Netherlands","DAAD scholarships for additional financial support"] },
+            costs: { title: "Cost of Living (Monthly Estimate)", tableHeaders: ["Item","Amount (EUR)"], rows: [["Rent (shared flat)","350–600"],["Food & groceries","200–300"],["Transport (student ticket)","30–90"],["Health insurance","110–120"],["Personal expenses","100–150"],["Estimated total","800–1,250"]] },
+            application: { title: "Application Process", steps: ["Research universities and programs, check language requirements","Prepare documents: transcripts, diploma, language certificate (IELTS/TOEFL or TestDaF)","Apply online via uni-assist or the university's own portal","After acceptance, open a blocked account (~11,208 EUR/year)","Apply for a student visa at the German Embassy","Arrange accommodation and fly to Germany!"] },
+            visa: { title: "Visa & Residence Permit", content: "<p>Turkish citizens must apply for a <strong>Studienvisum (student visa)</strong> to study in Germany. The visa process takes approximately 6-12 weeks. Required documents include a blocked account, health insurance, acceptance letter and proof of financial resources.</p><p>After arriving in Germany, you must register at the local Foreigners' Office (Ausländerbehörde) for a residence permit. With a student visa, you can work 120 full days or 240 half days per year.</p>" },
+            faq: { title: "Frequently Asked Questions", items: [{ q: "Is university education in Germany really free?", a: "Yes, public universities are tuition-free. Only a semester contribution of 150-350 EUR is required. Private universities charge varying fees." },{ q: "Can I study in Germany without knowing German?", a: "Yes, especially at master's level there are many English-taught programs. The number of English bachelor's programs is also growing." },{ q: "Can I work while studying?", a: "Yes, with a student visa you can work 120 full days or 240 half days per year." },{ q: "How does VG Danışmanlık help?", a: "VG Danışmanlık manages the entire process professionally — from university selection to visa application, accommodation and orientation." }] }
+        },
+        czech: {
+            heroStats: { uniCount: '70+', intStudents: '50,000+' },
+            educationSystem: { title: "Czech Education System", content: "<p>The Czech Republic is home to some of Europe's oldest and most prestigious universities. <strong>Charles University (1348)</strong> is the oldest university in Central Europe. Czech-taught programs at public universities are free; English programs cost 2,000-10,000 EUR/year.</p><p>Prague offers a student-friendly atmosphere with much lower living costs than Western Europe.</p>" },
+            whyStudy: { title: "Why Study in Czech Republic?", reasons: ["Free education at Czech-taught public universities","Low cost of living compared to Western Europe (~600-900 EUR/month)","Prague — one of Europe's most beautiful and safe capitals","Strong programs in medicine, engineering and social sciences","Schengen zone — easy travel across Europe","50,000+ international students","Access to EU job market after graduation"] },
+            costs: { title: "Cost of Living (Monthly Estimate)", tableHeaders: ["Item","Amount (EUR)"], rows: [["Rent (shared flat, Prague)","300–500"],["Food & groceries","150–250"],["Transport (student pass)","15–25"],["Health insurance","50–80"],["Personal expenses","80–120"],["Estimated total","600–950"]] },
+            application: { title: "Application Process", steps: ["Choose a program and university — check language and fee requirements","Prepare documents: transcripts, diploma, language certificate, motivation letter","Apply through the university's online portal (deadlines usually February-April)","Receive acceptance letter and pay fees","Apply for a long-term visa at the Czech Embassy","Arrange accommodation and start your Czech adventure!"] },
+            visa: { title: "Visa & Residence Permit", content: "<p>Turkish citizens must apply for a <strong>long-term student visa (Dlouhodobé vízum)</strong> for studies exceeding 90 days. The process takes approximately 60-90 days.</p><p>Required documents: acceptance letter, proof of financial means, health insurance, clean criminal record and proof of accommodation.</p>" },
+            faq: { title: "Frequently Asked Questions", items: [{ q: "What is the language of instruction?", a: "Czech-taught programs at public universities are free. English programs are paid (2,000-10,000 EUR/year)." },{ q: "How much does it cost to live in Prague?", a: "You can live comfortably on 600-950 EUR/month — 40-50% cheaper than Western European capitals." },{ q: "Can I study medicine in Czech Republic?", a: "Yes! Charles University and Masaryk University offer English-taught medical programs." },{ q: "Does VG Danışmanlık have an office in Czech Republic?", a: "Yes! VG Danışmanlık has an office in Prague and provides comprehensive support." }] }
+        },
+        italy: {
+            heroStats: { uniCount: '90+', intStudents: '120,000+' },
+            educationSystem: { title: "Italian Education System", content: "<p>Italy has one of Europe's oldest university traditions. <strong>University of Bologna (1088)</strong> is the world's oldest university. Public university fees are income-based, ranging from 150-4,000 EUR/year.</p><p>World-class programs in engineering, architecture, art, design and medicine.</p>" },
+            whyStudy: { title: "Why Study in Italy?", reasons: ["World's oldest university tradition — 900+ years","Affordable public universities (150-4,000 EUR/year)","World leader in engineering, architecture, design and art","Rich cultural experience","Growing number of English-taught programs","DSU scholarships for free education and housing","Schengen zone — explore Europe"] },
+            costs: { title: "Cost of Living (Monthly Estimate)", tableHeaders: ["Item","Amount (EUR)"], rows: [["Rent (shared flat)","300–600"],["Food & groceries","200–300"],["Transport","25–50"],["Health insurance","Covered by state"],["Personal expenses","100–150"],["Estimated total","650–1,100"]] },
+            application: { title: "Application Process", steps: ["Pre-register on Universitaly portal","Prepare documents: diploma, transcripts, language certificate","Get Dichiarazione di Valore from Italian Consulate","Apply through university's own portal","Apply for student visa at Italian Embassy","Apply for DSU scholarship if eligible"] },
+            visa: { title: "Visa & Residence Permit", content: "<p>Turkish citizens need a <strong>Type D student visa</strong>. Processing takes 4-8 weeks. After arrival, apply for Permesso di Soggiorno within 8 days. You can work up to 20 hours/week.</p>" },
+            faq: { title: "Frequently Asked Questions", items: [{ q: "Is education in Italy expensive?", a: "No! Public universities charge 150-4,000 EUR/year. DSU scholarships can cover everything." },{ q: "Can I study in English?", a: "Yes, many master's programs are in English. Politecnico di Milano, Bocconi, Bologna offer English options." },{ q: "What is DSU?", a: "Diritto allo Studio Universitario — Italy's income-based scholarship covering tuition, monthly stipend and housing." },{ q: "How does VG Danışmanlık help?", a: "University selection, Universitaly registration, document preparation, visa process and DSU application support." }] }
+        },
+        austria: {
+            heroStats: { uniCount: '70+', intStudents: '80,000+' },
+            educationSystem: { title: "Austrian Education System", content: "<p>Austria features prestigious universities and the highest quality of life. <strong>University of Vienna (1365)</strong> is the oldest university in the German-speaking world. Tuition for non-EU students is approximately 1,500 EUR/year.</p><p>Vienna has been ranked #1 in global livability indices.</p>" },
+            whyStudy: { title: "Why Study in Austria?", reasons: ["#1 quality of life (Vienna — Mercer ranking)","Affordable tuition (~1,500 EUR/year at public universities)","World-class medicine, technical sciences and music programs","German and English program options","Safe, clean and organized living environment","Central European location — easy travel","Access to Austrian job market after graduation"] },
+            costs: { title: "Cost of Living (Monthly Estimate)", tableHeaders: ["Item","Amount (EUR)"], rows: [["Rent (shared flat, Vienna)","400–650"],["Food & groceries","250–350"],["Transport (Semester Ticket)","75"],["Health insurance","60–70"],["Personal expenses","100–150"],["Estimated total","900–1,300"]] },
+            application: { title: "Application Process", steps: ["Research universities and programs","Prepare apostilled documents","Apply through university's online portal","Receive acceptance letter","Apply for student visa","Registration and residence permit upon arrival"] },
+            visa: { title: "Visa & Residence Permit", content: "<p>Turkish citizens need an <strong>Aufenthaltsbewilligung Studierende</strong> (student residence permit). Process takes 8-12 weeks. You can work up to 20 hours/week.</p>" },
+            faq: { title: "Frequently Asked Questions", items: [{ q: "What language are programs taught in?", a: "Many programs are in German, but English master's programs are available at TU Wien, WU Wien and University of Vienna." },{ q: "Is Vienna expensive?", a: "More affordable than other Western European capitals. ~900-1,300 EUR/month is sufficient." },{ q: "Can I study medicine?", a: "Yes, Medical University of Vienna and Innsbruck offer programs. MedAT entrance exam required." },{ q: "How does VG Danışmanlık help?", a: "Program selection, document preparation, application tracking, visa support and settlement assistance." }] }
+        },
+        uk: {
+            heroStats: { uniCount: '160+', intStudents: '600,000+' },
+            educationSystem: { title: "UK Education System", content: "<p>The UK is home to the world's most prestigious universities including <strong>Oxford and Cambridge</strong>. UK bachelor's programs are typically 3 years (4 in Scotland). Applications are made through the centralised UCAS system.</p>" },
+            whyStudy: { title: "Why Study in the UK?", reasons: ["Top-ranked universities globally","3-year bachelor's programs — time and cost advantage","English-medium education","2-year Graduate Route post-study work visa","Strong industry-university partnerships","600,000+ international students","Chevening, Commonwealth and university scholarships"] },
+            costs: { title: "Cost of Living (Monthly Estimate)", tableHeaders: ["Item","Amount (GBP)"], rows: [["Rent (shared flat)","500–900"],["Food & groceries","200–350"],["Transport","50–100"],["Health (NHS IHS fee)","Included with visa"],["Personal expenses","100–200"],["Estimated total","900–1,550"]] },
+            application: { title: "Application Process", steps: ["Apply to up to 5 programs via UCAS (deadline: 31 January)","Prepare your Personal Statement","Prepare references and transcripts","Submit IELTS/TOEFL scores","Evaluate offers (Firm and Insurance choices)","Apply for Student Visa with CAS number"] },
+            visa: { title: "Visa & Residence Permit", content: "<p>Turkish citizens need a <strong>Student Visa (Tier 4)</strong>. CAS number, financial proof, IELTS and IHS payment required. You can work 20 hours/week during term, full-time during holidays. 2-year Graduate Route visa after graduation.</p>" },
+            faq: { title: "Frequently Asked Questions", items: [{ q: "How much is tuition?", a: "12,000-38,000 GBP/year for international students. Scholarships available." },{ q: "What is UCAS?", a: "The centralised application service for all UK undergraduate programs." },{ q: "What is Graduate Route?", a: "A 2-year post-study work visa (3 years for PhD) allowing you to work in any job." },{ q: "How does VG Danışmanlık help?", a: "UCAS application, Personal Statement preparation, IELTS support, visa process and accommodation guidance." }] }
+        },
+        poland: {
+            heroStats: { uniCount: '450+', intStudents: '85,000+' },
+            educationSystem: { title: "Polish Education System", content: "<p>Poland's education sector has grown rapidly with EU membership. <strong>Jagiellonian University (1364)</strong> is one of the world's oldest. English programs cost 2,000-6,000 EUR/year. Poland is especially popular for medical education across the EU.</p>" },
+            whyStudy: { title: "Why Study in Poland?", reasons: ["One of Europe's most affordable education destinations","Strong reputation in medicine, dentistry and pharmacy","Low cost of living (~500-800 EUR/month)","Many English-taught programs","EU member — Schengen zone travel","Safe, student-friendly cities","Stipendium Polonium scholarships"] },
+            costs: { title: "Cost of Living (Monthly Estimate)", tableHeaders: ["Item","Amount (EUR)"], rows: [["Rent (shared flat)","250–450"],["Food & groceries","150–250"],["Transport (student pass)","15–30"],["Health insurance","30–50"],["Personal expenses","80–120"],["Estimated total","500–900"]] },
+            application: { title: "Application Process", steps: ["Research universities and programs","Prepare documents","Apply through university's online portal","Some programs may require entrance exam/interview","Receive acceptance and pay fees","Apply for national D-type visa"] },
+            visa: { title: "Visa & Residence Permit", content: "<p>Turkish citizens need a <strong>national D-type student visa</strong>. Processing takes 2-4 weeks. After arrival, apply for temporary residence permit. No work restrictions for students.</p>" },
+            faq: { title: "Frequently Asked Questions", items: [{ q: "Is medical education good in Poland?", a: "Yes! Polish medical degrees are recognized across the EU." },{ q: "How much does it cost to live?", a: "500-900 EUR/month — 50-60% cheaper than Western Europe." },{ q: "Can I work while studying?", a: "Yes, no work restrictions with student residence permit." },{ q: "How does VG Danışmanlık help?", a: "University selection, application management, visa support and settlement assistance." }] }
+        },
+        hungary: {
+            heroStats: { uniCount: '65+', intStudents: '40,000+' },
+            educationSystem: { title: "Hungarian Education System", content: "<p>Hungary has become one of Europe's most attractive destinations thanks to the <strong>Stipendium Hungaricum</strong> scholarship. Renowned universities in Budapest, Debrecen and Szeged offer world-class programs in medicine, engineering and music.</p>" },
+            whyStudy: { title: "Why Study in Hungary?", reasons: ["Stipendium Hungaricum — full scholarship open to Turkish students","Europe's most affordable living costs (~500-750 EUR/month)","International reputation in medicine and dentistry","English and German program options","Budapest — one of Europe's most beautiful capitals","EU member — Schengen travel","Strong Turkish student community"] },
+            costs: { title: "Cost of Living (Monthly Estimate)", tableHeaders: ["Item","Amount (EUR)"], rows: [["Rent (shared flat, Budapest)","250–450"],["Food & groceries","150–220"],["Transport (student pass)","15–25"],["Health insurance","Free for scholarship holders"],["Personal expenses","80–120"],["Estimated total","500–800"]] },
+            application: { title: "Application Process", steps: ["Apply for Stipendium Hungaricum (deadline usually January-February)","Or apply directly to universities (self-funded)","Prepare documents","Apply for visa after acceptance","Arrange accommodation (dormitory allocated for scholarship holders)","Start your Hungarian adventure!"] },
+            visa: { title: "Visa & Residence Permit", content: "<p>Turkish citizens need a <strong>D-type student visa</strong>. Processing takes 30-60 days. Apply for residence permit within 30 days of arrival. You can work up to 24 hours/week.</p>" },
+            faq: { title: "Frequently Asked Questions", items: [{ q: "What does Stipendium Hungaricum cover?", a: "Tuition, monthly stipend, health insurance and dormitory. Open to Turkish citizens." },{ q: "Can I study medicine?", a: "Yes! Semmelweis, Debrecen, Pécs and Szeged offer English-taught medical programs." },{ q: "What is life like in Budapest?", a: "Affordable, safe and culturally rich. 500-800 EUR/month is sufficient." },{ q: "Does VG Danışmanlık help with scholarships?", a: "Yes! We provide professional support for all scholarship and university applications." }] }
+        },
+        netherlands: {
+            heroStats: { uniCount: '50+', intStudents: '115,000+' },
+            educationSystem: { title: "Dutch Education System", content: "<p>The Netherlands leads Europe in English-taught programs. Universities are divided into Research Universities (WO) and Universities of Applied Sciences (HBO). <strong>13 Dutch universities rank in the QS Top 200.</strong></p><p>Tuition for non-EU students is 6,000-20,000 EUR/year.</p>" },
+            whyStudy: { title: "Why Study in the Netherlands?", reasons: ["Europe's leader in English-taught programs (2,100+)","13 universities in QS Top 200","Innovation and entrepreneurship-focused education","Problem-based learning (PBL) approach","1-year Zoekjaar post-graduation work permit","Bike-friendly, safe and multicultural","Holland Scholarship and Orange Tulip programs"] },
+            costs: { title: "Cost of Living (Monthly Estimate)", tableHeaders: ["Item","Amount (EUR)"], rows: [["Rent (student room)","400–700"],["Food & groceries","250–350"],["Transport (bike + OV-chipkaart)","30–80"],["Health insurance","50–120"],["Personal expenses","100–150"],["Estimated total","850–1,400"]] },
+            application: { title: "Application Process", steps: ["Research programs on studyinholland.nl","Apply via Studielink (bachelor's) or university portal (master's)","Prepare documents: transcripts, IELTS/TOEFL, motivation letter","Get Nuffic credential evaluation","University initiates MVV sponsorship after acceptance","Register at municipality and get BSN number upon arrival"] },
+            visa: { title: "Visa & Residence Permit", content: "<p>Turkish citizens need an <strong>MVV (Machtiging tot Voorlopig Verblijf)</strong> and residence permit. The university applies for MVV on your behalf. You can work up to 16 hours/week. 1-year Zoekjaar visa available after graduation.</p>" },
+            faq: { title: "Frequently Asked Questions", items: [{ q: "What language are programs taught in?", a: "The Netherlands leads Europe with 2,100+ English-taught programs." },{ q: "Is the Netherlands expensive?", a: "Amsterdam can be pricey but Groningen, Leiden are more affordable. 850-1,400 EUR/month." },{ q: "What is Holland Scholarship?", a: "A one-time 5,000 EUR scholarship for non-EU students, supported by many Dutch universities." },{ q: "How does VG Danışmanlık help?", a: "Program matching, Studielink/Nuffic applications, scholarship guidance, MVV process and settlement support." }] }
+        }
+    },
+
     // Media Page
     media: {
         heroTitle: "In the Media",

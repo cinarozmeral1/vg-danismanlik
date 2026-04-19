@@ -30,7 +30,7 @@ router.get('/dashboard', async (req, res) => {
         }
 
         const partnerResult = await pool.query(
-            'SELECT id, first_name, last_name, email, company_name, phone, email_verified, is_active FROM partners WHERE id = $1',
+            'SELECT * FROM partners WHERE id = $1',
             [decoded.partnerId]
         );
 
@@ -122,7 +122,7 @@ router.get('/settings', async (req, res) => {
         }
 
         const partnerResult = await pool.query(
-            'SELECT id, first_name, last_name, email, company_name, phone, email_verified, is_active FROM partners WHERE id = $1',
+            'SELECT * FROM partners WHERE id = $1',
             [decoded.partnerId]
         );
 
@@ -373,6 +373,42 @@ router.put('/api/change-password', authenticatePartner, async (req, res) => {
             success: false,
             message: 'Şifre değiştirilirken bir hata oluştu'
         });
+    }
+});
+
+// Update partner bank info (IBAN)
+router.put('/api/update-bank-info', authenticatePartner, async (req, res) => {
+    try {
+        const { iban, account_holder_name } = req.body;
+
+        if (!iban || !account_holder_name) {
+            return res.status(400).json({
+                success: false,
+                message: 'IBAN ve hesap sahibi adı gerekli'
+            });
+        }
+
+        const cleanIban = iban.replace(/\s/g, '').toUpperCase();
+        if (cleanIban.length < 15 || cleanIban.length > 34) {
+            return res.status(400).json({
+                success: false,
+                message: 'Geçersiz IBAN formatı'
+            });
+        }
+
+        await pool.query(
+            'UPDATE partners SET iban = $1, account_holder_name = $2, updated_at = CURRENT_TIMESTAMP WHERE id = $3',
+            [cleanIban, account_holder_name.trim(), req.partner.id]
+        );
+
+        res.json({
+            success: true,
+            message: 'Banka bilgileri başarıyla güncellendi'
+        });
+
+    } catch (error) {
+        console.error('Update bank info error:', error);
+        res.status(500).json({ success: false, message: 'Banka bilgileri güncellenirken bir hata oluştu' });
     }
 });
 

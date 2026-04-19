@@ -464,10 +464,51 @@ body {
     transform: scale(1.05);
 }
 
-/* Mobile logo adjustments */
-@media (max-width: 991px) {
-    .navbar-logo {
-        height: 36px;
+/* Mobil: sabit 64px yükseklik + padding logoyu taşırıyordu — height:auto, ofset senkron */
+@media (max-width: 991.98px) {
+    .navbar {
+        height: auto !important;
+        min-height: 56px;
+        padding-top: 0.45rem !important;
+        padding-bottom: 0.45rem !important;
+        --navbar-height: 72px;
+        align-items: center;
+    }
+    .navbar > .container-fluid {
+        flex-wrap: nowrap;
+        align-items: center;
+    }
+    .navbar-brand-main {
+        flex: 1 1 auto;
+        min-width: 0;
+        max-width: calc(100% - 52px);
+        margin-right: 0.35rem !important;
+    }
+    .navbar-brand-title {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+    .navbar-brand-logo-img {
+        height: 46px !important;
+        max-height: 46px !important;
+        width: auto;
+        object-fit: contain;
+        vertical-align: middle;
+    }
+    .navbar .navbar-toggler {
+        flex-shrink: 0;
+        align-self: center;
+    }
+}
+
+@media (min-width: 992px) {
+    .navbar-brand-logo-img {
+        height: 60px !important;
+        max-height: 64px !important;
+    }
+    .navbar-brand-title {
+        white-space: nowrap;
+        flex: 0 1 auto;
     }
 }
 
@@ -1225,7 +1266,7 @@ section:not(.navbar),
 /* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 991px) {
   .navbar {
-    --navbar-height: 64px;
+    /* yükseklik ve --navbar-height: mobil blokta (991.98px) height:auto + 72px ofset */
     background: #ffffff !important;
     background-color: #ffffff !important;
   }
@@ -1273,7 +1314,14 @@ section:not(.navbar),
     font-size: var(--text-xs);
     padding: var(--space-2) var(--space-3);
   }
-  
+
+  .btn-lg {
+    font-size: 0.93rem;
+    padding: 10px 20px;
+    white-space: normal;
+    max-width: 100%;
+  }
+
   .hero-title {
     font-size: var(--text-xl);
   }
@@ -2862,6 +2910,12 @@ body {
 }
 
 .wcep-hero {
+    background: linear-gradient(135deg, rgba(236,246,255,0.95) 0%, rgba(206,230,255,0.95) 100%);
+    color: #1a2740;
+}
+
+/* Kanpus partner page — same soft blue hero band as WCEP */
+.kanpus-hero {
     background: linear-gradient(135deg, rgba(236,246,255,0.95) 0%, rgba(206,230,255,0.95) 100%);
     color: #1a2740;
 }
@@ -4948,6 +5002,55 @@ footer {
     html, body {
         overflow-x: hidden !important;
         -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Footer marka — header ile aynı logo, mobilde büyük, masaüstünde daha da büyük */
+/* Mobil menü başlığı — logo beyaz disk içinde */
+.mobile-nav-logo-wrap {
+    width: 52px;
+    height: 52px;
+    background: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+}
+.mobile-nav-logo-img {
+    height: 44px;
+    width: auto;
+    max-width: 48px;
+    object-fit: contain;
+    display: block;
+}
+
+.footer-brand-logo-wrap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 108px;
+    height: 108px;
+    min-width: 108px;
+    background: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.14);
+    border: 2px solid rgba(255, 255, 255, 0.95);
+}
+.footer .footer-brand-logo {
+    height: 86px;
+    width: auto;
+    max-width: 96px;
+    object-fit: contain;
+    display: block;
+}
+@media (min-width: 992px) {
+    .footer-brand-logo-wrap {
+        width: 132px;
+        height: 132px;
+        min-width: 132px;
+    }
+    .footer .footer-brand-logo {
+        height: 108px;
+        max-width: 120px;
     }
 }
 

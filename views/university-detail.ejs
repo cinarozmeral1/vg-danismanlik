@@ -534,4 +534,48 @@ function openImageModal(imageUrl, caption) {
     const modal = new bootstrap.Modal(document.getElementById('imageModal'));
     modal.show();
 }
+</script>
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Ana Sayfa",
+            "item": "https://vgdanismanlik.com"
+        },
+        {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Üniversiteler",
+            "item": "https://vgdanismanlik.com/universities"
+        },
+        {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "<%= university.name %>",
+            "item": "https://vgdanismanlik.com/universities/<%= university.slug %>"
+        }
+    ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "CollegeOrUniversity",
+    "name": "<%= university.name %>",
+    <% if (university.name_en) { %>"alternateName": "<%= university.name_en %>",<% } %>
+    <% if (university.website) { %>"url": "<%= university.website %>",<% } %>
+    <% if (university.logo_url) { %>"image": "<%= university.logo_url %>",<% } %>
+    "address": {
+        "@type": "PostalAddress",
+        <% if (university.city) { %>"addressLocality": "<%= university.city %>",<% } %>
+        "addressCountry": "<%= university.country || '' %>"
+    },
+    "description": "<%= (university.description_tr || university.description || '').replace(/"/g, '&quot;').replace(/\n/g, ' ').substring(0, 300) %>"
+}
 </script> 

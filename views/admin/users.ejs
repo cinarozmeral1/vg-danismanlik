@@ -56,10 +56,32 @@
     </div>
 </div>
 
+<!-- Status Tabs -->
+<ul class="nav nav-tabs mb-0" id="statusTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" data-status-tab="active" type="button" role="tab">
+            <i class="fas fa-check-circle text-success me-1"></i>Aktif
+            <span class="badge bg-success ms-1" id="tabActiveCount"><%= typeof activeCount !== 'undefined' ? activeCount : 0 %></span>
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" data-status-tab="pending" type="button" role="tab">
+            <i class="fas fa-clock text-warning me-1"></i>Beklemede
+            <span class="badge bg-warning text-dark ms-1" id="tabPendingCount"><%= typeof pendingCount !== 'undefined' ? pendingCount : 0 %></span>
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" data-status-tab="negative" type="button" role="tab">
+            <i class="fas fa-times-circle text-danger me-1"></i>Olumsuz
+            <span class="badge bg-danger ms-1" id="tabNegativeCount"><%= typeof negativeCount !== 'undefined' ? negativeCount : 0 %></span>
+        </button>
+    </li>
+</ul>
+
 <!-- Users Table -->
-<div class="card">
+<div class="card border-top-0" style="border-top-left-radius:0; border-top-right-radius:0;">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">Öğrenci Listesi (<span id="visibleCount"><%= users.length %></span> / <%= users.length %>) <span class="ms-3 text-success" style="font-size: 0.85rem;"><i class="fas fa-check-circle me-1"></i>Aktif Öğrenci: <span id="activeCount"><%= typeof activeCount !== 'undefined' ? activeCount : 0 %></span>/<%= users.length %></span></h5>
+        <h5 class="mb-0">Öğrenci Listesi (<span id="visibleCount"><%= users.length %></span> / <%= users.length %>)</h5>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -89,27 +111,40 @@
                         data-kabul-oncesi="<%= user.kabul_oncesi_paid ? 'true' : 'false' %>"
                         data-kabul-sonrasi="<%= user.kabul_sonrasi_paid ? 'true' : 'false' %>"
                         data-hazirlik="<%= user.hazirlik_paid ? 'true' : 'false' %>"
-                        data-active="<%= user.has_any_paid_service ? 'true' : 'false' %>">
+                        data-active="<%= user.has_any_paid_service ? 'true' : 'false' %>"
+                        data-student-status="<%= user.student_status || 'pending' %>">
                                 <td><%= user.id %></td>
                                 <td><%= user.first_name %> <%= user.last_name %></td>
                                 <td><%= user.email %></td>
                                 <td><%= user.phone %></td>
                                 <td><span class="badge bg-info"><%= user.english_level %></span></td>
-                                <td>
-                                    <% if (user.has_any_paid_service) { %>
-                                        <span class="badge bg-success">Aktif</span>
+                                <td class="status-badge-cell">
+                                    <% if (user.student_status === 'negative') { %>
+                                        <span class="badge bg-danger">Olumsuz</span>
+                                    <% } else if (user.student_status === 'pending') { %>
+                                        <span class="badge bg-warning text-dark">Beklemede</span>
                                     <% } else { %>
-                                        <span class="badge bg-warning text-dark">Ödeme Bekleniyor</span>
+                                        <span class="badge bg-success">Aktif</span>
                                     <% } %>
                                 </td>
                                 <td><%= new Date(user.created_at).toLocaleDateString('tr-TR') %></td>
                                 <td>
-                                    <div class="btn-group" role="group">
+                                    <div class="d-flex align-items-center gap-1">
+                                        <button class="btn btn-sm js-set-status <%= user.student_status === 'active' ? 'btn-success' : 'btn-outline-success' %>" data-user-id="<%= user.id %>" data-set-status="active" title="Aktif">
+                                            <i class="fas fa-check-circle"></i>
+                                        </button>
+                                        <button class="btn btn-sm js-set-status <%= user.student_status === 'pending' ? 'btn-warning' : 'btn-outline-warning' %>" data-user-id="<%= user.id %>" data-set-status="pending" title="Beklemede">
+                                            <i class="fas fa-clock"></i>
+                                        </button>
+                                        <button class="btn btn-sm js-set-status <%= user.student_status === 'negative' ? 'btn-danger' : 'btn-outline-danger' %>" data-user-id="<%= user.id %>" data-set-status="negative" title="Olumsuz">
+                                            <i class="fas fa-times-circle"></i>
+                                        </button>
+                                        <span class="border-start ms-1 ps-1"></span>
                                         <button class="btn btn-sm btn-outline-info js-view-details" data-user-id="<%= user.id %>">
-                                            <i class="fas fa-eye"></i> Detaylar
+                                            <i class="fas fa-eye"></i>
                                         </button>
                                         <button class="btn btn-sm btn-outline-danger js-delete-user" data-user-id="<%= user.id %>" data-user-name="<%= user.first_name %> <%= user.last_name %>">
-                                            <i class="fas fa-trash"></i> Sil
+                                            <i class="fas fa-trash"></i>
                                         </button>
                                     </div>
                                 </td>
@@ -129,22 +164,95 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Event delegation for buttons
-        document.addEventListener('click', function(e) {
+        let currentTab = 'active';
+
+        // --- Status Tab System ---
+        const tabButtons = document.querySelectorAll('[data-status-tab]');
+        tabButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                tabButtons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentTab = this.getAttribute('data-status-tab');
+                applyFilters();
+            });
+        });
+
+        // --- Set Status Buttons ---
+        document.addEventListener('click', async function(e) {
+            const statusBtn = e.target.closest('.js-set-status');
+            if (statusBtn) {
+                const userId = statusBtn.getAttribute('data-user-id');
+                const newStatus = statusBtn.getAttribute('data-set-status');
+                try {
+                    const res = await fetch(`/admin/users/${userId}/status`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({ status: newStatus })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        const row = statusBtn.closest('tr');
+                        row.setAttribute('data-student-status', newStatus);
+
+                        const statusMap = {
+                            active:   { cls: 'bg-success', text: 'Aktif' },
+                            pending:  { cls: 'bg-warning text-dark', text: 'Beklemede' },
+                            negative: { cls: 'bg-danger',  text: 'Olumsuz' }
+                        };
+                        const badgeCell = row.querySelector('.status-badge-cell');
+                        const info = statusMap[newStatus];
+                        badgeCell.innerHTML = '<span class="badge ' + info.cls + '">' + info.text + '</span>';
+
+                        const btnGroup = row.querySelectorAll('.js-set-status');
+                        btnGroup.forEach(b => {
+                            const s = b.getAttribute('data-set-status');
+                            b.className = b.className
+                                .replace(/btn-(success|warning|danger|outline-success|outline-warning|outline-danger)/g, '');
+                            if (s === newStatus) {
+                                b.classList.add(s === 'active' ? 'btn-success' : s === 'pending' ? 'btn-warning' : 'btn-danger');
+                            } else {
+                                b.classList.add(s === 'active' ? 'btn-outline-success' : s === 'pending' ? 'btn-outline-warning' : 'btn-outline-danger');
+                            }
+                        });
+
+                        refreshTabCounts();
+                        applyFilters();
+                        showAlert('success', 'Durum güncellendi.');
+                    } else {
+                        showAlert('danger', data.message || 'Durum güncellenemedi.');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    showAlert('danger', 'Durum güncellenirken hata oluştu.');
+                }
+                return;
+            }
+
             const detailsBtn = e.target.closest('.js-view-details');
             const deleteBtn = e.target.closest('.js-delete-user');
-            
+
             if (detailsBtn) {
-                const userId = detailsBtn.getAttribute('data-user-id');
-                viewUserDetails(userId);
+                viewUserDetails(detailsBtn.getAttribute('data-user-id'));
             }
-            
             if (deleteBtn) {
-                const userId = deleteBtn.getAttribute('data-user-id');
-                const userName = deleteBtn.getAttribute('data-user-name');
-                deleteUser(userId, userName);
+                deleteUser(deleteBtn.getAttribute('data-user-id'), deleteBtn.getAttribute('data-user-name'));
             }
         });
+
+        function refreshTabCounts() {
+            const allRows = document.querySelectorAll('.student-row');
+            let a = 0, p = 0, n = 0;
+            allRows.forEach(r => {
+                const s = r.getAttribute('data-student-status');
+                if (s === 'active') a++;
+                else if (s === 'pending') p++;
+                else if (s === 'negative') n++;
+            });
+            document.getElementById('tabActiveCount').textContent = a;
+            document.getElementById('tabPendingCount').textContent = p;
+            document.getElementById('tabNegativeCount').textContent = n;
+        }
 
         // --- Advanced Filter System ---
         const searchInput = document.getElementById('userSearchInput');
@@ -155,9 +263,9 @@
         const resetBtn = document.getElementById('resetFilters');
         const visibleCountEl = document.getElementById('visibleCount');
         const noResultsMsg = document.getElementById('noResultsMsg');
-        const allRows = document.querySelectorAll('.student-row');
 
         function applyFilters() {
+            const allRows = document.querySelectorAll('.student-row');
             const searchTerm = searchInput.value.toLowerCase().trim();
             const selectedClass = classFilter.value;
             const requireHazirlik = filterHazirlik.checked;
@@ -169,38 +277,30 @@
             allRows.forEach(row => {
                 let show = true;
 
-                // 1. Text search: name, phone, TC, school, guardians, email
-                if (searchTerm) {
-                    const name = row.getAttribute('data-name') || '';
-                    const phone = row.getAttribute('data-phone') || '';
-                    const email = row.getAttribute('data-email') || '';
-                    const tc = row.getAttribute('data-tc') || '';
-                    const school = row.getAttribute('data-school') || '';
-                    const guardians = row.getAttribute('data-guardians') || '';
+                // 0. Status tab filter
+                const rowStatus = row.getAttribute('data-student-status') || 'active';
+                if (rowStatus !== currentTab) show = false;
 
-                    const textMatch = name.includes(searchTerm) ||
-                                     phone.includes(searchTerm) ||
-                                     email.includes(searchTerm) ||
-                                     tc.includes(searchTerm) ||
-                                     school.includes(searchTerm) ||
-                                     guardians.includes(searchTerm);
+                // 1. Text search
+                if (show && searchTerm) {
+                    const fields = ['data-name','data-phone','data-email','data-tc','data-school','data-guardians'];
+                    const textMatch = fields.some(f => (row.getAttribute(f) || '').includes(searchTerm));
                     if (!textMatch) show = false;
                 }
 
                 // 2. Class filter
                 if (show && selectedClass) {
-                    const rowClass = row.getAttribute('data-class') || '';
-                    if (rowClass !== selectedClass) show = false;
+                    if ((row.getAttribute('data-class') || '') !== selectedClass) show = false;
                 }
 
-                // 3. Payment filters (OR logic - show if ANY checked condition matches)
+                // 3. Payment filters
                 if (show && (requireHazirlik || requireKabulOncesi || requireKabulSonrasi)) {
-                    const hasHazirlik = row.getAttribute('data-hazirlik') === 'true';
-                    const hasKabulOncesi = row.getAttribute('data-kabul-oncesi') === 'true';
-                    const hasKabulSonrasi = row.getAttribute('data-kabul-sonrasi') === 'true';
-                    const matchesAny = (requireHazirlik && hasHazirlik) ||
-                                      (requireKabulOncesi && hasKabulOncesi) ||
-                                      (requireKabulSonrasi && hasKabulSonrasi);
+                    const hasH = row.getAttribute('data-hazirlik') === 'true';
+                    const hasKO = row.getAttribute('data-kabul-oncesi') === 'true';
+                    const hasKS = row.getAttribute('data-kabul-sonrasi') === 'true';
+                    const matchesAny = (requireHazirlik && hasH) ||
+                                      (requireKabulOncesi && hasKO) ||
+                                      (requireKabulSonrasi && hasKS);
                     if (!matchesAny) show = false;
                 }
 
@@ -212,14 +312,12 @@
             noResultsMsg.style.display = visibleCount === 0 ? '' : 'none';
         }
 
-        // Attach filter events
         searchInput.addEventListener('input', applyFilters);
         classFilter.addEventListener('change', applyFilters);
         filterHazirlik.addEventListener('change', applyFilters);
         filterKabulOncesi.addEventListener('change', applyFilters);
         filterKabulSonrasi.addEventListener('change', applyFilters);
 
-        // Reset all filters
         resetBtn.addEventListener('click', function() {
             searchInput.value = '';
             classFilter.value = '';
@@ -228,6 +326,9 @@
             filterKabulSonrasi.checked = false;
             applyFilters();
         });
+
+        // Initial filter (show only active tab)
+        applyFilters();
     });
 
     function viewUserDetails(userId) {
@@ -242,9 +343,7 @@
         try {
             const response = await fetch(`/admin/users/${userId}`, {
                 method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 credentials: 'include'
             });
 
@@ -252,17 +351,8 @@
 
             if (result.success) {
                 showAlert('success', result.message);
-                // Remove the row from table
                 const row = document.querySelector(`[data-user-id="${userId}"]`).closest('tr');
-                if (row) {
-                    row.remove();
-                }
-                // Update user count
-                const badge = document.querySelector('.badge.bg-primary');
-                if (badge) {
-                    const currentCount = parseInt(badge.textContent);
-                    badge.textContent = currentCount - 1;
-                }
+                if (row) row.remove();
             } else {
                 showAlert('danger', result.message);
             }
@@ -284,11 +374,9 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         `;
         document.body.appendChild(alertDiv);
-        
+
         setTimeout(() => {
-            if (alertDiv.parentNode) {
-                alertDiv.parentNode.removeChild(alertDiv);
-            }
-        }, 10000);
+            if (alertDiv.parentNode) alertDiv.parentNode.removeChild(alertDiv);
+        }, 5000);
     }
 </script>

@@ -82,6 +82,37 @@
                     </div>
                 </div>
 
+                <!-- Bank Info Card -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="mb-0"><i class="fas fa-university me-2"></i>Banka Bilgileri</h4>
+                    </div>
+                    <div class="card-body">
+                        <% if (!partner.iban) { %>
+                        <div class="alert alert-warning mb-3">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Ödeme alabilmeniz için banka bilgilerinizi girmeniz gerekmektedir.</strong>
+                        </div>
+                        <% } %>
+                        <form id="bankInfoForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="accountHolderName" class="form-label">Hesap Sahibi Ad Soyad *</label>
+                                    <input type="text" class="form-control" id="accountHolderName" required placeholder="Ad Soyad" value="<%= partner.account_holder_name || '' %>">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="iban" class="form-label">IBAN *</label>
+                                    <input type="text" class="form-control" id="iban" required placeholder="TR00 0000 0000 0000 0000 0000 00" value="<%= partner.iban || '' %>" maxlength="42" style="font-family: monospace; letter-spacing: 1px;">
+                                    <small class="text-muted">Tüm ülke formatları desteklenir (TR, CZ, DE, vb.)</small>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success" id="bankSubmitBtn">
+                                <i class="fas fa-save me-2"></i>Banka Bilgilerini Kaydet
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
                 <!-- Account Info Card -->
                 <div class="card shadow-sm">
                     <div class="card-header bg-secondary text-white">
@@ -154,6 +185,45 @@
             alert.remove();
         }, 10000);
     }
+
+    document.getElementById('bankInfoForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const iban = document.getElementById('iban').value.trim();
+        const accountHolderName = document.getElementById('accountHolderName').value.trim();
+
+        if (!iban || !accountHolderName) {
+            showAlert('IBAN ve hesap sahibi adı gereklidir!', 'danger');
+            return;
+        }
+
+        const btn = document.getElementById('bankSubmitBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Kaydediliyor...';
+
+        try {
+            const response = await fetch('/partner/api/update-bank-info', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ iban, account_holder_name: accountHolderName })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                showAlert('Banka bilgileri başarıyla kaydedildi!', 'success');
+            } else {
+                showAlert(data.message || 'Banka bilgileri kaydedilemedi!', 'danger');
+            }
+        } catch (error) {
+            console.error('Bank info update error:', error);
+            showAlert('Banka bilgileri kaydedilirken bir hata oluştu!', 'danger');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-save me-2"></i>Banka Bilgilerini Kaydet';
+        }
+    });
 
     document.getElementById('passwordForm').addEventListener('submit', async function(e) {
         e.preventDefault();
