@@ -5,25 +5,51 @@ const router = express.Router();
 const pool = require('../config/database');
 const { createContact } = require('../services/contactService');
 
+const { buildTurkishUniversitySlug } = require('../services/blogAIService');
+
+/**
+ * Generate a Turkish-friendly URL slug for a university.
+ *
+ * Strategy:
+ *   1. Pure Turkish slug from the (translated) name + city, e.g.
+ *      "Czech Technical University" + "Prague" → "cek-teknik-universitesi-prag".
+ *   2. Brand-only acronym universities like "ESADE Business School" become
+ *      "esade-barselona" (handled inside buildTurkishUniversitySlug).
+ *   3. Caller is responsible for collision-handling at INSERT/UPDATE time.
+ */
 function generateUniversitySlug(name, city, country) {
+    const slug = buildTurkishUniversitySlug(name || '', city || '');
+    if (slug && slug.length > 0) return slug;
+    // Defensive fallback: legacy ASCII-only slug if for any reason the
+    // Turkish builder returns empty.
     return [name, city, country]
         .filter(Boolean)
         .join('-')
         .toLowerCase()
-        .replace(/ü/g, 'u').replace(/ö/g, 'o').replace(/ş/g, 's')
-        .replace(/ç/g, 'c').replace(/ğ/g, 'g').replace(/ı/g, 'i')
-        .replace(/é/g, 'e').replace(/è/g, 'e').replace(/ë/g, 'e')
-        .replace(/á/g, 'a').replace(/à/g, 'a').replace(/ä/g, 'a')
-        .replace(/ú/g, 'u').replace(/ů/g, 'u').replace(/ó/g, 'o')
-        .replace(/ő/g, 'o').replace(/ř/g, 'r').replace(/ž/g, 'z')
-        .replace(/ý/g, 'y').replace(/ě/g, 'e').replace(/š/g, 's')
-        .replace(/č/g, 'c').replace(/ň/g, 'n').replace(/ď/g, 'd')
-        .replace(/ť/g, 't').replace(/í/g, 'i').replace(/ł/g, 'l')
-        .replace(/ą/g, 'a').replace(/ę/g, 'e').replace(/ź/g, 'z')
-        .replace(/ś/g, 's').replace(/ć/g, 'c').replace(/ń/g, 'n')
-        .replace(/ż/g, 'z').replace(/'|'/g, '')
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '');
+}
+
+/**
+ * Ensure the proposed slug is unique in the universities table.
+ * If a collision exists, append "-2", "-3" … until free. Optional
+ * `excludeId` lets the caller skip the row being updated.
+ */
+async function ensureUniqueUniversitySlug(pool, baseSlug, excludeId = null) {
+    if (!baseSlug) return baseSlug;
+    let candidate = baseSlug;
+    let counter = 2;
+    // Cap iterations defensively
+    for (let i = 0; i < 50; i++) {
+        const params = excludeId ? [candidate, excludeId] : [candidate];
+        const sql = excludeId
+            ? 'SELECT 1 FROM universities WHERE slug = $1 AND id <> $2 LIMIT 1'
+            : 'SELECT 1 FROM universities WHERE slug = $1 LIMIT 1';
+        const r = await pool.query(sql, params);
+        if (r.rows.length === 0) return candidate;
+        candidate = `${baseSlug}-${counter++}`;
+    }
+    return candidate;
 }
 
 // Admin sayfalarında footer'ı gizlemek için flag
@@ -96,6 +122,136 @@ router.post('/_maintenance/clean-blog-dashes', async (req, res) => {
     }
 });
 router.get('/_maintenance/clean-blog-dashes', (req, res) => {
+    res.status(405).json({ success: false, message: 'Use POST' });
+});
+
+// ============================================================================
+// One-shot migration that converts every university's slug to a Turkish-
+// friendly version while preserving the previous slug as legacy_slug so old
+// URLs keep redirecting via 301.
+//
+// Usage:
+//   curl -X POST 'https://<host>/admin/_maintenance/migrate-uni-slugs?token=migrate-now-2026&dryRun=1'
+//   curl -X POST 'https://<host>/admin/_maintenance/migrate-uni-slugs?token=migrate-now-2026'
+//
+// dryRun=1 just returns the planned changes without writing anything.
+// Safe to call repeatedly: rows whose slug already matches the desired
+// Turkish slug are skipped.
+// ============================================================================
+router.get('/_maintenance/dump-uni-slugs', async (req, res) => {
+    if (req.query.token !== 'migrate-now-2026') {
+        return res.status(403).json({ success: false, message: 'Forbidden' });
+    }
+    try {
+        const { rows } = await pool.query(`
+            SELECT id, name, city, country, slug, legacy_slug
+            FROM universities ORDER BY country, name
+        `);
+        res.json({ success: true, total: rows.length, rows });
+    } catch (e) {
+        res.status(500).json({ success: false, error: e.message });
+    }
+});
+
+router.post('/_maintenance/migrate-uni-slugs', async (req, res) => {
+    if (req.query.token !== 'migrate-now-2026') {
+        return res.status(403).json({ success: false, message: 'Forbidden' });
+    }
+    const dryRun = req.query.dryRun === '1' || req.query.dryRun === 'true';
+    try {
+        // Belt-and-braces: ensure the column exists before we read it.
+        try {
+            await pool.query(`ALTER TABLE universities ADD COLUMN IF NOT EXISTS legacy_slug TEXT`);
+        } catch (alterErr) {
+            console.log('legacy_slug ALTER inside endpoint:', alterErr.message);
+        }
+        const { rows } = await pool.query(`
+            SELECT id, name, city, country, slug, legacy_slug
+            FROM universities
+            ORDER BY id ASC
+        `);
+
+        const planned = [];
+        const taken = new Set(); // slugs already chosen during this run
+        // Seed with existing slugs we are NOT going to change (so we don't
+        // collide with rows whose new slug already matches the current one).
+        for (const r of rows) {
+            const newSlug = generateUniversitySlug(r.name, r.city, r.country);
+            if (newSlug === r.slug) taken.add(r.slug);
+        }
+
+        for (const r of rows) {
+            const desired = generateUniversitySlug(r.name, r.city, r.country);
+            if (!desired || desired === r.slug) {
+                planned.push({ id: r.id, name: r.name, city: r.city,
+                               from: r.slug, to: r.slug, action: 'skip' });
+                continue;
+            }
+            // Find a unique target — accounting for both DB rows and slugs
+            // we've planned during this same migration run.
+            let candidate = desired;
+            let counter = 2;
+            while (taken.has(candidate)) {
+                candidate = `${desired}-${counter++}`;
+            }
+            // Also check DB for collisions outside the rows we've enumerated
+            // (paranoia — query is cheap).
+            const dbCheck = await pool.query(
+                'SELECT 1 FROM universities WHERE slug = $1 AND id <> $2 LIMIT 1',
+                [candidate, r.id]
+            );
+            if (dbCheck.rows.length > 0) {
+                while (true) {
+                    candidate = `${desired}-${counter++}`;
+                    const c2 = await pool.query(
+                        'SELECT 1 FROM universities WHERE slug = $1 AND id <> $2 LIMIT 1',
+                        [candidate, r.id]
+                    );
+                    if (c2.rows.length === 0 && !taken.has(candidate)) break;
+                }
+            }
+            taken.add(candidate);
+
+            // Preserve the very first legacy slug we ever shipped: only set
+            // legacy_slug when it's currently empty.
+            const legacyToWrite = r.legacy_slug || r.slug;
+            planned.push({
+                id: r.id, name: r.name, city: r.city, country: r.country,
+                from: r.slug, to: candidate,
+                legacy_slug: legacyToWrite,
+                action: 'update'
+            });
+        }
+
+        let updated = 0;
+        if (!dryRun) {
+            for (const p of planned) {
+                if (p.action !== 'update') continue;
+                await pool.query(
+                    `UPDATE universities
+                     SET slug = $1, legacy_slug = COALESCE(legacy_slug, $2),
+                         updated_at = CURRENT_TIMESTAMP
+                     WHERE id = $3`,
+                    [p.to, p.legacy_slug, p.id]
+                );
+                updated++;
+            }
+        }
+
+        res.json({
+            success: true,
+            dryRun,
+            total: rows.length,
+            toUpdate: planned.filter(p => p.action === 'update').length,
+            updated,
+            preview: planned.slice(0, 200)
+        });
+    } catch (e) {
+        console.error('migrate-uni-slugs error:', e);
+        res.status(500).json({ success: false, message: e.message, stack: e.stack });
+    }
+});
+router.get('/_maintenance/migrate-uni-slugs', (req, res) => {
     res.status(405).json({ success: false, message: 'Use POST' });
 });
 
@@ -767,11 +923,33 @@ async function ensureTablesExist() {
             }
         } catch (e) { console.log('Blog em-dash migration skipped:', e.message); }
 
+        // Add legacy_slug column to universities so changing the canonical
+        // slug (e.g. when migrating to Turkish slugs) keeps old URLs working
+        // via 301 redirect. Idempotent — safe to re-run.
+        try {
+            await pool.query(`ALTER TABLE universities ADD COLUMN IF NOT EXISTS legacy_slug TEXT`);
+            await pool.query(`CREATE INDEX IF NOT EXISTS idx_universities_legacy_slug ON universities(legacy_slug)`);
+            console.log('✅ universities.legacy_slug ensured');
+        } catch (e) { console.log('legacy_slug migration skipped:', e.message); }
+
         console.log('✅ Tables ensured to exist');
     } catch (error) {
         console.error('❌ Error ensuring tables:', error.message);
     }
 }
+
+// Independent migration: universities.legacy_slug. Runs UNCONDITIONALLY
+// on module load (not nested inside ensureTablesExist) so an earlier
+// migration failure can't short-circuit it. Idempotent.
+(async () => {
+    try {
+        await pool.query(`ALTER TABLE universities ADD COLUMN IF NOT EXISTS legacy_slug TEXT`);
+        await pool.query(`CREATE INDEX IF NOT EXISTS idx_universities_legacy_slug ON universities(legacy_slug)`);
+        console.log('✅ universities.legacy_slug column ensured');
+    } catch (e) {
+        console.log('legacy_slug migration error (non-fatal):', e.message);
+    }
+})();
 
 // Call this once when the module loads
 console.log('🚀 Starting ensureTablesExist...');
@@ -2271,19 +2449,38 @@ router.put('/universities/:id', async (req, res) => {
 
         // Normalize booleans
         const deadlineValue = application_deadline && application_deadline !== '' ? application_deadline : null;
-        const updatedSlug = generateUniversitySlug(name, city, country);
+        const baseUpdatedSlug = generateUniversitySlug(name, city, country);
+        const updatedSlug = await ensureUniqueUniversitySlug(pool, baseUpdatedSlug, id);
+
+        // If the slug actually changes, preserve the previous one as
+        // legacy_slug so old URLs keep working via 301 redirect.
+        const prevRow = await pool.query(
+            'SELECT slug, legacy_slug FROM universities WHERE id = $1',
+            [id]
+        );
+        const previousSlug = prevRow.rows[0]?.slug || null;
+        const previousLegacy = prevRow.rows[0]?.legacy_slug || null;
+        // Keep the OLDEST legacy we know about so the very first URL we ever
+        // shipped also keeps redirecting. If we already have a legacy_slug,
+        // don't overwrite it (it's the original); otherwise capture the
+        // current slug as the legacy if it's about to change.
+        let legacyToWrite = previousLegacy;
+        if (!previousLegacy && previousSlug && previousSlug !== updatedSlug) {
+            legacyToWrite = previousSlug;
+        }
+
         const result = await pool.query(`
             UPDATE universities SET 
                 name = $1, country = $2, city = $3, logo_url = $4, 
                 description = $5, requirements = $6,
                 world_ranking = $7, application_deadline = $8,
-                slug = $9,
+                slug = $9, legacy_slug = $10,
                 is_active = true, 
                 is_featured = false, updated_at = CURRENT_TIMESTAMP
-            WHERE id = $10 RETURNING *
+            WHERE id = $11 RETURNING *
         `, [
             name, country, city, finalLogoUrl, description, requirements,
-            worldRanking, deadlineValue, updatedSlug, id
+            worldRanking, deadlineValue, updatedSlug, legacyToWrite, id
         ]);
 
         if (result.rows.length === 0) {
@@ -2577,7 +2774,8 @@ router.post('/universities', async (req, res) => {
 
         // Create university
         const deadlineValue = application_deadline && application_deadline !== '' ? application_deadline : null;
-        const generatedSlug = generateUniversitySlug(name, city, country);
+        const baseSlug = generateUniversitySlug(name, city, country);
+        const generatedSlug = await ensureUniqueUniversitySlug(pool, baseSlug);
         const universityResult = await pool.query(
             `INSERT INTO universities (
                 name, country, city, logo_url, world_ranking, 

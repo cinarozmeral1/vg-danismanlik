@@ -741,6 +741,22 @@ app.get('/universities/:slug', async (req, res) => {
         `, [slug]);
 
         if (universityResult.rows.length === 0) {
+            // Fallback: maybe the visitor / Google still has the OLD English
+            // slug — look it up via legacy_slug and 301-redirect to the
+            // current canonical Turkish slug. This preserves SEO equity for
+            // every URL we ever shipped.
+            try {
+                const legacyResult = await pool.query(
+                    'SELECT slug FROM universities WHERE legacy_slug = $1 LIMIT 1',
+                    [slug]
+                );
+                if (legacyResult.rows.length > 0 && legacyResult.rows[0].slug) {
+                    return res.redirect(301, `/universities/${legacyResult.rows[0].slug}`);
+                }
+            } catch (legacyErr) {
+                // legacy_slug column may not exist on very old DBs; ignore
+                console.warn('legacy_slug lookup failed:', legacyErr.message);
+            }
             return res.status(404).render('error', {
                 title: 'Üniversite Bulunamadı',
                 message: 'Aradığınız üniversite bulunamadı.'
