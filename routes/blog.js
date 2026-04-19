@@ -17,7 +17,9 @@ const COUNTRY_SIDEBAR_DATA = {
     'Austria': { slug: 'avusturya', tr: 'Avusturya', en: 'Austria', flag: '🇦🇹' },
     'Hungary': { slug: 'macaristan', tr: 'Macaristan', en: 'Hungary', flag: '🇭🇺' },
     'Poland': { slug: 'polonya', tr: 'Polonya', en: 'Poland', flag: '🇵🇱' },
-    'Netherlands': { slug: 'hollanda', tr: 'Hollanda', en: 'Netherlands', flag: '🇳🇱' }
+    'Netherlands': { slug: 'hollanda', tr: 'Hollanda', en: 'Netherlands', flag: '🇳🇱' },
+    'Spain': { slug: 'ispanya', tr: 'İspanya', en: 'Spain', flag: '🇪🇸' },
+    'France': { slug: 'fransa', tr: 'Fransa', en: 'France', flag: '🇫🇷' }
 };
 const OGRENCI_YASAMI_BASE = '/ogrenci-yasami';
 

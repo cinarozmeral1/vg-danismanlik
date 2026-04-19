@@ -1096,6 +1096,18 @@ app.get('/sitemap.xml', async (req, res) => {
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
+    <url>
+        <loc>${baseUrl}/ogrenci-yasami/ispanya</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>${baseUrl}/ogrenci-yasami/fransa</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
     
     <!-- Ülke Rehber Sayfaları -->
     <url><loc>${baseUrl}/ulkede-universite/almanya</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
@@ -1106,6 +1118,8 @@ app.get('/sitemap.xml', async (req, res) => {
     <url><loc>${baseUrl}/ulkede-universite/polonya</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
     <url><loc>${baseUrl}/ulkede-universite/macaristan</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
     <url><loc>${baseUrl}/ulkede-universite/hollanda</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+    <url><loc>${baseUrl}/ulkede-universite/ispanya</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+    <url><loc>${baseUrl}/ulkede-universite/fransa</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
 
     <!-- Partners -->
     <url>
@@ -1187,10 +1201,10 @@ app.get('/', async (req, res) => {
     try {
         // Set SEO metadata with competitive keywords - Focus on "VG Danışmanlık", "Venture Global", and "Eğitim Danışmanlığı"
         res.locals.seoTitle = 'VG Danışmanlık | Venture Global - Yurt Dışı Eğitim Danışmanlığı & Üniversite Danışmanlık';
-        res.locals.seoDescription = 'VG Danışmanlık (Venture Global) - Türkiye\'nin güvenilir eğitim danışmanlığı. Yurt dışı danışmanlık, yurt dışı üniversite danışmanlık, üniversite başvuru ve eğitim danışmanlığı hizmetleri. Almanya, Çekya, İtalya, Avusturya, İngiltere, Polonya, Macaristan\'da 50+ üniversite ile profesyonel yurt dışı eğitim danışmanlığı.';
-        res.locals.seoKeywords = 'vg danışmanlık, venture global, vg danışmanlık yurt dışı, eğitim danışmanlığı, yurt dışı eğitim danışmanlığı, yurt dışı danışmanlık, üniversite danışmanlık, yurt dışı üniversite danışmanlık, venture global danışmanlık, yurtdışı eğitim, yurtdışı üniversite, avrupa eğitim danışmanlığı, üniversite başvurusu, yurt dışı üniversite başvuru, vize danışmanlığı, almanya üniversite, çekya üniversite, italya üniversite, avusturya üniversite, ingiltere üniversite';
+        res.locals.seoDescription = 'VG Danışmanlık (Venture Global) - Türkiye\'nin güvenilir eğitim danışmanlığı. Yurt dışı danışmanlık, yurt dışı üniversite danışmanlık, üniversite başvuru ve eğitim danışmanlığı hizmetleri. Almanya, Çekya, İtalya, Avusturya, İngiltere, Polonya, Macaristan, Hollanda, İspanya ve Fransa\'da 50+ üniversite ile profesyonel yurt dışı eğitim danışmanlığı.';
+        res.locals.seoKeywords = 'vg danışmanlık, venture global, vg danışmanlık yurt dışı, eğitim danışmanlığı, yurt dışı eğitim danışmanlığı, yurt dışı danışmanlık, üniversite danışmanlık, yurt dışı üniversite danışmanlık, venture global danışmanlık, yurtdışı eğitim, yurtdışı üniversite, avrupa eğitim danışmanlığı, üniversite başvurusu, yurt dışı üniversite başvuru, vize danışmanlığı, almanya üniversite, çekya üniversite, italya üniversite, avusturya üniversite, ingiltere üniversite, ispanya üniversite, fransa üniversite';
         res.locals.ogTitle = 'VG Danışmanlık | Venture Global - Yurt Dışı Eğitim Danışmanlığı';
-        res.locals.ogDescription = 'VG Danışmanlık (Venture Global) ile yurt dışı eğitim danışmanlığı. Üniversite danışmanlık, yurt dışı üniversite başvuru süreçlerinde profesyonel destek. 7 ülkede 50+ üniversite.';
+        res.locals.ogDescription = 'VG Danışmanlık (Venture Global) ile yurt dışı eğitim danışmanlığı. Üniversite danışmanlık, yurt dışı üniversite başvuru süreçlerinde profesyonel destek. 10 ülkede 50+ üniversite.';
         res.locals.ogType = 'website';
         
         res.render('index', {
@@ -1214,10 +1228,10 @@ app.get('/services', (req, res) => {
 
 app.get('/about-us', (req, res) => {
     res.locals.seoTitle = 'Venture Global (VG Danışmanlık) Hakkında - Yurt Dışı Eğitim Danışmanlığı | Profesyonel Eğitim Danışmanlığı';
-    res.locals.seoDescription = 'Venture Global (VG Danışmanlık) yurt dışı eğitim danışmanlığı firması. Yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı, yurt dışı dil okulu danışmanlığı ve Avrupa eğitim danışmanlığı alanında 7 ülkede, 50+ üniversite seçeneği ile profesyonel danışmanlık hizmeti sunuyoruz.';
+    res.locals.seoDescription = 'Venture Global (VG Danışmanlık) yurt dışı eğitim danışmanlığı firması. Yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı, yurt dışı dil okulu danışmanlığı ve Avrupa eğitim danışmanlığı alanında 10 ülkede, 50+ üniversite seçeneği ile profesyonel danışmanlık hizmeti sunuyoruz.';
     res.locals.seoKeywords = 'Venture Global, vg danışmanlık, venture global danışmanlık, yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı, yurt dışı dil okulu danışmanlığı, Avrupa eğitim danışmanlığı, eğitim danışmanlığı, yurtdışı eğitim, avrupa üniversite, eğitim danışmanlığı firması, venture global eğitim';
     res.locals.ogTitle = 'Venture Global (VG Danışmanlık) - Yurt Dışı Eğitim Danışmanlığı';
-    res.locals.ogDescription = 'Venture Global (VG Danışmanlık) yurt dışı danışmanlık ve eğitim danışmanlığı firması. 7 ülkede profesyonel hizmet.';
+    res.locals.ogDescription = 'Venture Global (VG Danışmanlık) yurt dışı danışmanlık ve eğitim danışmanlığı firması. 10 ülkede profesyonel hizmet.';
     res.render('about-us', { title: res.locals.t.nav.aboutUs });
 });
 
@@ -2478,9 +2492,11 @@ const STUDENT_LIFE_COUNTRIES = [
     { key: 'uk', trSlug: 'ingiltere', view: 'student-life-uk' },
     { key: 'poland', trSlug: 'polonya', view: 'student-life-poland' },
     { key: 'hungary', trSlug: 'macaristan', view: 'student-life-hungary' },
-    { key: 'netherlands', trSlug: 'hollanda', view: 'student-life-netherlands' }
+    { key: 'netherlands', trSlug: 'hollanda', view: 'student-life-netherlands' },
+    { key: 'spain', trSlug: 'ispanya', view: 'student-life-spain' },
+    { key: 'france', trSlug: 'fransa', view: 'student-life-france' }
 ];
-const STUDENT_LIFE_EN_TO_TR = { germany: 'almanya', czech: 'cekya', italy: 'italya', austria: 'avusturya', uk: 'ingiltere', poland: 'polonya', hungary: 'macaristan', netherlands: 'hollanda' };
+const STUDENT_LIFE_EN_TO_TR = { germany: 'almanya', czech: 'cekya', italy: 'italya', austria: 'avusturya', uk: 'ingiltere', poland: 'polonya', hungary: 'macaristan', netherlands: 'hollanda', spain: 'ispanya', france: 'fransa' };
 
 function setStudentLifeSeo(res, countryKey, pathSlug) {
     const t = res.locals.t || {};
@@ -2525,7 +2541,9 @@ const COUNTRY_GUIDE_MAP = [
     { key: 'uk',            slug: 'ingiltere',  nameTR: 'İngiltere',        nameEN: 'United Kingdom', dbCountry: 'UK',                 flag: '🇬🇧' },
     { key: 'poland',        slug: 'polonya',    nameTR: 'Polonya',          nameEN: 'Poland',         dbCountry: 'Poland',             flag: '🇵🇱' },
     { key: 'hungary',       slug: 'macaristan', nameTR: 'Macaristan',       nameEN: 'Hungary',        dbCountry: 'Hungary',            flag: '🇭🇺' },
-    { key: 'netherlands',   slug: 'hollanda',   nameTR: 'Hollanda',         nameEN: 'Netherlands',    dbCountry: 'Netherlands',        flag: '🇳🇱' }
+    { key: 'netherlands',   slug: 'hollanda',   nameTR: 'Hollanda',         nameEN: 'Netherlands',    dbCountry: 'Netherlands',        flag: '🇳🇱' },
+    { key: 'spain',         slug: 'ispanya',    nameTR: 'İspanya',          nameEN: 'Spain',          dbCountry: 'Spain',              flag: '🇪🇸' },
+    { key: 'france',        slug: 'fransa',     nameTR: 'Fransa',           nameEN: 'France',         dbCountry: 'France',             flag: '🇫🇷' }
 ];
 
 const _ytCache = {};
@@ -2537,7 +2555,11 @@ const COUNTRY_FALLBACK_VIDEOS = {
     uk:          ['GF6aOzB72og', 'dgao11VKd3E', 'XKaOobmneNg'],
     poland:      ['fVuZgMm1JQ8', 'Jht5FjvOC-s', 'eoca6qNT0dE'],
     hungary:     ['pNj5EMNSSaE', 'JFMODyS17J8', 'SRrGtm-oY9Y'],
-    netherlands: ['UCU-vobO0w8', 'F-C04P965l0', 'GXpgfj8Xc8E']
+    netherlands: ['UCU-vobO0w8', 'F-C04P965l0', 'GXpgfj8Xc8E'],
+    spain:       ['ymQGUVfaDO0', 'XKaOobmneNg', 'eoca6qNT0dE'],
+    france:      ['F-C04P965l0', 'pNj5EMNSSaE', 'GF6aOzB72og']
+    // Note: when YOUTUBE_API_KEY is set, the API search overrides these
+    // fallback IDs and will fetch country-specific videos automatically.
 };
 async function getCountryYouTubeVideos(countryNameTR, countryKey) {
     const fallback = COUNTRY_FALLBACK_VIDEOS[countryKey] || [];

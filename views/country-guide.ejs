@@ -707,6 +707,50 @@ const images = countryImages[countryData.key] || [];
         </div>
     </div>
 </section>
+<% } else { %>
+<!-- Coming Soon — No universities in DB yet -->
+<section class="cg-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-9">
+                <div style="background: linear-gradient(135deg, #f8fbff 0%, #e8f1fb 100%); border: 2px dashed #0078D7; border-radius: 24px; padding: 60px 40px; text-align: center; box-shadow: 0 4px 24px rgba(0,120,215,0.08);">
+                    <div style="font-size: 4.5rem; margin-bottom: 1rem; line-height: 1;">
+                        <span><%= countryData.flag %></span>
+                        <i class="fas fa-clock" style="color: #005A9E; font-size: 2.8rem; margin-left: 12px;"></i>
+                    </div>
+                    <h2 style="font-size: 2rem; font-weight: 800; color: #003d6b; margin-bottom: 0.75rem;">
+                        <%= lang === 'en'
+                            ? 'Coming Soon — ' + countryData.nameEN + ' University List Is Being Prepared'
+                            : 'Yakında — ' + countryData.nameTR + ' Üniversite Listesi Hazırlanıyor' %>
+                    </h2>
+                    <p style="font-size: 1.1rem; color: #4a5b6e; max-width: 640px; margin: 0 auto 1.5rem;">
+                        <%= lang === 'en'
+                            ? 'We are finalizing partnerships with top universities in ' + countryData.nameEN + '. In the meantime, our advisors are ready to help you explore study options today.'
+                            : countryData.nameTR + '\'daki anlaşmalı üniversitelerimizi yakında burada listeleyeceğiz. O zamana kadar uzman danışmanlarımız ' + countryData.nameTR + ' eğitim seçeneklerinizi sizinle birlikte değerlendirmeye hazır.' %>
+                    </p>
+                    <div class="d-flex flex-column flex-md-row gap-3 justify-content-center mt-4">
+                        <a href="/contact?subject=<%= encodeURIComponent(countryData.nameTR) %>" class="btn btn-primary btn-lg px-4" style="border-radius: 50px; font-weight: 600; background: linear-gradient(135deg, #005A9E 0%, #0078D7 100%); border: 0;">
+                            <i class="fas fa-graduation-cap me-2"></i>
+                            <%= lang === 'en'
+                                ? 'I Want to Study in ' + countryData.nameEN
+                                : 'Bu Ülkede Okumak İstiyorum' %>
+                        </a>
+                        <a href="/#randevu" class="btn btn-outline-primary btn-lg px-4" style="border-radius: 50px; font-weight: 600; border-width: 2px;">
+                            <i class="fas fa-calendar-check me-2"></i>
+                            <%= lang === 'en' ? 'Book a Free Appointment' : 'Ücretsiz Randevu Al' %>
+                        </a>
+                    </div>
+                    <p style="font-size: 0.875rem; color: #6c8197; margin-top: 1.5rem; margin-bottom: 0;">
+                        <i class="fas fa-info-circle me-1"></i>
+                        <%= lang === 'en'
+                            ? 'Our consultants have direct contacts with leading institutions and can guide you through programs, fees, scholarships and the application process.'
+                            : 'Danışmanlarımız önde gelen kurumlarla doğrudan iletişim halindedir; programlar, ücretler, burslar ve başvuru süreci konusunda size rehberlik edebilirler.' %>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 <% } %>
 
 <!-- University Departments Table -->

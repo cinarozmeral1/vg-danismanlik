@@ -691,7 +691,9 @@ const sendVisaApplicationEmail = async (user, country, consulateCity, status) =>
         'UK': 'İngiltere',
         'Poland': 'Polonya',
         'Hungary': 'Macaristan',
-        'Netherlands': 'Hollanda'
+        'Netherlands': 'Hollanda',
+        'Spain': 'İspanya',
+        'France': 'Fransa'
     };
     
     const statusMessages = {

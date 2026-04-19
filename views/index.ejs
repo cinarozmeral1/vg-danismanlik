@@ -889,7 +889,9 @@
                 { slug: 'ingiltere', flag: '🇬🇧', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'United Kingdom' : 'İngiltere' },
                 { slug: 'polonya', flag: '🇵🇱', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Poland' : 'Polonya' },
                 { slug: 'macaristan', flag: '🇭🇺', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Hungary' : 'Macaristan' },
-                { slug: 'hollanda', flag: '🇳🇱', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Netherlands' : 'Hollanda' }
+                { slug: 'hollanda', flag: '🇳🇱', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Netherlands' : 'Hollanda' },
+                { slug: 'ispanya', flag: '🇪🇸', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Spain' : 'İspanya' },
+                { slug: 'fransa', flag: '🇫🇷', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'France' : 'Fransa' }
             ]; %>
             <% countryGuides.forEach(function(c) { %>
             <div class="col-6 col-md-3">
@@ -1075,6 +1077,8 @@
                                             <option value="Polonya">Polonya</option>
                                             <option value="Avusturya">Avusturya</option>
                                             <option value="Hollanda">Hollanda</option>
+                                            <option value="İspanya">İspanya</option>
+                                            <option value="Fransa">Fransa</option>
                                             <option value="Henüz Karar Vermedim"><%= currentLanguage === 'en' ? 'Not Decided Yet' : 'Henüz Karar Vermedim' %></option>
                                         </select>
                                     </div>

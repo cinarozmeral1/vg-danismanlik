@@ -16,7 +16,9 @@ const COUNTRY_NAMES = {
     'Austria': { tr: 'Avusturya', en: 'Austria' },
     'Hungary': { tr: 'Macaristan', en: 'Hungary' },
     'Poland': { tr: 'Polonya', en: 'Poland' },
-    'Netherlands': { tr: 'Hollanda', en: 'Netherlands' }
+    'Netherlands': { tr: 'Hollanda', en: 'Netherlands' },
+    'Spain': { tr: 'İspanya', en: 'Spain' },
+    'France': { tr: 'Fransa', en: 'France' }
 };
 
 async function findYouTubeVideo(universityName, departmentName, countryTR) {

@@ -69,7 +69,9 @@ const ALL_COUNTRIES = [
     'Austria',
     'Hungary',
     'Poland',
-    'Netherlands'  // Yeni eklendi!
+    'Netherlands',
+    'Spain',
+    'France'
 ];
 
 const COUNTRY_NAMES = {
@@ -80,7 +82,9 @@ const COUNTRY_NAMES = {
     'Austria': { tr: 'Avusturya', en: 'Austria' },
     'Hungary': { tr: 'Macaristan', en: 'Hungary' },
     'Poland': { tr: 'Polonya', en: 'Poland' },
-    'Netherlands': { tr: 'Hollanda', en: 'Netherlands' }
+    'Netherlands': { tr: 'Hollanda', en: 'Netherlands' },
+    'Spain': { tr: 'İspanya', en: 'Spain' },
+    'France': { tr: 'Fransa', en: 'France' }
 };
 
 // Türkçe URL slug'ları (öğrenci yaşamı sayfaları)
@@ -92,7 +96,9 @@ const COUNTRY_STUDENT_LIFE_SLUGS = {
     'Austria': 'avusturya',
     'Hungary': 'macaristan',
     'Poland': 'polonya',
-    'Netherlands': 'hollanda'
+    'Netherlands': 'hollanda',
+    'Spain': 'ispanya',
+    'France': 'fransa'
 };
 const OGRENCI_YASAMI_BASE = '/ogrenci-yasami';
 
