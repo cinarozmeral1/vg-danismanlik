@@ -42,7 +42,9 @@
                                     <div class="col-md-6">
                                         <h5 class="mb-3" style="color: #005A9E;"><%= t.studentLifePage.sections.educationSystem.popularDepts %></h5>
                                         <div class="d-flex flex-wrap gap-2">
-                                            <% const franceDepts = ['Bachelor in Business Administration', 'Master in Management', 'Finance', 'Marketing', 'International Business', 'Luxury Management']; %>
+                                            <% const franceDepts = currentLanguage === 'en'
+                                                ? ['Business', 'Engineering', 'Arts & Design', 'Hospitality', 'International Relations', 'Luxury Management']
+                                                : ['İşletme', 'Mühendislik', 'Sanat ve Tasarım', 'Turizm ve Otelcilik', 'Uluslararası İlişkiler', 'Lüks Yönetimi']; %>
                                             <% franceDepts.forEach(function(badge, idx) { %>
                                                 <span class="badge badge-style-<%= (idx % 3) + 1 %> text-dark fw-semibold bg-white border"><%= badge %></span>
                                             <% }); %>
@@ -107,7 +109,7 @@
                     <div class="row g-0">
                         <div class="col-md-4">
                             <div class="student-life-card-img-wrapper">
-                                <img src="/images/countries/france/emlyon-edhec-campus.jpg" class="student-life-card-img" alt="EMLYON EDHEC Business Schools">
+                                <img src="/images/countries/france/emlyon-edhec-campus.jpg" class="student-life-card-img" alt="France University Costs">
                             </div>
                         </div>
                         <div class="col-md-8">
@@ -124,10 +126,10 @@
                                             <div class="card-body p-3">
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <div>
-                                                        <h6 class="mb-1">American Business School Paris</h6>
+                                                        <h6 class="mb-1"><%= t.studentLifePage.sections.costs.stateUniversities %></h6>
                                                         <small class="text-muted"><%= t.studentLifePage.sections.costs.mostEconomic %></small>
                                                     </div>
-                                                    <span class="badge" style="background: #005A9E;">12.000-14.000€<%= t.studentLifePage.units.yearly %></span>
+                                                    <span class="badge" style="background: #005A9E;">170-600€<%= t.studentLifePage.units.yearly %></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -135,10 +137,10 @@
                                             <div class="card-body p-3">
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <div>
-                                                        <h6 class="mb-1">IÉSEG School of Management</h6>
+                                                        <h6 class="mb-1"><%= t.studentLifePage.sections.costs.privateUniversities %></h6>
                                                         <small class="text-muted"><%= t.studentLifePage.sections.costs.qualityEducation %></small>
                                                     </div>
-                                                    <span class="badge" style="background: #005A9E;">13.000-15.000€<%= t.studentLifePage.units.yearly %></span>
+                                                    <span class="badge" style="background: #005A9E;">8.000-15.000€<%= t.studentLifePage.units.yearly %></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -146,10 +148,10 @@
                                             <div class="card-body p-3">
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <div>
-                                                        <h6 class="mb-1">EMLYON &amp; EDHEC</h6>
+                                                        <h6 class="mb-1"><%= currentLanguage === 'en' ? 'Grandes Écoles & Business Schools' : 'Grandes Écoles ve İşletme Okulları' %></h6>
                                                         <small class="text-muted"><%= t.studentLifePage.sections.costs.prestigiousPrograms %></small>
                                                     </div>
-                                                    <span class="badge" style="background: #005A9E;">16.000-25.000€<%= t.studentLifePage.units.yearly %></span>
+                                                    <span class="badge" style="background: #005A9E;">12.000-25.000€<%= t.studentLifePage.units.yearly %></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -159,13 +161,13 @@
                                         <div class="d-flex flex-column gap-2">
                                             <div class="d-flex align-items-center p-2 border rounded">
                                                 <div>
-                                                    <strong>Eiffel Excellence</strong>
+                                                    <strong><%= t.studentLifePage.additionalTerms.governmentScholarships %></strong>
                                                     <small class="d-block text-muted"><%= t.studentLifePage.countries.france.scholarships.france.description %></small>
                                                 </div>
                                             </div>
                                             <div class="d-flex align-items-center p-2 border rounded">
                                                 <div>
-                                                    <strong>EDHEC Excellence &amp; EMLYON Merit</strong>
+                                                    <strong><%= t.studentLifePage.sections.costs.scholarships %></strong>
                                                     <small class="d-block text-muted"><%= t.studentLifePage.countries.france.scholarships.university.description %></small>
                                                 </div>
                                             </div>
@@ -223,7 +225,7 @@
                         <div class="row text-center">
                             <div class="col-6 mb-3">
                                 <div class="p-3 rounded" style="background: #005A9E;">
-                                    <h4 class="text-white mb-1">12.000€+</h4>
+                                    <h4 class="text-white mb-1">170€+</h4>
                                     <small class="text-white"><%= t.studentLifePage.sections.quickInfo.yearlyTuition %></small>
                                 </div>
                             </div>
@@ -241,7 +243,7 @@
                             </div>
                             <div class="col-6 mb-3">
                                 <div class="p-3 rounded" style="background: #005A9E;">
-                                    <h4 class="text-white mb-1">4 Premium</h4>
+                                    <h4 class="text-white mb-1">70+</h4>
                                     <small class="text-white"><%= t.studentLifePage.additionalTerms.universities %></small>
                                 </div>
                             </div>
@@ -308,7 +310,7 @@
                 <span style="font-size:2.5rem;">🇫🇷</span>
                 <div>
                     <h4 class="mb-0 fw-bold"><%= currentLanguage === 'en' ? 'France Country Guide' : 'Fransa Ülke Rehberi' %></h4>
-                    <p class="mb-0 small" style="opacity:0.85;"><%= currentLanguage === 'en' ? 'EMLYON, EDHEC, IÉSEG, ABS Paris — programs, fees, scholarships and more' : 'EMLYON, EDHEC, IÉSEG, ABS Paris — programlar, ücretler, burslar ve daha fazlası' %></p>
+                    <p class="mb-0 small" style="opacity:0.85;"><%= currentLanguage === 'en' ? 'Universities, fees, scholarships, visa process and more' : 'Üniversiteler, ücretler, burslar, vize süreci ve daha fazlası' %></p>
                 </div>
             </div>
             <a href="/ulkede-universite/fransa" class="btn btn-light btn-lg px-4" style="border-radius:50px; font-weight:600; white-space:nowrap;">

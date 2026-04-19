@@ -184,13 +184,13 @@ module.exports = {
             },
             spain: {
                 title: "İspanya'da Öğrenci Olmak",
-                subtitle: "Madrid ve Barcelona'da IE University, ESADE, ESE ve UC3M gibi prestijli işletme okullarında İngilizce eğitim",
-                intro: "İspanya'da okumak ve İspanya'da üniversite okumak isteyenler için rehber: Madrid ve Barcelona'da işletme eğitimi, IE University, ESADE Business School, ESE Madrid kampüsü ve UC3M deneyimi, yaşam maliyetleri ve vize."
+                subtitle: "Madrid, Barcelona ve diğer şehirlerde Akdeniz iklimi, zengin kültür ve dünya çapında üniversiteler",
+                intro: "İspanya'da okumak ve İspanya'da üniversite okumak isteyenler için rehber: Madrid, Barcelona ve diğer şehirlerde eğitim, yaşam maliyetleri, vize ve İngilizce program seçenekleri."
             },
             france: {
                 title: "Fransa'da Öğrenci Olmak",
-                subtitle: "Paris, Lyon ve Lille'de EMLYON, EDHEC, IÉSEG ve American Business School gibi okullarda İngilizce işletme programları",
-                intro: "Fransa'da okumak ve Fransa'da üniversite okumak isteyenler için rehber: Paris, Lyon, Lille ve Nice'te EMLYON Business School, EDHEC, IÉSEG ve American Business School Paris programları, yaşam maliyetleri ve vize."
+                subtitle: "Paris, Lyon ve diğer şehirlerde köklü üniversiteler, zengin kültür ve Avrupa'nın eğitim merkezi",
+                intro: "Fransa'da okumak ve Fransa'da üniversite okumak isteyenler için rehber: Paris, Lyon ve diğer şehirlerde eğitim, yaşam maliyetleri, vize ve İngilizce program seçenekleri."
             }
         },
         seo: {
@@ -236,13 +236,13 @@ module.exports = {
             },
             spain: {
                 title: "İspanya'da Okumak | İspanya'da Üniversite ve Öğrenci Hayatı 2025 | Venture Global",
-                description: "İspanya'da okumak isteyenler için rehber. IE University, ESADE Business School, ESE Madrid ve UC3M'de İngilizce işletme eğitimi, yaşam maliyetleri ve vize. VG Danışmanlık ile İspanya'da eğitim.",
-                keywords: "ispanya da okumak, ispanya universite, ie university, esade business school, ese madrid, uc3m, ispanya ogrenci hayati, venture global ispanya, vg danismanlik ispanya, yurtdisi egitim"
+                description: "İspanya'da okumak ve İspanya'da üniversite okumak isteyenler için rehber. Madrid, Barcelona'da eğitim, yaşam maliyetleri, vize ve İngilizce programlar. Venture Global ile bu ülkede eğitim danışmanlığı.",
+                keywords: "ispanya da okumak, ispanya da universite, ispanya ogrenci hayati, madrid universite, barcelona universite, ispanya yasam maliyeti, ispanya vize, venture global ispanya, bu ulkede okumak, yurtdisi egitim"
             },
             france: {
                 title: "Fransa'da Okumak | Fransa'da Üniversite ve Öğrenci Hayatı 2025 | Venture Global",
-                description: "Fransa'da okumak isteyenler için rehber. EMLYON, EDHEC, IÉSEG ve American Business School Paris'te İngilizce işletme programları, yaşam maliyetleri ve vize. VG Danışmanlık ile Fransa'da eğitim.",
-                keywords: "fransa da okumak, fransa universite, emlyon, edhec, ieseg, american business school paris, fransa ogrenci hayati, venture global fransa, vg danismanlik fransa, yurtdisi egitim"
+                description: "Fransa'da okumak ve Fransa'da üniversite okumak isteyenler için rehber. Paris, Lyon'da eğitim, yaşam maliyetleri, vize ve İngilizce programlar. Venture Global ile bu ülkede eğitim danışmanlığı.",
+                keywords: "fransa da okumak, fransa da universite, fransa ogrenci hayati, paris universite, lyon universite, fransa yasam maliyeti, fransa vize, venture global fransa, bu ulkede okumak, yurtdisi egitim"
             }
         },
         sections: {
@@ -444,22 +444,22 @@ module.exports = {
                 benefit4: "İngilizce programlara doğrudan başvuru hakkı"
             },
             spain: {
-                info: "Türk lise diploması İspanya'daki birçok özel üniversite (IE University, ESADE, ESE Madrid) tarafından doğrudan kabul edilmektedir. Devlet üniversitelerinde (Universidad Carlos III de Madrid gibi) ek olarak UNEDasiss / PCE sınavı veya YKS denkliği aranabilir.",
-                medicalWarning: "Tıp ve sağlık bilimleri programları için EvAU/PCE giriş sınavı zorunludur. Bu çalışmamızda öncelik İngilizce işletme/iletişim programlarıdır.",
-                advantage: "WCEP ile Kanada'da on-site eğitim alıp Kanada lise diploması alan öğrenciler, IE University, ESADE ve UC3M gibi üniversitelerin İngilizce programlarında öncelikli olarak değerlendirilmektedir!",
-                benefit1: "IE University, ESADE, ESE Madrid'e doğrudan başvuru",
-                benefit2: "Universidad Carlos III de Madrid (UC3M) için güçlü profil",
-                benefit3: "İngilizce işletme (BBA) programlarına doğrudan kabul",
-                benefit4: "Burs başvurularında avantajlı değerlendirme"
+                info: "Türk lise diploması İspanya'daki birçok özel üniversite tarafından doğrudan kabul edilmektedir. Bazı devlet üniversiteleri ek olarak UNEDasiss / PCE sınavı veya YKS denkliği talep edebilir.",
+                medicalWarning: "Tıp ve sağlık bilimleri programları için EvAU/PCE giriş sınavı zorunludur. İngilizce eğitim seçeneği daha çok işletme, iletişim, mühendislik ve uluslararası ilişkiler programlarında bulunmaktadır.",
+                advantage: "WCEP ile Kanada'da on-site eğitim alıp Kanada lise diploması alan öğrenciler, İspanyol üniversitelerinin İngilizce programlarında öncelikli olarak değerlendirilmektedir!",
+                benefit1: "İngilizce lisans (BBA, Communication, Engineering) programlarına doğrudan kabul",
+                benefit2: "Devlet ve özel üniversitelerinde güçlü başvuru profili",
+                benefit3: "Burs başvurularında avantajlı değerlendirme",
+                benefit4: "İspanyolca öğrenme bonusu — 500 milyon kişinin konuştuğu dünya dili"
             },
             france: {
-                info: "Türk lise diploması Fransa'daki Grande École tipi işletme okulları (EMLYON, EDHEC, IÉSEG, American Business School Paris) tarafından İngilizce BBA programlarında doğrudan kabul edilmektedir. Devlet üniversiteleri (Sorbonne tipi) için Fransızca yeterlilik (DELF B2) ve denklik gerekebilir.",
-                medicalWarning: "Tıp programları için PASS/L.AS sistemi ve Fransızca C1 zorunludur. Bu çalışmamızda öncelik İngilizce işletme programlarıdır.",
-                advantage: "WCEP ile Kanada'da on-site eğitim alıp Kanada lise diploması alan öğrenciler, EMLYON, EDHEC ve IÉSEG'in İngilizce BBA programlarında öncelikli olarak değerlendirilmektedir!",
-                benefit1: "EMLYON, EDHEC, IÉSEG, ABS Paris'e doğrudan başvuru",
-                benefit2: "İngilizce Bachelor in Business Administration (BBA) kabul",
-                benefit3: "Fransızca yeterlilik şartı aranmaz (English-taught programlar)",
-                benefit4: "Excellence Scholarship başvurularında avantajlı değerlendirme"
+                info: "Türk lise diploması Fransa'daki birçok özel üniversite ve işletme okulu tarafından İngilizce programlar için doğrudan kabul edilmektedir. Devlet üniversiteleri için Fransızca yeterlilik (DELF B2) ve denklik gerekebilir.",
+                medicalWarning: "Tıp programları için PASS/L.AS sistemi ve Fransızca C1 zorunludur. İngilizce program seçeneği daha çok işletme, mühendislik ve uluslararası ilişkiler alanlarında bulunmaktadır.",
+                advantage: "WCEP ile Kanada'da on-site eğitim alıp Kanada lise diploması alan öğrenciler, Fransız üniversitelerinin İngilizce programlarında öncelikli olarak değerlendirilmektedir!",
+                benefit1: "İngilizce lisans (BBA, Engineering, IR) programlarına doğrudan kabul",
+                benefit2: "Fransızca yeterlilik şartı aranmaz (English-taught programlar)",
+                benefit3: "Burs başvurularında avantajlı değerlendirme",
+                benefit4: "Apprenticeship (alternance) ile maaşlı staj imkânı"
             }
         },
         countries: {
@@ -652,18 +652,18 @@ module.exports = {
                 consultingText: "Hollanda'da eğitim hakkında detaylı bilgi almak için bizimle iletişime geçin."
             },
             spain: {
-                description1: "İspanya, IE University, ESADE Business School, ESE Madrid kampüsü ve Universidad Carlos III de Madrid (UC3M) gibi prestijli işletme okullarıyla Avrupa'nın en güçlü business eğitim destinasyonlarından biridir.",
-                description2: "Madrid ve Barcelona, dünya çapında tanınan İngilizce BBA, MBA ve master programları sunar. IE University ve ESADE QS dünya sıralamalarında üst sıralarda yer alırken, UC3M devlet üniversitesi olarak ekonomik bir alternatif sunar.",
-                livingDescription: "İspanya'da Madrid ve Barcelona, vibrant öğrenci hayatı, ılıman iklim ve zengin kültürel deneyim sunar. Konaklama maliyetleri Londra ve Paris'e göre %30-40 daha uygundur.",
-                costsDescription: "İspanya'da özel işletme okulları (IE, ESADE, ESE) yıllık 20.000-35.000 EUR aralığında ücret talep ederken, Universidad Carlos III de Madrid gibi devlet üniversitelerinde ücretler 1.000-3.500 EUR/yıl seviyesindedir.",
+                description1: "İspanya, ılıman Akdeniz iklimi, zengin kültürel mirası ve dünya çapında tanınan üniversiteleriyle Avrupa'nın en çok tercih edilen eğitim destinasyonlarından biridir.",
+                description2: "İspanya'da hem köklü devlet üniversiteleri hem de yenilikçi özel üniversiteler bulunmaktadır. İşletme, iletişim, mühendislik, mimarlık ve uluslararası ilişkiler alanlarında geniş program seçenekleri vardır; İngilizce eğitim veren program sayısı her geçen yıl artmaktadır.",
+                livingDescription: "İspanya'da Madrid, Barcelona, Valencia, Sevilla ve Salamanca gibi şehirlerde öğrenci konaklama seçenekleri çeşitlidir. Akdeniz iklimi, vibrant şehir hayatı ve diğer Batı Avrupa başkentlerine göre %30-40 daha uygun maliyetler öne çıkan avantajlardır.",
+                costsDescription: "İspanya'da devlet üniversitelerinde yıllık ücretler AB dışı öğrenciler için 1.000-3.500 EUR aralığındadır. Özel üniversitelerde ve uluslararası işletme okullarında ücretler 8.000-30.000 EUR/yıl arasında değişir.",
                 scholarships: {
                     spain: {
-                        title: "IE Foundation & ESADE Excellence",
-                        description: "Akademik başarıya göre %20-50 burs"
+                        title: "İspanya Devlet Bursları",
+                        description: "MAEC-AECID ve hükümet destekli"
                     },
                     university: {
                         title: "Üniversite Bursları",
-                        description: "Başarılı uluslararası öğrenciler için"
+                        description: "Akademik başarıya göre"
                     },
                     erasmus: {
                         title: "Erasmus+ Bursları",
@@ -672,23 +672,23 @@ module.exports = {
                 },
                 alerts: {
                     visaRequirement: "İspanya'da öğrenci vizesi (Estudiante) için aylık ~700€ finansal yeterlilik kanıtı gerekmektedir.",
-                    tip: "IE University, ESADE ve American-style işletme okullarında İngilizce eğitim sayesinde İspanyolca bilgisi şart değildir; ancak günlük yaşam için B1 seviye İspanyolca öğrenmek tavsiye edilir."
+                    tip: "İspanya'da İngilizce eğitim veren program sayısı her yıl artmaktadır; İspanyolca bilmek zorunlu değildir ancak günlük yaşam için B1 seviye İspanyolca öğrenmek tavsiye edilir."
                 },
-                consultingText: "İspanya'da IE, ESADE, ESE Madrid veya UC3M'de okumak için bizimle iletişime geçin."
+                consultingText: "İspanya'da eğitim hakkında detaylı bilgi almak için bizimle iletişime geçin."
             },
             france: {
-                description1: "Fransa, EMLYON Business School, EDHEC, IÉSEG School of Management ve American Business School Paris gibi İngilizce BBA programları sunan Grande École tipi okullarla parlak bir kariyere açılan kapıdır.",
-                description2: "Paris, Lyon, Lille ve Nice'te bulunan bu prestijli işletme okulları, %100 İngilizce eğitim, güçlü staj ağı ve Avrupa iş piyasasında tanınmış mezun ağına erişim imkânı sunar.",
-                livingDescription: "Fransa'da Paris yaşam maliyetleri yüksek (1.200-1.800€/ay), ancak Lyon ve Lille gibi şehirler %30 daha uygundur. CROUS öğrenci yurtları ve uygun fiyatlı konaklama imkânları mevcuttur.",
-                costsDescription: "Fransa'da özel işletme okulları yıllık 12.000-25.000 EUR aralığında ücret uygular. American Business School Paris ve IÉSEG nispeten daha uygun fiyatlıdır; EMLYON ve EDHEC premium konumdadır.",
+                description1: "Fransa, sanat, mutfak ve kültürün başkenti olmasının yanı sıra köklü üniversite geleneği, Grande École sistemi ve dünya çapında prestijli kurumlarıyla Avrupa'nın en önemli eğitim merkezlerinden biridir.",
+                description2: "Fransa'da devlet üniversiteleri, Grande École tipi okullar ve özel üniversitelerde geniş program seçenekleri bulunmaktadır. İşletme, mühendislik, sanat, moda ve uluslararası ilişkiler alanlarında dünya çapında tanınan programlar sunulmakta; İngilizce eğitim veren program sayısı her geçen yıl artmaktadır.",
+                livingDescription: "Fransa'da Paris yaşam maliyetleri yüksek (1.200-1.800€/ay), ancak Lyon, Lille, Toulouse, Marsilya ve Nice gibi şehirler %30-40 daha uygundur. CROUS öğrenci yurtları, CAF konaklama yardımı ve geniş öğrenci indirimleri mevcuttur.",
+                costsDescription: "Fransa'da devlet üniversitelerinde AB dışı öğrenciler için yıllık ücretler 2.770-3.770 EUR aralığındadır. Grande École ve özel okullarda ücretler 8.000-25.000 EUR/yıl arasında değişir.",
                 scholarships: {
                     france: {
                         title: "Eiffel Excellence Scholarship",
                         description: "Fransa Hükümeti destekli"
                     },
                     university: {
-                        title: "EDHEC Excellence & EMLYON Merit",
-                        description: "Akademik başarıya göre %15-50"
+                        title: "Üniversite Bursları",
+                        description: "Akademik başarıya göre"
                     },
                     erasmus: {
                         title: "Erasmus+ Bursları",
@@ -697,9 +697,9 @@ module.exports = {
                 },
                 alerts: {
                     visaRequirement: "Fransa'da öğrenci vizesi (Visa Long Séjour Études) için aylık ~615€ finansal yeterlilik gerekmektedir.",
-                    tip: "EMLYON, EDHEC, IÉSEG ve American Business School Paris programları %100 İngilizce olduğu için Fransızca bilgisi şart değildir; günlük yaşam için A2-B1 seviye Fransızca öğrenmek tavsiye edilir."
+                    tip: "Fransa'da İngilizce eğitim veren program sayısı her yıl artmaktadır; günlük yaşam ve Fransız iş piyasasına entegrasyon için A2-B1 seviye Fransızca öğrenmek tavsiye edilir."
                 },
-                consultingText: "Fransa'da EMLYON, EDHEC, IÉSEG veya American Business School Paris'te okumak için bizimle iletişime geçin."
+                consultingText: "Fransa'da eğitim hakkında detaylı bilgi almak için bizimle iletişime geçin."
             }
         }
     },
@@ -2872,43 +2872,43 @@ module.exports = {
             }
         },
         spain: {
-            heroStats: { uniCount: '4 Premium', intStudents: '230.000+' },
+            heroStats: { uniCount: '50+', intStudents: '230.000+' },
             educationSystem: {
-                title: "İspanya Eğitim Sistemi (Premium İşletme Okulları)",
-                content: "<p>İspanya, Avrupa'nın en güçlü işletme eğitimi destinasyonlarından biridir. <strong>IE University (Madrid + Segovia), ESADE Business School (Barcelona), ESE Business School (Madrid kampüsü)</strong> ve devlet üniversitesi <strong>Universidad Carlos III de Madrid (UC3M)</strong> İngilizce BBA, Communication, Marketing ve Finance programları sunar.</p><p>IE ve ESADE Financial Times ve QS dünya sıralamalarında MBA ve Master in Management programlarında ilk 10'da yer alır. UC3M ise nispeten ekonomik bir devlet üniversitesi alternatifidir.</p>"
+                title: "İspanya Eğitim Sistemi",
+                content: "<p>İspanya, dünya çapında tanınan üniversite geleneğine sahip bir Akdeniz ülkesidir. <strong>Universidad de Salamanca (1218)</strong> Avrupa'nın en eski üniversitelerinden biridir. Devlet üniversitelerinde AB dışı öğrenciler için yıllık ücretler 1.000-3.500 EUR arasında değişir.</p><p>İşletme, iletişim, mühendislik, mimarlık ve uluslararası ilişkiler alanlarında dünya çapında tanınan programlar sunulmaktadır. İngilizce eğitim veren program sayısı her geçen yıl artmaktadır; özellikle özel üniversiteler ve uluslararası master programları %100 İngilizce eğitim sunar.</p>"
             },
             whyStudy: {
                 title: "Neden İspanya'da Okumalısınız?",
                 reasons: [
-                    "IE University & ESADE — QS sıralamasında dünya top 50 işletme okulları",
-                    "%100 İngilizce BBA, MIM ve MBA programları",
-                    "Madrid ve Barcelona — yüksek yaşam kalitesi, ılıman iklim",
-                    "Avrupa iş piyasasına güçlü mezun ağı erişimi",
+                    "Avrupa'nın en uygun yaşam maliyetlerinden biri (Madrid, Barcelona, Valencia, Sevilla)",
+                    "Akdeniz iklimi — yıl boyunca güneş ve ılıman hava",
+                    "Artan İngilizce program seçenekleri (özellikle yüksek lisans)",
+                    "Zengin kültürel deneyim — sanat, mimari, mutfak ve futbol",
                     "İspanyolca öğrenme bonusu — 500 milyon kişinin konuştuğu dünya dili",
-                    "Yaşam maliyetleri Londra ve Paris'e göre %30-40 daha uygun",
-                    "IE Foundation, ESADE Excellence ve devlet bursları"
+                    "Avrupa iş piyasası ve Latin Amerika bağlantısı",
+                    "Schengen bölgesi — Avrupa'yı keşfetme fırsatı"
                 ]
             },
             costs: {
-                title: "Yaşam Maliyetleri (Aylık Tahmini, Madrid/Barcelona)",
+                title: "Yaşam Maliyetleri (Aylık Tahmini)",
                 tableHeaders: ["Kalem", "Tutar (EUR)"],
                 rows: [
-                    ["Kira (paylaşımlı daire, merkez)", "500–800"],
+                    ["Kira (paylaşımlı daire)", "350–700"],
                     ["Yemek ve market", "200–300"],
                     ["Ulaşım (Abono Joven)", "20"],
-                    ["Sağlık sigortası (özel, vize için)", "50–80"],
+                    ["Sağlık sigortası (özel)", "50–80"],
                     ["Kişisel harcamalar", "150–250"],
-                    ["Toplam tahmini", "920–1.450"]
+                    ["Toplam tahmini", "770–1.350"]
                 ]
             },
             application: {
-                title: "Başvuru Süreci (IE / ESADE / ESE / UC3M)",
+                title: "Başvuru Süreci",
                 steps: [
-                    "Hedef üniversiteyi seçin (IE, ESADE, ESE, UC3M) ve program araştırması yapın",
+                    "Hedef üniversite ve program araştırması yapın",
                     "Belgeleri hazırlayın: transkript, diploma, IELTS/TOEFL, motivasyon mektubu, CV",
-                    "IE/ESADE/ESE: Üniversitenin kendi online portalından başvurun (rolling admission)",
-                    "UC3M (devlet): UNEDasiss üzerinden PCE/EvAU veya YKS denkliği başvurusu",
-                    "Mülakat (özellikle IE ve ESADE) — Skype/Zoom üzerinden",
+                    "Özel üniversiteler: Üniversitenin kendi online portalından başvurun (rolling admission)",
+                    "Devlet üniversiteleri: UNEDasiss üzerinden PCE/EvAU veya YKS denkliği başvurusu",
+                    "Mülakat (gerekirse) — online veya yüz yüze",
                     "Kabul mektubu ve burs sonucunu bekleyin, ücreti ödeyin",
                     "İspanya Konsolosluğu'na öğrenci vizesi (Estudiante) başvurusu yapın"
                 ]
@@ -2920,35 +2920,35 @@ module.exports = {
             faq: {
                 title: "Sık Sorulan Sorular",
                 items: [
-                    { q: "İspanya'da hangi üniversitelere yönlendiriyorsunuz?", a: "İlk etapta IE University (Madrid + Segovia), ESADE Business School (Barcelona), ESE Business School Madrid kampüsü ve Universidad Carlos III de Madrid (UC3M) ile çalışıyoruz. Bu okullar İngilizce işletme eğitimi sunan, Türk öğrencilere açık ve partnership kanalı kuvvetli kurumlardır." },
-                    { q: "İspanyolca bilmek zorunlu mu?", a: "Hayır. IE, ESADE, ESE ve UC3M'in bilingual track programları %100 İngilizce eğitim verir. Ancak günlük yaşam ve staj fırsatları için B1 seviye İspanyolca öğrenmek tavsiye edilir." },
-                    { q: "IE University ve ESADE arasındaki fark nedir?", a: "IE University Madrid ve Segovia'da kampüse sahip, daha küçük gruplar (15-30 kişi) ve startup/girişimcilik odaklıdır. ESADE Business School Barcelona'da, daha büyük öğrenci topluluğuyla finans ve consulting odaklıdır. İkisi de FT/QS sıralamalarında ilk 50'dedir." },
-                    { q: "Universidad Carlos III de Madrid (UC3M) bir devlet üniversitesi mi?", a: "Evet. UC3M devlet üniversitesi olduğu için yıllık ücretler 1.000-3.500 EUR arasındadır (özel okullarda 20.000-35.000 EUR). UC3M ekonomik bir alternatif olup özellikle Economics ve Business Administration İngilizce track'ları çok güçlüdür." },
-                    { q: "İspanya'da işletme okulları yıllık ne kadar?", a: "IE University BBA: ~24.000 EUR/yıl. ESADE BBA: ~28.000 EUR/yıl. ESE Madrid: ~13.000-16.000 EUR/yıl. UC3M: ~3.500 EUR/yıl (AB dışı). Burs alarak bu rakamların %20-50'si karşılanabilir." },
-                    { q: "İspanya'da hangi burs imkanları var?", a: "IE Foundation Scholarship (akademik başarı, %20-50 burs), ESADE Excellence Scholarship, ESE Achievement Scholarship, Erasmus+ ve İspanyol devlet bursları (MAEC-AECID). VG Danışmanlık burs başvurularında profesyonel destek sağlar." },
-                    { q: "Madrid'de aylık yaşam masrafları ne kadar?", a: "Madrid'de öğrenci aylık 900-1.400 EUR ile rahat yaşayabilir. Konaklama (500-800 EUR) en büyük gider; Abono Joven (genç ulaşım kartı) ile aylık sadece 20 EUR'a Madrid'in tamamına ulaşırsınız. Yemek maliyetleri Londra ve Paris'e göre çok daha uygundur." },
-                    { q: "İspanya'da öğrenciyken çalışabilir miyim?", a: "Evet, öğrenci vizesiyle haftada 30 saate kadar yarı zamanlı veya 3 ay tam zamanlı çalışabilirsiniz. İşveren çalışma izni başvurusu yapar. IE ve ESADE öğrencileri için staj fırsatları oldukça geniştir." },
-                    { q: "Mezuniyet sonrası İspanya'da kalma izni var mı?", a: "Evet. Mezuniyet sonrası 12-24 aylık 'iş arama vizesi' (Visado de búsqueda de empleo) alabilirsiniz. Bu sürede iş bulduğunuzda çalışma iznine geçiş yaparsınız. AB içinde de istihdam fırsatları açıktır." },
-                    { q: "VG Danışmanlık İspanya başvurularında nasıl yardımcı oluyor?", a: "VG Danışmanlık, IE / ESADE / ESE / UC3M başvuru sürecini A'dan Z'ye yönetir: program seçimi, belge hazırlığı, motivasyon mektubu/CV editing, mülakat hazırlığı, burs başvuruları, vize süreci ve Madrid/Barcelona'da konaklama desteği." }
+                    { q: "İspanya'da eğitim pahalı mı?", a: "Devlet üniversitelerinde yıllık 1.000-3.500 EUR arasında ücret uygulanır. Özel üniversiteler ve uluslararası işletme okullarında ücretler 8.000-30.000 EUR aralığındadır. Burs imkanlarıyla bu rakamların önemli bir kısmı karşılanabilir." },
+                    { q: "İspanyolca bilmek zorunlu mu?", a: "Hayır. Birçok program (özellikle yüksek lisans ve uluslararası işletme okullarında) %100 İngilizce eğitim verir. Günlük yaşam ve staj fırsatları için B1 seviye İspanyolca öğrenmek tavsiye edilir." },
+                    { q: "Madrid ve Barcelona dışında hangi şehirler tercih edilir?", a: "Valencia, Sevilla, Granada, Salamanca, Bilbao ve Málaga da uluslararası öğrencilerin tercih ettiği şehirlerdir. Yaşam maliyetleri Madrid ve Barcelona'ya göre %20-30 daha uygundur." },
+                    { q: "İspanya'da hangi burs imkanları var?", a: "MAEC-AECID (İspanyol hükümeti), Erasmus+, üniversite merit bursları ve özel kurumların verdiği burslar mevcuttur. Akademik başarıya göre %20-50 oranında burs alınabilir." },
+                    { q: "İspanya'da aylık yaşam masrafları ne kadar?", a: "Madrid ve Barcelona'da öğrenci aylık 900-1.450 EUR ile rahat yaşayabilir. Valencia, Sevilla, Granada gibi şehirlerde bu rakam 700-1.100 EUR'a düşer. Konaklama (350-800 EUR) en büyük gider kalemidir." },
+                    { q: "İspanya'da öğrenciyken çalışabilir miyim?", a: "Evet, öğrenci vizesiyle haftada 30 saate kadar yarı zamanlı veya 3 ay tam zamanlı çalışabilirsiniz. İşveren çalışma izni başvurusu yapar." },
+                    { q: "Mezuniyet sonrası İspanya'da kalma izni var mı?", a: "Evet. Mezuniyet sonrası 12-24 aylık 'iş arama vizesi' (Visado de búsqueda de empleo) alabilirsiniz. Bu sürede iş bulduğunuzda çalışma iznine geçiş yaparsınız." },
+                    { q: "İspanya'da öğrenci vizesi süreci nasıldır?", a: "Türk vatandaşları için Ankara veya İstanbul'daki İspanyol Konsolosluğu'na başvurulur. Kabul mektubu, mali yeterlilik (~700 EUR/ay), sağlık sigortası ve adli sicil belgesi gereklidir. Süreç 4-8 hafta sürer. Ülkeye girdikten sonra 30 gün içinde TIE başvurusu yapılmalıdır." },
+                    { q: "İspanya'da hangi bölümler popülerdir?", a: "İşletme (BBA, MBA), İletişim, Pazarlama, Mühendislik, Mimarlık, Tasarım, Turizm Yönetimi ve Uluslararası İlişkiler en popüler alanlardır. İngilizce program sayısı özellikle Madrid ve Barcelona'da hızla artmaktadır." },
+                    { q: "VG Danışmanlık İspanya başvurularında nasıl yardımcı oluyor?", a: "VG Danışmanlık, İspanya başvuru sürecini A'dan Z'ye yönetir: program seçimi, belge hazırlığı, motivasyon mektubu/CV editing, mülakat hazırlığı, burs başvuruları, vize süreci ve İspanya'da konaklama desteği." }
                 ]
             }
         },
         france: {
-            heroStats: { uniCount: '4 Business School', intStudents: '370.000+' },
+            heroStats: { uniCount: '70+', intStudents: '370.000+' },
             educationSystem: {
-                title: "Fransa Eğitim Sistemi (Grande École tipi İşletme Okulları)",
-                content: "<p>Fransa, Grande École geleneğiyle dünya çapında tanınan işletme okullarına ev sahipliği yapar. <strong>EMLYON Business School (Lyon), EDHEC Business School (Lille + Nice), IÉSEG School of Management (Paris + Lille)</strong> ve <strong>American Business School Paris</strong> İngilizce BBA, Master in Management ve MBA programları sunar.</p><p>Bu okullar AACSB, EQUIS ve AMBA üçlü akreditasyona sahiptir (Triple Crown) — dünyada sadece %1'lik elit grubun parçasıdır. Mezunları LVMH, L'Oréal, BNP Paribas, EY ve Big4 firmalarda kariyer yapar.</p>"
+                title: "Fransa Eğitim Sistemi",
+                content: "<p>Fransa, köklü üniversite geleneğine sahip bir Avrupa eğitim merkezidir. <strong>Sorbonne (1257)</strong> ve diğer prestijli kurumlar dünya çapında tanınmaktadır. Devlet üniversitelerinde AB dışı öğrenciler için yıllık ücretler 2.770-3.770 EUR aralığındadır.</p><p>Fransa ayrıca <strong>Grande École</strong> sistemiyle dünyada eşsiz bir konuma sahiptir; bu okullar mühendislik, işletme ve siyasal bilimlerde elit eğitim sunar. İngilizce program sayısı, özellikle yüksek lisans düzeyinde her geçen yıl artmaktadır.</p>"
             },
             whyStudy: {
                 title: "Neden Fransa'da Okumalısınız?",
                 reasons: [
-                    "EMLYON, EDHEC, IÉSEG — FT Avrupa Top 20 işletme okulları",
-                    "Triple Crown akreditasyon (AACSB + EQUIS + AMBA)",
-                    "%100 İngilizce BBA ve Master programları",
-                    "Paris, Lyon, Lille ve Nice gibi farklı şehir seçenekleri",
-                    "LVMH, L'Oréal, BNP Paribas dahil güçlü kurumsal ağ",
+                    "Avrupa'nın eğitim ve kültür merkezi — sanat, mutfak, moda",
+                    "Devlet üniversitelerinde uygun ücretler (~3.000 EUR/yıl)",
+                    "Grande École geleneği — dünya çapında tanınan elit okullar",
+                    "Artan İngilizce program seçenekleri (özellikle master)",
                     "Apprenticeship (alternance) ile maaşlı staj imkânı",
-                    "Mezuniyet sonrası APS (24 ay iş arama izni)"
+                    "Mezuniyet sonrası 12-24 aylık APS iş arama izni",
+                    "Schengen bölgesi — Avrupa'yı keşfetme fırsatı"
                 ]
             },
             costs: {
@@ -2956,25 +2956,25 @@ module.exports = {
                 tableHeaders: ["Kalem", "Tutar (EUR)"],
                 rows: [
                     ["Kira Paris (paylaşımlı)", "700–1.100"],
-                    ["Kira Lyon/Lille (paylaşımlı)", "400–650"],
+                    ["Kira diğer şehirler (Lyon, Lille)", "400–650"],
                     ["Yemek ve market", "250–350"],
-                    ["Ulaşım (Navigo/TCL)", "30–85"],
+                    ["Ulaşım (Navigo / abonman)", "30–85"],
                     ["Sağlık sigortası (CVEC + mutuelle)", "20–40"],
                     ["Kişisel harcamalar", "150–250"],
-                    ["Toplam (Lyon/Lille)", "850–1.400"],
+                    ["Toplam (diğer şehirler)", "850–1.400"],
                     ["Toplam (Paris)", "1.200–1.800"]
                 ]
             },
             application: {
-                title: "Başvuru Süreci (EMLYON / EDHEC / IÉSEG / ABS Paris)",
+                title: "Başvuru Süreci",
                 steps: [
-                    "Hedef okulu seçin (EMLYON, EDHEC, IÉSEG, ABS Paris) ve program araştırması yapın",
-                    "Belgeleri hazırlayın: transkript, diploma, IELTS/TOEFL (min. 6.5/85), CV, motivasyon mektubu",
-                    "Online başvuru — okulların kendi portalından (Studialis, EDHEC apply, vs.)",
-                    "Online mülakat (özellikle EDHEC ve IÉSEG için zorunlu)",
-                    "Erken başvuru (Round 1 — Aralık) için %15-30 burs şansı yüksek",
-                    "Kabul mektubu ve depozitoyu ödeyin",
+                    "Hedef üniversite ve program araştırması yapın",
+                    "Belgeleri hazırlayın: transkript, diploma, IELTS/TOEFL veya DELF, motivasyon mektubu, CV",
                     "Campus France (Etudes en France) süreci başlatın",
+                    "Online başvuru — okulun kendi portalından (özel okullar) veya Parcoursup (devlet)",
+                    "Mülakat (gerekirse) — online veya yüz yüze",
+                    "Erken başvuru burs şansını artırır",
+                    "Kabul mektubu ve depozito sonrası vize süreci başlatın",
                     "Fransa Konsolosluğu'na uzun süreli öğrenci vizesi (VLS-TS) başvurusu yapın"
                 ]
             },
@@ -2985,16 +2985,16 @@ module.exports = {
             faq: {
                 title: "Sık Sorulan Sorular",
                 items: [
-                    { q: "Fransa'da hangi üniversitelere yönlendiriyorsunuz?", a: "İlk etapta EMLYON Business School (Lyon), EDHEC Business School (Lille + Nice), IÉSEG School of Management (Paris + Lille) ve American Business School Paris ile çalışıyoruz. Bu okullar İngilizce BBA programları sunan, Türk öğrencilere açık ve partnership kanalı güçlü Grande École tipi kurumlardır." },
-                    { q: "Fransızca bilmek zorunlu mu?", a: "Hayır. EMLYON, EDHEC, IÉSEG ve ABS Paris'in BBA programları %100 İngilizce eğitim verir. Ancak günlük yaşam ve Fransız iş piyasasına entegrasyon için A2-B1 seviye Fransızca öğrenmek tavsiye edilir." },
-                    { q: "EMLYON ile EDHEC arasındaki fark nedir?", a: "EMLYON Lyon merkezli, daha entrepreneurship ve global business odaklıdır; Paris kampüsü de vardır. EDHEC Lille (kuzey Fransa) ve Nice (güney) kampüslerinde finans ve risk yönetimi alanlarında dünya çapında tanınmıştır. İkisi de FT Avrupa top 20'dedir." },
-                    { q: "IÉSEG'in özelliği nedir?", a: "IÉSEG School of Management, Paris ve Lille kampüsleriyle Türk öğrencilere kapısı çok açık olan ve partnership kanalı en aktif olan okuldur. Bachelor in International Business programı %100 İngilizce ve 4 yıllıktır. Erasmus ve double degree imkânları çok zengindir." },
-                    { q: "American Business School Paris'in farkı nedir?", a: "ABS Paris, Paris'in merkezinde küçük gruplarla (boutique tarzda) %100 İngilizce BBA ve MBA programları sunan butik bir okuldur. American-style müfredat (US college modeli), küçük sınıflar ve kişisel mentorluk öne çıkan özellikleridir." },
-                    { q: "Bu okullarda eğitim ücretleri ne kadar?", a: "EMLYON Global BBA: ~16.000 EUR/yıl. EDHEC International BBA: ~17.000 EUR/yıl. IÉSEG Bachelor in IB: ~13.000 EUR/yıl. American Business School Paris: ~12.000-14.000 EUR/yıl. Burs (%15-50) ile bu rakamlar düşürülebilir." },
-                    { q: "Fransa'da burs imkanları nelerdir?", a: "Eiffel Excellence Scholarship (Fransız hükümeti, master ve doktora için), Charpak Scholarship, EDHEC Excellence Scholarship, EMLYON Merit Scholarship, IÉSEG Achievement Scholarship ve Erasmus+ programı mevcuttur. Erken başvuru burs şansını artırır." },
-                    { q: "Paris'te aylık yaşam masrafları ne kadar?", a: "Paris'te öğrenci aylık 1.200-1.800 EUR harcayabilir. Konaklama en büyük gider (700-1.100 EUR). CROUS yurtları için başvuruyu erken yapmak önemli. Lyon ve Lille'de yaşam maliyetleri %30-40 daha uygundur (850-1.400 EUR)." },
-                    { q: "Fransa'da öğrenciyken çalışabilir miyim?", a: "Evet, öğrenci vizesiyle yılda 964 saate kadar (haftada ~20 saat) çalışabilirsiniz. Apprenticeship (alternance) sözleşmesi ile maaşlı stajlar ve okul-iş kombinasyonu mümkündür. Bu Fransa'nın en büyük avantajlarından biridir." },
-                    { q: "Mezuniyet sonrası Fransa'da kalma izni var mı?", a: "Evet, mezuniyet sonrası APS (Autorisation Provisoire de Séjour) ile 24 aylık iş arama / başlangıç işletmesi izni alabilirsiniz. Bu sürede CDI (sürekli sözleşme) iş bulduğunuzda Talent Passport'a geçiş yapabilirsiniz. Fransa'da AB iş piyasasına geniş erişim mevcuttur." }
+                    { q: "Fransa'da eğitim pahalı mı?", a: "Devlet üniversitelerinde AB dışı öğrenciler için yıllık ücretler 2.770-3.770 EUR aralığındadır. Grande École ve özel okullarda ücretler 8.000-25.000 EUR/yıl arasında değişir. Burs imkanlarıyla bu rakamların önemli bir kısmı karşılanabilir." },
+                    { q: "Fransızca bilmek zorunlu mu?", a: "Hayır. Özellikle yüksek lisans ve özel okullarda %100 İngilizce eğitim veren çok sayıda program mevcuttur. Devlet üniversiteleri lisans programlarında genellikle DELF B2 seviyesi Fransızca aranır." },
+                    { q: "Paris dışında hangi şehirler tercih edilir?", a: "Lyon, Lille, Toulouse, Marsilya, Nice ve Bordeaux uluslararası öğrencilerin tercih ettiği şehirlerdir. Yaşam maliyetleri Paris'e göre %30-40 daha uygundur." },
+                    { q: "Grande École nedir?", a: "Grande École'ler Fransa'ya özgü, devlet üniversitelerinden ayrı çalışan elit okullardır. Mühendislik, işletme ve siyasal bilimlerde dünya çapında tanınan eğitim sunarlar; mezunları büyük şirket ve devlet kurumlarında üst düzey pozisyonlarda yer alır." },
+                    { q: "Fransa'da burs imkanları nelerdir?", a: "Eiffel Excellence Scholarship (Fransız hükümeti), Charpak Scholarship, Erasmus+, üniversite merit bursları ve özel okul bursları mevcuttur. Erken başvuru burs şansını artırır." },
+                    { q: "Fransa'da aylık yaşam masrafları ne kadar?", a: "Paris'te öğrenci aylık 1.200-1.800 EUR, Lyon ve Lille'de 850-1.400 EUR harcayabilir. Konaklama en büyük gider kalemidir. CROUS yurtları ve öğrenci yardımları (CAF) ile maliyet düşürülebilir." },
+                    { q: "Fransa'da öğrenciyken çalışabilir miyim?", a: "Evet, öğrenci vizesiyle yılda 964 saate kadar (haftada ~20 saat) çalışabilirsiniz. Apprenticeship (alternance) sözleşmesi ile maaşlı stajlar ve okul-iş kombinasyonu mümkündür." },
+                    { q: "Mezuniyet sonrası Fransa'da kalma izni var mı?", a: "Evet, mezuniyet sonrası APS (Autorisation Provisoire de Séjour) ile 12-24 aylık iş arama izni alabilirsiniz. Bu sürede iş bulduğunuzda çalışma iznine veya Talent Passport'a geçiş yapabilirsiniz." },
+                    { q: "Fransa'da öğrenci vizesi süreci nasıldır?", a: "Türk vatandaşları için önce Campus France üzerinden Etudes en France başvurusu, sonra Ankara veya İstanbul'daki Fransız Konsolosluğu'na vize başvurusu yapılır. Gerekli belgeler: kabul mektubu, mali yeterlilik (~615 EUR/ay) ve sağlık sigortası. Süreç 3-8 hafta sürer." },
+                    { q: "VG Danışmanlık Fransa başvurularında nasıl yardımcı oluyor?", a: "VG Danışmanlık, Fransa başvuru sürecini A'dan Z'ye yönetir: program seçimi, Campus France süreci, belge hazırlığı, motivasyon mektubu/CV editing, mülakat hazırlığı, burs başvuruları, vize süreci ve Fransa'da konaklama desteği." }
                 ]
             }
         }

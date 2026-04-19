@@ -184,13 +184,13 @@ module.exports = {
             },
             spain: {
                 title: "Being a Student in Spain",
-                subtitle: "English-taught business education at IE University, ESADE, ESE Madrid and UC3M in Madrid and Barcelona",
-                intro: "Guide for studying in Spain: business education in Madrid and Barcelona at IE University, ESADE Business School, ESE Madrid campus and UC3M, living costs and visa."
+                subtitle: "Mediterranean climate, rich culture and world-class universities in Madrid, Barcelona and beyond",
+                intro: "Guide for studying in Spain: education in Madrid, Barcelona and other cities, living costs, visa and English-taught program options."
             },
             france: {
                 title: "Being a Student in France",
-                subtitle: "English-taught business programs at EMLYON, EDHEC, IÉSEG and American Business School in Paris, Lyon and Lille",
-                intro: "Guide for studying in France: programs at EMLYON Business School, EDHEC, IÉSEG and American Business School Paris in Paris, Lyon, Lille and Nice, living costs and visa."
+                subtitle: "Renowned universities, rich culture and Europe's education hub in Paris, Lyon and beyond",
+                intro: "Guide for studying in France: education in Paris, Lyon and other cities, living costs, visa and English-taught program options."
             }
         },
         seo: {
@@ -236,13 +236,13 @@ module.exports = {
             },
             spain: {
                 title: "Study in Spain | University & Student Life 2025 | Venture Global",
-                description: "Guide for studying in Spain: English-taught business at IE University, ESADE, ESE Madrid and UC3M, living costs and visa. Education consultancy with VG Danışmanlık.",
-                keywords: "study in spain, spain university, ie university, esade business school, ese madrid, uc3m, student life spain, venture global spain, vg danismanlik spain, study abroad"
+                description: "Guide for studying in Spain: Madrid, Barcelona education, living costs, visa and English-taught programs. Education consultancy with Venture Global.",
+                keywords: "study in spain, spain university, madrid university, barcelona university, student life spain, venture global spain, study abroad"
             },
             france: {
                 title: "Study in France | University & Student Life 2025 | Venture Global",
-                description: "Guide for studying in France: English-taught BBA at EMLYON, EDHEC, IÉSEG and American Business School Paris, living costs and visa. Education consultancy with VG Danışmanlık.",
-                keywords: "study in france, france university, emlyon, edhec, ieseg, american business school paris, student life france, venture global france, vg danismanlik france, study abroad"
+                description: "Guide for studying in France: Paris, Lyon education, living costs, visa and English-taught programs. Education consultancy with Venture Global.",
+                keywords: "study in france, france university, paris university, lyon university, student life france, venture global france, study abroad"
             }
         },
         sections: {
@@ -444,22 +444,22 @@ module.exports = {
                 benefit4: "Direct application to English programs"
             },
             spain: {
-                info: "Turkish high school diploma is directly accepted by many private Spanish universities (IE University, ESADE, ESE Madrid). For state universities such as Universidad Carlos III de Madrid, an additional UNEDasiss / PCE exam or YKS equivalence may be required.",
-                medicalWarning: "EvAU/PCE entrance exam is mandatory for medicine and health sciences. Our focus in this rollout is English-taught business and communication programs.",
-                advantage: "Students who receive on-site education with WCEP in Canada and earn a Canadian high school diploma are evaluated with priority at IE University, ESADE and UC3M English programs!",
-                benefit1: "Direct application to IE University, ESADE, ESE Madrid",
-                benefit2: "Strong profile for Universidad Carlos III de Madrid (UC3M)",
-                benefit3: "Direct admission to English-taught BBA programs",
-                benefit4: "Advantageous evaluation in scholarship applications"
+                info: "Turkish high school diploma is directly accepted by many private Spanish universities. Some state universities may additionally require the UNEDasiss / PCE exam or YKS equivalence.",
+                medicalWarning: "EvAU/PCE entrance exam is mandatory for medicine and health sciences. English-taught options are mostly available in business, communication, engineering and international relations programs.",
+                advantage: "Students who receive on-site education with WCEP in Canada and earn a Canadian high school diploma are evaluated with priority at English-taught programs of Spanish universities!",
+                benefit1: "Direct admission to English-taught bachelor (BBA, Communication, Engineering) programs",
+                benefit2: "Strong application profile at both state and private universities",
+                benefit3: "Advantageous evaluation in scholarship applications",
+                benefit4: "Spanish learning bonus — global language spoken by 500M people"
             },
             france: {
-                info: "Turkish high school diploma is directly accepted by Grande École type French business schools (EMLYON, EDHEC, IÉSEG, American Business School Paris) for English-taught BBA programs. State universities (Sorbonne type) may require French proficiency (DELF B2) and equivalence.",
-                medicalWarning: "Medicine programs require the PASS/L.AS system and French C1. Our focus in this rollout is English-taught business programs.",
-                advantage: "Students who receive on-site education with WCEP in Canada and earn a Canadian high school diploma are evaluated with priority at EMLYON, EDHEC and IÉSEG English-taught BBA programs!",
-                benefit1: "Direct application to EMLYON, EDHEC, IÉSEG, ABS Paris",
-                benefit2: "Direct admission to English-taught Bachelor in Business Administration (BBA)",
-                benefit3: "No French proficiency requirement (English-taught programs)",
-                benefit4: "Advantageous evaluation in Excellence Scholarship applications"
+                info: "Turkish high school diploma is directly accepted by many private French universities and business schools for English-taught programs. State universities may require French proficiency (DELF B2) and equivalence.",
+                medicalWarning: "Medicine programs require the PASS/L.AS system and French C1. English-taught options are mostly available in business, engineering and international relations.",
+                advantage: "Students who receive on-site education with WCEP in Canada and earn a Canadian high school diploma are evaluated with priority at English-taught programs of French universities!",
+                benefit1: "Direct admission to English-taught bachelor (BBA, Engineering, IR) programs",
+                benefit2: "No French proficiency requirement (English-taught programs)",
+                benefit3: "Advantageous evaluation in scholarship applications",
+                benefit4: "Apprenticeship (alternance) — paid internship opportunity"
             }
         },
         countries: {
@@ -648,18 +648,18 @@ module.exports = {
                 consultingText: "Contact us for detailed information about studying in Netherlands."
             },
             spain: {
-                description1: "Spain is one of Europe's strongest business education destinations, hosting prestigious schools such as IE University, ESADE Business School, ESE Madrid campus and Universidad Carlos III de Madrid (UC3M).",
-                description2: "Madrid and Barcelona offer world-class English-taught BBA, MBA and master programs. IE University and ESADE rank in the top tiers of QS world rankings, while UC3M provides a more economical state university alternative.",
-                livingDescription: "In Spain, Madrid and Barcelona offer vibrant student life, mild climate and rich cultural experience. Accommodation costs are 30-40% lower than London and Paris.",
-                costsDescription: "In Spain, private business schools (IE, ESADE, ESE) charge €20,000-35,000 per year, while state universities like Universidad Carlos III de Madrid offer fees of €1,000-3,500 per year.",
+                description1: "Spain is one of Europe's most popular education destinations, with its mild Mediterranean climate, rich cultural heritage and world-renowned universities.",
+                description2: "Spain hosts both deep-rooted public universities and innovative private institutions. There is a wide range of programs in business, communication, engineering, architecture and international relations; the number of English-taught programs is growing every year.",
+                livingDescription: "In Spain, cities like Madrid, Barcelona, Valencia, Seville and Salamanca offer diverse student accommodation options. Mediterranean climate, vibrant city life and 30-40% lower costs compared to other Western European capitals are the main advantages.",
+                costsDescription: "In Spain, public universities charge €1,000-3,500 per year for non-EU students. Private universities and international business schools charge €8,000-30,000 per year.",
                 scholarships: {
                     spain: {
-                        title: "IE Foundation & ESADE Excellence",
-                        description: "20-50% scholarship based on academic merit"
+                        title: "Spanish Government Scholarships",
+                        description: "MAEC-AECID and government supported"
                     },
                     university: {
                         title: "University Scholarships",
-                        description: "For top international students"
+                        description: "Based on academic merit"
                     },
                     erasmus: {
                         title: "Erasmus+ Scholarships",
@@ -668,23 +668,23 @@ module.exports = {
                 },
                 alerts: {
                     visaRequirement: "Spanish student visa (Estudiante) requires proof of ~€700/month financial means.",
-                    tip: "IE University, ESADE, ESE Madrid and American-style business programs are taught in English; learning B1-level Spanish is recommended for daily life."
+                    tip: "The number of English-taught programs in Spain is growing every year; Spanish is not mandatory, but learning B1-level Spanish is recommended for daily life."
                 },
-                consultingText: "Contact us to study at IE, ESADE, ESE Madrid or UC3M in Spain."
+                consultingText: "Contact us for detailed information about studying in Spain."
             },
             france: {
-                description1: "France hosts world-class Grande École type business schools such as EMLYON Business School, EDHEC, IÉSEG School of Management and American Business School Paris, offering English-taught BBA programs.",
-                description2: "Located in Paris, Lyon, Lille and Nice, these prestigious business schools offer 100% English-taught education, strong internship networks and access to a recognized alumni network in the European job market.",
-                livingDescription: "In France, Paris is more expensive (€1,200-1,800/month), but cities like Lyon and Lille are 30% cheaper. CROUS student housing and affordable accommodation options are available.",
-                costsDescription: "In France, private business schools charge €12,000-25,000 per year. American Business School Paris and IÉSEG are relatively more affordable, while EMLYON and EDHEC are premium-positioned.",
+                description1: "Beyond being the capital of art, cuisine and culture, France is one of Europe's most important education hubs with its deep-rooted university tradition, Grande École system and world-renowned institutions.",
+                description2: "France offers a wide range of programs across public universities, Grande École type schools and private institutions. Globally recognized programs are available in business, engineering, art, fashion and international relations; the number of English-taught programs grows every year.",
+                livingDescription: "In France, Paris is more expensive (€1,200-1,800/month), but cities like Lyon, Lille, Toulouse, Marseille and Nice are 30-40% more affordable. CROUS student housing, CAF housing aid and wide student discounts are available.",
+                costsDescription: "In France, public universities charge €2,770-3,770 per year for non-EU students. Grande École and private institutions charge €8,000-25,000 per year.",
                 scholarships: {
                     france: {
                         title: "Eiffel Excellence Scholarship",
                         description: "French government supported"
                     },
                     university: {
-                        title: "EDHEC Excellence & EMLYON Merit",
-                        description: "15-50% based on academic merit"
+                        title: "University Scholarships",
+                        description: "Based on academic merit"
                     },
                     erasmus: {
                         title: "Erasmus+ Scholarships",
@@ -693,9 +693,9 @@ module.exports = {
                 },
                 alerts: {
                     visaRequirement: "French student visa (Visa Long Séjour Études) requires proof of ~€615/month financial means.",
-                    tip: "EMLYON, EDHEC, IÉSEG and American Business School Paris programs are 100% in English; learning A2-B1 level French is recommended for daily life."
+                    tip: "The number of English-taught programs in France is growing every year; learning A2-B1 French is recommended for daily life and integration into the French job market."
                 },
-                consultingText: "Contact us to study at EMLYON, EDHEC, IÉSEG or American Business School Paris in France."
+                consultingText: "Contact us for detailed information about studying in France."
             }
         }
     },
@@ -2428,43 +2428,43 @@ module.exports = {
             faq: { title: "Frequently Asked Questions", items: [{ q: "What language are programs taught in?", a: "The Netherlands leads Europe with 2,100+ English-taught programs." },{ q: "Is the Netherlands expensive?", a: "Amsterdam can be pricey but Groningen, Leiden are more affordable. 850-1,400 EUR/month." },{ q: "What is Holland Scholarship?", a: "A one-time 5,000 EUR scholarship for non-EU students, supported by many Dutch universities." },{ q: "How does VG Danışmanlık help?", a: "Program matching, Studielink/Nuffic applications, scholarship guidance, MVV process and settlement support." }] }
         },
         spain: {
-            heroStats: { uniCount: '4 Premium', intStudents: '230,000+' },
-            educationSystem: { title: "Spanish Education System (Premium Business Schools)", content: "<p>Spain is one of Europe's strongest business education destinations. <strong>IE University (Madrid + Segovia), ESADE Business School (Barcelona), ESE Business School (Madrid campus)</strong> and the state university <strong>Universidad Carlos III de Madrid (UC3M)</strong> offer English-taught BBA, Communication, Marketing and Finance programs.</p><p>IE and ESADE rank in the top 10 worldwide in MBA and Master in Management on Financial Times and QS rankings. UC3M is a more economical state university alternative.</p>" },
-            whyStudy: { title: "Why Study in Spain?", reasons: ["IE University & ESADE — top 50 business schools in QS world rankings","100% English-taught BBA, MIM and MBA programs","Madrid and Barcelona — high quality of life, mild climate","Strong alumni network access in European job market","Spanish language bonus — global language spoken by 500M people","Living costs 30-40% lower than London and Paris","IE Foundation, ESADE Excellence and government scholarships"] },
-            costs: { title: "Cost of Living (Monthly Estimate, Madrid/Barcelona)", tableHeaders: ["Item","Amount (EUR)"], rows: [["Rent (shared flat, central)","500–800"],["Food & groceries","200–300"],["Transport (Abono Joven)","20"],["Health insurance (private, for visa)","50–80"],["Personal expenses","150–250"],["Estimated total","920–1,450"]] },
-            application: { title: "Application Process (IE / ESADE / ESE / UC3M)", steps: ["Choose target school (IE, ESADE, ESE, UC3M) and research programs","Prepare documents: transcripts, diploma, IELTS/TOEFL, motivation letter, CV","IE/ESADE/ESE: Apply through the school's online portal (rolling admission)","UC3M (state): UNEDasiss application via PCE/EvAU or YKS equivalence","Interview (especially for IE and ESADE) — via Skype/Zoom","Wait for acceptance and scholarship decision, pay deposit","Apply for student visa (Estudiante) at Spanish Consulate"] },
+            heroStats: { uniCount: '50+', intStudents: '230,000+' },
+            educationSystem: { title: "Spanish Education System", content: "<p>Spain has a deep-rooted university tradition recognized worldwide. <strong>Universidad de Salamanca (1218)</strong> is one of the oldest universities in Europe. State universities charge €1,000-3,500 per year for non-EU students.</p><p>Spain offers world-class programs in business, communication, engineering, architecture and international relations. The number of English-taught programs is growing every year — particularly at private universities and international master's programs that offer 100% English-taught education.</p>" },
+            whyStudy: { title: "Why Study in Spain?", reasons: ["One of Europe's most affordable living costs (Madrid, Barcelona, Valencia, Seville)","Mediterranean climate — sun and mild weather year-round","Growing English-taught program options (especially at master's level)","Rich cultural experience — art, architecture, cuisine and football","Spanish learning bonus — global language spoken by 500M people","European job market and Latin America connection","Schengen zone — opportunity to explore Europe"] },
+            costs: { title: "Cost of Living (Monthly Estimate)", tableHeaders: ["Item","Amount (EUR)"], rows: [["Rent (shared flat)","350–700"],["Food & groceries","200–300"],["Transport (Abono Joven)","20"],["Health insurance (private)","50–80"],["Personal expenses","150–250"],["Estimated total","770–1,350"]] },
+            application: { title: "Application Process", steps: ["Research target university and programs","Prepare documents: transcripts, diploma, IELTS/TOEFL, motivation letter, CV","Private universities: Apply via the university's own online portal (rolling admission)","Public universities: Apply via UNEDasiss with PCE/EvAU or YKS equivalence","Interview (if required) — online or in person","Wait for acceptance and scholarship decision, pay deposit","Apply for student visa (Estudiante) at Spanish Consulate"] },
             visa: { title: "Visa & Residence Permit", content: "<p>Turkish citizens need a <strong>student visa (Visado de Estudios)</strong> for stays over 90 days. Visa processing takes 4-8 weeks.</p><p>Required documents: acceptance letter, financial proof (~€700/month), private health insurance, clean criminal record and accommodation proof. Apply for TIE (residence permit card) within 30 days of arrival. Student visa allows up to 30 hours/week of work.</p>" },
             faq: { title: "Frequently Asked Questions", items: [
-                { q: "Which universities do you focus on in Spain?", a: "We initially work with IE University (Madrid + Segovia), ESADE Business School (Barcelona), ESE Business School Madrid campus and Universidad Carlos III de Madrid (UC3M). These institutions offer English-taught business education and have strong partnership channels open to Turkish students." },
-                { q: "Is Spanish language required?", a: "No. IE, ESADE, ESE and UC3M's English/bilingual track programs are 100% in English. However, learning B1-level Spanish is recommended for daily life and internships." },
-                { q: "What's the difference between IE and ESADE?", a: "IE University has campuses in Madrid and Segovia, with smaller groups (15-30) and a startup/entrepreneurship focus. ESADE in Barcelona has a larger student body, with finance and consulting focus. Both rank top 50 in FT/QS." },
-                { q: "Is Universidad Carlos III de Madrid (UC3M) a state university?", a: "Yes. UC3M's annual fees are €1,000-3,500 (vs. €20,000-35,000 at private schools). Especially the English-track Economics and Business Administration programs are very strong." },
-                { q: "How much do business schools cost in Spain?", a: "IE University BBA: ~€24,000/year. ESADE BBA: ~€28,000/year. ESE Madrid: ~€13,000-16,000/year. UC3M: ~€3,500/year (non-EU). Scholarships can cover 20-50% of these amounts." },
-                { q: "What scholarships are available?", a: "IE Foundation Scholarship (academic merit, 20-50%), ESADE Excellence Scholarship, ESE Achievement Scholarship, Erasmus+ and Spanish government scholarships (MAEC-AECID). VG Danışmanlık provides professional support for scholarship applications." },
-                { q: "What are monthly living costs in Madrid?", a: "Madrid students can live comfortably on €900-1,400/month. Accommodation (€500-800) is the biggest expense; with Abono Joven (youth transport card) you get all of Madrid for just €20/month. Food costs are much lower than London and Paris." },
-                { q: "Can I work while studying in Spain?", a: "Yes, the student visa allows part-time work up to 30 hours/week or 3 months full-time. The employer applies for work permit. IE and ESADE students have wide internship opportunities." },
-                { q: "Is there a post-graduation residence option in Spain?", a: "Yes. After graduation you can get a 12-24 month 'job-search visa' (Visado de búsqueda de empleo). Once you find work, you transition to a work permit. EU job market access is also open." },
-                { q: "How does VG Danışmanlık help with Spain applications?", a: "VG Danışmanlık manages the IE / ESADE / ESE / UC3M application from A to Z: program selection, document preparation, motivation letter/CV editing, interview prep, scholarship applications, visa process and accommodation support in Madrid/Barcelona." }
+                { q: "Is education in Spain expensive?", a: "Public universities charge €1,000-3,500 per year. Private universities and international business schools charge €8,000-30,000 per year. Scholarships can cover a significant portion of these amounts." },
+                { q: "Is Spanish language required?", a: "No. Many programs (especially at master's level and at international business schools) are taught 100% in English. Learning B1-level Spanish is recommended for daily life and internships." },
+                { q: "Which cities besides Madrid and Barcelona are popular?", a: "Valencia, Seville, Granada, Salamanca, Bilbao and Málaga are also preferred by international students. Living costs are 20-30% lower than Madrid and Barcelona." },
+                { q: "What scholarships are available in Spain?", a: "MAEC-AECID (Spanish government), Erasmus+, university merit scholarships and private institution scholarships are available. 20-50% scholarships are possible based on academic merit." },
+                { q: "What are monthly living costs in Spain?", a: "Students in Madrid and Barcelona can live comfortably on €900-1,450/month. In Valencia, Seville, Granada this drops to €700-1,100. Accommodation (€350-800) is the biggest expense." },
+                { q: "Can I work while studying in Spain?", a: "Yes, the student visa allows part-time work up to 30 hours/week or 3 months full-time. The employer applies for work permit." },
+                { q: "Is there a post-graduation residence option in Spain?", a: "Yes. After graduation you can get a 12-24 month 'job-search visa' (Visado de búsqueda de empleo). Once you find work, you transition to a work permit." },
+                { q: "What is the visa process like?", a: "For Turkish citizens, applications are made at the Spanish Consulate in Ankara or Istanbul. Required: acceptance letter, financial proof (~€700/month), health insurance and clean criminal record. Process takes 4-8 weeks. Apply for TIE within 30 days of arrival." },
+                { q: "Which fields are popular in Spain?", a: "Business (BBA, MBA), Communication, Marketing, Engineering, Architecture, Design, Tourism Management and International Relations are the most popular. The number of English-taught programs is growing rapidly, especially in Madrid and Barcelona." },
+                { q: "How does VG Danışmanlık help with Spain applications?", a: "VG Danışmanlık manages the application from A to Z: program selection, document preparation, motivation letter/CV editing, interview prep, scholarship applications, visa process and accommodation support in Spain." }
             ] }
         },
         france: {
-            heroStats: { uniCount: '4 Business Schools', intStudents: '370,000+' },
-            educationSystem: { title: "French Education System (Grande École Business Schools)", content: "<p>France hosts world-renowned business schools through the Grande École tradition. <strong>EMLYON Business School (Lyon), EDHEC Business School (Lille + Nice), IÉSEG School of Management (Paris + Lille)</strong> and <strong>American Business School Paris</strong> offer English-taught BBA, Master in Management and MBA programs.</p><p>These schools hold AACSB, EQUIS and AMBA triple accreditation (Triple Crown) — only 1% of business schools worldwide hold this elite distinction. Graduates pursue careers at LVMH, L'Oréal, BNP Paribas, EY and Big4 firms.</p>" },
-            whyStudy: { title: "Why Study in France?", reasons: ["EMLYON, EDHEC, IÉSEG — FT Europe Top 20 business schools","Triple Crown accreditation (AACSB + EQUIS + AMBA)","100% English-taught BBA and Master programs","Choose between Paris, Lyon, Lille and Nice","Strong corporate network including LVMH, L'Oréal, BNP Paribas","Apprenticeship (alternance) — paid internship opportunity","Post-graduation APS (24-month job-search permit)"] },
-            costs: { title: "Cost of Living (Monthly Estimate)", tableHeaders: ["Item","Amount (EUR)"], rows: [["Rent Paris (shared)","700–1,100"],["Rent Lyon/Lille (shared)","400–650"],["Food & groceries","250–350"],["Transport (Navigo/TCL)","30–85"],["Health insurance (CVEC + mutuelle)","20–40"],["Personal expenses","150–250"],["Total (Lyon/Lille)","850–1,400"],["Total (Paris)","1,200–1,800"]] },
-            application: { title: "Application Process (EMLYON / EDHEC / IÉSEG / ABS Paris)", steps: ["Choose target school (EMLYON, EDHEC, IÉSEG, ABS Paris) and research programs","Prepare documents: transcripts, diploma, IELTS/TOEFL (min. 6.5/85), CV, motivation letter","Online application — through school's portal (Studialis, EDHEC apply, etc.)","Online interview (mandatory for EDHEC and IÉSEG)","Early application (Round 1 — December) gives 15-30% scholarship chance","Receive acceptance and pay deposit","Initiate Campus France (Etudes en France) process","Apply for long-stay student visa (VLS-TS) at French Consulate"] },
-            visa: { title: "Visa & Residence Permit", content: "<p>Turkish citizens need a <strong>long-stay student visa (VLS-TS Étudiant)</strong> for stays over 90 days. The process is first via Campus France's Etudes en France, then a consulate appointment.</p><p>Required documents: acceptance letter, financial proof (~€615/month), accommodation proof, health insurance and CVEC payment. Validate visa via OFII within 3 months of arrival. Student visa allows up to 964 hours/year (~20 hours/week) of work.</p>" },
+            heroStats: { uniCount: '70+', intStudents: '370,000+' },
+            educationSystem: { title: "French Education System", content: "<p>France is a European education hub with a deep-rooted university tradition. <strong>Sorbonne (1257)</strong> and other prestigious institutions are recognized worldwide. State universities charge €2,770-3,770 per year for non-EU students.</p><p>France also has a unique position globally with its <strong>Grande École</strong> system; these schools offer elite education in engineering, business and political sciences. The number of English-taught programs grows every year, especially at master's level.</p>" },
+            whyStudy: { title: "Why Study in France?", reasons: ["Europe's education and cultural hub — art, cuisine, fashion","Affordable tuition at public universities (~€3,000/year)","Grande École tradition — globally recognized elite institutions","Growing English-taught program options (especially at master's level)","Apprenticeship (alternance) — paid internship opportunity","Post-graduation APS — 12-24 month job-search permit","Schengen zone — opportunity to explore Europe"] },
+            costs: { title: "Cost of Living (Monthly Estimate)", tableHeaders: ["Item","Amount (EUR)"], rows: [["Rent Paris (shared)","700–1,100"],["Rent other cities (Lyon, Lille)","400–650"],["Food & groceries","250–350"],["Transport (Navigo / pass)","30–85"],["Health insurance (CVEC + mutuelle)","20–40"],["Personal expenses","150–250"],["Total (other cities)","850–1,400"],["Total (Paris)","1,200–1,800"]] },
+            application: { title: "Application Process", steps: ["Research target university and programs","Prepare documents: transcripts, diploma, IELTS/TOEFL or DELF, motivation letter, CV","Initiate Campus France (Etudes en France) process","Online application — via school's own portal (private) or Parcoursup (public)","Interview (if required) — online or in person","Early applications increase scholarship chances","Initiate visa process after acceptance and deposit","Apply for long-stay student visa (VLS-TS) at French Consulate"] },
+            visa: { title: "Visa & Residence Permit", content: "<p>Turkish citizens need a <strong>long-stay student visa (VLS-TS Étudiant)</strong> for stays over 90 days. The process starts via Campus France's Etudes en France, then a consulate appointment.</p><p>Required documents: acceptance letter, financial proof (~€615/month), accommodation proof, health insurance and CVEC payment. Validate visa via OFII within 3 months of arrival. Student visa allows up to 964 hours/year (~20 hours/week) of work.</p>" },
             faq: { title: "Frequently Asked Questions", items: [
-                { q: "Which universities do you focus on in France?", a: "We initially work with EMLYON Business School (Lyon), EDHEC Business School (Lille + Nice), IÉSEG School of Management (Paris + Lille) and American Business School Paris. These Grande École type institutions offer English-taught BBA programs with strong partnership channels open to Turkish students." },
-                { q: "Is French language required?", a: "No. EMLYON, EDHEC, IÉSEG and ABS Paris BBA programs are 100% English-taught. However, learning A2-B1 French is recommended for daily life and integration into the French job market." },
-                { q: "What's the difference between EMLYON and EDHEC?", a: "EMLYON is Lyon-based, more entrepreneurship and global business focused; also has a Paris campus. EDHEC is in Lille (north France) and Nice (south), recognized worldwide in finance and risk management. Both are FT Europe Top 20." },
-                { q: "What's special about IÉSEG?", a: "IÉSEG School of Management has campuses in Paris and Lille, with the most active partnership channel for Turkish students. Bachelor in International Business is 100% English and 4 years long. Erasmus and double-degree opportunities are very rich." },
-                { q: "What about American Business School Paris?", a: "ABS Paris is a boutique school in central Paris offering 100% English-taught BBA and MBA programs in small groups (American style). American-style curriculum (US college model), small classes and personal mentorship are its highlights." },
-                { q: "How much are tuition fees at these schools?", a: "EMLYON Global BBA: ~€16,000/year. EDHEC International BBA: ~€17,000/year. IÉSEG Bachelor in IB: ~€13,000/year. American Business School Paris: ~€12,000-14,000/year. Scholarships (15-50%) can reduce these amounts." },
-                { q: "What scholarships are available in France?", a: "Eiffel Excellence Scholarship (French government, master's and PhD), Charpak Scholarship, EDHEC Excellence Scholarship, EMLYON Merit Scholarship, IÉSEG Achievement Scholarship and Erasmus+. Early application increases scholarship chances." },
-                { q: "What are monthly living costs in Paris?", a: "Paris students can spend €1,200-1,800/month. Accommodation is the biggest expense (€700-1,100). Apply early for CROUS dorms. Lyon and Lille are 30-40% cheaper (€850-1,400)." },
-                { q: "Can I work while studying in France?", a: "Yes, the student visa allows up to 964 hours/year (~20 hours/week). Apprenticeship (alternance) contracts allow paid internships and school-work combinations. This is one of France's biggest advantages." },
-                { q: "Is there a post-graduation residence option in France?", a: "Yes, after graduation you can get APS (Autorisation Provisoire de Séjour) — a 24-month job-search/startup permit. Once you find a CDI (permanent contract), you transition to Talent Passport. France offers wide access to EU job market." }
+                { q: "Is education in France expensive?", a: "Public universities charge €2,770-3,770 per year for non-EU students. Grande École and private institutions charge €8,000-25,000 per year. Scholarships can cover a significant portion of these amounts." },
+                { q: "Is French language required?", a: "No. Many programs, especially at master's level and at private schools, are taught 100% in English. Public university bachelor's programs typically require DELF B2 level French." },
+                { q: "Which cities besides Paris are popular?", a: "Lyon, Lille, Toulouse, Marseille, Nice and Bordeaux are preferred by international students. Living costs are 30-40% lower than Paris." },
+                { q: "What is a Grande École?", a: "Grande Écoles are elite institutions unique to France, operating separately from public universities. They offer world-renowned education in engineering, business and political sciences; graduates hold senior positions in major corporations and government institutions." },
+                { q: "What scholarships are available in France?", a: "Eiffel Excellence Scholarship (French government), Charpak Scholarship, Erasmus+, university merit scholarships and private school scholarships are available. Early applications increase scholarship chances." },
+                { q: "What are monthly living costs in France?", a: "Students in Paris can spend €1,200-1,800/month, while in Lyon and Lille €850-1,400. Accommodation is the biggest expense. CROUS dorms and student aid (CAF) can reduce costs." },
+                { q: "Can I work while studying in France?", a: "Yes, the student visa allows up to 964 hours/year (~20 hours/week). Apprenticeship (alternance) contracts allow paid internships and school-work combinations." },
+                { q: "Is there a post-graduation residence option in France?", a: "Yes, after graduation you can get APS (Autorisation Provisoire de Séjour) — a 12-24 month job-search permit. Once you find work, you transition to a work permit or Talent Passport." },
+                { q: "What is the visa process like?", a: "For Turkish citizens, the process starts via Campus France's Etudes en France, then a visa application at the French Consulate in Ankara or Istanbul. Required: acceptance letter, financial proof (~€615/month) and health insurance. Process takes 3-8 weeks." },
+                { q: "How does VG Danışmanlık help with France applications?", a: "VG Danışmanlık manages the application from A to Z: program selection, Campus France process, document preparation, motivation letter/CV editing, interview prep, scholarship applications, visa process and accommodation support in France." }
             ] }
         }
     },
