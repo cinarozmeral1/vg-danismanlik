@@ -138,21 +138,6 @@ router.get('/_maintenance/clean-blog-dashes', (req, res) => {
 // Safe to call repeatedly: rows whose slug already matches the desired
 // Turkish slug are skipped.
 // ============================================================================
-router.get('/_maintenance/dump-uni-slugs', async (req, res) => {
-    if (req.query.token !== 'migrate-now-2026') {
-        return res.status(403).json({ success: false, message: 'Forbidden' });
-    }
-    try {
-        const { rows } = await pool.query(`
-            SELECT id, name, city, country, slug, legacy_slug
-            FROM universities ORDER BY country, name
-        `);
-        res.json({ success: true, total: rows.length, rows });
-    } catch (e) {
-        res.status(500).json({ success: false, error: e.message });
-    }
-});
-
 router.post('/_maintenance/migrate-uni-slugs', async (req, res) => {
     if (req.query.token !== 'migrate-now-2026') {
         return res.status(403).json({ success: false, message: 'Forbidden' });

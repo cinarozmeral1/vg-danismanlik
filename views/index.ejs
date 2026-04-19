@@ -517,7 +517,7 @@
         </div>
         
         <div class="text-center mt-5">
-            <a href="/universities" class="btn btn-primary btn-lg px-5 py-3 rounded-pill fw-bold" style="background: #005A9E; border: none; box-shadow: 0 10px 30px rgba(0, 90, 158, 0.3);">
+            <a href="/universiteler" class="btn btn-primary btn-lg px-5 py-3 rounded-pill fw-bold" style="background: #005A9E; border: none; box-shadow: 0 10px 30px rgba(0, 90, 158, 0.3);">
                 <%= t.home.partnerUniversities?.button || 'Üniversitelerimiz' %>
                 <i class="fas fa-arrow-right ms-2"></i>
             </a>
@@ -882,20 +882,20 @@
         </div>
         <div class="row g-3 justify-content-center reveal">
             <% const countryGuides = [
-                { slug: 'almanya', flag: '🇩🇪', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Germany' : 'Almanya' },
-                { slug: 'cekya', flag: '🇨🇿', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Czech Republic' : 'Çekya' },
-                { slug: 'italya', flag: '🇮🇹', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Italy' : 'İtalya' },
-                { slug: 'avusturya', flag: '🇦🇹', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Austria' : 'Avusturya' },
-                { slug: 'ingiltere', flag: '🇬🇧', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'United Kingdom' : 'İngiltere' },
-                { slug: 'polonya', flag: '🇵🇱', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Poland' : 'Polonya' },
-                { slug: 'macaristan', flag: '🇭🇺', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Hungary' : 'Macaristan' },
-                { slug: 'hollanda', flag: '🇳🇱', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Netherlands' : 'Hollanda' },
-                { slug: 'ispanya', flag: '🇪🇸', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Spain' : 'İspanya' },
-                { slug: 'fransa', flag: '🇫🇷', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'France' : 'Fransa' }
+                { slug: 'almanyada-universite',    flag: '🇩🇪', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Germany' : 'Almanya' },
+                { slug: 'cekyada-universite',      flag: '🇨🇿', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Czech Republic' : 'Çekya' },
+                { slug: 'italyada-universite',     flag: '🇮🇹', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Italy' : 'İtalya' },
+                { slug: 'avusturyada-universite',  flag: '🇦🇹', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Austria' : 'Avusturya' },
+                { slug: 'ingilterede-universite',  flag: '🇬🇧', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'United Kingdom' : 'İngiltere' },
+                { slug: 'polonyada-universite',    flag: '🇵🇱', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Poland' : 'Polonya' },
+                { slug: 'macaristanda-universite', flag: '🇭🇺', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Hungary' : 'Macaristan' },
+                { slug: 'hollandada-universite',   flag: '🇳🇱', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Netherlands' : 'Hollanda' },
+                { slug: 'ispanyada-universite',    flag: '🇪🇸', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Spain' : 'İspanya' },
+                { slug: 'fransada-universite',     flag: '🇫🇷', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'France' : 'Fransa' }
             ]; %>
             <% countryGuides.forEach(function(c) { %>
             <div class="col-6 col-md-3">
-                <a href="/ulkede-universite/<%= c.slug %>" class="cg-home-card">
+                <a href="/<%= c.slug %>" class="cg-home-card">
                     <span class="cg-home-flag"><%= c.flag %></span>
                     <span class="cg-home-name"><%= c.name %></span>
                     <i class="fas fa-arrow-right cg-home-arrow"></i>

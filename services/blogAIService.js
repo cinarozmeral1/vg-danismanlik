@@ -128,6 +128,20 @@ const COUNTRY_STUDENT_LIFE_SLUGS = {
     'Spain': 'ispanya',
     'France': 'fransa'
 };
+// Maps DB country → canonical Turkish country guide URL slug
+// (used for blog post internal links to the country guide page).
+const COUNTRY_GUIDE_SLUGS = {
+    'Czech Republic': 'cekyada-universite',
+    'Italy': 'italyada-universite',
+    'UK': 'ingilterede-universite',
+    'Germany': 'almanyada-universite',
+    'Austria': 'avusturyada-universite',
+    'Hungary': 'macaristanda-universite',
+    'Poland': 'polonyada-universite',
+    'Netherlands': 'hollandada-universite',
+    'Spain': 'ispanyada-universite',
+    'France': 'fransada-universite'
+};
 const OGRENCI_YASAMI_BASE = '/ogrenci-yasami';
 
 // City / region name translations used to convert university names into
@@ -878,7 +892,8 @@ async function generateContent(dept, lang, countryName, ytVideo, universityName)
     const uniNameOriginal = dept.university_name; // for clarity / English fallback
     const countryEN = COUNTRY_NAMES[dept.country]?.en || dept.country;
     const countrySlug = COUNTRY_STUDENT_LIFE_SLUGS[dept.country] || '';
-    const countryGuideLink = countrySlug ? `/ulkede-universite/${countrySlug}` : '';
+    const countryGuideSlug = COUNTRY_GUIDE_SLUGS[dept.country] || '';
+    const countryGuideLink = countryGuideSlug ? `/${countryGuideSlug}` : '';
     
     const ytInstruction = ytVideo
         ? (lang === 'tr'
@@ -1021,13 +1036,13 @@ FORMAT: HTML tags: <h2>, <h3>, <p>, <ul>, <li>, <strong>, <a>, <table>, <thead>,
     // Post-processing: Replace internal link placeholders with real URLs
     const studentLifeSlug = COUNTRY_STUDENT_LIFE_SLUGS[dept.country] || '';
     const studentLifeUrl = studentLifeSlug ? `${OGRENCI_YASAMI_BASE}/${studentLifeSlug}` : '';
-    const universityDetailUrl = dept.university_slug ? `/universities/${dept.university_slug}` : `/c/${dept.university_id}`;
+    const universityDetailUrl = dept.university_slug ? `/universiteler/${dept.university_slug}` : `/c/${dept.university_id}`;
 
     content = content.replace(/STUDENT_LIFE_LINK/g, studentLifeUrl);
     content = content.replace(/UNIVERSITY_DETAIL_LINK/g, universityDetailUrl);
 
     const hasStudentLifeLink = content.includes(OGRENCI_YASAMI_BASE + '/');
-    const hasUniversityLink = content.includes('/universities/') || content.includes(`/c/${dept.university_id}`);
+    const hasUniversityLink = content.includes('/universiteler/') || content.includes('/universities/') || content.includes(`/c/${dept.university_id}`);
 
     if (!hasStudentLifeLink || !hasUniversityLink) {
         const countryNameTr = COUNTRY_NAMES[dept.country]?.tr || dept.country;

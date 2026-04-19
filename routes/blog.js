@@ -40,7 +40,7 @@ async function buildSidebarLinks(post, lang) {
         try {
             const slugResult = await pool.query('SELECT slug FROM universities WHERE id = $1', [post.related_university_id]);
             if (slugResult.rows.length > 0 && slugResult.rows[0].slug) {
-                uniUrl = `/universities/${slugResult.rows[0].slug}`;
+                uniUrl = `/universiteler/${slugResult.rows[0].slug}`;
             }
         } catch (e) { /* fallback to /c/ */ }
         links.universityDetail = {

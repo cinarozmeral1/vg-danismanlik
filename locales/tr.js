@@ -2381,7 +2381,7 @@ module.exports = {
         }
     },
     
-    // Country Guide Pages (/ulkede-universite/)
+    // Country Guide Pages (/{country}da-universite — e.g. /almanyada-universite)
     countryGuide: {
         germany: {
             heroStats: { uniCount: '400+', intStudents: '400.000+' },

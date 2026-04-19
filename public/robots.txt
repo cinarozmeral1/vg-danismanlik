@@ -15,13 +15,25 @@ Disallow: /test-*
 
 # Allow important pages
 Allow: /services
-Allow: /universities
+Allow: /universiteler
+Allow: /universiteler/
 Allow: /about-us
 Allow: /contact
 Allow: /ogrenci-yasami/
 Allow: /partners/
 Allow: /blog
 Allow: /blog/
+# Country guide pages (Turkish URLs)
+Allow: /almanyada-universite
+Allow: /cekyada-universite
+Allow: /italyada-universite
+Allow: /avusturyada-universite
+Allow: /ingilterede-universite
+Allow: /polonyada-universite
+Allow: /macaristanda-universite
+Allow: /hollandada-universite
+Allow: /ispanyada-universite
+Allow: /fransada-universite
 
 # Sitemap
 Sitemap: https://vgdanismanlik.com/sitemap.xml
