@@ -45,6 +45,17 @@
 
             <!-- Main Content -->
             <div class="col-lg-9">
+                <% if (!partner.iban) { %>
+                <div class="alert alert-warning shadow-sm mb-4 d-flex align-items-center" role="alert">
+                    <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+                    <div>
+                        <strong>Banka bilgileriniz eksik!</strong><br>
+                        Ödeme alabilmeniz için IBAN bilginizi girmeniz gerekmektedir.
+                        <a href="/partner/settings" class="alert-link ms-1">Ayarlar sayfasından girin &rarr;</a>
+                    </div>
+                </div>
+                <% } %>
+
                 <!-- Welcome Card -->
                 <div class="card shadow-sm mb-4">
                     <div class="card-header bg-primary text-white">

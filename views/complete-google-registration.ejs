@@ -221,9 +221,32 @@
 
                 <!-- Ek Bilgiler -->
                 <div class="mb-2 mt-3">
-                    <small class="text-muted fw-bold"><i class="fas fa-info-circle me-1"></i><%= currentLanguage === 'tr' ? 'Ek Bilgiler (Opsiyonel)' : 'Additional Info (Optional)' %></small>
+                    <small class="text-muted fw-bold"><i class="fas fa-info-circle me-1"></i><%= currentLanguage === 'tr' ? 'Ek Bilgiler' : 'Additional Info' %></small>
                 </div>
                 <div class="row">
+                    <div class="col-6 mb-3">
+                        <label for="birth_date" class="form-label">
+                            <i class="fas fa-birthday-cake me-2 text-primary"></i>
+                            <%= currentLanguage === 'tr' ? 'Doğum Tarihi' : 'Date of Birth' %> <span class="text-danger">*</span>
+                        </label>
+                        <input type="date" class="form-control" id="birth_date" name="birth_date" required>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <label for="high_school_graduation_date" class="form-label">
+                            <i class="fas fa-calendar-check me-2 text-primary"></i>
+                            <%= currentLanguage === 'tr' ? 'Lise Mezuniyet Tarihi' : 'HS Graduation Date' %> <span class="text-danger">*</span>
+                        </label>
+                        <input type="date" class="form-control" id="high_school_graduation_date" name="high_school_graduation_date" required>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <label for="gpa" class="form-label">
+                            <i class="fas fa-chart-line me-2 text-primary"></i>
+                            <%= currentLanguage === 'tr' ? 'Aktif Not Ortalaması' : 'Current GPA' %> <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="gpa" name="gpa" required
+                               placeholder="<%= currentLanguage === 'tr' ? 'Örn: 85.50' : 'e.g. 85.50' %>"
+                               pattern="[0-9]*[.,]?[0-9]*">
+                    </div>
                     <div class="col-6 mb-3">
                         <label for="desired_country" class="form-label">
                             <i class="fas fa-globe me-2 text-primary"></i>
@@ -357,6 +380,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Validate required additional fields
+        const birthDate = document.getElementById('birth_date').value.trim();
+        const highSchoolGradDate = document.getElementById('high_school_graduation_date').value.trim();
+        const gpa = document.getElementById('gpa').value.trim();
         const desiredCountry = document.getElementById('desired_country').value.trim();
         const currentSchool = document.getElementById('current_school').value.trim();
         const activeClass = document.getElementById('active_class').value.trim();
@@ -364,8 +390,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const passportNumber = document.getElementById('passport_number').value.trim();
         const homeAddress = document.getElementById('home_address').value.trim();
         
-        if (!desiredCountry || !currentSchool || !activeClass || !passportType || !passportNumber || !homeAddress) {
-            showAlert('danger', '<%= currentLanguage === "tr" ? "Lütfen tüm zorunlu alanları doldurun (ülke, okul, sınıf, pasaport bilgileri, ev adresi)" : "Please fill in all required fields (country, school, grade, passport info, home address)" %>');
+        if (!birthDate || !highSchoolGradDate || !gpa || !desiredCountry || !currentSchool || !activeClass || !passportType || !passportNumber || !homeAddress) {
+            showAlert('danger', '<%= currentLanguage === "tr" ? "Lütfen tüm zorunlu alanları doldurun" : "Please fill in all required fields" %>');
             return;
         }
 
@@ -424,6 +450,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     tc_number: tcNumber,
                     phone: phoneNumber,
                     english_level: englishLevel,
+                    birth_date: birthDate,
+                    high_school_graduation_date: highSchoolGradDate,
+                    gpa: gpa,
                     desired_country: desiredCountry,
                     current_school: currentSchool,
                     active_class: activeClass,

@@ -8,6 +8,27 @@ const pool = new Pool({
 
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
+const CJK_REGEX = /[\u4e00-\u9fff\u3040-\u309f\u30a0-\u30ff\uac00-\ud7af\u3100-\u312f\u31a0-\u31bf\uff00-\uffef]/g;
+function stripUnwantedCharacters(text) {
+    if (!text || typeof text !== 'string') return text;
+    return text.replace(CJK_REGEX, '');
+}
+function createSlug(text) {
+    const chars = { 'ğ': 'g', 'ü': 'u', 'ş': 's', 'ı': 'i', 'ö': 'o', 'ç': 'c', 'İ': 'i' };
+    let slug = (text || '').toLowerCase();
+    for (const [tr, en] of Object.entries(chars)) slug = slug.replace(new RegExp(tr.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), en);
+    return slug.replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').substring(0, 80);
+}
+async function ensureUniqueSlug(baseSlug) {
+    let slug = baseSlug;
+    let n = 1;
+    for (;;) {
+        const r = await pool.query('SELECT 1 FROM blog_posts WHERE slug = $1', [slug]);
+        if (r.rows.length === 0) return slug;
+        slug = `${baseSlug}-${++n}`;
+    }
+}
+
 const COUNTRIES = [
     { en: 'Czech Republic', tr: 'Çek Cumhuriyeti' },
     { en: 'Italy', tr: 'İtalya' },
@@ -38,7 +59,7 @@ async function generateContent(prompt, lang) {
     });
     const data = await res.json();
     let content = data.choices?.[0]?.message?.content || '';
-    
+    content = stripUnwantedCharacters(content);
     // Temizle - html/head/body tagleri varsa kaldır
     content = content
         .replace(/<html[^>]*>[\s\S]*?<body[^>]*>/gi, '')
@@ -88,11 +109,7 @@ async function createArticle(countryData, index) {
     
     const titleTR = `${d.uni} - ${d.name_tr} Bölümü`;
     const titleEN = `${d.uni} - ${enName} Program`;
-    
-    const slug = titleTR.toLowerCase()
-        .replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ş/g,'s').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ç/g,'c')
-        .replace(/[^a-z0-9\s-]/g,'').replace(/\s+/g,'-').substring(0,50) + '-' + Date.now().toString(36);
-    
+    const slug = await ensureUniqueSlug(createSlug(titleTR));
     const excerptTR = contentTR.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 180) + '...';
     const excerptEN = contentEN.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 180) + '...';
     

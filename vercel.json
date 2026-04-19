@@ -5,7 +5,18 @@
       "src": "server.js",
       "use": "@vercel/node",
       "config": {
-        "maxLambdaSize": "50mb"
+        "maxLambdaSize": "50mb",
+        "includeFiles": [
+          "public/favicon.ico",
+          "public/favicon.png",
+          "public/favicon-48.png",
+          "public/favicon-192.png",
+          "public/apple-touch-icon.png",
+          "public/images/signature.png",
+          "views/**",
+          "locales/**"
+        ],
+        "excludeFiles": "{public/images/**,public/uploads/**,public/videos/**,public/css/**,public/js/**,public/templates/**,public/fonts/**,public/logo-with-bg.png,public/favicon-original.png,reports/**,scripts/**,docs/**,tests/**,*.md,.git/**,.next/**,.cache/**}"
       }
     },
     {
@@ -24,15 +35,62 @@
     },
     {
       "src": "/favicon.ico",
-      "dest": "/public/favicon.ico"
+      "dest": "/server.js"
     },
     {
       "src": "/favicon.png",
-      "dest": "/public/favicon.png"
+      "dest": "/server.js"
+    },
+    {
+      "src": "/favicon-48.png",
+      "dest": "/server.js"
     },
     {
       "src": "/favicon-192.png",
-      "dest": "/public/favicon-192.png"
+      "dest": "/server.js"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "dest": "/server.js"
+    },
+    {
+      "src": "/images/(.*)",
+      "dest": "/public/images/$1"
+    },
+    {
+      "src": "/css/(.*)",
+      "dest": "/public/css/$1"
+    },
+    {
+      "src": "/js/(.*)",
+      "dest": "/public/js/$1"
+    },
+    {
+      "src": "/fonts/(.*)",
+      "dest": "/public/fonts/$1"
+    },
+    {
+      "src": "/uploads/(.*)",
+      "dest": "/public/uploads/$1"
+    },
+    {
+      "src": "/templates/(.*)",
+      "dest": "/public/templates/$1"
+    },
+    {
+      "src": "/videos/(.*)",
+      "dest": "/public/videos/$1"
+    },
+    {
+      "src": "/robots.txt",
+      "dest": "/public/robots.txt"
+    },
+    {
+      "src": "/google-site-verification.html",
+      "dest": "/public/google-site-verification.html"
+    },
+    {
+      "handle": "filesystem"
     },
     {
       "src": "/api/cron/(.*)",
@@ -52,16 +110,16 @@
       "schedule": "0 9 */3 * *"
     },
     {
-      "path": "/api/cron/backup-database",
-      "schedule": "0 3 * * *"
-    },
-    {
       "path": "/api/cron/profile-reminder",
       "schedule": "0 */6 * * *"
     },
     {
       "path": "/api/cron/zoom-reminder",
       "schedule": "*/10 * * * *"
+    },
+    {
+      "path": "/api/cron/zoom-meeting-check",
+      "schedule": "*/15 * * * *"
     }
   ],
   "env": {

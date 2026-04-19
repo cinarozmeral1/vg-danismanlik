@@ -34,6 +34,17 @@
     display: block;
 }
 
+.blog-card-header .uni-logo {
+    width: 56px;
+    height: 56px;
+    object-fit: contain;
+    background: #fff;
+    border-radius: 10px;
+    padding: 6px;
+    margin-bottom: 8px;
+    display: block;
+}
+
 .blog-card-header .university-name {
     color: #ffffff;
     font-size: 0.85rem;
@@ -212,8 +223,13 @@ const countryFlags = {
                     <div class="col-lg-4 col-md-6">
                         <div class="blog-card">
                             <div class="blog-card-header">
-                                <span class="country-flag"><%= flag %></span>
-                                <span class="university-name"><%= countryDisplay %></span>
+                                <% if (post.universityLogo) { %>
+                                    <img src="<%= post.universityLogo %>" alt="<%= post.universityName %>" class="uni-logo">
+                                    <span class="university-name"><%= post.universityName %></span>
+                                <% } else { %>
+                                    <span class="country-flag"><%= flag %></span>
+                                    <span class="university-name"><%= countryDisplay %></span>
+                                <% } %>
                             </div>
                             <div class="blog-card-body">
                                 <span class="blog-card-badge">

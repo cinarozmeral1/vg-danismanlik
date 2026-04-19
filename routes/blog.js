@@ -1,18 +1,27 @@
 // Blog Routes - SEO Optimized Blog with AI-Generated Content
 const express = require('express');
+const { Pool } = require('pg');
 const router = express.Router();
 const { getBlogPosts, getBlogPostBySlug, getBlogPostCount, getRelatedPosts, generateBlogPost } = require('../services/blogAIService');
 
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+});
+
 const COUNTRY_SIDEBAR_DATA = {
-    'Czech Republic': { slug: 'czech', tr: 'Çek Cumhuriyeti', en: 'Czech Republic', flag: '🇨🇿' },
-    'Italy': { slug: 'italy', tr: 'İtalya', en: 'Italy', flag: '🇮🇹' },
-    'UK': { slug: 'uk', tr: 'İngiltere', en: 'United Kingdom', flag: '🇬🇧' },
-    'Germany': { slug: 'germany', tr: 'Almanya', en: 'Germany', flag: '🇩🇪' },
-    'Austria': { slug: 'austria', tr: 'Avusturya', en: 'Austria', flag: '🇦🇹' },
-    'Hungary': { slug: 'hungary', tr: 'Macaristan', en: 'Hungary', flag: '🇭🇺' },
-    'Poland': { slug: 'poland', tr: 'Polonya', en: 'Poland', flag: '🇵🇱' },
-    'Netherlands': { slug: 'netherlands', tr: 'Hollanda', en: 'Netherlands', flag: '🇳🇱' }
+    'Czech Republic': { slug: 'cekya', tr: 'Çek Cumhuriyeti', en: 'Czech Republic', flag: '🇨🇿' },
+    'Italy': { slug: 'italya', tr: 'İtalya', en: 'Italy', flag: '🇮🇹' },
+    'UK': { slug: 'ingiltere', tr: 'İngiltere', en: 'United Kingdom', flag: '🇬🇧' },
+    'Germany': { slug: 'almanya', tr: 'Almanya', en: 'Germany', flag: '🇩🇪' },
+    'Austria': { slug: 'avusturya', tr: 'Avusturya', en: 'Austria', flag: '🇦🇹' },
+    'Hungary': { slug: 'macaristan', tr: 'Macaristan', en: 'Hungary', flag: '🇭🇺' },
+    'Poland': { slug: 'polonya', tr: 'Polonya', en: 'Poland', flag: '🇵🇱' },
+    'Netherlands': { slug: 'hollanda', tr: 'Hollanda', en: 'Netherlands', flag: '🇳🇱' },
+    'Spain': { slug: 'ispanya', tr: 'İspanya', en: 'Spain', flag: '🇪🇸' },
+    'France': { slug: 'fransa', tr: 'Fransa', en: 'France', flag: '🇫🇷' }
 };
+const OGRENCI_YASAMI_BASE = '/ogrenci-yasami';
 
 async function buildSidebarLinks(post, lang) {
     const countryData = COUNTRY_SIDEBAR_DATA[post.related_country];
@@ -20,7 +29,7 @@ async function buildSidebarLinks(post, lang) {
     if (countryData) {
         const countryName = lang === 'tr' ? countryData.tr : countryData.en;
         links.studentLife = {
-            url: `/student-life/${countryData.slug}`,
+            url: `${OGRENCI_YASAMI_BASE}/${countryData.slug}`,
             label: lang === 'tr' ? `${countryName}'de Öğrenci Hayatı` : `Student Life in ${countryName}`,
             icon: 'fas fa-globe-europe',
             flag: countryData.flag
@@ -67,14 +76,16 @@ router.get('/', async (req, res) => {
             topic: post.topic_type,
             country: post.related_country,
             date: formatDate(post.published_at, lang),
-            views: post.view_count || 0
+            views: post.view_count || 0,
+            universityLogo: post.university_logo || null,
+            universityName: lang === 'tr' ? (post.university_name_tr || null) : (post.university_name_en || post.university_name_tr || null)
         }));
         
         res.render('blog/index', {
-            title: lang === 'tr' ? 'Blog | Venture Global' : 'Blog | Venture Global',
+            title: lang === 'tr' ? 'Blog | VG Danışmanlık' : 'Blog | VG Danışmanlık',
             metaDescription: lang === 'tr' 
-                ? 'Yurtdışı eğitim, Avrupa üniversiteleri ve kariyer fırsatları hakkında güncel makaleler. Venture Global Eğitim Danışmanlığı blog sayfası.'
-                : 'Latest articles about studying abroad, European universities and career opportunities. Venture Global Education Consultancy blog.',
+                ? 'Yurtdışı eğitim, Avrupa üniversiteleri ve kariyer fırsatları hakkında güncel makaleler. VG Danışmanlık blog sayfası.'
+                : 'Latest articles about studying abroad, European universities and career opportunities. VG Danışmanlık Education Consultancy blog.',
             posts: displayPosts,
             currentPage: page,
             totalPages,
@@ -125,7 +136,9 @@ router.get('/:slug', async (req, res) => {
             date: formatDate(post.published_at, lang),
             views: post.view_count || 0,
             metaDescription: lang === 'tr' ? post.meta_description_tr : post.meta_description_en,
-            keywords: post.keywords
+            keywords: post.keywords,
+            universityLogo: post.university_logo || null,
+            universityName: lang === 'tr' ? (post.university_name_tr || null) : (post.university_name_en || post.university_name_tr || null)
         };
         
         const displayRelated = relatedPosts.map(p => ({
@@ -146,30 +159,30 @@ router.get('/:slug', async (req, res) => {
             "dateModified": post.updated_at || post.published_at,
             "author": {
                 "@type": "Organization",
-                "name": "Venture Global Eğitim Danışmanlığı",
-                "url": "https://ventureglobal.com.tr"
+                "name": "VG Danışmanlık",
+                "url": "https://vgdanismanlik.com"
             },
             "publisher": {
                 "@type": "Organization",
-                "name": "Venture Global",
+                "name": "VG Danışmanlık",
                 "logo": {
                     "@type": "ImageObject",
-                    "url": "https://ventureglobal.com.tr/images/logos/venture-global-logo.png"
+                    "url": "https://vgdanismanlik.com/images/logos/01-1%20copy.png"
                 }
             },
             "mainEntityOfPage": {
                 "@type": "WebPage",
-                "@id": `https://ventureglobal.com.tr/blog/${slug}`
+                "@id": `https://vgdanismanlik.com/blog/${slug}`
             }
         };
         
         const sidebarLinks = await buildSidebarLinks(post, lang);
 
         res.render('blog/article', {
-            title: `${displayPost.title} | Venture Global`,
+            title: `${displayPost.title} | VG Danışmanlık`,
             metaDescription: displayPost.metaDescription,
             metaKeywords: displayPost.keywords,
-            canonicalUrl: `https://ventureglobal.com.tr/blog/${slug}`,
+            canonicalUrl: `https://vgdanismanlik.com/blog/${slug}`,
             ogImage: displayPost.image,
             structuredData: JSON.stringify(structuredData),
             post: displayPost,
@@ -198,7 +211,12 @@ router.get('/preview/:id', async (req, res) => {
     try {
         const { Pool } = require('pg');
         const pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false });
-        const result = await pool.query('SELECT * FROM blog_posts WHERE id = $1', [req.params.id]);
+        const result = await pool.query(`
+            SELECT bp.*, u.logo_url as university_logo, u.name as university_name_tr, u.name_en as university_name_en
+            FROM blog_posts bp
+            LEFT JOIN universities u ON bp.related_university_id = u.id
+            WHERE bp.id = $1
+        `, [req.params.id]);
 
         if (result.rows.length === 0) {
             return res.status(404).send('Makale bulunamadı.');
@@ -219,7 +237,9 @@ router.get('/preview/:id', async (req, res) => {
             date: post.published_at ? formatDate(post.published_at, lang) : 'TASLAK',
             views: post.view_count || 0,
             metaDescription: lang === 'tr' ? post.meta_description_tr : post.meta_description_en,
-            keywords: post.keywords
+            keywords: post.keywords,
+            universityLogo: post.university_logo || null,
+            universityName: lang === 'tr' ? (post.university_name_tr || null) : (post.university_name_en || post.university_name_tr || null)
         };
 
         const sidebarLinks = await buildSidebarLinks(post, lang);

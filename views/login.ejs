@@ -406,9 +406,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const urlParams = new URLSearchParams(window.location.search);
                     const redirect = urlParams.get('redirect');
                     
-                    if (redirect === 'wizard') {
-                        window.location.href = '/student-wizard';
-                    } else if (data.is_partner) {
+                    if (data.is_partner) {
                         window.location.href = data.redirect || '/partner/dashboard';
                     } else if (data.user && data.user.is_admin) {
                         window.location.href = '/admin/dashboard';

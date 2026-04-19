@@ -1,0 +1,1027 @@
+<%
+  const lang = typeof locals.lang !== 'undefined' ? locals.lang : (typeof locals.currentLanguage !== 'undefined' ? locals.currentLanguage : 'tr');
+  const countryName = lang === 'en' ? countryData.nameEN : countryData.nameTR;
+  const baseUrl = 'https://vgdanismanlik.com';
+  const pageUrl = baseUrl + '/ulkede-universite/' + countryData.slug;
+%>
+
+<style>
+.cg-hero {
+    background: linear-gradient(135deg, #003d6b 0%, #005A9E 50%, #0078D7 100%);
+    padding: 90px 0 70px;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+}
+
+.cg-hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.cg-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -10%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.cg-hero .container { position: relative; z-index: 2; }
+
+.cg-hero-flag {
+    font-size: 4rem;
+    margin-bottom: 0.5rem;
+    display: block;
+    line-height: 1;
+}
+
+.cg-hero h1 {
+    font-size: 2.6rem;
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+}
+
+.cg-hero .lead {
+    font-size: 1.2rem;
+    opacity: 0.92;
+    max-width: 650px;
+    margin-bottom: 2rem;
+}
+
+.cg-stats {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.cg-stat-card {
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 14px;
+    padding: 20px 28px;
+    min-width: 180px;
+    text-align: center;
+}
+
+.cg-stat-card .stat-value {
+    font-size: 1.8rem;
+    font-weight: 800;
+    display: block;
+    line-height: 1.2;
+}
+
+.cg-stat-card .stat-label {
+    font-size: 0.88rem;
+    opacity: 0.85;
+    margin-top: 4px;
+}
+
+.cg-breadcrumb {
+    background: #fff;
+    border-bottom: 1px solid #e9ecef;
+    padding: 14px 0;
+}
+
+.cg-breadcrumb .breadcrumb {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.cg-breadcrumb .breadcrumb-item a {
+    color: #005A9E;
+    text-decoration: none;
+}
+
+.cg-breadcrumb .breadcrumb-item a:hover { text-decoration: underline; }
+
+.cg-breadcrumb .breadcrumb-item.active { color: #6c757d; }
+
+.cg-section {
+    padding: 70px 0;
+}
+
+.cg-section:nth-child(even) {
+    background: #f8f9fa;
+}
+
+.cg-section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #003d6b;
+    margin-bottom: 1.25rem;
+}
+
+.cg-section-title i {
+    color: #0078D7;
+    margin-right: 10px;
+}
+
+.cg-content-block {
+    font-size: 1.05rem;
+    line-height: 1.85;
+    color: #444;
+}
+
+.cg-content-block p { margin-bottom: 1rem; }
+.cg-content-block ul { padding-left: 1.25rem; }
+.cg-content-block li { margin-bottom: 0.5rem; }
+
+.cg-reason-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 18px;
+}
+
+.cg-reason-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    transition: transform 0.25s, box-shadow 0.25s;
+}
+
+.cg-reason-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+.cg-reason-icon {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, #0078D7, #005A9E);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #fff;
+    font-size: 1.1rem;
+}
+
+.cg-reason-text {
+    font-size: 1rem;
+    color: #333;
+    line-height: 1.5;
+    font-weight: 500;
+}
+
+.cg-costs-table {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+    border: 1px solid #e9ecef;
+}
+
+.cg-costs-table table {
+    width: 100%;
+    margin: 0;
+    border-collapse: collapse;
+}
+
+.cg-costs-table thead th {
+    background: #003d6b;
+    color: #fff;
+    padding: 18px 24px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-align: left;
+}
+
+.cg-costs-table tbody td {
+    padding: 16px 24px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.98rem;
+    color: #444;
+}
+
+.cg-costs-table tbody tr:last-child td { border-bottom: none; }
+
+.cg-costs-table tbody tr:hover { background: #f8fbff; }
+
+.cg-steps {
+    position: relative;
+    padding-left: 48px;
+}
+
+.cg-steps::before {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 6px;
+    bottom: 6px;
+    width: 3px;
+    background: linear-gradient(180deg, #0078D7, #005A9E);
+    border-radius: 3px;
+}
+
+.cg-step {
+    position: relative;
+    margin-bottom: 28px;
+    padding-left: 20px;
+}
+
+.cg-step:last-child { margin-bottom: 0; }
+
+.cg-step-number {
+    position: absolute;
+    left: -48px;
+    top: 0;
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #0078D7, #005A9E);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.95rem;
+    box-shadow: 0 3px 12px rgba(0,120,215,0.35);
+    z-index: 1;
+}
+
+.cg-step-text {
+    font-size: 1.05rem;
+    color: #333;
+    line-height: 1.6;
+    padding-top: 6px;
+}
+
+.cg-uni-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+}
+
+.cg-uni-card {
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 14px;
+    padding: 24px 20px;
+    text-align: center;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.cg-uni-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.1);
+    border-color: #0078D7;
+    color: inherit;
+}
+
+.cg-uni-logo {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    margin-bottom: 14px;
+    border-radius: 10px;
+}
+
+.cg-uni-logo-placeholder {
+    width: 72px;
+    height: 72px;
+    background: linear-gradient(135deg, #e9ecef, #dee2e6);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+    color: #adb5bd;
+    font-size: 1.8rem;
+}
+
+.cg-uni-name {
+    font-size: 0.98rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 6px;
+    line-height: 1.35;
+}
+
+.cg-uni-city {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-bottom: 8px;
+}
+
+.cg-uni-dept-badge {
+    font-size: 0.78rem;
+    background: #e6f0fa;
+    color: #005A9E;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.cg-blog-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.cg-blog-card {
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 14px;
+    padding: 24px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.25s, box-shadow 0.25s;
+    display: flex;
+    flex-direction: column;
+}
+
+.cg-blog-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.09);
+    color: inherit;
+}
+
+.cg-blog-date {
+    font-size: 0.82rem;
+    color: #0078D7;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.cg-blog-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+.cg-blog-excerpt {
+    font-size: 0.9rem;
+    color: #6c757d;
+    line-height: 1.6;
+    flex-grow: 1;
+}
+
+.cg-faq .accordion-item {
+    border: 1px solid #e9ecef;
+    border-radius: 12px !important;
+    margin-bottom: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.cg-faq .accordion-button {
+    font-weight: 600;
+    font-size: 1.02rem;
+    color: #1e293b;
+    background: #fff;
+    padding: 18px 24px;
+    box-shadow: none !important;
+}
+
+.cg-faq .accordion-button:not(.collapsed) {
+    background: #f0f7ff;
+    color: #003d6b;
+}
+
+.cg-faq .accordion-button::after {
+    filter: brightness(0) saturate(100%) invert(25%) sepia(80%) saturate(1800%) hue-rotate(195deg);
+}
+
+.cg-faq .accordion-body {
+    padding: 4px 24px 20px;
+    font-size: 0.98rem;
+    color: #555;
+    line-height: 1.75;
+}
+
+.cg-cta {
+    background: linear-gradient(135deg, #003d6b 0%, #0078D7 100%);
+    padding: 80px 0;
+    color: #fff;
+    text-align: center;
+}
+
+.cg-cta h2 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.cg-cta p {
+    font-size: 1.15rem;
+    opacity: 0.9;
+    margin-bottom: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.cg-cta .btn-light {
+    padding: 14px 38px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    border-radius: 50px;
+    color: #003d6b;
+}
+
+.cg-cta .btn-outline-light {
+    padding: 14px 38px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    border-radius: 50px;
+}
+
+@media (max-width: 991px) {
+    .cg-uni-grid { grid-template-columns: repeat(2, 1fr); }
+    .cg-blog-grid { grid-template-columns: repeat(2, 1fr); }
+    .cg-hero h1 { font-size: 2.1rem; }
+}
+
+@media (max-width: 767px) {
+    .cg-hero { padding: 60px 0 50px; }
+    .cg-hero h1 { font-size: 1.8rem; }
+    .cg-hero-flag { font-size: 3rem; }
+    .cg-stats { flex-direction: column; gap: 12px; }
+    .cg-stat-card { min-width: auto; }
+    .cg-section { padding: 50px 0; }
+    .cg-section-title { font-size: 1.6rem; }
+    .cg-uni-grid { grid-template-columns: 1fr; }
+    .cg-blog-grid { grid-template-columns: 1fr; }
+    .cg-reason-list { grid-template-columns: 1fr; }
+    .cg-costs-table { overflow-x: auto; }
+    .cg-costs-table table { min-width: 400px; }
+    .cg-cta h2 { font-size: 1.7rem; }
+    .cg-cta .btn-light,
+    .cg-cta .btn-outline-light {
+        padding: 12px 20px;
+        font-size: 0.93rem;
+        white-space: normal;
+        max-width: 100%;
+    }
+}
+</style>
+
+<!-- Hero Section -->
+<section class="cg-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1>
+                    <%= lang === 'en'
+                        ? 'Study in ' + countryData.nameEN + ' - University Guide'
+                        : countryData.nameTR + '\'da Üniversite Eğitimi Rehberi' %>
+                </h1>
+                <p class="lead">
+                    <%= lang === 'en'
+                        ? 'Everything you need to know about studying at universities in ' + countryData.nameEN + '. Admission requirements, costs, visa process and partner universities.'
+                        : countryData.nameTR + ' üniversiteleri hakkında bilmeniz gereken her şey. Kabul koşulları, maliyetler, vize süreci ve partner üniversitelerimiz.' %>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Breadcrumb -->
+<nav class="cg-breadcrumb" aria-label="breadcrumb">
+    <div class="container">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/"><%= lang === 'en' ? 'Home' : 'Ana Sayfa' %></a></li>
+            <li class="breadcrumb-item"><a href="/universities"><%= lang === 'en' ? 'Universities' : 'Üniversiteler' %></a></li>
+            <li class="breadcrumb-item active" aria-current="page"><%= countryName %></li>
+        </ol>
+    </div>
+</nav>
+
+<!-- Country Gallery -->
+<%
+const countryImages = {
+    germany: [
+        { src: 'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800&q=80', alt: 'Berlin Skyline' },
+        { src: 'https://images.unsplash.com/photo-1599946347371-68eb71b16afc?w=800&q=80', alt: 'German University Campus' },
+        { src: 'https://images.unsplash.com/photo-1468436139062-f60a71c5c892?w=800&q=80', alt: 'Heidelberg University Town' }
+    ],
+    czech: [
+        { src: 'https://images.unsplash.com/photo-1519677100203-a0e668c92439?w=800&q=80', alt: 'Prague Charles Bridge' },
+        { src: 'https://images.unsplash.com/photo-1541849546-216549ae216d?w=800&q=80', alt: 'Prague Old Town' },
+        { src: 'https://images.unsplash.com/photo-1562624475-96c2bc08fab9?w=800&q=80', alt: 'Prague Castle' }
+    ],
+    italy: [
+        { src: 'https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=800&q=80', alt: 'Rome Colosseum' },
+        { src: 'https://images.unsplash.com/photo-1534445867742-43195f401b6c?w=800&q=80', alt: 'Milan University' },
+        { src: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=800&q=80', alt: 'Italian Coast' }
+    ],
+    austria: [
+        { src: 'https://images.unsplash.com/photo-1516550893923-42d28e5677af?w=800&q=80', alt: 'Vienna Architecture' },
+        { src: 'https://images.unsplash.com/photo-1573599852326-2d4da0bbe613?w=800&q=80', alt: 'Salzburg Mountains' },
+        { src: 'https://images.unsplash.com/photo-1609856878074-cf31e21ccb6b?w=800&q=80', alt: 'Austrian Alps Campus' }
+    ],
+    uk: [
+        { src: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800&q=80', alt: 'London Skyline' },
+        { src: 'https://images.unsplash.com/photo-1607237138185-eedd9c632b0b?w=800&q=80', alt: 'Oxford University' },
+        { src: 'https://images.unsplash.com/photo-1520986606214-8b456906c813?w=800&q=80', alt: 'Cambridge University' }
+    ],
+    poland: [
+        { src: 'https://images.unsplash.com/photo-1519197924294-4ba991a11128?w=800&q=80', alt: 'Warsaw Old Town' },
+        { src: 'https://images.unsplash.com/photo-1569396116180-210c182bedb8?w=800&q=80', alt: 'Krakow Architecture' },
+        { src: 'https://images.unsplash.com/photo-1607427293702-036933bbf746?w=800&q=80', alt: 'Warsaw Modern Campus' }
+    ],
+    hungary: [
+        { src: 'https://images.unsplash.com/photo-1541849546-216549ae216d?w=800&q=80', alt: 'Budapest Parliament' },
+        { src: 'https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=800&q=80', alt: 'Budapest Danube' },
+        { src: 'https://images.unsplash.com/photo-1565426873118-a17ed65d74b9?w=800&q=80', alt: 'Hungarian Architecture' }
+    ],
+    netherlands: [
+        { src: 'https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=800&q=80', alt: 'Amsterdam Canals' },
+        { src: 'https://images.unsplash.com/photo-1583037189850-1921ae7c6c22?w=800&q=80', alt: 'Dutch University Campus' },
+        { src: 'https://images.unsplash.com/photo-1527866959252-deab85ef7d1b?w=800&q=80', alt: 'Rotterdam Modern Architecture' }
+    ],
+    spain: [
+        { src: 'https://images.unsplash.com/photo-1543783207-ec64e4d95325?w=800&q=80', alt: 'Madrid Skyline' },
+        { src: 'https://images.unsplash.com/photo-1511527661048-7fe73d85e9a4?w=800&q=80', alt: 'Barcelona Architecture' },
+        { src: 'https://images.unsplash.com/photo-1509840841025-9088ba78a826?w=800&q=80', alt: 'Spanish University Campus' }
+    ],
+    france: [
+        { src: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&q=80', alt: 'Paris Eiffel Tower' },
+        { src: 'https://images.unsplash.com/photo-1431274172761-fca41d930114?w=800&q=80', alt: 'Paris Architecture' },
+        { src: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=800&q=80', alt: 'French University Town' }
+    ]
+};
+const images = countryImages[countryData.key] || [];
+%>
+<% if (images.length > 0) { %>
+<section style="padding: 40px 0 10px; background: #fff;">
+    <div class="container">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <figure style="border-radius:16px; overflow:hidden; height:280px; box-shadow:0 4px 20px rgba(0,0,0,0.08); margin:0;" itemscope itemtype="https://schema.org/ImageObject">
+                    <img src="<%= images[0].src %>" alt="<%= countryName %>'da üniversite eğitimi - <%= images[0].alt %>" title="<%= countryName %> üniversite kampüsü" loading="lazy" style="width:100%; height:100%; object-fit:cover;" itemprop="contentUrl">
+                    <meta itemprop="name" content="<%= countryName %> Üniversite Eğitimi">
+                    <meta itemprop="description" content="<%= countryName %>'da üniversite eğitimi ve kampüs yaşamı - VG Danışmanlık">
+                </figure>
+            </div>
+            <div class="col-md-3">
+                <figure style="border-radius:16px; overflow:hidden; height:280px; box-shadow:0 4px 20px rgba(0,0,0,0.08); margin:0;" itemscope itemtype="https://schema.org/ImageObject">
+                    <img src="<%= images[1].src %>" alt="<%= countryName %> üniversite kampüsü - <%= images[1].alt %>" title="<%= countryName %>'da öğrenci yaşamı" loading="lazy" style="width:100%; height:100%; object-fit:cover;" itemprop="contentUrl">
+                </figure>
+            </div>
+            <div class="col-md-3">
+                <figure style="border-radius:16px; overflow:hidden; height:280px; box-shadow:0 4px 20px rgba(0,0,0,0.08); margin:0;" itemscope itemtype="https://schema.org/ImageObject">
+                    <img src="<%= images[2].src %>" alt="<%= countryName %>'da eğitim hayatı - <%= images[2].alt %>" title="<%= countryName %> şehir manzarası" loading="lazy" style="width:100%; height:100%; object-fit:cover;" itemprop="contentUrl">
+                </figure>
+            </div>
+        </div>
+    </div>
+</section>
+<% } %>
+
+<!-- Education System -->
+<section class="cg-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <h2 class="cg-section-title">
+                    <i class="fas fa-graduation-cap"></i><%= guideContent.educationSystem.title %>
+                </h2>
+                <div class="cg-content-block">
+                    <%- guideContent.educationSystem.content %>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Why Study Here -->
+<section class="cg-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <h2 class="cg-section-title">
+                    <i class="fas fa-star"></i><%= guideContent.whyStudy.title %>
+                </h2>
+                <ul class="cg-reason-list">
+                    <% const reasonIcons = ['fa-check-circle','fa-globe','fa-coins','fa-book','fa-users','fa-briefcase','fa-heart','fa-shield-alt','fa-award','fa-lightbulb']; %>
+                    <% guideContent.whyStudy.reasons.forEach(function(reason, i) { %>
+                    <li class="cg-reason-item">
+                        <div class="cg-reason-icon">
+                            <i class="fas <%= reasonIcons[i % reasonIcons.length] %>"></i>
+                        </div>
+                        <span class="cg-reason-text"><%= reason %></span>
+                    </li>
+                    <% }); %>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Application Process -->
+<section class="cg-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <h2 class="cg-section-title">
+                    <i class="fas fa-clipboard-list"></i><%= guideContent.application.title %>
+                </h2>
+                <div class="cg-steps">
+                    <% guideContent.application.steps.forEach(function(step, i) { %>
+                    <div class="cg-step">
+                        <div class="cg-step-number"><%= i + 1 %></div>
+                        <div class="cg-step-text"><%= step %></div>
+                    </div>
+                    <% }); %>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Visa & Residence Permit -->
+<section class="cg-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <h2 class="cg-section-title">
+                    <i class="fas fa-passport"></i><%= guideContent.visa.title %>
+                </h2>
+                <div class="cg-content-block">
+                    <%- guideContent.visa.content %>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Partner Universities -->
+<% if (universities && universities.length > 0) { %>
+<section class="cg-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-11">
+                <h2 class="cg-section-title text-center mb-4">
+                    <i class="fas fa-university"></i>
+                    <%= lang === 'en'
+                        ? 'Our Partner Universities in ' + countryData.nameEN
+                        : countryData.nameTR + ' Partner Üniversitelerimiz' %>
+                </h2>
+                <div class="cg-uni-grid">
+                    <% universities.forEach(function(uni) { %>
+                    <a href="/universities/<%= uni.slug %>" class="cg-uni-card">
+                        <% if (uni.logo_url) { %>
+                        <img src="<%= uni.logo_url %>" alt="<%= uni.name %>" class="cg-uni-logo" loading="lazy">
+                        <% } else { %>
+                        <div class="cg-uni-logo-placeholder">
+                            <i class="fas fa-university"></i>
+                        </div>
+                        <% } %>
+                        <div class="cg-uni-name"><%= uni.name %></div>
+                        <div class="cg-uni-city"><i class="fas fa-map-marker-alt me-1"></i><%= uni.city %></div>
+                        <% if (uni.department_count) { %>
+                        <span class="cg-uni-dept-badge">
+                            <%= uni.department_count %> <%= lang === 'en' ? 'Programs' : 'Program' %>
+                        </span>
+                        <% } %>
+                    </a>
+                    <% }); %>
+                </div>
+                <div class="text-center mt-4">
+                    <a href="/universities?country=<%= encodeURIComponent(countryData.dbCountry) %>" class="btn btn-outline-primary btn-lg" style="border-radius: 50px; padding: 12px 36px; font-weight: 600;">
+                        <i class="fas fa-search me-2"></i>
+                        <%= lang === 'en' ? 'View All Universities' : 'Tüm Üniversiteleri Gör' %>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<% } else { %>
+<!-- Coming Soon — No universities in DB yet -->
+<section class="cg-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-9">
+                <div style="background: linear-gradient(135deg, #f8fbff 0%, #e8f1fb 100%); border: 2px dashed #0078D7; border-radius: 24px; padding: 60px 40px; text-align: center; box-shadow: 0 4px 24px rgba(0,120,215,0.08);">
+                    <div style="font-size: 4.5rem; margin-bottom: 1rem; line-height: 1;">
+                        <span><%= countryData.flag %></span>
+                        <i class="fas fa-clock" style="color: #005A9E; font-size: 2.8rem; margin-left: 12px;"></i>
+                    </div>
+                    <h2 style="font-size: 2rem; font-weight: 800; color: #003d6b; margin-bottom: 0.75rem;">
+                        <%= lang === 'en'
+                            ? 'Coming Soon — ' + countryData.nameEN + ' University List Is Being Prepared'
+                            : 'Yakında — ' + countryData.nameTR + ' Üniversite Listesi Hazırlanıyor' %>
+                    </h2>
+                    <p style="font-size: 1.1rem; color: #4a5b6e; max-width: 640px; margin: 0 auto 1.5rem;">
+                        <%= lang === 'en'
+                            ? 'We are finalizing partnerships with top universities in ' + countryData.nameEN + '. In the meantime, our advisors are ready to help you explore study options today.'
+                            : countryData.nameTR + '\'daki anlaşmalı üniversitelerimizi yakında burada listeleyeceğiz. O zamana kadar uzman danışmanlarımız ' + countryData.nameTR + ' eğitim seçeneklerinizi sizinle birlikte değerlendirmeye hazır.' %>
+                    </p>
+                    <div class="d-flex flex-column flex-md-row gap-3 justify-content-center mt-4">
+                        <a href="/contact?subject=<%= encodeURIComponent(countryData.nameTR) %>" class="btn btn-primary btn-lg px-4" style="border-radius: 50px; font-weight: 600; background: linear-gradient(135deg, #005A9E 0%, #0078D7 100%); border: 0;">
+                            <i class="fas fa-graduation-cap me-2"></i>
+                            <%= lang === 'en'
+                                ? 'I Want to Study in ' + countryData.nameEN
+                                : 'Bu Ülkede Okumak İstiyorum' %>
+                        </a>
+                        <a href="/#randevu" class="btn btn-outline-primary btn-lg px-4" style="border-radius: 50px; font-weight: 600; border-width: 2px;">
+                            <i class="fas fa-calendar-check me-2"></i>
+                            <%= lang === 'en' ? 'Book a Free Appointment' : 'Ücretsiz Randevu Al' %>
+                        </a>
+                    </div>
+                    <p style="font-size: 0.875rem; color: #6c8197; margin-top: 1.5rem; margin-bottom: 0;">
+                        <i class="fas fa-info-circle me-1"></i>
+                        <%= lang === 'en'
+                            ? 'Our consultants have direct contacts with leading institutions and can guide you through programs, fees, scholarships and the application process.'
+                            : 'Danışmanlarımız önde gelen kurumlarla doğrudan iletişim halindedir; programlar, ücretler, burslar ve başvuru süreci konusunda size rehberlik edebilirler.' %>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<% } %>
+
+<!-- University Departments Table -->
+<% if (typeof departments !== 'undefined' && departments && departments.length > 0) { %>
+<%
+const visibleCount = Math.min(Math.max(Math.ceil(departments.length * 0.1), 4), 6);
+const allDepts = departments.slice(0, 80);
+const hasMore = allDepts.length > visibleCount;
+%>
+<section class="cg-section" style="background:#f8f9fa;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-11">
+                <h2 class="cg-section-title text-center mb-4">
+                    <i class="fas fa-list-alt"></i>
+                    <%= lang === 'en'
+                        ? 'Available Programs in ' + countryData.nameEN
+                        : countryData.nameTR + '\'daki Mevcut Programlar' %>
+                </h2>
+                <p class="text-center text-muted mb-4"><%= lang === 'en' ? 'Browse all departments and tuition fees at our partner universities.' : 'Partner üniversitelerimizdeki tüm bölümleri ve ücretleri inceleyin.' %></p>
+                <div class="table-responsive" style="border-radius:12px; box-shadow:0 2px 14px rgba(0,0,0,0.06); background:#fff; position:relative;" id="deptTableWrap">
+                    <table class="table table-hover mb-0" style="font-size:0.92rem;">
+                        <thead style="background:#0078D7; color:#fff;">
+                            <tr>
+                                <th style="padding:14px 16px; font-weight:600;"><%= lang === 'en' ? 'University' : 'Üniversite' %></th>
+                                <th style="padding:14px 16px; font-weight:600;"><%= lang === 'en' ? 'Department' : 'Bölüm' %></th>
+                                <th style="padding:14px 16px; font-weight:600; text-align:right;"><%= lang === 'en' ? 'Tuition/Year' : 'Yıllık Ücret' %></th>
+                            </tr>
+                        </thead>
+                        <tbody id="deptTableBody">
+                            <% allDepts.forEach(function(d, i) { %>
+                            <tr class="dept-row" style="<%= i % 2 === 0 ? '' : 'background:#f8f9fa;' %><%= (hasMore && i >= visibleCount) ? 'display:none;' : '' %>">
+                                <td style="padding:12px 16px;"><a href="/universities/<%= d.university_slug %>" style="color:#005A9E; text-decoration:none; font-weight:500;"><%= d.university_name %></a></td>
+                                <td style="padding:12px 16px;"><%= lang === 'en' ? (d.name_en || d.name_tr) : d.name_tr %></td>
+                                <td style="padding:12px 16px; text-align:right; white-space:nowrap;"><%= d.price ? (d.price.toLocaleString() + ' ' + (d.currency || 'EUR')) : (lang === 'en' ? 'Contact us' : 'Bilgi alınız') %></td>
+                            </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                    <% if (hasMore) { %>
+                    <div id="deptFade" style="position:absolute; bottom:0; left:0; right:0; height:80px; background:linear-gradient(transparent, #fff); pointer-events:none;"></div>
+                    <% } %>
+                </div>
+                <% if (hasMore) { %>
+                <div class="text-center mt-3" id="deptShowMoreWrap">
+                    <button onclick="(function(){document.querySelectorAll('.dept-row').forEach(function(r){r.style.display=''});document.getElementById('deptShowMoreWrap').style.display='none';document.getElementById('deptFade').style.display='none';})()" class="btn btn-outline-primary" style="border-radius:50px; padding:10px 32px; font-weight:600;">
+                        <i class="fas fa-chevron-down me-2"></i><%= lang === 'en' ? 'Show All ' + allDepts.length + ' Programs' : 'Tüm ' + allDepts.length + ' Programı Göster' %>
+                    </button>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</section>
+<% } %>
+
+<!-- YouTube Videos -->
+<% const ytVideos = typeof countryVideos !== 'undefined' ? countryVideos : []; %>
+<% if (ytVideos.length > 0) { %>
+<section class="cg-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-11">
+                <h2 class="cg-section-title text-center mb-4">
+                    <i class="fab fa-youtube" style="color:#FF0000;"></i>
+                    <%= lang === 'en'
+                        ? 'Videos About Studying in ' + countryData.nameEN
+                        : countryData.nameTR + '\'da Eğitim Hakkında Videolar' %>
+                </h2>
+                <div class="row g-4">
+                    <% ytVideos.forEach(function(vid) { %>
+                    <div class="col-lg-4 col-md-6">
+                        <div style="border-radius:14px; overflow:hidden; box-shadow:0 2px 14px rgba(0,0,0,0.08); background:#000;">
+                            <div style="position:relative; padding-bottom:56.25%; height:0;">
+                                <iframe src="https://www.youtube-nocookie.com/embed/<%= vid %>" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0; border-radius:14px;" allowfullscreen loading="lazy" title="<%= countryData.nameTR %> Education Video"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                    <% }); %>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<% } %>
+
+<!-- Related Blog Posts -->
+<% if (blogPosts && blogPosts.length > 0) { %>
+<section class="cg-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-11">
+                <h2 class="cg-section-title text-center mb-4">
+                    <i class="fas fa-newspaper"></i>
+                    <%= lang === 'en'
+                        ? 'Articles About ' + countryData.nameEN
+                        : countryData.nameTR + ' Hakkında Yazılar' %>
+                </h2>
+                <div class="cg-blog-grid">
+                    <% blogPosts.slice(0, 6).forEach(function(post) { %>
+                    <a href="/blog/<%= post.slug %>" class="cg-blog-card">
+                        <div class="cg-blog-date">
+                            <i class="far fa-calendar-alt me-1"></i>
+                            <%= new Date(post.published_at).toLocaleDateString(lang === 'en' ? 'en-GB' : 'tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }) %>
+                        </div>
+                        <div class="cg-blog-title"><%= lang === 'en' ? (post.title_en || post.title_tr) : post.title_tr %></div>
+                        <div class="cg-blog-excerpt">
+                            <%= (lang === 'en' ? (post.excerpt_en || post.excerpt_tr) : post.excerpt_tr || '').substring(0, 140) %>...
+                        </div>
+                    </a>
+                    <% }); %>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<% } %>
+
+<!-- FAQ -->
+<% if (guideContent.faq && guideContent.faq.items && guideContent.faq.items.length > 0) { %>
+<section class="cg-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-9">
+                <h2 class="cg-section-title text-center mb-4">
+                    <i class="fas fa-question-circle"></i><%= guideContent.faq.title %>
+                </h2>
+                <div class="cg-faq">
+                    <div class="accordion" id="cgFaqAccordion">
+                        <% guideContent.faq.items.forEach(function(item, i) { %>
+                        <div class="accordion-item">
+                            <h3 class="accordion-header" id="cgFaqHead<%= i %>">
+                                <button class="accordion-button collapsed" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#cgFaqBody<%= i %>"
+                                    aria-expanded="false" aria-controls="cgFaqBody<%= i %>">
+                                    <%= item.q %>
+                                </button>
+                            </h3>
+                            <div id="cgFaqBody<%= i %>" class="accordion-collapse collapse"
+                                 aria-labelledby="cgFaqHead<%= i %>" data-bs-parent="#cgFaqAccordion">
+                                <div class="accordion-body"><%= item.a %></div>
+                            </div>
+                        </div>
+                        <% }); %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<% } %>
+
+<!-- Related Pages / Internal Links -->
+<section class="cg-section" style="background:#f0f7ff;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <h2 class="cg-section-title text-center mb-4">
+                    <i class="fas fa-compass"></i>
+                    <%= lang === 'en' ? 'Explore More About ' + countryData.nameEN : countryData.nameTR + ' Hakkında Daha Fazlası' %>
+                </h2>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <a href="/ogrenci-yasami/<%= countryData.slug %>" style="display:block; background:#fff; border-radius:14px; padding:24px; text-decoration:none; box-shadow:0 2px 12px rgba(0,0,0,0.06); transition:transform 0.2s, box-shadow 0.2s; height:100%;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 20px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='';this.style.boxShadow='0 2px 12px rgba(0,0,0,0.06)'">
+                            <div style="width:44px; height:44px; background:linear-gradient(135deg,#0078D7,#00BCF2); border-radius:12px; display:flex; align-items:center; justify-content:center; margin-bottom:14px;">
+                                <i class="fas fa-heart" style="color:#fff; font-size:1.1rem;"></i>
+                            </div>
+                            <h5 style="color:#1a1a2e; font-weight:700; font-size:1rem; margin-bottom:6px;"><%= lang === 'en' ? 'Student Life in ' + countryData.nameEN : countryData.nameTR + '\'da Öğrenci Yaşamı' %></h5>
+                            <p style="color:#666; font-size:0.88rem; margin:0;"><%= lang === 'en' ? 'Daily life, accommodation, transport and student culture.' : 'Günlük yaşam, konaklama, ulaşım ve öğrenci kültürü.' %></p>
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="/universities?country=<%= encodeURIComponent(countryData.dbCountry) %>" style="display:block; background:#fff; border-radius:14px; padding:24px; text-decoration:none; box-shadow:0 2px 12px rgba(0,0,0,0.06); transition:transform 0.2s, box-shadow 0.2s; height:100%;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 20px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='';this.style.boxShadow='0 2px 12px rgba(0,0,0,0.06)'">
+                            <div style="width:44px; height:44px; background:linear-gradient(135deg,#0078D7,#00BCF2); border-radius:12px; display:flex; align-items:center; justify-content:center; margin-bottom:14px;">
+                                <i class="fas fa-university" style="color:#fff; font-size:1.1rem;"></i>
+                            </div>
+                            <h5 style="color:#1a1a2e; font-weight:700; font-size:1rem; margin-bottom:6px;"><%= lang === 'en' ? 'Universities in ' + countryData.nameEN : countryData.nameTR + ' Üniversiteleri' %></h5>
+                            <p style="color:#666; font-size:0.88rem; margin:0;"><%= lang === 'en' ? 'Browse all partner universities and programs.' : 'Tüm partner üniversiteleri ve programları inceleyin.' %></p>
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="/blog" style="display:block; background:#fff; border-radius:14px; padding:24px; text-decoration:none; box-shadow:0 2px 12px rgba(0,0,0,0.06); transition:transform 0.2s, box-shadow 0.2s; height:100%;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 20px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='';this.style.boxShadow='0 2px 12px rgba(0,0,0,0.06)'">
+                            <div style="width:44px; height:44px; background:linear-gradient(135deg,#0078D7,#00BCF2); border-radius:12px; display:flex; align-items:center; justify-content:center; margin-bottom:14px;">
+                                <i class="fas fa-newspaper" style="color:#fff; font-size:1.1rem;"></i>
+                            </div>
+                            <h5 style="color:#1a1a2e; font-weight:700; font-size:1rem; margin-bottom:6px;"><%= lang === 'en' ? 'Blog Articles' : 'Blog Yazıları' %></h5>
+                            <p style="color:#666; font-size:0.88rem; margin:0;"><%= lang === 'en' ? 'Latest articles about studying abroad.' : 'Yurt dışı eğitim hakkında güncel makaleler.' %></p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cg-cta">
+    <div class="container">
+        <h2><%= lang === 'en' ? 'Ready to Study in ' + countryData.nameEN + '?' : countryData.nameTR + '\'da Eğitim Almaya Hazır mısınız?' %></h2>
+        <p>
+            <%= lang === 'en'
+                ? 'Book a free consultation with our expert advisors and start your application process today.'
+                : 'Uzman danışmanlarımızla ücretsiz görüşme ayarlayın ve başvuru sürecinizi bugün başlatın.' %>
+        </p>
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+            <a href="/contact" class="btn btn-light btn-lg">
+                <i class="fas fa-phone me-2"></i><%= lang === 'en' ? 'Free Consultation' : 'Ücretsiz Danışmanlık' %>
+            </a>
+            <a href="/#randevu" class="btn btn-outline-light btn-lg">
+                <i class="fas fa-calendar-check me-2"></i><%= lang === 'en' ? 'Book Appointment' : 'Randevu Al' %>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- JSON-LD: BreadcrumbList -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "<%= lang === 'en' ? 'Home' : 'Ana Sayfa' %>",
+            "item": "<%= baseUrl %>"
+        },
+        {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "<%= lang === 'en' ? 'Universities' : 'Üniversiteler' %>",
+            "item": "<%= baseUrl %>/universities"
+        },
+        {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "<%= countryName %>",
+            "item": "<%= pageUrl %>"
+        }
+    ]
+}
+</script>
+
+<!-- JSON-LD: FAQPage -->
+<% if (guideContent.faq && guideContent.faq.items && guideContent.faq.items.length > 0) { %>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        <% guideContent.faq.items.forEach(function(item, i) { %><% if (i > 0) { %>,<% } %>
+        {
+            "@type": "Question",
+            "name": "<%- item.q.replace(/"/g, '\\"') %>",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "<%- item.a.replace(/"/g, '\\"') %>"
+            }
+        }
+        <% }); %>
+    ]
+}
+</script>
+<% } %>

@@ -76,25 +76,42 @@
                             <tr>
                                 <th>ID</th>
                                 <th>İsim Soyisim</th>
-                                <th>Şirket</th>
                                 <th>E-posta</th>
-                                <th>Telefon</th>
                                 <th>Öğrenci</th>
-                                <th>Kazanç</th>
+                                <th>Ödenen</th>
+                                <th>Bekleyen</th>
+                                <th>IBAN</th>
                                 <th>Durum</th>
                                 <th>İşlemler</th>
                             </tr>
                         </thead>
                         <tbody>
                             <% partners.forEach(partner => { %>
-                            <tr data-partner-id="<%= partner.id %>">
+                            <tr data-partner-id="<%= partner.id %>" style="cursor: pointer;" onclick="showPartnerStudents(<%= partner.id %>, '<%= partner.first_name %> <%= partner.last_name %>')">
                                 <td><%= partner.id %></td>
-                                <td><strong><%= partner.first_name %> <%= partner.last_name %></strong></td>
-                                <td><%= partner.company_name || '-' %></td>
-                                <td><%= partner.email %></td>
-                                <td><%= partner.phone || '-' %></td>
-                                <td><span class="badge bg-info"><%= partner.student_count || 0 %></span></td>
-                                <td><%= parseFloat(partner.total_earnings || 0).toFixed(2) %> €</td>
+                                <td>
+                                    <strong><%= partner.first_name %> <%= partner.last_name %></strong>
+                                    <% if (partner.company_name) { %>
+                                    <br><small class="text-muted"><%= partner.company_name %></small>
+                                    <% } %>
+                                </td>
+                                <td><small><%= partner.email %></small></td>
+                                <td><span class="badge bg-info" title="Öğrencileri göster"><%= partner.student_count || 0 %></span></td>
+                                <td><span class="text-success fw-bold"><%= parseFloat(partner.paid_earnings || 0).toFixed(2) %> €</span></td>
+                                <td>
+                                    <% if (parseFloat(partner.pending_earnings || 0) > 0) { %>
+                                        <span class="text-warning fw-bold"><%= parseFloat(partner.pending_earnings || 0).toFixed(2) %> €</span>
+                                    <% } else { %>
+                                        <span class="text-muted">0.00 €</span>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <% if (partner.iban) { %>
+                                        <span class="badge bg-success" title="<%= partner.iban %>"><i class="fas fa-check me-1"></i>Mevcut</span>
+                                    <% } else { %>
+                                        <span class="badge bg-danger"><i class="fas fa-times me-1"></i>Eksik</span>
+                                    <% } %>
+                                </td>
                                 <td>
                                     <% if (partner.email_verified && partner.is_active) { %>
                                         <span class="badge bg-success">Aktif</span>
@@ -104,7 +121,7 @@
                                         <span class="badge bg-secondary">Pasif</span>
                                     <% } %>
                                 </td>
-                                <td>
+                                <td onclick="event.stopPropagation();">
                                     <div class="btn-group" role="group">
                                         <button class="btn btn-sm btn-outline-primary" onclick="editPartner(<%= partner.id %>)" title="Düzenle">
                                             <i class="fas fa-edit"></i>
@@ -217,6 +234,11 @@
                         <input type="tel" class="form-control" id="editPartnerPhone">
                     </div>
                     <div class="mb-3">
+                        <label class="form-label">IBAN</label>
+                        <div id="editPartnerIbanDisplay" class="form-control-plaintext" style="font-family: monospace; letter-spacing: 1px; background: #f8f9fa; padding: 8px 12px; border-radius: 6px; font-size: 13px;"></div>
+                        <small class="text-muted">IBAN sadece partner tarafından güncellenebilir</small>
+                    </div>
+                    <div class="mb-3">
                         <div class="form-check form-switch">
                             <input class="form-check-input" type="checkbox" id="editPartnerActive">
                             <label class="form-check-label" for="editPartnerActive">Aktif</label>
@@ -229,6 +251,24 @@
                 <button type="button" class="btn btn-warning" onclick="updatePartner()">
                     <i class="fas fa-save me-2"></i>Kaydet
                 </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Partner Students Modal -->
+<div class="modal fade" id="partnerStudentsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #005A9E 0%, #003d6b 100%); color: white;">
+                <h5 class="modal-title"><i class="fas fa-users me-2"></i><span id="psModalTitle">Partner Öğrencileri</span></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="psModalBody">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-2 text-muted">Yükleniyor...</p>
+                </div>
             </div>
         </div>
     </div>
@@ -308,6 +348,12 @@
                     document.getElementById('editPartnerCompany').value = partner.company_name || '';
                     document.getElementById('editPartnerPhone').value = partner.phone || '';
                     document.getElementById('editPartnerActive').checked = partner.is_active;
+                    const ibanEl = document.getElementById('editPartnerIbanDisplay');
+                    if (partner.iban) {
+                        ibanEl.innerHTML = `<span class="text-success"><i class="fas fa-check-circle me-1"></i>${partner.iban}</span>` + (partner.account_holder_name ? `<br><small class="text-muted">${partner.account_holder_name}</small>` : '');
+                    } else {
+                        ibanEl.innerHTML = '<span class="text-danger"><i class="fas fa-times-circle me-1"></i>Henüz girilmemiş</span>';
+                    }
                     
                     const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editPartnerModal'));
                     modal.show();
@@ -398,6 +444,86 @@
         } catch (error) {
             console.error('Resend verification error:', error);
             alert('E-posta gönderilirken bir hata oluştu!');
+        }
+    }
+
+    // Show partner students
+    async function showPartnerStudents(partnerId, partnerName) {
+        const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('partnerStudentsModal'));
+        document.getElementById('psModalTitle').textContent = partnerName + ' - Öğrenciler';
+        document.getElementById('psModalBody').innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-muted">Yükleniyor...</p></div>';
+        modal.show();
+
+        try {
+            const response = await fetch(`/admin/partners/${partnerId}/students`, { credentials: 'include' });
+            const data = await response.json();
+
+            if (!data.success) {
+                document.getElementById('psModalBody').innerHTML = '<div class="alert alert-danger">Veriler yüklenemedi.</div>';
+                return;
+            }
+
+            const students = data.students;
+
+            if (students.length === 0) {
+                document.getElementById('psModalBody').innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="fas fa-user-slash fa-3x text-muted mb-3"></i>
+                        <h6 class="text-muted">Bu partnere atanmış öğrenci bulunmuyor</h6>
+                    </div>`;
+                return;
+            }
+
+            let html = `
+                <div class="mb-3">
+                    <span class="badge bg-primary">${students.length} öğrenci</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Ad Soyad</th>
+                                <th>E-posta</th>
+                                <th>Telefon</th>
+                                <th>Sınıf</th>
+                                <th>Kazanç</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+            students.forEach(s => {
+                const total = parseFloat(s.total_earning || 0);
+                const paid = parseFloat(s.paid_earning || 0);
+                const pending = parseFloat(s.pending_earning || 0);
+                const cur = s.earning_currency || 'EUR';
+                let earningCell = '<span class="text-muted">-</span>';
+                if (total > 0) {
+                    earningCell = '';
+                    if (paid > 0) earningCell += `<span class="badge bg-success me-1">${paid.toFixed(0)} ${cur}</span>`;
+                    if (pending > 0) earningCell += `<span class="badge bg-warning text-dark">${pending.toFixed(0)} ${cur}</span>`;
+                }
+
+                html += `
+                    <tr>
+                        <td><strong>${s.first_name} ${s.last_name}</strong></td>
+                        <td><small>${s.email || '-'}</small></td>
+                        <td><small>${s.phone || '-'}</small></td>
+                        <td>${s.active_class || '-'}</td>
+                        <td>${earningCell}</td>
+                        <td>
+                            <a href="/admin/users/${s.id}/details#partner-section" class="btn btn-sm btn-outline-primary" title="Partner Yönetimi">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </td>
+                    </tr>`;
+            });
+
+            html += '</tbody></table></div>';
+            document.getElementById('psModalBody').innerHTML = html;
+        } catch (error) {
+            console.error('Partner students error:', error);
+            document.getElementById('psModalBody').innerHTML = '<div class="alert alert-danger">Bir hata oluştu.</div>';
         }
     }
 </script>

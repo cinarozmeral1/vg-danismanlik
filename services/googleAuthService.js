@@ -53,11 +53,11 @@ async function verifyGoogleToken(token) {
  * If user doesn't exist -> Register and Login
  * 
  * @param {string} googleToken - Google ID token
- * @param {Object} options - Additional options (wizard_recommendation_id, language)
+ * @param {Object} options - Additional options (language)
  * @returns {Object} - Result with user data and JWT token
  */
 async function handleGoogleAuth(googleToken, options = {}) {
-    const { language = 'tr', wizard_recommendation_id = null } = options;
+    const { language = 'tr' } = options;
     
     try {
         // 1. Verify Google token
@@ -167,20 +167,7 @@ async function handleGoogleAuth(googleToken, options = {}) {
             }
         }
         
-        // 3. If there's a wizard recommendation, link it to this user
-        if (wizard_recommendation_id) {
-            try {
-                await pool.query(
-                    'UPDATE ai_recommendations SET user_id = $1 WHERE id = $2 AND user_id IS NULL',
-                    [user.id, wizard_recommendation_id]
-                );
-                console.log(`📎 Linked wizard recommendation ${wizard_recommendation_id} to user ${user.id}`);
-            } catch (err) {
-                console.warn('Could not link wizard recommendation:', err.message);
-            }
-        }
-        
-        // 4. Send new student notification if new user
+        // 3. Send new student notification if new user
         if (isNewUser) {
             sendNewStudentNotificationEmail({
                 first_name: user.first_name,

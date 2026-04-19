@@ -6,6 +6,7 @@ const calendarService = require('../services/calendarService');
 const zoomService = require('../services/zoomService');
 const nodemailer = require('nodemailer');
 const rateLimit = require('express-rate-limit');
+const { createContact } = require('../services/contactService');
 
 const publicApiLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -145,12 +146,11 @@ const getEmailSignature = () => `
         <table cellpadding="0" cellspacing="0" border="0" style="margin-top: 15px;">
             <tr>
                 <td style="vertical-align: middle; padding-right: 15px;">
-                    <img src="https://vgdanismanlik.com/images/logos/venture-global-logo.png" alt="Venture Global" style="height: 80px; width: auto;">
+                    <img src="https://vgdanismanlik.com/images/logos/01-1%20copy.png" alt="VG Danışmanlık" style="height: 80px; width: auto;">
                 </td>
                 <td style="vertical-align: middle;">
-                    <p style="margin: 0; color: #1e40af; font-size: 18px; font-weight: bold;">VENTURE GLOBAL <sup style="font-size: 10px;">®</sup></p>
+                    <p style="margin: 0; color: #1e40af; font-size: 18px; font-weight: bold;">VG DANIŞMANLIK</p>
                     <p style="margin: 0; color: #3b82f6; font-size: 14px; font-weight: 600;">YURT DIŞI EĞİTİM</p>
-                    <p style="margin: 0; color: #3b82f6; font-size: 14px; font-weight: 600;">DANIŞMANLIĞI</p>
                 </td>
             </tr>
         </table>
@@ -274,14 +274,15 @@ router.get('/available-slots/:date', publicApiLimiter, async (req, res) => {
         );
         const bookedSlots = bookedResult.rows;
 
+        const SLOT_BLOCK_MS = 60 * 60 * 1000;
         if (bookedSlots.length > 0) {
             slots = slots.filter(slot => {
                 const slotStart = new Date(slot.startUTC).getTime();
-                const slotEnd = new Date(slot.endUTC).getTime();
+                const slotBlockEnd = slotStart + SLOT_BLOCK_MS;
                 return !bookedSlots.some(booked => {
                     const bookedStart = new Date(booked.start_utc).getTime();
-                    const bookedEnd = new Date(booked.end_utc).getTime();
-                    return bookedStart < slotEnd && bookedEnd > slotStart;
+                    const bookedBlockEnd = bookedStart + SLOT_BLOCK_MS;
+                    return bookedStart < slotBlockEnd && bookedBlockEnd > slotStart;
                 });
             });
         }
@@ -448,6 +449,7 @@ router.post('/create-fast', bookingLimiter, async (req, res) => {
         }
 
         let zoomLink = null;
+        let zoomMeetingId = null;
         try {
             if (zoomService.isConfigured()) {
                 const meeting = await zoomService.createZoomMeeting({
@@ -457,6 +459,7 @@ router.post('/create-fast', bookingLimiter, async (req, res) => {
                     agenda: `Danışmanlık görüşmesi: ${fullName} (Kayıtlı Öğrenci)`
                 });
                 zoomLink = meeting.join_url;
+                zoomMeetingId = meeting.meeting_id ? String(meeting.meeting_id) : null;
                 console.log('Zoom meeting created:', meeting.join_url);
             }
         } catch (zoomError) {
@@ -468,13 +471,13 @@ router.post('/create-fast', bookingLimiter, async (req, res) => {
                 full_name, phone, email, target_country, field_of_interest,
                 education_level, grade, budget, notes,
                 appointment_date, czech_time, turkey_time,
-                start_utc, end_utc, calendar_event_id, ip_address, status, zoom_link
-            ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,'confirmed',$17)
+                start_utc, end_utc, calendar_event_id, ip_address, status, zoom_link, zoom_meeting_id
+            ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,'confirmed',$17,$18)
             RETURNING *`,
             [fullName, phone, email, 'Kayıtlı Öğrenci', 'Genel Danışmanlık',
              'Kayıtlı Öğrenci', null, null, 'Hızlı randevu (kayıtlı öğrenci)',
              date, czechTime, turkeyTime, startUTC, endUTC,
-             calendarEventId || null, ip, zoomLink]
+             calendarEventId || null, ip, zoomLink, zoomMeetingId]
         );
 
         const appointment = result.rows[0];
@@ -579,6 +582,7 @@ router.post('/create', bookingLimiter, async (req, res) => {
         }
 
         let zoomLink = null;
+        let zoomMeetingId = null;
         try {
             if (zoomService.isConfigured()) {
                 const meeting = await zoomService.createZoomMeeting({
@@ -588,6 +592,7 @@ router.post('/create', bookingLimiter, async (req, res) => {
                     agenda: `Danışmanlık görüşmesi: ${fullName} - ${targetCountry} / ${fieldOfInterest}`
                 });
                 zoomLink = meeting.join_url;
+                zoomMeetingId = meeting.meeting_id ? String(meeting.meeting_id) : null;
                 console.log('Zoom meeting created:', meeting.join_url);
             }
         } catch (zoomError) {
@@ -599,13 +604,13 @@ router.post('/create', bookingLimiter, async (req, res) => {
                 full_name, phone, email, target_country, field_of_interest,
                 education_level, grade, budget, notes,
                 appointment_date, czech_time, turkey_time,
-                start_utc, end_utc, calendar_event_id, ip_address, status, zoom_link
-            ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,'confirmed',$17)
+                start_utc, end_utc, calendar_event_id, ip_address, status, zoom_link, zoom_meeting_id
+            ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,'confirmed',$17,$18)
             RETURNING *`,
             [fullName, phone, email, targetCountry, fieldOfInterest,
              educationLevel, grade || null, budget || null, notes || null,
              date, czechTime, turkeyTime, startUTC, endUTC,
-             calendarEventId || null, ip, zoomLink]
+             calendarEventId || null, ip, zoomLink, zoomMeetingId]
         );
 
         await pool.query(`DELETE FROM appointment_verifications WHERE email = $1`, [email]);
@@ -616,6 +621,12 @@ router.post('/create', bookingLimiter, async (req, res) => {
             sendConfirmationEmail(appointment).catch(e => console.error('Confirmation email failed:', e.message)),
             sendAdminNotificationEmail(appointment).catch(e => console.error('Admin notification failed:', e.message))
         ]);
+
+        if (phone) {
+            createContact(fullName, phone, email, 'student')
+                .then(uid => { if (uid) console.log('Appointment contact saved to iCloud:', uid); })
+                .catch(err => console.error('Appointment iCloud contact failed:', err.message));
+        }
 
         res.json({ success: true, message: 'Randevunuz başarıyla oluşturuldu!', appointment: { id: appointment.id, date, turkeyTime } });
     } catch (error) {
@@ -1076,6 +1087,81 @@ router.post('/send-test-emails', requireSuperAdminOrCron, async (req, res) => {
             await sendSatisfactionEmail(proTestApt);
             results.push('OK - PRO Memnuniyet maili gonderildi');
         } catch (e) { results.push('HATA - PRO Memnuniyet maili: ' + e.message); }
+
+        // --- Randevu Düzenleme Test Mailleri ---
+        try {
+            const getEditSignature = () => `<div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0;"><p style="margin: 0 0 15px 0; color: #333; font-style: italic; font-weight: 500;">Kind Regards,</p><p style="margin: 0 0 3px 0;"><a href="https://vgdanismanlik.com" style="color: #2563eb; text-decoration: underline; font-weight: bold; font-style: italic;">vgdanismanlik.com</a></p><p style="margin: 0 0 3px 0; color: #1a365d; font-weight: bold; font-style: italic;">CZ: +420 776 791 541</p><p style="margin: 0 0 20px 0; color: #1a365d; font-weight: bold; font-style: italic;">TR: +90 539 927 30 08</p><table cellpadding="0" cellspacing="0" border="0" style="margin-top: 15px;"><tr><td style="vertical-align: middle; padding-right: 15px;"><img src="https://vgdanismanlik.com/images/logos/01-1%20copy.png" alt="VG Danışmanlık" style="height: 80px; width: auto;"></td><td style="vertical-align: middle;"><p style="margin: 0; color: #1e40af; font-size: 18px; font-weight: bold;">VG DANIŞMANLIK</p><p style="margin: 0; color: #3b82f6; font-size: 14px; font-weight: 600;">YURT DIŞI EĞİTİM</p></td></tr></table></div>`;
+            const editEmailWrapper = (content) => `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="color-scheme" content="light dark"><style>@media (prefers-color-scheme: dark) { .email-body { background-color: #1a1a2e !important; } .email-card { background-color: #16213e !important; border-color: #2a2a4a !important; } .email-text { color: #e0e0e0 !important; } .email-muted { color: #a0a0b0 !important; } .info-box { background-color: #1a2744 !important; } }</style></head><body style="margin: 0; padding: 0;"><div class="email-body" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #1a1a1a;"><div style="background: linear-gradient(135deg, #005A9E 0%, #003d6b 100%); color: white; padding: 30px; text-align: center; border-radius: 12px 12px 0 0;"><h1 style="margin: 0; font-size: 24px; font-weight: 700;">VG Danışmanlık</h1><p style="margin: 8px 0 0 0; opacity: 0.9; font-size: 14px;">Yurt Dışı Eğitim Danışmanlığı</p></div><div class="email-card" style="background: #ffffff; padding: 30px; border-radius: 0 0 12px 12px; border: 1px solid #e5e7eb; border-top: none;">${content}${getEditSignature()}</div></div></body></html>`;
+
+            // Test 1: Date/time change email
+            await transporter.sendMail({
+                from: `"VG Danışmanlık" <${emailUser}>`,
+                to: ADMIN_EMAIL,
+                subject: 'VG Danışmanlık - [TEST] Randevu Tarihi Değişikliği',
+                html: editEmailWrapper(`
+                    <h2 class="email-text" style="color: #1a1a1a; margin: 0 0 20px 0; font-size: 20px;">
+                        <i style="color: #f59e0b;">⚠</i> Randevu Tarih/Saat Değişikliği
+                    </h2>
+                    <p class="email-muted" style="color: #4b5563; line-height: 1.7; margin-bottom: 20px;">
+                        Merhaba <strong>Test</strong>, randevunuzun tarih ve/veya saati güncellenmiştir.
+                    </p>
+                    <div style="background: #fef3c7; border-radius: 12px; padding: 20px; margin: 20px 0; border-left: 4px solid #f59e0b;">
+                        <p style="margin: 0 0 8px 0; color: #92400e; font-weight: 700; font-size: 13px; text-transform: uppercase;">Eski Tarih/Saat</p>
+                        <p style="margin: 0; color: #92400e; font-size: 15px; text-decoration: line-through;">15 Mart 2026 Pazar — 20:00 (TSİ)</p>
+                    </div>
+                    <div style="background: #d1fae5; border-radius: 12px; padding: 20px; margin: 20px 0; border-left: 4px solid #059669;">
+                        <p style="margin: 0 0 8px 0; color: #065f46; font-weight: 700; font-size: 13px; text-transform: uppercase;">Yeni Tarih/Saat</p>
+                        <p style="margin: 0; color: #065f46; font-size: 18px; font-weight: 700;">18 Mart 2026 Çarşamba — 21:00 (TSİ)</p>
+                    </div>
+                    <div style="text-align: center; margin: 25px 0;">
+                        <a href="https://zoom.us/j/1234567890" style="display: inline-block; background: linear-gradient(135deg, #2D8CFF, #0B5CFF); color: white; padding: 14px 32px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 15px;">Zoom Toplantısına Katıl</a>
+                    </div>
+                    <div style="background: #f0f7ff; border-radius: 8px; padding: 16px; margin: 20px 0;">
+                        <p style="margin: 0; color: #003d6b; font-size: 14px;">
+                            <strong>Not:</strong> Toplantı linki görüşmeden 30 dakika önce ayrıca e-posta ile gönderilecektir. Değişiklikle ilgili sorularınız için bizimle iletişime geçebilirsiniz.
+                        </p>
+                    </div>
+                    <div style="text-align: center; margin-top: 25px;">
+                        <a href="https://wa.me/905399273008" style="display: inline-block; background: linear-gradient(135deg, #005A9E 0%, #003d6b 100%); color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px;">WhatsApp ile İletişim</a>
+                    </div>
+                `)
+            });
+            results.push('OK - Tarih degisikligi test maili gonderildi');
+
+            // Test 2: Details change email
+            await transporter.sendMail({
+                from: `"VG Danışmanlık" <${emailUser}>`,
+                to: ADMIN_EMAIL,
+                subject: 'VG Danışmanlık - [TEST] Randevu Bilgileri Güncellendi',
+                html: editEmailWrapper(`
+                    <h2 class="email-text" style="color: #1a1a1a; margin: 0 0 20px 0; font-size: 20px;">
+                        Randevu Bilgileri Güncellendi
+                    </h2>
+                    <p class="email-muted" style="color: #4b5563; line-height: 1.7; margin-bottom: 20px;">
+                        Merhaba <strong>Test</strong>, randevunuza ait bazı bilgiler güncellenmiştir.
+                    </p>
+                    <div style="background: #f0f7ff; border-radius: 12px; padding: 24px; margin: 20px 0; border-left: 4px solid #005A9E;">
+                        <p style="margin: 0 0 4px 0; color: #6b7280; font-size: 13px;">Güncellenen Alanlar</p>
+                        <p style="margin: 0; color: #005A9E; font-weight: 700;">Hedef Ülke, Not</p>
+                    </div>
+                    <div style="background: #f0f7ff; border-radius: 12px; padding: 24px; margin: 20px 0; border-left: 4px solid #005A9E;">
+                        <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
+                            <tr><td style="padding: 8px 0; color: #6b7280; font-size: 14px; width: 100px;">Tarih</td><td style="padding: 8px 0; font-weight: 600; color: #1a1a1a;">15 Mart 2026 Pazar</td></tr>
+                            <tr><td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Saat</td><td style="padding: 8px 0; font-weight: 700; color: #005A9E; font-size: 18px;">20:00 (TSİ)</td></tr>
+                        </table>
+                    </div>
+                    <div style="text-align: center; margin: 20px 0;">
+                        <a href="https://zoom.us/j/1234567890" style="display: inline-block; background: linear-gradient(135deg, #2D8CFF, #0B5CFF); color: white; padding: 14px 32px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 15px;">Zoom Toplantısına Katıl</a>
+                    </div>
+                    <div style="text-align: center; margin-top: 25px;">
+                        <a href="https://wa.me/905399273008" style="display: inline-block; background: linear-gradient(135deg, #005A9E 0%, #003d6b 100%); color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px;">WhatsApp ile İletişim</a>
+                    </div>
+                `)
+            });
+            results.push('OK - Bilgi guncelleme test maili gonderildi');
+        } catch (e) {
+            results.push('HATA - Edit test mailleri: ' + e.message);
+        }
 
         res.json({ success: true, message: 'Test mailleri gönderildi', results });
     } catch (error) {

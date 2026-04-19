@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/database');
+const { createContact } = require('../services/contactService');
 
 function generateUniversitySlug(name, city, country) {
     return [name, city, country]
@@ -29,6 +30,73 @@ function generateUniversitySlug(name, city, country) {
 router.use((req, res, next) => {
     res.locals.isAdminPage = true;
     next();
+});
+
+// Token-protected maintenance endpoint registered BEFORE the blanket
+// admin auth so we can clean blog content from a curl/script without an
+// admin session. Disabled by default unless ?token matches.
+router.post('/_maintenance/clean-blog-dashes', async (req, res) => {
+    if (req.query.token !== 'clean-now-2026') {
+        return res.status(403).json({ success: false, message: 'Forbidden' });
+    }
+    try {
+        const cleanField = (s) => {
+            if (s == null || typeof s !== 'string') return s;
+            const parts = s.split(/(<[^>]+>)/g);
+            return parts.map((part, idx) => {
+                if (idx % 2 === 1) return part;
+                return part
+                    .replace(/\s*[\u2014\u2013\u2015]\s*/g, ': ')
+                    .replace(/(\S)\s+-\s+(\S)/g, '$1: $2')
+                    .replace(/\s*:\s*:\s*/g, ': ')
+                    .replace(/[ \t]{2,}/g, ' ');
+            }).join('');
+        };
+        const allPosts = await pool.query(`
+            SELECT id, title_tr, title_en, content_tr, content_en,
+                   excerpt_tr, excerpt_en,
+                   meta_description_tr, meta_description_en
+            FROM blog_posts
+        `);
+        let cleaned = 0;
+        for (const row of allPosts.rows) {
+            const updated = {
+                title_tr: cleanField(row.title_tr),
+                title_en: cleanField(row.title_en),
+                content_tr: cleanField(row.content_tr),
+                content_en: cleanField(row.content_en),
+                excerpt_tr: cleanField(row.excerpt_tr),
+                excerpt_en: cleanField(row.excerpt_en),
+                meta_description_tr: cleanField(row.meta_description_tr),
+                meta_description_en: cleanField(row.meta_description_en)
+            };
+            const changed = Object.keys(updated).some(k => updated[k] !== row[k]);
+            if (!changed) continue;
+            await pool.query(
+                `UPDATE blog_posts
+                 SET title_tr=$1, title_en=$2, content_tr=$3, content_en=$4,
+                     excerpt_tr=$5, excerpt_en=$6,
+                     meta_description_tr=$7, meta_description_en=$8,
+                     updated_at = CURRENT_TIMESTAMP
+                 WHERE id = $9`,
+                [
+                    updated.title_tr, updated.title_en,
+                    updated.content_tr, updated.content_en,
+                    updated.excerpt_tr, updated.excerpt_en,
+                    updated.meta_description_tr, updated.meta_description_en,
+                    row.id
+                ]
+            );
+            cleaned++;
+        }
+        res.json({ success: true, total: allPosts.rows.length, cleaned });
+    } catch (e) {
+        console.error('clean-blog-dashes error:', e);
+        res.status(500).json({ success: false, message: e.message, stack: e.stack });
+    }
+});
+router.get('/_maintenance/clean-blog-dashes', (req, res) => {
+    res.status(405).json({ success: false, message: 'Use POST' });
 });
 
 // ==================== SECURITY: BLANKET ADMIN AUTH ====================
@@ -61,7 +129,7 @@ function requireSuperAdminPage(req, res, next) {
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const { sendApplicationCreationEmail, sendApplicationStatusEmail, sendPartnerVerificationEmail, sendVisaApplicationEmail, generateVerificationToken } = require('../services/emailService');
+const { sendApplicationCreationEmail, sendApplicationStatusEmail, sendPartnerVerificationEmail, sendVisaApplicationEmail, generateVerificationToken, sendPartnerPaymentEmail, sendPartnerNewStudentEmail, sendPartnerNewEarningEmail, sendReviewRequestEmail } = require('../services/emailService');
 const { generateContractPDF, generateContractNumber } = require('../services/contractService');
 const { DateTime } = require('luxon');
 
@@ -574,6 +642,131 @@ async function ensureTablesExist() {
         `);
         console.log('✅ Appointments table ensured');
 
+        // Add student_status column to users table
+        try {
+            await pool.query(`
+                ALTER TABLE users
+                ADD COLUMN student_status VARCHAR(20) DEFAULT 'pending'
+            `);
+            console.log('✅ Added student_status column to users table');
+        } catch (error) {
+            if (error.message.includes('already exists')) {
+                console.log('ℹ️ student_status column already exists');
+                try {
+                    await pool.query(`ALTER TABLE users ALTER COLUMN student_status SET DEFAULT 'pending'`);
+                    console.log('✅ student_status default updated to pending');
+                } catch (defErr) {
+                    console.error('❌ Error updating student_status default:', defErr.message);
+                }
+            } else {
+                console.error('❌ Error adding student_status:', error.message);
+            }
+        }
+
+        // Backfill: paid → active, not paid → pending (only for rows still on default)
+        try {
+            await pool.query(`
+                UPDATE users u SET student_status = 'pending'
+                WHERE (u.is_admin = false OR u.is_admin IS NULL)
+                  AND u.student_status = 'active'
+                  AND NOT EXISTS (
+                      SELECT 1 FROM services s
+                      WHERE s.user_id = u.id AND s.is_paid = true
+                  )
+            `);
+        } catch (e) { /* ignore if services table missing */ }
+
+        // Add IBAN columns to partners table
+        try {
+            await pool.query(`ALTER TABLE partners ADD COLUMN IF NOT EXISTS iban VARCHAR(34)`);
+            await pool.query(`ALTER TABLE partners ADD COLUMN IF NOT EXISTS account_holder_name VARCHAR(200)`);
+        } catch (e) { /* columns may already exist */ }
+
+        // One-time migration: Replace "Venture Global" with "VG Danışmanlık" in blog content
+        try {
+            const checkResult = await pool.query(`SELECT COUNT(*) FROM blog_posts WHERE content_tr LIKE '%Venture Global%'`);
+            if (parseInt(checkResult.rows[0].count) > 0) {
+                await pool.query(`
+                    UPDATE blog_posts 
+                    SET content_tr = REPLACE(content_tr, 'Venture Global', 'VG Danışmanlık'),
+                        content_en = REPLACE(content_en, 'Venture Global', 'VG Danışmanlık'),
+                        keywords = REPLACE(keywords, 'Venture Global', 'VG Danışmanlık'),
+                        updated_at = CURRENT_TIMESTAMP
+                `);
+                console.log('✅ Blog posts migrated: Venture Global → VG Danışmanlık');
+            }
+        } catch (e) { console.log('Blog migration skipped:', e.message); }
+
+        // One-time migration: Replace em-dashes (—), en-dashes (–) and
+        // mid-sentence " - " (space-hyphen-space) with a colon (": ") in
+        // blog titles, content, excerpts and meta. Dashes used as sentence
+        // separators are a classic AI-writing tell, and the user prefers
+        // colon-style headings ("Giriş: ..." rather than "Giriş - ...").
+        //
+        // Implemented in pure JS (not SQL regex) because PostgreSQL's `~`
+        // operator was not reliably matching the literal multibyte em-dash
+        // character on prod, causing the previous SQL-based migration to
+        // silently skip every row.
+        try {
+            const cleanField = (s) => {
+                if (s == null) return s;
+                if (typeof s !== 'string') return s;
+                // Split on HTML tags so attribute values (class="btn-primary"
+                // etc.) and compound words inside tags are not touched.
+                const parts = s.split(/(<[^>]+>)/g);
+                return parts.map((part, idx) => {
+                    if (idx % 2 === 1) return part; // HTML tag, leave alone
+                    return part
+                        .replace(/\s*[\u2014\u2013\u2015]\s*/g, ': ') // — – ―
+                        .replace(/(\S)\s+-\s+(\S)/g, '$1: $2')         // " - " separator
+                        .replace(/\s*:\s*:\s*/g, ': ')                  // collapse "::"
+                        .replace(/[ \t]{2,}/g, ' ');
+                }).join('');
+            };
+
+            const allPosts = await pool.query(`
+                SELECT id, title_tr, title_en, content_tr, content_en,
+                       excerpt_tr, excerpt_en,
+                       meta_description_tr, meta_description_en
+                FROM blog_posts
+            `);
+
+            let cleanedCount = 0;
+            for (const row of allPosts.rows) {
+                const updated = {
+                    title_tr: cleanField(row.title_tr),
+                    title_en: cleanField(row.title_en),
+                    content_tr: cleanField(row.content_tr),
+                    content_en: cleanField(row.content_en),
+                    excerpt_tr: cleanField(row.excerpt_tr),
+                    excerpt_en: cleanField(row.excerpt_en),
+                    meta_description_tr: cleanField(row.meta_description_tr),
+                    meta_description_en: cleanField(row.meta_description_en)
+                };
+                const changed = Object.keys(updated).some(k => updated[k] !== row[k]);
+                if (!changed) continue;
+                await pool.query(
+                    `UPDATE blog_posts
+                     SET title_tr=$1, title_en=$2, content_tr=$3, content_en=$4,
+                         excerpt_tr=$5, excerpt_en=$6,
+                         meta_description_tr=$7, meta_description_en=$8,
+                         updated_at = CURRENT_TIMESTAMP
+                     WHERE id = $9`,
+                    [
+                        updated.title_tr, updated.title_en,
+                        updated.content_tr, updated.content_en,
+                        updated.excerpt_tr, updated.excerpt_en,
+                        updated.meta_description_tr, updated.meta_description_en,
+                        row.id
+                    ]
+                );
+                cleanedCount++;
+            }
+            if (cleanedCount > 0) {
+                console.log(`✅ Blog posts cleaned: ${cleanedCount} rows had long dashes / " - " separators replaced with ":"`);
+            }
+        } catch (e) { console.log('Blog em-dash migration skipped:', e.message); }
+
         console.log('✅ Tables ensured to exist');
     } catch (error) {
         console.error('❌ Error ensuring tables:', error.message);
@@ -582,7 +775,7 @@ async function ensureTablesExist() {
 
 // Call this once when the module loads
 console.log('🚀 Starting ensureTablesExist...');
-ensureTablesExist().then(() => {
+const tablesReady = ensureTablesExist().then(() => {
     console.log('✅ ensureTablesExist completed');
 }).catch(error => {
     console.error('❌ ensureTablesExist failed:', error);
@@ -877,27 +1070,51 @@ router.get('/dashboard', async (req, res) => {
 // Admin users page route
 router.get('/users', async (req, res) => {
     try {
-        // Adminleri hariç tut (sadece öğrencileri listele)
-        // Guardians ve Services ile LEFT JOIN yaparak veli bilgileri ve ödeme durumunu çek
-        const usersResult = await pool.query(
-            `SELECT u.id, u.first_name, u.last_name, u.email, u.phone, u.english_level, 
-                    u.tc_number, u.active_class, u.current_school, u.created_at, u.is_admin,
-                    string_agg(DISTINCT g.full_name, ', ') as guardian_names,
-                    bool_or(s.is_paid = true AND s.service_name ILIKE '%Kabul Oncesi%') as kabul_oncesi_paid,
-                    bool_or(s.is_paid = true AND s.service_name ILIKE '%Kabul Sonrasi%') as kabul_sonrasi_paid,
-                    bool_or(s.is_paid = true AND (s.service_name ILIKE '%11%' OR s.service_name ILIKE '%Hazirlik%')) as hazirlik_paid,
-                    bool_or(s.is_paid = true) as has_any_paid_service
-             FROM users u
-             LEFT JOIN guardians g ON g.user_id = u.id
-             LEFT JOIN services s ON s.user_id = u.id
-             WHERE u.is_admin = false OR u.is_admin IS NULL
-             GROUP BY u.id
-             ORDER BY u.created_at DESC`
-        );
+        await tablesReady;
 
-        const activeCount = usersResult.rows.filter(u => u.has_any_paid_service).length;
+        // Try with student_status column; fall back if column doesn't exist yet
+        let usersResult;
+        try {
+            usersResult = await pool.query(
+                `SELECT u.id, u.first_name, u.last_name, u.email, u.phone, u.english_level, 
+                        u.tc_number, u.active_class, u.current_school, u.created_at, u.is_admin,
+                        COALESCE(u.student_status, 'pending') as student_status,
+                        string_agg(DISTINCT g.full_name, ', ') as guardian_names,
+                        bool_or(s.is_paid = true AND s.service_name ILIKE '%Kabul Oncesi%') as kabul_oncesi_paid,
+                        bool_or(s.is_paid = true AND s.service_name ILIKE '%Kabul Sonrasi%') as kabul_sonrasi_paid,
+                        bool_or(s.is_paid = true AND (s.service_name ILIKE '%11%' OR s.service_name ILIKE '%Hazirlik%')) as hazirlik_paid,
+                        bool_or(s.is_paid = true) as has_any_paid_service
+                 FROM users u
+                 LEFT JOIN guardians g ON g.user_id = u.id
+                 LEFT JOIN services s ON s.user_id = u.id
+                 WHERE u.is_admin = false OR u.is_admin IS NULL
+                 GROUP BY u.id
+                 ORDER BY u.created_at DESC`
+            );
+        } catch (colErr) {
+            console.warn('student_status column may not exist yet, falling back:', colErr.message);
+            usersResult = await pool.query(
+                `SELECT u.id, u.first_name, u.last_name, u.email, u.phone, u.english_level, 
+                        u.tc_number, u.active_class, u.current_school, u.created_at, u.is_admin,
+                        CASE WHEN bool_or(s.is_paid = true) THEN 'active' ELSE 'pending' END as student_status,
+                        string_agg(DISTINCT g.full_name, ', ') as guardian_names,
+                        bool_or(s.is_paid = true AND s.service_name ILIKE '%Kabul Oncesi%') as kabul_oncesi_paid,
+                        bool_or(s.is_paid = true AND s.service_name ILIKE '%Kabul Sonrasi%') as kabul_sonrasi_paid,
+                        bool_or(s.is_paid = true AND (s.service_name ILIKE '%11%' OR s.service_name ILIKE '%Hazirlik%')) as hazirlik_paid,
+                        bool_or(s.is_paid = true) as has_any_paid_service
+                 FROM users u
+                 LEFT JOIN guardians g ON g.user_id = u.id
+                 LEFT JOIN services s ON s.user_id = u.id
+                 WHERE u.is_admin = false OR u.is_admin IS NULL
+                 GROUP BY u.id
+                 ORDER BY u.created_at DESC`
+            );
+        }
 
-        // Get sidebar counts
+        const activeCount = usersResult.rows.filter(u => u.student_status === 'active').length;
+        const pendingCount = usersResult.rows.filter(u => u.student_status === 'pending').length;
+        const negativeCount = usersResult.rows.filter(u => u.student_status === 'negative').length;
+
         const sidebarCounts = await getAdminSidebarCounts();
 
         res.render('admin/users', {
@@ -905,10 +1122,37 @@ router.get('/users', async (req, res) => {
             activePage: 'users',
             users: usersResult.rows,
             activeCount,
+            pendingCount,
+            negativeCount,
             ...sidebarCounts
         });
     } catch (error) {
         console.error('Admin users error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// Update student status (active / pending / negative)
+router.post('/users/:id/status', async (req, res) => {
+    try {
+        await tablesReady;
+        const { id } = req.params;
+        const { status } = req.body;
+        const validStatuses = ['active', 'pending', 'negative'];
+        if (!validStatuses.includes(status)) {
+            return res.status(400).json({ success: false, message: 'Geçersiz durum' });
+        }
+        try {
+            await pool.query('UPDATE users SET student_status = $1 WHERE id = $2', [status, id]);
+        } catch (colErr) {
+            // Column might not exist yet — create it and retry
+            console.warn('student_status UPDATE failed, creating column:', colErr.message);
+            await pool.query(`ALTER TABLE users ADD COLUMN student_status VARCHAR(20) DEFAULT 'pending'`).catch(() => {});
+            await pool.query('UPDATE users SET student_status = $1 WHERE id = $2', [status, id]);
+        }
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Update student status error:', error);
         res.status(500).json({ success: false, message: 'Server error' });
     }
 });
@@ -1081,6 +1325,15 @@ router.put('/users/:id/guardians', async (req, res) => {
 
         await client.query('BEGIN');
 
+        // Mevcut velilerin telefonlarini al (yeni veli tespiti icin)
+        const existingGuardians = await client.query(
+            'SELECT phone, icloud_contact_uid FROM guardians WHERE user_id = $1',
+            [id]
+        );
+        const existingPhones = new Set(
+            existingGuardians.rows.map(g => g.phone).filter(Boolean)
+        );
+
         // Delete existing guardians for this user
         await client.query('DELETE FROM guardians WHERE user_id = $1', [id]);
 
@@ -1110,13 +1363,26 @@ router.put('/users/:id/guardians', async (req, res) => {
         const result = await client.query(
             'SELECT * FROM guardians WHERE user_id = $1 ORDER BY sort_order ASC',
             [id]
-         );
- 
-         res.json({
-             success: true,
-             message: 'Veli bilgileri başarıyla güncellendi',
-            guardians: result.rows 
-         });
+        );
+
+        // Yeni eklenen velileri iCloud rehberine kaydet
+        for (const g of result.rows) {
+            if (!g.phone || existingPhones.has(g.phone)) continue;
+            createContact(g.full_name, g.phone, g.email, 'guardian')
+                .then(uid => {
+                    if (uid) {
+                        pool.query('UPDATE guardians SET icloud_contact_uid = $1 WHERE id = $2', [uid, g.id])
+                            .catch(err => console.error('Guardian iCloud UID save failed:', err.message));
+                    }
+                })
+                .catch(err => console.error('Guardian iCloud contact failed:', err.message));
+        }
+
+        res.json({
+            success: true,
+            message: 'Veli bilgileri başarıyla güncellendi',
+            guardians: result.rows
+        });
     } catch (error) {
         await client.query('ROLLBACK');
         console.error('Update guardians error:', error);
@@ -1150,11 +1416,12 @@ router.get('/users', async (req, res) => {
 
 router.get('/users/:id/details', async (req, res) => {
     try {
+        await tablesReady;
         const { id } = req.params;
         
         const userResult = await pool.query(
             `SELECT id, first_name, last_name, email, phone, english_level, 
-                    high_school_graduation_date, birth_date, tc_number,
+                    high_school_graduation_date, birth_date, gpa, tc_number,
                     passport_type, passport_number, desired_country, active_class,
                     current_school, home_address,
                     avatar_url, created_at, is_admin
@@ -1211,6 +1478,7 @@ router.put('/users/:id/details', async (req, res) => {
             english_level,
             birth_date,
             high_school_graduation_date,
+            gpa,
             tc_number,
             passport_number,
             passport_type,
@@ -1232,15 +1500,16 @@ router.put('/users/:id/details', async (req, res) => {
                 english_level = $5,
                 birth_date = $6,
                 high_school_graduation_date = $7,
-                tc_number = $8,
-                passport_number = $9,
-                passport_type = $10,
-                desired_country = $11,
-                active_class = $12,
-                current_school = $13,
-                home_address = $14,
+                gpa = $8,
+                tc_number = $9,
+                passport_number = $10,
+                passport_type = $11,
+                desired_country = $12,
+                active_class = $13,
+                current_school = $14,
+                home_address = $15,
                 updated_at = CURRENT_TIMESTAMP
-             WHERE id = $15 RETURNING *`,
+             WHERE id = $16 RETURNING *`,
             [
                 first_name,
                 last_name,
@@ -1249,6 +1518,7 @@ router.put('/users/:id/details', async (req, res) => {
                 english_level,
                 birth_date,
                 high_school_graduation_date,
+                gpa || null,
                 tc_number,
                 passport_number,
                 passportTypeFinal,
@@ -1558,6 +1828,16 @@ router.put('/applications/:id/status', async (req, res) => {
                 code: emailError.code
             });
             // Don't fail the request if email fails
+        }
+
+        // Send Google Review request only on approval (not rejection)
+        if (status === 'approved') {
+            try {
+                await sendReviewRequestEmail(application.email, application.first_name, 'acceptance');
+                console.log(`Review request email sent to ${application.email} after approval`);
+            } catch (reviewErr) {
+                console.error('Review request email error:', reviewErr.message);
+            }
         }
 
         res.json({
@@ -2219,6 +2499,15 @@ router.post('/test-email', async (req, res) => {
     }
 });
 
+router.post('/test-review-email', requireSuperAdminPage, async (req, res) => {
+    try {
+        const result = await sendReviewRequestEmail('info@vgdanismanlik.com', 'Ahmet', 'meeting');
+        res.json({ success: true, message: 'Review test email sent to info@vgdanismanlik.com', result });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
 // Create new university (mount-safe)
 router.post('/universities', async (req, res) => {
     try {
@@ -2578,7 +2867,7 @@ router.get('/users/:id/files/:fileId/download', async (req, res) => {
         const buffer = Buffer.from(file.file_data, 'base64');
         
         // Set appropriate headers for file download
-        res.setHeader('Content-Disposition', `attachment; filename="${file.original_filename}"`);
+        res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(file.original_filename)}`);
         res.setHeader('Content-Type', file.mime_type);
         res.setHeader('Content-Length', buffer.length);
         
@@ -3774,7 +4063,7 @@ router.get('/users/:id/documents/:docId/download', async (req, res) => {
         const { id, docId } = req.params;
         
         const result = await pool.query(
-            'SELECT file_data, file_path, mime_type, original_filename FROM user_documents WHERE id = $1 AND user_id = $2',
+            'SELECT file_data, file_path, mime_type, original_filename, title FROM user_documents WHERE id = $1 AND user_id = $2',
             [docId, id]
         );
         
@@ -3799,7 +4088,11 @@ router.get('/users/:id/documents/:docId/download', async (req, res) => {
         }
         
         res.setHeader('Content-Type', document.mime_type || 'application/octet-stream');
-        res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(document.original_filename)}"`);
+        const ext = (document.mime_type === 'application/pdf') ? '.pdf' : '';
+        const downloadName = document.title
+            ? `${document.title}${ext}`
+            : (document.original_filename || `dosya${ext}`);
+        res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(downloadName)}`);
         res.setHeader('Content-Length', fileBuffer.length);
         res.send(fileBuffer);
     } catch (error) {
@@ -4006,15 +4299,29 @@ router.get('/users/:userId/file-categories', async (req, res) => {
 router.post('/users/:userId/generate-contract', async (req, res) => {
     try {
         const { userId } = req.params;
-        
-        console.log('📄 Generating contract for user:', userId);
+        const { targetPeriod } = req.body;
+
+        // Validate period is provided
+        if (!targetPeriod || !targetPeriod.match(/^\d{4}-\d{4}$/)) {
+            return res.status(400).json({ success: false, message: 'Lütfen hedef dönemi seçin (örn: 2026-2027)' });
+        }
+
+        console.log('📄 Generating contract for user:', userId, 'period:', targetPeriod);
+
+        // Ensure target_period column exists
+        try {
+            await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS target_period VARCHAR(20)`);
+        } catch (e) { /* ignore */ }
+
+        // Persist the selected period on the user record
+        await pool.query(`UPDATE users SET target_period = $1 WHERE id = $2`, [targetPeriod, userId]);
         
         // 1. Get student info
         const userResult = await pool.query(
             `SELECT id, first_name, last_name, email, phone, english_level, 
-                    high_school_graduation_date, birth_date, tc_number,
+                    high_school_graduation_date, birth_date, gpa, tc_number,
                     passport_type, passport_number, desired_country, active_class,
-                    current_school, home_address
+                    current_school, home_address, target_period
              FROM users WHERE id = $1`,
             [userId]
         );
@@ -4085,7 +4392,8 @@ router.post('/users/:userId/generate-contract', async (req, res) => {
             user,
             applications,
             services,
-            guardians
+            guardians,
+            targetPeriod
         });
         
         console.log('✅ Contract PDF generated, size:', pdfBuffer.length);
@@ -4875,81 +5183,6 @@ router.get('/api/financial-export', async (req, res) => {
     }
 });
 
-// ==========================================
-// YEDEKLEME SİSTEMİ - ADMIN PANEL
-// ==========================================
-
-// Yedekleme sayfası
-router.get('/backups', async (req, res) => {
-    try {
-        // Admin kontrolü (res.locals'dan)
-        if (!res.locals.isLoggedIn || !res.locals.isAdmin) {
-            return res.redirect('/login');
-        }
-
-        // Yedekleme bilgileri
-        const backupInfo = {
-            ftpHost: process.env.FTP_HOST || 'Ayarlanmamış',
-            ftpUser: process.env.FTP_USER || 'Ayarlanmamış',
-            ftpDir: process.env.FTP_BACKUP_DIR || '/venture-global-backups',
-            autoCleanup: process.env.FTP_AUTO_CLEANUP === 'true',
-            cronSchedule: '03:00 UTC (Her gün)',
-            cronScheduleTR: '06:00 Türkiye Saati (Her gün)',
-            emailNotifications: process.env.EMAIL_NOTIFICATIONS === 'true'
-        };
-
-        // Get sidebar counts
-        const sidebarCounts = await getAdminSidebarCounts();
-
-        res.render('admin/backups', {
-            title: 'Yedekleme Sistemi',
-            activePage: 'backups',
-            currentUser: res.locals.currentUser,
-            backupInfo,
-            ...sidebarCounts
-        });
-
-    } catch (error) {
-        console.error('Backup page error:', error);
-        res.status(500).render('error', {
-            message: 'Sayfa yüklenirken hata oluştu'
-        });
-    }
-});
-
-// Manuel yedekleme başlat
-router.post('/backups/trigger', async (req, res) => {
-    try {
-        // Admin kontrolü (res.locals'dan)
-        if (!res.locals.isLoggedIn || !res.locals.isAdmin) {
-            return res.status(401).json({
-                success: false,
-                message: 'Oturum bulunamadı'
-            });
-        }
-
-        // Yedekleme fonksiyonunu çağır
-        const { backupToFTP } = require('../scripts/backup-to-ftp');
-        
-        console.log('📋 Manuel yedekleme başlatıldı:', res.locals.currentUser.email);
-        
-        const result = await backupToFTP();
-        
-        res.json({
-            success: true,
-            message: 'Yedekleme başarılı!',
-            data: result
-        });
-
-    } catch (error) {
-        console.error('Manuel yedekleme hatası:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Yedekleme başarısız: ' + error.message
-        });
-    }
-});
-
 // =====================================================
 // PAYMENT & WISE TRANSFER ENDPOINTS
 // =====================================================
@@ -5146,6 +5379,7 @@ router.get('/payments/statistics', async (req, res) => {
 // Get partners list page
 router.get('/partners', async (req, res) => {
     try {
+        await tablesReady;
         const sidebarCounts = await getAdminSidebarCounts();
         
         // Get all partners with correct counts using subqueries (multi-partner support)
@@ -5157,7 +5391,9 @@ router.get('/partners', async (req, res) => {
                     FROM student_partners 
                     WHERE partner_id = p.id
                 ) as student_count,
-                (SELECT COALESCE(SUM(amount), 0) FROM partner_earnings WHERE partner_id = p.id) as total_earnings
+                (SELECT COALESCE(SUM(amount), 0) FROM partner_earnings WHERE partner_id = p.id) as total_earnings,
+                (SELECT COALESCE(SUM(CASE WHEN is_paid = true THEN amount ELSE 0 END), 0) FROM partner_earnings WHERE partner_id = p.id) as paid_earnings,
+                (SELECT COALESCE(SUM(CASE WHEN is_paid = false THEN amount ELSE 0 END), 0) FROM partner_earnings WHERE partner_id = p.id) as pending_earnings
             FROM partners p
             ORDER BY p.created_at DESC
         `);
@@ -5177,17 +5413,10 @@ router.get('/partners', async (req, res) => {
 // Get partners list API
 router.get('/api/partners', async (req, res) => {
     try {
+        await tablesReady;
         const result = await pool.query(`
             SELECT 
-                p.id,
-                p.first_name,
-                p.last_name,
-                p.email,
-                p.company_name,
-                p.phone,
-                p.email_verified,
-                p.is_active,
-                p.created_at,
+                p.*,
                 (
                     SELECT COUNT(DISTINCT student_id) 
                     FROM student_partners 
@@ -5205,6 +5434,30 @@ router.get('/api/partners', async (req, res) => {
         });
     } catch (error) {
         console.error('Get partners API error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+// Get students assigned to a specific partner (with earnings summary)
+router.get('/partners/:id/students', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const result = await pool.query(`
+            SELECT u.id, u.first_name, u.last_name, u.email, u.phone, u.active_class, 
+                   u.desired_country, u.current_school, u.created_at,
+                   COALESCE((SELECT SUM(pe.amount) FROM partner_earnings pe WHERE pe.user_id = u.id AND pe.partner_id = $1), 0) as total_earning,
+                   COALESCE((SELECT SUM(pe.amount) FROM partner_earnings pe WHERE pe.user_id = u.id AND pe.partner_id = $1 AND pe.is_paid = true), 0) as paid_earning,
+                   COALESCE((SELECT SUM(pe.amount) FROM partner_earnings pe WHERE pe.user_id = u.id AND pe.partner_id = $1 AND pe.is_paid = false), 0) as pending_earning,
+                   COALESCE((SELECT pe.currency FROM partner_earnings pe WHERE pe.user_id = u.id AND pe.partner_id = $1 LIMIT 1), 'EUR') as earning_currency
+            FROM users u
+            INNER JOIN student_partners sp ON u.id = sp.student_id
+            WHERE sp.partner_id = $1
+            ORDER BY u.first_name ASC, u.last_name ASC
+        `, [id]);
+
+        res.json({ success: true, students: result.rows });
+    } catch (error) {
+        console.error('Get partner students error:', error);
         res.status(500).json({ success: false, message: 'Server error' });
     }
 });
@@ -5468,6 +5721,19 @@ router.post('/users/:id/partners', async (req, res) => {
             VALUES ($1, $2)
             ON CONFLICT (student_id, partner_id) DO NOTHING
         `, [id, partner_id]);
+
+        // Send email notification to partner
+        try {
+            const partnerInfo = await pool.query('SELECT email, first_name, last_name FROM partners WHERE id = $1', [partner_id]);
+            const studentInfo = await pool.query('SELECT first_name, last_name FROM users WHERE id = $1', [id]);
+            if (partnerInfo.rows.length > 0 && studentInfo.rows.length > 0) {
+                const p = partnerInfo.rows[0];
+                const s = studentInfo.rows[0];
+                sendPartnerNewStudentEmail(p.email, `${p.first_name} ${p.last_name}`, `${s.first_name} ${s.last_name}`);
+            }
+        } catch (emailErr) {
+            console.error('Partner new student email failed (non-blocking):', emailErr.message);
+        }
         
         res.json({
             success: true,
@@ -5621,15 +5887,29 @@ router.post('/partner-earnings', async (req, res) => {
         }
         
         // Insert earning
+        const earningCurrency = currency || 'EUR';
         const result = await pool.query(`
             INSERT INTO partner_earnings (partner_id, user_id, amount, currency, earning_date, is_paid, notes)
             VALUES ($1, $2, $3, $4, $5, $6, $7)
             RETURNING *
-        `, [partner_id, user_id, amount, currency || 'EUR', earning_date || new Date().toISOString().split('T')[0], is_paid || false, notes || null]);
+        `, [partner_id, user_id, amount, earningCurrency, earning_date || new Date().toISOString().split('T')[0], is_paid || false, notes || null]);
         
         // Also update user's partner_id if not set
         if (!userCheck.rows[0].partner_id) {
             await pool.query('UPDATE users SET partner_id = $1 WHERE id = $2', [partner_id, user_id]);
+        }
+
+        // Send email notification to partner
+        try {
+            const partnerInfo = await pool.query('SELECT email, first_name, last_name FROM partners WHERE id = $1', [partner_id]);
+            const studentInfo = await pool.query('SELECT first_name, last_name FROM users WHERE id = $1', [user_id]);
+            if (partnerInfo.rows.length > 0 && studentInfo.rows.length > 0) {
+                const p = partnerInfo.rows[0];
+                const s = studentInfo.rows[0];
+                sendPartnerNewEarningEmail(p.email, `${p.first_name} ${p.last_name}`, `${s.first_name} ${s.last_name}`, amount, earningCurrency);
+            }
+        } catch (emailErr) {
+            console.error('Partner earning email failed (non-blocking):', emailErr.message);
         }
         
         res.status(201).json({
@@ -5649,31 +5929,56 @@ router.put('/partner-earnings/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const { amount, currency, earning_date, is_paid, payment_date, notes } = req.body;
+
+        // Check previous state to detect paid status change
+        const prevResult = await pool.query('SELECT is_paid, partner_id, user_id, amount, currency FROM partner_earnings WHERE id = $1', [id]);
+        if (prevResult.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Kazanç kaydı bulunamadı' });
+        }
+        const prevEarning = prevResult.rows[0];
         
-        const result = await pool.query(`
-            UPDATE partner_earnings 
-            SET amount = COALESCE($1, amount),
-                currency = COALESCE($2, currency),
-                earning_date = COALESCE($3, earning_date),
-                is_paid = COALESCE($4, is_paid),
-                payment_date = $5,
-                notes = $6,
-                updated_at = CURRENT_TIMESTAMP
-            WHERE id = $7
-            RETURNING *
-        `, [amount, currency, earning_date, is_paid, payment_date || null, notes, id]);
+        const updateFields = [];
+        const updateValues = [];
+        let paramIdx = 1;
+
+        if (amount !== undefined) { updateFields.push(`amount = $${paramIdx++}`); updateValues.push(amount); }
+        if (currency !== undefined) { updateFields.push(`currency = $${paramIdx++}`); updateValues.push(currency); }
+        if (earning_date !== undefined) { updateFields.push(`earning_date = $${paramIdx++}`); updateValues.push(earning_date); }
+        if (is_paid !== undefined) { updateFields.push(`is_paid = $${paramIdx++}`); updateValues.push(is_paid); }
+        if (payment_date !== undefined || is_paid !== undefined) { updateFields.push(`payment_date = $${paramIdx++}`); updateValues.push(payment_date || null); }
+        if (notes !== undefined) { updateFields.push(`notes = $${paramIdx++}`); updateValues.push(notes); }
+        updateFields.push('updated_at = CURRENT_TIMESTAMP');
+        updateValues.push(id);
+
+        const result = await pool.query(
+            `UPDATE partner_earnings SET ${updateFields.join(', ')} WHERE id = $${paramIdx} RETURNING *`,
+            updateValues
+        );
         
         if (result.rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Kazanç kaydı bulunamadı'
-            });
+            return res.status(404).json({ success: false, message: 'Kazanç kaydı bulunamadı' });
+        }
+
+        // Send payment email if status changed to paid
+        const updatedEarning = result.rows[0];
+        if (is_paid === true && !prevEarning.is_paid) {
+            try {
+                const partnerInfo = await pool.query('SELECT email, first_name, last_name FROM partners WHERE id = $1', [updatedEarning.partner_id]);
+                const studentInfo = await pool.query('SELECT first_name, last_name FROM users WHERE id = $1', [updatedEarning.user_id]);
+                if (partnerInfo.rows.length > 0 && studentInfo.rows.length > 0) {
+                    const p = partnerInfo.rows[0];
+                    const s = studentInfo.rows[0];
+                    sendPartnerPaymentEmail(p.email, `${p.first_name} ${p.last_name}`, `${s.first_name} ${s.last_name}`, updatedEarning.amount, updatedEarning.currency);
+                }
+            } catch (emailErr) {
+                console.error('Partner payment email failed (non-blocking):', emailErr.message);
+            }
         }
         
         res.json({
             success: true,
             message: 'Kazanç kaydı başarıyla güncellendi',
-            earning: result.rows[0]
+            earning: updatedEarning
         });
         
     } catch (error) {
@@ -5933,98 +6238,6 @@ router.delete('/visa-applications/:id', async (req, res) => {
         
     } catch (error) {
         console.error('Delete visa application error:', error);
-        res.status(500).json({ success: false, message: error.message });
-    }
-});
-
-// ==================== AI RECOMMENDATIONS ROUTES ====================
-
-// AI Recommendations Page
-router.get('/ai-recommendations', requireSuperAdminPage, async (req, res) => {
-    try {
-        const sidebarCounts = await getAdminSidebarCounts();
-        res.render('admin/ai-recommendations', {
-            title: 'AI Önerileri',
-            activePage: 'ai-recommendations',
-            ...sidebarCounts
-        });
-    } catch (error) {
-        console.error('AI recommendations page error:', error);
-        res.status(500).send('Sayfa yüklenirken hata oluştu');
-    }
-});
-
-// Get All AI Recommendations (API)
-router.get('/ai-recommendations/list', requireSuperAdminPage, async (req, res) => {
-    try {
-        const limit = parseInt(req.query.limit) || 100;
-        
-        const result = await pool.query(`
-            SELECT 
-                r.*,
-                u.first_name,
-                u.last_name,
-                u.email
-            FROM ai_recommendations r
-            JOIN users u ON r.user_id = u.id
-            ORDER BY r.created_at DESC
-            LIMIT $1
-        `, [limit]);
-        
-        res.json({
-            success: true,
-            data: result.rows
-        });
-    } catch (error) {
-        console.error('Get AI recommendations error:', error);
-        res.status(500).json({ success: false, message: error.message });
-    }
-});
-
-// Delete AI Recommendation
-router.delete('/ai-recommendations/:id', requireSuperAdminPage, async (req, res) => {
-    try {
-        const { id } = req.params;
-        
-        // Check if recommendation exists
-        const checkResult = await pool.query(
-            'SELECT id FROM ai_recommendations WHERE id = $1',
-            [id]
-        );
-        
-        if (checkResult.rows.length === 0) {
-            return res.status(404).json({ success: false, message: 'Öneri bulunamadı' });
-        }
-        
-        // Delete the recommendation
-        await pool.query('DELETE FROM ai_recommendations WHERE id = $1', [id]);
-        
-        res.json({ success: true, message: 'Öneri başarıyla silindi' });
-    } catch (error) {
-        console.error('Delete AI recommendation error:', error);
-        res.status(500).json({ success: false, message: error.message });
-    }
-});
-
-// Get AI Recommendation for a specific user (for admin student details page)
-router.get('/users/:userId/ai-recommendation', async (req, res) => {
-    try {
-        const { userId } = req.params;
-        
-        const result = await pool.query(`
-            SELECT * FROM ai_recommendations 
-            WHERE user_id = $1 
-            ORDER BY created_at DESC 
-            LIMIT 1
-        `, [userId]);
-        
-        if (result.rows.length === 0) {
-            return res.json({ success: true, recommendation: null });
-        }
-        
-        res.json({ success: true, recommendation: result.rows[0] });
-    } catch (error) {
-        console.error('Get user AI recommendation error:', error);
         res.status(500).json({ success: false, message: error.message });
     }
 });
@@ -6523,8 +6736,29 @@ router.post('/appointments/:id/delete', requireSuperAdminPage, async (req, res) 
         if (result.rows.length === 0) {
             return res.status(404).json({ success: false, message: 'Randevu bulunamadı.' });
         }
+        const apt = result.rows[0];
+
+        // Delete Zoom meeting
+        if (apt.zoom_meeting_id) {
+            try {
+                const zoomService = require('../services/zoomService');
+                if (zoomService.isConfigured()) {
+                    await zoomService.deleteZoomMeeting(apt.zoom_meeting_id);
+                    console.log('✅ Zoom meeting deleted:', apt.zoom_meeting_id);
+                }
+            } catch (zErr) { console.error('Zoom delete failed (non-blocking):', zErr.message); }
+        }
+
+        // Delete iCloud calendar event
+        if (apt.calendar_event_id) {
+            try {
+                const calendarService = require('../services/calendarService');
+                await calendarService.deleteEvent(apt.calendar_event_id);
+            } catch (cErr) { console.error('iCloud delete failed (non-blocking):', cErr.message); }
+        }
+
         await pool.query('DELETE FROM appointments WHERE id = $1', [id]);
-        console.log('Appointment deleted:', id, result.rows[0].full_name);
+        console.log('Appointment deleted:', id, apt.full_name);
         res.json({ success: true });
     } catch (error) {
         console.error('Appointment delete error:', error);
@@ -6542,67 +6776,263 @@ router.post('/appointments/:id/status', requireSuperAdminPage, async (req, res) 
         const oldResult = await pool.query('SELECT * FROM appointments WHERE id = $1', [id]);
         await pool.query('UPDATE appointments SET status = $1 WHERE id = $2', [status, id]);
 
+        // When cancelled, remove Zoom meeting and iCloud event
+        if (status === 'cancelled' && oldResult.rows.length > 0 && oldResult.rows[0].status !== 'cancelled') {
+            const apt = oldResult.rows[0];
+            if (apt.zoom_meeting_id) {
+                try {
+                    const zoomService = require('../services/zoomService');
+                    if (zoomService.isConfigured()) {
+                        await zoomService.deleteZoomMeeting(apt.zoom_meeting_id);
+                        console.log('✅ Zoom meeting cancelled:', apt.zoom_meeting_id);
+                    }
+                } catch (zErr) { console.error('Zoom cancel-delete failed (non-blocking):', zErr.message); }
+            }
+            if (apt.calendar_event_id) {
+                try {
+                    const calendarService = require('../services/calendarService');
+                    await calendarService.deleteEvent(apt.calendar_event_id);
+                } catch (cErr) { console.error('iCloud cancel-delete failed (non-blocking):', cErr.message); }
+            }
+        }
+
         if (status === 'completed' && oldResult.rows.length > 0 && oldResult.rows[0].status !== 'completed') {
             const apt = oldResult.rows[0];
             try {
-                const nodemailer = require('nodemailer');
-                const emailUser = (process.env.EMAIL_USER || 'ventureglobaldanisma@gmail.com').trim().replace(/\\n/g, '').replace(/\n/g, '');
-                const emailPass = (process.env.EMAIL_PASS || '').trim().replace(/\\n/g, '').replace(/\n/g, '');
-                const mailer = nodemailer.createTransport({ service: 'gmail', auth: { user: emailUser, pass: emailPass }, tls: { rejectUnauthorized: false } });
-
-                const getEmailSignature = () => `<div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0;"><p style="margin: 0 0 15px 0; color: #333; font-style: italic; font-weight: 500;">Kind Regards,</p><p style="margin: 0 0 3px 0;"><a href="https://vgdanismanlik.com" style="color: #2563eb; text-decoration: underline; font-weight: bold; font-style: italic;">vgdanismanlik.com</a></p><p style="margin: 0 0 3px 0; color: #1a365d; font-weight: bold; font-style: italic;">CZ: +420 776 791 541</p><p style="margin: 0 0 20px 0; color: #1a365d; font-weight: bold; font-style: italic;">TR: +90 539 927 30 08</p><table cellpadding="0" cellspacing="0" border="0" style="margin-top: 15px;"><tr><td style="vertical-align: middle; padding-right: 15px;"><img src="https://vgdanismanlik.com/images/logos/venture-global-logo.png" alt="Venture Global" style="height: 80px; width: auto;"></td><td style="vertical-align: middle;"><p style="margin: 0; color: #1e40af; font-size: 18px; font-weight: bold;">VENTURE GLOBAL <sup style="font-size: 10px;">®</sup></p><p style="margin: 0; color: #3b82f6; font-size: 14px; font-weight: 600;">YURT DIŞI EĞİTİM</p><p style="margin: 0; color: #3b82f6; font-size: 14px; font-weight: 600;">DANIŞMANLIĞI</p></td></tr></table></div>`;
-                const emailWrapper = (content) => `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="color-scheme" content="light dark"><style>@media (prefers-color-scheme: dark) { .email-body { background-color: #1a1a2e !important; } .email-card { background-color: #16213e !important; border-color: #2a2a4a !important; } .email-text { color: #e0e0e0 !important; } .email-muted { color: #a0a0b0 !important; } .info-box { background-color: #1a2744 !important; } }</style></head><body style="margin: 0; padding: 0;"><div class="email-body" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #1a1a1a;"><div style="background: linear-gradient(135deg, #005A9E 0%, #003d6b 100%); color: white; padding: 30px; text-align: center; border-radius: 12px 12px 0 0;"><h1 style="margin: 0; font-size: 24px; font-weight: 700;">VG Danışmanlık</h1><p style="margin: 8px 0 0 0; opacity: 0.9; font-size: 14px;">Yurt Dışı Eğitim Danışmanlığı</p></div><div class="email-card" style="background: #ffffff; padding: 30px; border-radius: 0 0 12px 12px; border: 1px solid #e5e7eb; border-top: none;">${content}${getEmailSignature()}</div><div style="text-align: center; padding: 20px; color: #9ca3af; font-size: 12px;"><p style="margin: 0;">© ${new Date().getFullYear()} VG Danışmanlık</p></div></div></body></html>`;
-
-                const dateFormatted = new Date(apt.appointment_date).toLocaleDateString('tr-TR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-                const firstName = apt.full_name.split(' ')[0];
-
-                await mailer.sendMail({
-                    from: `"VG Danışmanlık" <${emailUser}>`,
-                    to: apt.email,
-                    subject: 'VG Danışmanlık - Görüşmemiz Nasıldı?',
-                    html: emailWrapper(`
-                        <h2 class="email-text" style="color: #1a1a1a; margin: 0 0 20px 0; font-size: 20px;">Teşekkür Ederiz, ${firstName}!</h2>
-                        <p class="email-muted" style="color: #4b5563; line-height: 1.7; margin-bottom: 20px;">
-                            <strong>${dateFormatted}</strong> tarihindeki danışmanlık mülakatımızı tamamladık. Sizinle görüşmekten büyük memnuniyet duyduk.
-                        </p>
-                        <div style="background: #f0f7ff; border-radius: 12px; padding: 24px; margin: 24px 0; border-left: 4px solid #005A9E; text-align: center;">
-                            <p style="margin: 0 0 12px 0; color: #005A9E; font-size: 16px; font-weight: 600;">Görüşmemiz işinize yaradı mı?</p>
-                            <p style="margin: 0; color: #4b5563; font-size: 14px;">Geri bildiriminiz bizim için çok değerli.</p>
-                        </div>
-                        <div style="text-align: center; margin: 30px 0;">
-                            <table cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto;">
-                                <tr>
-                                    <td style="padding: 0 6px;">
-                                        <a href="https://wa.me/905399273008?text=${encodeURIComponent('Merhaba, mülakatım çok verimli geçti. Teşekkür ederim!')}" style="display: inline-block; background: linear-gradient(135deg, #005A9E, #003d6b); color: white; padding: 14px 24px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 15px;">Çok Memnunum</a>
-                                    </td>
-                                    <td style="padding: 0 6px;">
-                                        <a href="https://wa.me/905399273008?text=${encodeURIComponent('Merhaba, mülakatımla ilgili geri bildirimim var.')}" style="display: inline-block; background: #f0f7ff; color: #005A9E; padding: 14px 24px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 15px; border: 2px solid #005A9E;">Geri Bildirimim Var</a>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div style="background: #f0f7ff; border-radius: 12px; padding: 20px; margin: 24px 0;">
-                            <p style="margin: 0 0 8px 0; color: #005A9E; font-weight: 600; font-size: 15px;">Sonraki Adımlar</p>
-                            <ul style="margin: 0; padding-left: 20px; color: #4b5563; font-size: 14px; line-height: 1.8;">
-                                <li>Görüşmede belirlenen yol haritanıza göre gerekli belgeleri hazırlayın.</li>
-                                <li>Sorularınız için WhatsApp üzerinden bize her zaman ulaşabilirsiniz.</li>
-                                <li>Başvuru süreciniz hakkında sizi düzenli olarak bilgilendireceğiz.</li>
-                            </ul>
-                        </div>
-                        <div style="text-align: center; margin-top: 25px;">
-                            <a href="https://wa.me/905399273008" style="display: inline-block; background: linear-gradient(135deg, #005A9E 0%, #003d6b 100%); color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px;">WhatsApp'tan Yazın</a>
-                        </div>
-                    `)
-                });
-                console.log('Satisfaction email sent to:', apt.email);
+                const { sendReviewRequestEmail } = require('../services/emailService');
+                await sendReviewRequestEmail(apt.email, apt.full_name.split(' ')[0], 'meeting');
+                console.log('Review request email sent to:', apt.email);
             } catch (emailErr) {
-                console.error('Satisfaction email error:', emailErr.message);
+                console.error('Review email error:', emailErr.message);
             }
         }
 
         res.json({ success: true });
     } catch (error) {
         console.error('Appointment status error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// ==================== ADMIN APPOINTMENT EDIT ====================
+router.put('/appointments/:id/edit', requireSuperAdminPage, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { full_name, email, phone, notes, date, timeSlot, target_country, field_of_interest, education_level } = req.body;
+
+        const oldResult = await pool.query('SELECT * FROM appointments WHERE id = $1', [id]);
+        if (oldResult.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Randevu bulunamadı.' });
+        }
+        const old = oldResult.rows[0];
+
+        const dateChanged = date && timeSlot && (date !== old.appointment_date.toISOString().split('T')[0] || timeSlot !== `${old.czech_time}|${old.turkey_time}|${old.start_utc.toISOString()}|${old.end_utc.toISOString()}`);
+
+        let newDate = old.appointment_date;
+        let newCzechTime = old.czech_time;
+        let newTurkeyTime = old.turkey_time;
+        let newStartUTC = old.start_utc;
+        let newEndUTC = old.end_utc;
+
+        if (dateChanged && timeSlot) {
+            const slotParts = timeSlot.split('|');
+            newCzechTime = slotParts[0];
+            newTurkeyTime = slotParts[1];
+            newStartUTC = slotParts[2];
+            newEndUTC = slotParts[3];
+            newDate = date;
+
+            const conflictCheck = await pool.query(
+                `SELECT id FROM appointments WHERE appointment_date = $1 AND status != 'cancelled' AND start_utc = $2 AND id != $3`,
+                [newDate, newStartUTC, id]
+            );
+            if (conflictCheck.rows.length > 0) {
+                return res.status(409).json({ success: false, message: 'Bu saat dilimi dolu. Farklı bir saat seçin.' });
+            }
+        }
+
+        const newFullName = full_name || old.full_name;
+        const newEmail = email || old.email;
+        const newPhone = phone !== undefined ? phone : old.phone;
+        const newNotes = notes !== undefined ? notes : old.notes;
+        const newCountry = target_country !== undefined ? target_country : old.target_country;
+        const newField = field_of_interest !== undefined ? field_of_interest : old.field_of_interest;
+        const newEducation = education_level !== undefined ? education_level : old.education_level;
+
+        await pool.query(`
+            UPDATE appointments SET
+                full_name = $1, email = $2, phone = $3, notes = $4,
+                appointment_date = $5, czech_time = $6, turkey_time = $7,
+                start_utc = $8, end_utc = $9,
+                target_country = $10, field_of_interest = $11, education_level = $12,
+                zoom_reminder_sent = CASE WHEN $5::date != $13::date OR $8::timestamptz != $14::timestamptz THEN false ELSE zoom_reminder_sent END
+            WHERE id = $15
+        `, [newFullName, newEmail, newPhone, newNotes,
+            newDate, newCzechTime, newTurkeyTime, newStartUTC, newEndUTC,
+            newCountry, newField, newEducation,
+            old.appointment_date, old.start_utc, id]);
+
+        const calendarService = require('../services/calendarService');
+        const zoomService = require('../services/zoomService');
+
+        if (dateChanged && old.calendar_event_id) {
+            try {
+                const isPro = old.meeting_type === 'professional';
+                const eventTitle = isPro ? `VG Görüşme - ${newFullName}` : `VG Randevu - ${newFullName}`;
+                await calendarService.updateEvent(old.calendar_event_id, {
+                    title: eventTitle,
+                    description: `Ad Soyad: ${newFullName}\nE-posta: ${newEmail}\nTelefon: ${newPhone || '-'}\n${newNotes ? 'Not: ' + newNotes : ''}`,
+                    startDate: new Date(newStartUTC),
+                    endDate: new Date(newEndUTC),
+                    attendeeEmail: newEmail,
+                    attendeeName: newFullName
+                });
+                console.log('iCloud event updated for appointment:', id);
+            } catch (calErr) {
+                console.error('iCloud event update failed:', calErr.message);
+            }
+        }
+
+        if (dateChanged && old.zoom_meeting_id && zoomService.isConfigured()) {
+            try {
+                await zoomService.updateZoomMeeting(old.zoom_meeting_id, {
+                    topic: old.meeting_type === 'professional' ? `VG Danışmanlık - Görüşme - ${newFullName}` : `VG Danışmanlık - ${newFullName}`,
+                    startTime: newStartUTC,
+                    duration: 30
+                });
+                console.log('Zoom meeting updated for appointment:', id);
+            } catch (zoomErr) {
+                console.error('Zoom meeting update failed:', zoomErr.message);
+                if (zoomService.isConfigured()) {
+                    try {
+                        const newMeeting = await zoomService.createZoomMeeting({
+                            topic: old.meeting_type === 'professional' ? `VG Danışmanlık - Görüşme - ${newFullName}` : `VG Danışmanlık - ${newFullName}`,
+                            startTime: newStartUTC,
+                            duration: 30
+                        });
+                        await pool.query('UPDATE appointments SET zoom_link = $1, zoom_meeting_id = $2 WHERE id = $3',
+                            [newMeeting.join_url, String(newMeeting.meeting_id), id]);
+                        console.log('New Zoom meeting created after update failure:', newMeeting.join_url);
+                    } catch (newZoomErr) {
+                        console.error('New Zoom meeting creation also failed:', newZoomErr.message);
+                    }
+                }
+            }
+        }
+
+        // Send notification email
+        try {
+            const nodemailer = require('nodemailer');
+            const emailUser = (process.env.EMAIL_USER || '').trim().replace(/\\n/g, '').replace(/\n/g, '');
+            const emailPass = (process.env.EMAIL_PASS || '').trim().replace(/\\n/g, '').replace(/\n/g, '');
+            if (emailUser && emailPass) {
+                const mailer = nodemailer.createTransport({ service: 'gmail', auth: { user: emailUser, pass: emailPass }, tls: { rejectUnauthorized: false } });
+                const getEmailSignature = () => `<div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0;"><p style="margin: 0 0 15px 0; color: #333; font-style: italic; font-weight: 500;">Kind Regards,</p><p style="margin: 0 0 3px 0;"><a href="https://vgdanismanlik.com" style="color: #2563eb; text-decoration: underline; font-weight: bold; font-style: italic;">vgdanismanlik.com</a></p><p style="margin: 0 0 3px 0; color: #1a365d; font-weight: bold; font-style: italic;">CZ: +420 776 791 541</p><p style="margin: 0 0 20px 0; color: #1a365d; font-weight: bold; font-style: italic;">TR: +90 539 927 30 08</p><table cellpadding="0" cellspacing="0" border="0" style="margin-top: 15px;"><tr><td style="vertical-align: middle; padding-right: 15px;"><img src="https://vgdanismanlik.com/images/logos/01-1%20copy.png" alt="VG Danışmanlık" style="height: 80px; width: auto;"></td><td style="vertical-align: middle;"><p style="margin: 0; color: #1e40af; font-size: 18px; font-weight: bold;">VG DANIŞMANLIK</p><p style="margin: 0; color: #3b82f6; font-size: 14px; font-weight: 600;">YURT DIŞI EĞİTİM</p></td></tr></table></div>`;
+                const emailWrapper = (content) => `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="color-scheme" content="light dark"><style>@media (prefers-color-scheme: dark) { .email-body { background-color: #1a1a2e !important; } .email-card { background-color: #16213e !important; border-color: #2a2a4a !important; } .email-text { color: #e0e0e0 !important; } .email-muted { color: #a0a0b0 !important; } .info-box { background-color: #1a2744 !important; } }</style></head><body style="margin: 0; padding: 0;"><div class="email-body" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #1a1a1a;"><div style="background: linear-gradient(135deg, #005A9E 0%, #003d6b 100%); color: white; padding: 30px; text-align: center; border-radius: 12px 12px 0 0;"><h1 style="margin: 0; font-size: 24px; font-weight: 700;">VG Danışmanlık</h1><p style="margin: 8px 0 0 0; opacity: 0.9; font-size: 14px;">Yurt Dışı Eğitim Danışmanlığı</p></div><div class="email-card" style="background: #ffffff; padding: 30px; border-radius: 0 0 12px 12px; border: 1px solid #e5e7eb; border-top: none;">${content}${getEmailSignature()}</div></div></body></html>`;
+
+                const firstName = newFullName.split(' ')[0];
+                const isPro = old.meeting_type === 'professional';
+                const updatedApt = (await pool.query('SELECT * FROM appointments WHERE id = $1', [id])).rows[0];
+                const currentZoomLink = updatedApt ? updatedApt.zoom_link : old.zoom_link;
+
+                if (dateChanged) {
+                    const oldDateFormatted = new Date(old.appointment_date).toLocaleDateString('tr-TR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                    const newDateFormatted = new Date(newDate).toLocaleDateString('tr-TR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+                    await mailer.sendMail({
+                        from: `"VG Danışmanlık" <${emailUser}>`,
+                        to: newEmail,
+                        subject: `VG Danışmanlık - ${isPro ? 'Görüşme' : 'Randevu'} Tarihi Değişikliği`,
+                        html: emailWrapper(`
+                            <h2 class="email-text" style="color: #1a1a1a; margin: 0 0 20px 0; font-size: 20px;">
+                                <i style="color: #f59e0b;">⚠</i> ${isPro ? 'Görüşme' : 'Randevu'} Tarih/Saat Değişikliği
+                            </h2>
+                            <p class="email-muted" style="color: #4b5563; line-height: 1.7; margin-bottom: 20px;">
+                                ${isPro ? 'Sayın' : 'Merhaba'} <strong>${firstName}</strong>, ${isPro ? 'görüşmenizin' : 'randevunuzun'} tarih ve/veya saati güncellenmiştir.
+                            </p>
+                            <div style="background: #fef3c7; border-radius: 12px; padding: 20px; margin: 20px 0; border-left: 4px solid #f59e0b;">
+                                <p style="margin: 0 0 8px 0; color: #92400e; font-weight: 700; font-size: 13px; text-transform: uppercase;">Eski Tarih/Saat</p>
+                                <p style="margin: 0; color: #92400e; font-size: 15px; text-decoration: line-through;">${oldDateFormatted} — ${old.turkey_time} (TSİ)</p>
+                            </div>
+                            <div style="background: #d1fae5; border-radius: 12px; padding: 20px; margin: 20px 0; border-left: 4px solid #059669;">
+                                <p style="margin: 0 0 8px 0; color: #065f46; font-weight: 700; font-size: 13px; text-transform: uppercase;">Yeni Tarih/Saat</p>
+                                <p style="margin: 0; color: #065f46; font-size: 18px; font-weight: 700;">${newDateFormatted} — ${newTurkeyTime} (TSİ)</p>
+                            </div>
+                            ${currentZoomLink ? `<div style="text-align: center; margin: 25px 0;"><a href="${currentZoomLink}" style="display: inline-block; background: linear-gradient(135deg, #2D8CFF, #0B5CFF); color: white; padding: 14px 32px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 15px;">Zoom Toplantısına Katıl</a></div>` : ''}
+                            <div style="background: #f0f7ff; border-radius: 8px; padding: 16px; margin: 20px 0;">
+                                <p style="margin: 0; color: #003d6b; font-size: 14px;">
+                                    <strong>Not:</strong> Toplantı linki görüşmeden 30 dakika önce ayrıca e-posta ile gönderilecektir. Değişiklikle ilgili sorularınız için bizimle iletişime geçebilirsiniz.
+                                </p>
+                            </div>
+                            <div style="text-align: center; margin-top: 25px;">
+                                <a href="https://wa.me/905399273008" style="display: inline-block; background: linear-gradient(135deg, #005A9E 0%, #003d6b 100%); color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px;">WhatsApp ile İletişim</a>
+                            </div>
+                        `)
+                    });
+                    console.log('Date change email sent to:', newEmail);
+                } else {
+                    const changes = [];
+                    if (full_name && full_name !== old.full_name) changes.push('İsim');
+                    if (email && email !== old.email) changes.push('E-posta');
+                    if (phone !== undefined && phone !== old.phone) changes.push('Telefon');
+                    if (notes !== undefined && notes !== old.notes) changes.push('Not');
+                    if (target_country !== undefined && target_country !== old.target_country) changes.push('Hedef Ülke');
+
+                    if (changes.length > 0) {
+                        const dateFormatted = new Date(old.appointment_date).toLocaleDateString('tr-TR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                        await mailer.sendMail({
+                            from: `"VG Danışmanlık" <${emailUser}>`,
+                            to: newEmail,
+                            subject: `VG Danışmanlık - ${isPro ? 'Görüşme' : 'Randevu'} Bilgileri Güncellendi`,
+                            html: emailWrapper(`
+                                <h2 class="email-text" style="color: #1a1a1a; margin: 0 0 20px 0; font-size: 20px;">
+                                    ${isPro ? 'Görüşme' : 'Randevu'} Bilgileri Güncellendi
+                                </h2>
+                                <p class="email-muted" style="color: #4b5563; line-height: 1.7; margin-bottom: 20px;">
+                                    ${isPro ? 'Sayın' : 'Merhaba'} <strong>${firstName}</strong>, ${isPro ? 'görüşmenize' : 'randevunuza'} ait bazı bilgiler güncellenmiştir.
+                                </p>
+                                <div style="background: #f0f7ff; border-radius: 12px; padding: 24px; margin: 20px 0; border-left: 4px solid #005A9E;">
+                                    <p style="margin: 0 0 4px 0; color: #6b7280; font-size: 13px;">Güncellenen Alanlar</p>
+                                    <p style="margin: 0; color: #005A9E; font-weight: 700;">${changes.join(', ')}</p>
+                                </div>
+                                <div style="background: #f0f7ff; border-radius: 12px; padding: 24px; margin: 20px 0; border-left: 4px solid #005A9E;">
+                                    <table cellpadding="0" cellspacing="0" border="0" style="width: 100%;">
+                                        <tr><td style="padding: 8px 0; color: #6b7280; font-size: 14px; width: 100px;">Tarih</td><td style="padding: 8px 0; font-weight: 600; color: #1a1a1a;">${dateFormatted}</td></tr>
+                                        <tr><td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Saat</td><td style="padding: 8px 0; font-weight: 700; color: #005A9E; font-size: 18px;">${old.turkey_time} (TSİ)</td></tr>
+                                    </table>
+                                </div>
+                                ${currentZoomLink ? `<div style="text-align: center; margin: 20px 0;"><a href="${currentZoomLink}" style="display: inline-block; background: linear-gradient(135deg, #2D8CFF, #0B5CFF); color: white; padding: 14px 32px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 15px;">Zoom Toplantısına Katıl</a></div>` : ''}
+                                <div style="text-align: center; margin-top: 25px;">
+                                    <a href="https://wa.me/905399273008" style="display: inline-block; background: linear-gradient(135deg, #005A9E 0%, #003d6b 100%); color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px;">WhatsApp ile İletişim</a>
+                                </div>
+                            `)
+                        });
+                        console.log('Details change email sent to:', newEmail);
+                    }
+                }
+            }
+        } catch (mailErr) {
+            console.error('Edit appointment email error:', mailErr.message);
+        }
+
+        res.json({ success: true, message: 'Randevu başarıyla güncellendi.' });
+    } catch (error) {
+        console.error('Edit appointment error:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// Get single appointment details
+router.get('/appointments/:id/details', requireSuperAdminPage, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const result = await pool.query('SELECT * FROM appointments WHERE id = $1', [id]);
+        if (result.rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Randevu bulunamadı.' });
+        }
+        res.json({ success: true, appointment: result.rows[0] });
+    } catch (error) {
+        console.error('Get appointment details error:', error);
         res.status(500).json({ success: false, message: error.message });
     }
 });
@@ -6693,6 +7123,7 @@ router.post('/appointments/create', requireSuperAdminPage, async (req, res) => {
         }
 
         let zoomLink = null;
+        let zoomMeetingId = null;
         try {
             if (zoomService.isConfigured()) {
                 const meeting = await zoomService.createZoomMeeting({
@@ -6702,6 +7133,7 @@ router.post('/appointments/create', requireSuperAdminPage, async (req, res) => {
                     agenda: isPro ? `Profesyonel görüşme: ${fullName}` : `Danışmanlık görüşmesi: ${fullName} - ${targetCountry || 'Genel'}`
                 });
                 zoomLink = meeting.join_url;
+                zoomMeetingId = meeting.meeting_id ? String(meeting.meeting_id) : null;
             }
         } catch (zoomError) {
             console.error('Zoom meeting creation failed:', zoomError.message);
@@ -6712,8 +7144,8 @@ router.post('/appointments/create', requireSuperAdminPage, async (req, res) => {
                 full_name, phone, email, target_country, field_of_interest,
                 education_level, grade, budget, notes,
                 appointment_date, czech_time, turkey_time,
-                start_utc, end_utc, calendar_event_id, ip_address, status, zoom_link, meeting_type
-            ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,'confirmed',$17,$18)
+                start_utc, end_utc, calendar_event_id, ip_address, status, zoom_link, zoom_meeting_id, meeting_type
+            ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,'confirmed',$17,$18,$19)
             RETURNING *`,
             [fullName, phone || '', email,
              isPro ? 'Profesyonel' : (targetCountry || 'Admin'),
@@ -6721,7 +7153,7 @@ router.post('/appointments/create', requireSuperAdminPage, async (req, res) => {
              isPro ? 'Profesyonel' : (educationLevel || 'Belirtilmedi'),
              grade || null, null, notes || (isPro ? 'Profesyonel görüşme' : 'Admin tarafından oluşturuldu'),
              date, czechTime, turkeyTime, startUTC, endUTC,
-             calendarEventId || null, 'admin', zoomLink, isPro ? 'professional' : 'student']
+             calendarEventId || null, 'admin', zoomLink, zoomMeetingId, isPro ? 'professional' : 'student']
         );
 
         const appointment = result.rows[0];
@@ -6734,7 +7166,7 @@ router.post('/appointments/create', requireSuperAdminPage, async (req, res) => {
                 const mailer = nodemailer.createTransport({ service: 'gmail', auth: { user: emailUserEnv, pass: emailPassEnv }, tls: { rejectUnauthorized: false } });
                 const dateFormatted = new Date(date).toLocaleDateString('tr-TR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-                const getEmailSignature = () => `<div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0;"><p style="margin: 0 0 15px 0; color: #333; font-style: italic; font-weight: 500;">Kind Regards,</p><p style="margin: 0 0 3px 0;"><a href="https://vgdanismanlik.com" style="color: #2563eb; text-decoration: underline; font-weight: bold; font-style: italic;">vgdanismanlik.com</a></p><p style="margin: 0 0 3px 0; color: #1a365d; font-weight: bold; font-style: italic;">CZ: +420 776 791 541</p><p style="margin: 0 0 20px 0; color: #1a365d; font-weight: bold; font-style: italic;">TR: +90 539 927 30 08</p><table cellpadding="0" cellspacing="0" border="0" style="margin-top: 15px;"><tr><td style="vertical-align: middle; padding-right: 15px;"><img src="https://vgdanismanlik.com/images/logos/venture-global-logo.png" alt="Venture Global" style="height: 80px; width: auto;"></td><td style="vertical-align: middle;"><p style="margin: 0; color: #1e40af; font-size: 18px; font-weight: bold;">VENTURE GLOBAL <sup style="font-size: 10px;">&reg;</sup></p><p style="margin: 0; color: #3b82f6; font-size: 14px; font-weight: 600;">YURT DIŞI EĞİTİM</p><p style="margin: 0; color: #3b82f6; font-size: 14px; font-weight: 600;">DANIŞMANLIĞI</p></td></tr></table></div>`;
+                const getEmailSignature = () => `<div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0;"><p style="margin: 0 0 15px 0; color: #333; font-style: italic; font-weight: 500;">Kind Regards,</p><p style="margin: 0 0 3px 0;"><a href="https://vgdanismanlik.com" style="color: #2563eb; text-decoration: underline; font-weight: bold; font-style: italic;">vgdanismanlik.com</a></p><p style="margin: 0 0 3px 0; color: #1a365d; font-weight: bold; font-style: italic;">CZ: +420 776 791 541</p><p style="margin: 0 0 20px 0; color: #1a365d; font-weight: bold; font-style: italic;">TR: +90 539 927 30 08</p><table cellpadding="0" cellspacing="0" border="0" style="margin-top: 15px;"><tr><td style="vertical-align: middle; padding-right: 15px;"><img src="https://vgdanismanlik.com/images/logos/01-1%20copy.png" alt="VG Danışmanlık" style="height: 80px; width: auto;"></td><td style="vertical-align: middle;"><p style="margin: 0; color: #1e40af; font-size: 18px; font-weight: bold;">VG DANIŞMANLIK</p><p style="margin: 0; color: #3b82f6; font-size: 14px; font-weight: 600;">YURT DIŞI EĞİTİM</p></td></tr></table></div>`;
                 const emailWrapper = (content) => `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="color-scheme" content="light dark"><meta name="supported-color-schemes" content="light dark"><style>@media (prefers-color-scheme: dark) { .email-body { background-color: #1a1a2e !important; } .email-card { background-color: #16213e !important; border-color: #2a2a4a !important; } .email-text { color: #e0e0e0 !important; } .email-muted { color: #a0a0b0 !important; } .info-box { background-color: #1a2744 !important; border-color: #005A9E !important; } }</style></head><body style="margin: 0; padding: 0;"><div class="email-body" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #1a1a1a;"><div style="background: linear-gradient(135deg, #005A9E 0%, #003d6b 100%); color: white; padding: 30px; text-align: center; border-radius: 12px 12px 0 0;"><h1 style="margin: 0; font-size: 24px; font-weight: 700;">VG Danışmanlık</h1><p style="margin: 8px 0 0 0; opacity: 0.9; font-size: 14px;">Yurt Dışı Eğitim Danışmanlığı</p></div><div class="email-card" style="background: #ffffff; padding: 30px; border-radius: 0 0 12px 12px; border: 1px solid #e5e7eb; border-top: none;">${content}${getEmailSignature()}</div></div></body></html>`;
 
                 if (isPro) {
@@ -6792,6 +7224,12 @@ router.post('/appointments/create', requireSuperAdminPage, async (req, res) => {
             }
         } catch (mailErr) {
             console.error('Admin appointment confirmation mail error:', mailErr.message);
+        }
+
+        if (phone && !isPro) {
+            createContact(fullName, phone, email, 'student')
+                .then(uid => { if (uid) console.log('Admin appointment contact saved to iCloud:', uid); })
+                .catch(err => console.error('Admin appointment iCloud contact failed:', err.message));
         }
 
         res.json({ success: true, message: isPro ? 'Görüşme başarıyla oluşturuldu.' : 'Randevu başarıyla oluşturuldu.', appointment: { id: appointment.id } });

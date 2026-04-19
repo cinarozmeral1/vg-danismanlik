@@ -4,6 +4,7 @@ const pool = require('../config/database');
 const { generateUserToken, generatePartnerToken } = require('../middleware/auth');
 const { sendVerificationEmail, sendPasswordResetEmail, sendPartnerVerificationEmail, sendNewStudentNotificationEmail, generateVerificationToken, generateResetToken } = require('../services/emailService');
 const { handleGoogleAuth } = require('../services/googleAuthService');
+const { createContact } = require('../services/contactService');
 
 const router = express.Router();
 
@@ -76,7 +77,7 @@ function formatPhoneNumber(phone) {
 }
 
 router.get('/google/redirect', (req, res) => {
-    const { action = 'login', wizard_rec, phone, english_level, first_name, last_name, tc_number } = req.query;
+    const { action = 'login', phone, english_level, first_name, last_name, tc_number } = req.query;
     
     // Store action in cookie for callback
     res.cookie('google_auth_action', action, { 
@@ -117,17 +118,6 @@ router.get('/google/redirect', (req, res) => {
             sameSite: 'lax'
         });
         console.log('🆔 Storing tc_number for registration:', tc_number);
-    }
-    
-    // Store wizard recommendation ID if provided
-    if (wizard_rec) {
-        res.cookie('wizard_recommendation_id', wizard_rec, { 
-            maxAge: 10 * 60 * 1000,
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax'
-        });
-        console.log('📎 Storing wizard recommendation:', wizard_rec);
     }
     
     // Store phone number if provided (for Google registration)
@@ -175,7 +165,6 @@ router.get('/google/callback', async (req, res) => {
     try {
         const { code, error, error_description } = req.query;
         const action = req.cookies.google_auth_action || 'login';
-        const wizardRecommendationId = req.cookies.wizard_recommendation_id || null;
         const phoneNumber = req.cookies.google_auth_phone || null;
         const englishLevel = req.cookies.google_auth_english_level || null;
         const firstName = req.cookies.google_auth_first_name || null;
@@ -186,7 +175,6 @@ router.get('/google/callback', async (req, res) => {
         console.log('   Code:', code ? 'present' : 'missing');
         console.log('   Error:', error || 'none');
         console.log('   Action:', action);
-        console.log('   Wizard Rec:', wizardRecommendationId || 'none');
         console.log('   First Name:', firstName || 'none');
         console.log('   Last Name:', lastName || 'none');
         console.log('   TC Number:', tcNumber || 'none');
@@ -195,7 +183,6 @@ router.get('/google/callback', async (req, res) => {
         
         // Clear cookies
         res.clearCookie('google_auth_action');
-        res.clearCookie('wizard_recommendation_id');
         res.clearCookie('google_auth_phone');
         res.clearCookie('google_auth_english_level');
         res.clearCookie('google_auth_first_name');
@@ -265,19 +252,6 @@ router.get('/google/callback', async (req, res) => {
             
             console.log('✅ Existing user logged in:', user.email);
             
-            // Link wizard recommendation if exists
-            if (wizardRecommendationId) {
-                try {
-                    await pool.query(
-                        'UPDATE ai_recommendations SET user_id = $1 WHERE id = $2 AND user_id IS NULL',
-                        [user.id, wizardRecommendationId]
-                    );
-                    console.log('📎 Linked wizard recommendation', wizardRecommendationId, 'to user', user.id);
-                } catch (linkErr) {
-                    console.error('Failed to link wizard recommendation:', linkErr.message);
-                }
-            }
-            
             // Generate JWT token (same as normal login)
             const token = generateUserToken(user.id);
             
@@ -317,16 +291,6 @@ router.get('/google/callback', async (req, res) => {
                 sameSite: 'lax'
             });
             
-            // Store wizard recommendation ID if exists
-            if (wizardRecommendationId) {
-                res.cookie('google_pending_wizard_rec', wizardRecommendationId, {
-                    maxAge: 30 * 60 * 1000,
-                    httpOnly: true,
-                    secure: process.env.NODE_ENV === 'production',
-                    sameSite: 'lax'
-                });
-            }
-            
             return res.redirect('/complete-google-registration');
         }
         
@@ -345,13 +309,13 @@ router.post('/complete-google-registration', async (req, res) => {
     
     try {
         const { first_name, last_name, tc_number, phone, english_level,
+                birth_date, high_school_graduation_date, gpa,
                 desired_country, current_school, active_class,
                 passport_type, passport_number, home_address } = req.body;
         
         // Get pending Google info from cookies
         const googleEmail = req.cookies.google_pending_email;
         const googleId = req.cookies.google_pending_id;
-        const wizardRecommendationId = req.cookies.google_pending_wizard_rec;
         
         if (!googleEmail || !googleId) {
             return res.status(400).json({
@@ -429,7 +393,6 @@ router.post('/complete-google-registration', async (req, res) => {
             res.clearCookie('google_pending_email');
             res.clearCookie('google_pending_id');
             res.clearCookie('google_pending_name');
-            res.clearCookie('google_pending_wizard_rec');
             
             return res.status(400).json({
                 success: false,
@@ -440,17 +403,9 @@ router.post('/complete-google-registration', async (req, res) => {
         // Format phone number
         const formattedPhone = formatPhoneNumber(phone);
         
-        // Create new user
-        const result = await pool.query(`
-            INSERT INTO users (
-                google_id, email, first_name, last_name, tc_number, phone, password_hash,
-                english_level, high_school_graduation_date, birth_date,
-                desired_country, current_school, active_class,
-                passport_type, passport_number, home_address,
-                email_verified, registered_via, personal_info_completed, created_at
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, NOW())
-            RETURNING *
-        `, [
+        // Create new user — explicitly mark as pending so admin sees them
+        // in the "Beklemede" list (regardless of DB default).
+        const googleCompleteParams = [
             googleId,
             googleEmail,
             first_name,
@@ -459,18 +414,46 @@ router.post('/complete-google-registration', async (req, res) => {
             formattedPhone,
             'GOOGLE_AUTH_NO_PASSWORD',
             english_level,
-            null,
-            null,
+            high_school_graduation_date || null,
+            birth_date || null,
+            gpa || null,
             desired_country || null,
             current_school || null,
             active_class || null,
             passport_type || null,
             passport_number || null,
             home_address || null,
-            true, // email_verified
+            true,
             'google',
-            true // personal_info_completed
-        ]);
+            true
+        ];
+
+        let result;
+        try {
+            result = await pool.query(`
+                INSERT INTO users (
+                    google_id, email, first_name, last_name, tc_number, phone, password_hash,
+                    english_level, high_school_graduation_date, birth_date, gpa,
+                    desired_country, current_school, active_class,
+                    passport_type, passport_number, home_address,
+                    email_verified, registered_via, personal_info_completed,
+                    student_status, created_at
+                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, 'pending', NOW())
+                RETURNING *
+            `, googleCompleteParams);
+        } catch (statusErr) {
+            console.warn('Google complete-register: student_status column missing, retrying without it:', statusErr.message);
+            result = await pool.query(`
+                INSERT INTO users (
+                    google_id, email, first_name, last_name, tc_number, phone, password_hash,
+                    english_level, high_school_graduation_date, birth_date, gpa,
+                    desired_country, current_school, active_class,
+                    passport_type, passport_number, home_address,
+                    email_verified, registered_via, personal_info_completed, created_at
+                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, NOW())
+                RETURNING *
+            `, googleCompleteParams);
+        }
         
         const user = result.rows[0];
         console.log('✅ New user created via Google registration:', user.email);
@@ -488,19 +471,6 @@ router.post('/complete-google-registration', async (req, res) => {
             );
         }
         
-        // Link wizard recommendation if exists
-        if (wizardRecommendationId) {
-            try {
-                await pool.query(
-                    'UPDATE ai_recommendations SET user_id = $1 WHERE id = $2 AND user_id IS NULL',
-                    [user.id, wizardRecommendationId]
-                );
-                console.log('📎 Linked wizard recommendation', wizardRecommendationId, 'to user', user.id);
-            } catch (linkErr) {
-                console.error('Failed to link wizard recommendation:', linkErr.message);
-            }
-        }
-        
         // Generate JWT token
         const token = generateUserToken(user.id);
         
@@ -516,7 +486,6 @@ router.post('/complete-google-registration', async (req, res) => {
         res.clearCookie('google_pending_email');
         res.clearCookie('google_pending_id');
         res.clearCookie('google_pending_name');
-        res.clearCookie('google_pending_wizard_rec');
 
         // Send new student notification to admin (non-blocking)
         sendNewStudentNotificationEmail({
@@ -527,6 +496,19 @@ router.post('/complete-google-registration', async (req, res) => {
         }, 'google_redirect').catch(err => {
             console.error('⚠️ Admin notification email error:', err.message);
         });
+
+        // iCloud rehberine ogrenciyi ekle
+        createContact(
+            `${first_name} ${last_name}`,
+            formattedPhone,
+            googleEmail,
+            'student'
+        ).then(uid => {
+            if (uid) {
+                pool.query('UPDATE users SET icloud_contact_uid = $1 WHERE id = $2', [uid, user.id])
+                    .catch(err => console.error('iCloud UID save failed:', err.message));
+            }
+        }).catch(err => console.error('iCloud contact creation failed:', err.message));
         
         res.json({
             success: true,
@@ -570,7 +552,7 @@ router.post('/complete-google-registration', async (req, res) => {
 // =====================================================
 router.post('/google', async (req, res) => {
     try {
-        const { credential, wizard_recommendation_id, language = 'tr' } = req.body;
+        const { credential, language = 'tr' } = req.body;
         
         if (!credential) {
             return res.status(400).json({
@@ -581,8 +563,7 @@ router.post('/google', async (req, res) => {
         
         // Handle Google authentication (smart login/register)
         const result = await handleGoogleAuth(credential, {
-            language,
-            wizard_recommendation_id
+            language
         });
         
         if (!result.success) {
@@ -624,7 +605,7 @@ router.post('/google', async (req, res) => {
 // =====================================================
 router.post('/google-oauth2', async (req, res) => {
     try {
-        const { access_token, user_data, wizard_recommendation_id, language = 'tr' } = req.body;
+        const { access_token, user_data, language = 'tr' } = req.body;
         
         if (!access_token || !user_data || !user_data.email) {
             return res.status(400).json({
@@ -670,40 +651,48 @@ router.post('/google-oauth2', async (req, res) => {
             const uniquePhone = '5' + Math.floor(Math.random() * 900000000 + 100000000).toString();
             const placeholderDate = '2000-01-01';
             
-            const result = await pool.query(`
-                INSERT INTO users (
-                    google_id,
-                    email,
-                    first_name,
-                    last_name,
-                    tc_number,
-                    phone,
-                    password_hash,
-                    english_level,
-                    high_school_graduation_date,
-                    birth_date,
-                    email_verified,
-                    registered_via,
-                    personal_info_completed,
-                    created_at
-                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, NOW())
-                RETURNING *
-            `, [
+            // student_status set to 'pending' explicitly so Google sign-ups
+            // also land in the "Beklemede" admin tab regardless of DB default.
+            const googleInsertParams = [
                 user_data.sub,
                 user_data.email,
-                '', // Will be filled later by user - not auto-filled from Google
-                '', // Will be filled later by user - not auto-filled from Google
-                uniqueTc, // Placeholder tc_number - user will fill later
-                uniquePhone, // Placeholder phone - user will fill later  
-                'GOOGLE_AUTH_NO_PASSWORD', // Marker for Google users
-                'Belirtilmedi', // Placeholder english_level
-                placeholderDate, // Placeholder graduation date
-                placeholderDate, // Placeholder birth date
-                1, // Google users are automatically verified
+                '',
+                '',
+                uniqueTc,
+                uniquePhone,
+                'GOOGLE_AUTH_NO_PASSWORD',
+                'Belirtilmedi',
+                placeholderDate,
+                placeholderDate,
+                1,
                 'google',
-                false // Personal info not completed yet
-            ]);
-            
+                false
+            ];
+
+            let result;
+            try {
+                result = await pool.query(`
+                    INSERT INTO users (
+                        google_id, email, first_name, last_name, tc_number, phone,
+                        password_hash, english_level, high_school_graduation_date,
+                        birth_date, email_verified, registered_via,
+                        personal_info_completed, student_status, created_at
+                    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, 'pending', NOW())
+                    RETURNING *
+                `, googleInsertParams);
+            } catch (statusErr) {
+                console.warn('Google register: student_status column missing, retrying without it:', statusErr.message);
+                result = await pool.query(`
+                    INSERT INTO users (
+                        google_id, email, first_name, last_name, tc_number, phone,
+                        password_hash, english_level, high_school_graduation_date,
+                        birth_date, email_verified, registered_via,
+                        personal_info_completed, created_at
+                    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, NOW())
+                    RETURNING *
+                `, googleInsertParams);
+            }
+
             user = result.rows[0];
             
             // Initialize default checklist for new user
@@ -720,19 +709,6 @@ router.post('/google-oauth2', async (req, res) => {
                     `INSERT INTO checklist_items (user_id, item_name, is_completed) VALUES ($1, $2, false)`,
                     [user.id, item]
                 );
-            }
-        }
-        
-        // If there's a wizard recommendation, link it to this user
-        if (wizard_recommendation_id) {
-            try {
-                await pool.query(
-                    'UPDATE ai_recommendations SET user_id = $1 WHERE id = $2 AND user_id IS NULL',
-                    [user.id, wizard_recommendation_id]
-                );
-                console.log(`📎 Linked wizard recommendation ${wizard_recommendation_id} to user ${user.id}`);
-            } catch (err) {
-                console.warn('Could not link wizard recommendation:', err.message);
             }
         }
         
@@ -791,6 +767,7 @@ router.post('/register', async (req, res) => {
             english_level,
             high_school_graduation_date,
             birth_date,
+            gpa,
             passport_number,
             passport_type,
             desired_country,
@@ -943,30 +920,17 @@ router.post('/register', async (req, res) => {
         const formattedPhone = formatPhoneNumber(phone);
         
         // Insert user with all provided fields from registration form
-        const result = await pool.query(`
-            INSERT INTO users (
-                first_name,
-                last_name,
-                email,
-                tc_number,
-                phone,
-                password_hash,
-                english_level,
-                high_school_graduation_date,
-                birth_date,
-                passport_type,
-                passport_number,
-                desired_country,
-                active_class,
-                current_school,
-                home_address,
-                verification_token,
-                registered_via,
-                personal_info_completed,
-                email_verified
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
-            RETURNING id, first_name, last_name, email, phone
-        `, [
+        // student_status is explicitly set to 'pending' so new students always
+        // land in the "Beklemede" admin tab, regardless of DB default.
+        const insertColumns = [
+            'first_name', 'last_name', 'email', 'tc_number', 'phone',
+            'password_hash', 'english_level', 'high_school_graduation_date',
+            'birth_date', 'gpa', 'passport_type', 'passport_number',
+            'desired_country', 'active_class', 'current_school', 'home_address',
+            'verification_token', 'registered_via', 'personal_info_completed',
+            'email_verified'
+        ];
+        const insertValues = [
             first_name || '',
             last_name || '',
             email,
@@ -976,6 +940,7 @@ router.post('/register', async (req, res) => {
             english_level || null,
             high_school_graduation_date || null,
             birth_date || null,
+            gpa || null,
             passport_type || null,
             passport_number || null,
             desired_country || null,
@@ -985,8 +950,27 @@ router.post('/register', async (req, res) => {
             verificationToken,
             'email',
             isPersonalInfoComplete,
-            false // email_verified - must verify via email
-        ]);
+            false
+        ];
+
+        let result;
+        try {
+            const colsWithStatus = [...insertColumns, 'student_status'];
+            const valsWithStatus = [...insertValues, 'pending'];
+            const placeholders = valsWithStatus.map((_, i) => `$${i + 1}`).join(', ');
+            result = await pool.query(
+                `INSERT INTO users (${colsWithStatus.join(', ')}) VALUES (${placeholders}) RETURNING id, first_name, last_name, email, phone`,
+                valsWithStatus
+            );
+        } catch (statusErr) {
+            // Fallback if student_status column does not yet exist
+            console.warn('Register: student_status column missing, retrying without it:', statusErr.message);
+            const placeholders = insertValues.map((_, i) => `$${i + 1}`).join(', ');
+            result = await pool.query(
+                `INSERT INTO users (${insertColumns.join(', ')}) VALUES (${placeholders}) RETURNING id, first_name, last_name, email, phone`,
+                insertValues
+            );
+        }
 
         const user = result.rows[0];
 
@@ -1027,6 +1011,19 @@ router.post('/register', async (req, res) => {
                 .then(() => console.log('Admin notification sent for:', email))
                 .catch(err => console.error('Admin notification failed:', err.message))
         ]);
+
+        // iCloud rehberine ogrenciyi ekle
+        createContact(
+            `${first_name} ${last_name}`,
+            formattedPhone,
+            email,
+            'student'
+        ).then(uid => {
+            if (uid) {
+                pool.query('UPDATE users SET icloud_contact_uid = $1 WHERE id = $2', [uid, user.id])
+                    .catch(err => console.error('iCloud UID save failed:', err.message));
+            }
+        }).catch(err => console.error('iCloud contact creation failed:', err.message));
 
         res.status(201).json({
             success: true,

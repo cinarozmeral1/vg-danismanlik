@@ -1,0 +1,7 @@
+---
+description: Revize sonrası staged deploy
+globs:
+alwaysApply: true
+---
+
+Kullanıcı site/UI/kod üzerinde revize, düzeltme veya değişiklik istediğinde ve bu değişiklikleri uyguladıktan sonra **her zaman** Vercel staged (preview) deploy çalıştır: proje kökünde `npm run deploy` (veya `vercel --yes`). Deploy bitince preview URL’yi kullanıcıya ilet. Production (`npm run deploy:prod`) ancak kullanıcı açıkça canlıya almak istediğinde.

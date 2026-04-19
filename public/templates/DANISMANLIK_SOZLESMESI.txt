@@ -11,10 +11,10 @@ Düzenleme Tarihi: [TARİH]
 
 1. DANIŞMAN
 
-Unvan          : Venture Global Yurt Dışı Eğitim Danışmanlık
-Adres          : İstanbul, Türkiye
+Unvan          : VG DANISMANLIK LTD
+Adres          : Na Větriniku 2513/4 Prag Çekya
 Telefon        : +90 539 927 30 08
-E-posta        : info@vgdanismanlik.com
+E-posta        : info@vgedu.org
 Web Sitesi     : www.vgdanismanlik.com
 
 TL IBAN        : TR56 0006 4000 0011 2120 9085 60
@@ -147,6 +147,17 @@ tarafından ayrıca karşılanacaktır:
      - EUR cinsinden belirlenen ücretler, ödeme günündeki T.C. Merkez 
        Bankası EUR efektif satış kuru üzerinden TL'ye çevrilebilir.
 
+4.5. Ödeme Gecikmesi ve Hizmetin Askıya Alınması:
+     Vadesi gelen taksit ödenmediği takdirde, DANIŞMAN ödeme yapılana kadar 
+     tüm danışmanlık hizmetlerini askıya alma hakkını saklı tutar. Hizmetin 
+     askıya alındığı süre zarfında oluşabilecek başvuru süresi gecikmelerinden, 
+     kontenjan dolmasından veya vize randevu kaybından DANIŞMAN sorumlu tutulamaz.
+
+4.6. Vize İşlemlerinin Başlama Koşulu:
+     Vize danışmanlığı ve vize başvuru işlemleri, kabul sonrası danışmanlık 
+     ücretinin (son taksit) tam olarak ödenmesinin ardından başlatılır. Bu 
+     ödeme yapılmadan vize sürecine ilişkin hizmetler sunulmayacaktır.
+
 ================================================================================
                           MADDE 5 - İADE POLİTİKASI
 ================================================================================
@@ -169,22 +180,34 @@ tarafından ayrıca karşılanacaktır:
      aksaklıklarda taraflar karşılıklı mutabakat ile çözüm arayacaktır.
 
 ================================================================================
-                   MADDE 6 - VİZE REDDİ VE SORUMLULUK SINIRI
+               MADDE 6 - GARANTİ, VİZE REDDİ VE SORUMLULUK SINIRI
 ================================================================================
 
-6.1. DANIŞMAN, vize başvuru sürecinde rehberlik ve destek sağlamakla 
+6.1. DANIŞMAN, üniversite başvuruları veya vize başvuruları için kabul ya da 
+     onay garantisi vermemektedir. Bu sonuçlar tamamen ilgili kurumların 
+     yetkisindedir. DANIŞMAN'ın yükümlülüğü, profesyonel danışmanlık hizmeti 
+     sunmak ile sınırlıdır. Olumsuz sonuçlar iade veya tazminat hakkı doğurmaz.
+
+6.2. ÖĞRENCİ'nin hedef üniversitelerin hiçbirinden kabul alamaması durumunda, 
+     Madde 5 hükümleri uyarınca kabul sonrası danışmanlık ücreti (son taksit) 
+     talep edilmez.
+
+6.3. DANIŞMAN, vize başvuru sürecinde rehberlik ve destek sağlamakla 
      yükümlüdür. Ancak vize başvurusunun kabul veya reddi tamamen ilgili 
-     ülkenin konsolosluk/büyükelçiliğinin yetkisindedir.
+     ülkenin konsolosluk/büyükelçiliğinin yetkisindedir. Vize kararı 
+     ÖĞRENCİ'nin bireysel profili (mali durum, seyahat geçmişi, bağlanma 
+     riski vb.) temelinde verilmekte olup DANIŞMAN'ın vize sonucu üzerinde 
+     herhangi bir etkisi bulunmamaktadır.
 
-6.2. Vize reddi halinde DANIŞMAN'ın herhangi bir sorumluluğu bulunmamaktadır. 
-     Vize reddi nedeniyle birinci taksit iadesi yapılmaz.
+6.4. Vize reddi halinde DANIŞMAN'ın herhangi bir sorumluluğu bulunmamaktadır. 
+     Vize reddi, iade veya tazminat hakkı doğurmaz.
 
-6.3. Vize reddi durumunda, VELİ/ÖĞRENCİ'nin talebi halinde DANIŞMAN, 
+6.5. Vize reddi durumunda, VELİ/ÖĞRENCİ'nin talebi halinde DANIŞMAN, 
      ilave ücret talep etmeksizin yeniden başvuru sürecinde destek 
      sağlayacaktır (sadece danışmanlık hizmeti - harç ve masraflar hariç).
 
-6.4. DANIŞMAN, üniversite başvurularının kabul garantisi vermemektedir. 
-     Kabul kararı tamamen üniversitelerin yetkisindedir.
+6.6. DANIŞMAN'ın işbu sözleşme kapsamındaki toplam sorumluluğu, her halükarda 
+     VELİ tarafından ödenen toplam danışmanlık ücretini aşamaz.
 
 ================================================================================
                       MADDE 7 - TARAFLARIN YÜKÜMLÜLÜKLERİ
@@ -212,6 +235,17 @@ tarafından ayrıca karşılanacaktır:
 7.3. Yanlış veya eksik bilgi verilmesi nedeniyle doğacak tüm sorumluluk 
      VELİ ve ÖĞRENCİ'ye aittir.
 
+7.4. VELİ/ÖĞRENCİ, DANIŞMAN tarafından talep edilen belgeleri, talep 
+     tarihinden itibaren en geç 10 (on) iş günü içinde teslim etmekle 
+     yükümlüdür. Belgelerin geç veya eksik teslimi nedeniyle başvuru süresinin 
+     kaçırılması, kontenjan dolması veya vize sürecinin aksaması halinde 
+     DANIŞMAN sorumlu tutulamaz ve iade talebi yapılamaz.
+
+7.5. VELİ/ÖĞRENCİ, DANIŞMAN'ın e-posta, telefon veya mesaj yoluyla ilettiği 
+     bildirimlere en geç 48 (kırk sekiz) saat içinde yanıt vermekle 
+     yükümlüdür. Yanıt verilmemesi nedeniyle kaçırılan fırsatlardan DANIŞMAN 
+     sorumlu tutulamaz.
+
 ================================================================================
                         MADDE 8 - GİZLİLİK VE KVKK
 ================================================================================
@@ -232,6 +266,11 @@ tarafından ayrıca karşılanacaktır:
 
 8.4. Taraflar, sözleşme şartlarını ve ücret bilgilerini üçüncü şahıslarla 
      paylaşmamayı kabul eder.
+
+8.5. VELİ ve ÖĞRENCİ, DANIŞMAN'ın ÖĞRENCİ'nin yerleştirme sürecine ilişkin 
+     bilgileri, fotoğrafları ve görselleri kurumsal tanıtım, sosyal medya 
+     paylaşımları ve referans amaçlı kullanmasına onay vermektedir. DANIŞMAN, 
+     paylaşımlarda ÖĞRENCİ'nin adını kullanabilir.
 
 ================================================================================
                     MADDE 9 - SÖZLEŞMENİN SÜRESİ VE FESHİ
@@ -285,8 +324,8 @@ yürürlüğe girmiştir.
 DANIŞMAN                                    VELİ / YASAL TEMSİLCİ
 ─────────────────────────                   ─────────────────────────
 
-Venture Global                              Adı Soyadı:
-Yurt Dışı Eğitim Danışmanlık               [VELİ ADI SOYADI]
+VG DANISMANLIK LTD                          Adı Soyadı:
+                                            [VELİ ADI SOYADI]
 
                                             T.C. Kimlik No:
                                             [VELİ TC KİMLİK NO]
@@ -320,7 +359,7 @@ Danışmanlık Ücreti    : [TOPLAM ÜCRET] EUR
 
 ================================================================================
 
-         Bu sözleşme [TARİH] tarihinde İstanbul'da düzenlenmiştir.
+         Bu sözleşme [TARİH] tarihinde Prag'da düzenlenmiştir.
 
 ================================================================================
 

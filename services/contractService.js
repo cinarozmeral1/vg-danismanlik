@@ -23,6 +23,7 @@ const FONT_BOLD_PATHS = [
     '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',
 ];
 const LETTERHEAD_PATH = path.join(__dirname, '..', 'public', 'templates', 'Venture Antetli_2026-3.pdf');
+const SIGNATURE_PATH = path.join(__dirname, '..', 'public', 'images', 'signature.png');
 
 function findFont(paths) {
     for (const p of paths) { try { if (fs.existsSync(p)) return p; } catch (e) { } } return null;
@@ -97,22 +98,34 @@ function generateTextOnlyPdf(data) {
             const program = (app && app.program_name) || '';
             const bl = '';
 
-            // Determine if student is 11th grade
-            const is11thGrade = user.active_class && String(user.active_class).trim() === '11';
-
             // Payment: filter services by name for proper categorization
             let svcs = (services || []).slice().sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
             const cur = (svcs[0] && svcs[0].currency) || 'EUR';
             const total = svcs.reduce((s, x) => s + parseFloat(x.amount || 0), 0);
 
-            // Find services by type (name-based matching)
-            const svcPrep = svcs.find(s => s.service_name && (s.service_name.includes('11') || s.service_name.toLowerCase().includes('hazirlik'))) || null;
-            const svcPre = svcs.find(s => s.service_name && s.service_name.toLowerCase().includes('kabul oncesi')) || null;
-            const svcPost = svcs.find(s => s.service_name && s.service_name.toLowerCase().includes('kabul sonrasi')) || null;
+            // Find services by type (name-based matching).
+            // svcPrep = 11th grade prep service (only shows installment if this exists)
+            // svcPre  = kabul öncesi (pre-acceptance)
+            // svcPost = kabul sonrası (post-acceptance)
+            const svcPrep = svcs.find(s => s.service_name && (
+                s.service_name.includes('11') ||
+                s.service_name.toLowerCase().includes('hazirlik') ||
+                s.service_name.toLowerCase().includes('hazırlık')
+            )) || null;
+            const svcPre = svcs.find(s => s.service_name && (
+                s.service_name.toLowerCase().includes('kabul oncesi') ||
+                s.service_name.toLowerCase().includes('kabul öncesi')
+            )) || null;
+            const svcPost = svcs.find(s => s.service_name && (
+                s.service_name.toLowerCase().includes('kabul sonrasi') ||
+                s.service_name.toLowerCase().includes('kabul sonrası')
+            )) || null;
 
-            // For 12th grade (legacy): fall back to positional if name-based doesn't match
-            const s1 = svcPre || svcs[0] || null;
-            const s2 = svcPost || svcs[1] || null;
+            // Show 11th grade installment ONLY if the prep service is actually assigned.
+            // Fall back to positional matching for pre/post services if name match fails.
+            const has11thService = svcPrep !== null;
+            const s1 = svcPre || (has11thService ? svcs[1] : svcs[0]) || null;
+            const s2 = svcPost || (has11thService ? svcs[2] : svcs[1]) || null;
             const a1 = s1 ? parseFloat(s1.amount) : null, a2 = s2 ? parseFloat(s2.amount) : null;
             const paid1 = s1 ? s1.is_paid : false, paid2 = s2 ? s2.is_paid : false;
             const pd1 = s1 && s1.payment_date ? formatDate(s1.payment_date) : '__ / __ / ____';
@@ -188,10 +201,10 @@ function generateTextOnlyPdf(data) {
 
             doc.font('B').fontSize(SZ.body).fillColor(CLR.dk).text('1. DANIŞMAN', ML);
             doc.moveDown(0.15);
-            field('Unvan:', 'Venture Global Yurt Dışı Eğitim Danışmanlık');
-            field('Adres:', 'İstanbul, Türkiye');
+            field('Unvan:', 'VG DANISMANLIK LTD');
+            field('Adres:', 'Na Větriniku 2513/4 Prag Çekya');
             field('Telefon:', '+90 539 927 30 08');
-            field('E-posta:', 'info@vgdanismanlik.com');
+            field('E-posta:', 'info@vgedu.org');
             field('Web:', 'www.vgdanismanlik.com');
             field('TL IBAN:', 'TR56 0006 4000 0011 2120 9085 60');
             field('EUR IBAN:', 'TR56 0006 4000 0011 2120 9085 60');
@@ -232,9 +245,7 @@ function generateTextOnlyPdf(data) {
             para('İşbu sözleşme, DANIŞMAN\'ın ÖĞRENCİ\'ye yurt dışında yükseköğretim eğitimi alabilmesi için danışmanlık hizmeti vermesine ilişkin tarafların karşılıklı hak ve yükümlülüklerini düzenlemektedir.');
             doc.moveDown(0.25);
             field('Hedef Ülke/Ülkeler:', country);
-            field('Hedef Program:', program);
-            const yr = new Date().getFullYear();
-            field('Hedef Dönem:', `${yr}-${yr + 1}`);
+            field('Hedef Dönem:', data.targetPeriod || `${new Date().getFullYear()}-${new Date().getFullYear() + 1}`);
 
             // ── MADDE 2 ──
             checkPage(100);
@@ -242,8 +253,8 @@ function generateTextOnlyPdf(data) {
             para('DANIŞMAN, işbu sözleşme kapsamında aşağıdaki hizmetleri sunmayı taahhüt eder:');
             doc.moveDown(0.25);
 
-            if (is11thGrade) {
-                // ── 11. SINIF: Two-phase service listing ──
+            if (has11thService) {
+                // ── 11. SINIF HİZMETİ ATANMIŞ: Two-phase service listing ──
 
                 // A) 11. Sınıf Hizmetleri
                 checkPage(40);
@@ -356,8 +367,8 @@ function generateTextOnlyPdf(data) {
             doc.font('B').fontSize(SZ.body).text('4.2. Ödeme Planı:', ML);
             doc.moveDown(0.15);
 
-            if (is11thGrade) {
-                // ── 11. Sınıf: 3 Taksitli Ödeme Planı ──
+            if (has11thService) {
+                // ── 11. Sınıf hizmeti atanmış: 3 Taksitli Ödeme Planı ──
                 doc.font('B').fontSize(SZ.body)
                     .text(`a) BİRİNCİ TAKSİT (11. Sınıf Başvuruya Hazırlık Ücreti): ${instPrep}`, ML, doc.y, { width: PW });
                 doc.font('R').fontSize(SZ.body)
@@ -396,13 +407,21 @@ function generateTextOnlyPdf(data) {
 
             doc.font('B').fontSize(SZ.body).text('4.4. Döviz Kuru:', ML);
             para('EUR cinsinden belirlenen ücretler, ödeme günündeki T.C. Merkez Bankası EUR efektif satış kuru üzerinden TL\'ye çevrilebilir.');
+            doc.moveDown(0.25);
+
+            doc.font('B').fontSize(SZ.body).text('4.5. Ödeme Gecikmesi ve Hizmetin Askıya Alınması:', ML);
+            para('Vadesi gelen taksit ödenmediği takdirde, DANIŞMAN ödeme yapılana kadar tüm danışmanlık hizmetlerini askıya alma hakkını saklı tutar. Hizmetin askıya alındığı süre zarfında oluşabilecek başvuru süresi gecikmelerinden, kontenjan dolmasından veya vize randevu kaybından DANIŞMAN sorumlu tutulamaz.');
+            doc.moveDown(0.25);
+
+            doc.font('B').fontSize(SZ.body).text('4.6. Vize İşlemlerinin Başlama Koşulu:', ML);
+            para('Vize danışmanlığı ve vize başvuru işlemleri, kabul sonrası danışmanlık ücretinin (son taksit) tam olarak ödenmesinin ardından başlatılır. Bu ödeme yapılmadan vize sürecine ilişkin hizmetler sunulmayacaktır.');
 
             // ── MADDE 5 ──
             checkPage(100);
             section('MADDE 5 – İADE POLİTİKASI');
 
-            if (is11thGrade) {
-                // ── 11. Sınıf: 3 Taksitli İade Politikası ──
+            if (has11thService) {
+                // ── 11. Sınıf hizmeti atanmış: 3 Taksitli İade Politikası ──
                 doc.font('B').fontSize(SZ.body).text('5.1. Birinci Taksit (11. Sınıf Başvuruya Hazırlık Ücreti) İadesi:', ML);
                 para('Birinci taksit, sözleşmenin imzalanması ve 11. sınıf hazırlık hizmetlerinin başlaması ile birlikte İADE EDİLMEZ niteliğindedir. VELİ veya ÖĞRENCİ\'nin herhangi bir sebeple danışmanlık hizmetinden vazgeçmesi halinde, bu tutar verilen hizmetin karşılığı olarak DANIŞMAN\'da kalacaktır.');
                 doc.moveDown(0.25);
@@ -438,12 +457,14 @@ function generateTextOnlyPdf(data) {
             }
 
             // ── MADDE 6 ──
-            checkPage(80);
-            section('MADDE 6 – VİZE REDDİ VE SORUMLULUK SINIRI');
-            item('6.1.', 'DANIŞMAN, vize başvuru sürecinde rehberlik ve destek sağlamakla yükümlüdür. Ancak vize başvurusunun kabul veya reddi tamamen ilgili ülkenin konsolosluk/büyükelçiliğinin yetkisindedir.');
-            item('6.2.', 'Vize reddi halinde DANIŞMAN\'ın herhangi bir sorumluluğu bulunmamaktadır. Vize reddi nedeniyle birinci taksit iadesi yapılmaz.');
-            item('6.3.', 'Vize reddi durumunda, VELİ/ÖĞRENCİ\'nin talebi halinde DANIŞMAN, ilave ücret talep etmeksizin yeniden başvuru sürecinde destek sağlayacaktır (sadece danışmanlık hizmeti – harç ve masraflar hariç).');
-            item('6.4.', 'DANIŞMAN, üniversite başvurularının kabul garantisi vermemektedir. Kabul kararı tamamen üniversitelerin yetkisindedir.');
+            checkPage(140);
+            section('MADDE 6 – GARANTİ, VİZE REDDİ VE SORUMLULUK SINIRI');
+            item('6.1.', 'DANIŞMAN, üniversite başvuruları veya vize başvuruları için kabul ya da onay garantisi vermemektedir. Bu sonuçlar tamamen ilgili kurumların yetkisindedir. DANIŞMAN\'ın yükümlülüğü, profesyonel danışmanlık hizmeti sunmak ile sınırlıdır. Olumsuz sonuçlar iade veya tazminat hakkı doğurmaz.');
+            item('6.2.', 'ÖĞRENCİ\'nin hedef üniversitelerin hiçbirinden kabul alamaması durumunda, Madde 5 hükümleri uyarınca kabul sonrası danışmanlık ücreti (son taksit) talep edilmez.');
+            item('6.3.', 'DANIŞMAN, vize başvuru sürecinde rehberlik ve destek sağlamakla yükümlüdür. Ancak vize başvurusunun kabul veya reddi tamamen ilgili ülkenin konsolosluk/büyükelçiliğinin yetkisindedir. Vize kararı ÖĞRENCİ\'nin bireysel profili (mali durum, seyahat geçmişi, bağlanma riski vb.) temelinde verilmekte olup DANIŞMAN\'ın vize sonucu üzerinde herhangi bir etkisi bulunmamaktadır.');
+            item('6.4.', 'Vize reddi halinde DANIŞMAN\'ın herhangi bir sorumluluğu bulunmamaktadır. Vize reddi, iade veya tazminat hakkı doğurmaz.');
+            item('6.5.', 'Vize reddi durumunda, VELİ/ÖĞRENCİ\'nin talebi halinde DANIŞMAN, ilave ücret talep etmeksizin yeniden başvuru sürecinde destek sağlayacaktır (sadece danışmanlık hizmeti – harç ve masraflar hariç).');
+            item('6.6.', 'DANIŞMAN\'ın işbu sözleşme kapsamındaki toplam sorumluluğu, her halükarda VELİ tarafından ödenen toplam danışmanlık ücretini aşamaz.');
 
             // ── MADDE 7 ──
             checkPage(130);
@@ -482,6 +503,10 @@ function generateTextOnlyPdf(data) {
             }
             doc.moveDown(0.15);
             item('7.3.', 'Yanlış veya eksik bilgi verilmesi nedeniyle doğacak tüm sorumluluk VELİ ve ÖĞRENCİ\'ye aittir.');
+            doc.moveDown(0.1);
+            item('7.4.', 'VELİ/ÖĞRENCİ, DANIŞMAN tarafından talep edilen belgeleri, talep tarihinden itibaren en geç 10 (on) iş günü içinde teslim etmekle yükümlüdür. Belgelerin geç veya eksik teslimi nedeniyle başvuru süresinin kaçırılması, kontenjan dolması veya vize sürecinin aksaması halinde DANIŞMAN sorumlu tutulamaz ve iade talebi yapılamaz.');
+            doc.moveDown(0.1);
+            item('7.5.', 'VELİ/ÖĞRENCİ, DANIŞMAN\'ın e-posta, telefon veya mesaj yoluyla ilettiği bildirimlere en geç 48 (kırk sekiz) saat içinde yanıt vermekle yükümlüdür. Yanıt verilmemesi nedeniyle kaçırılan fırsatlardan DANIŞMAN sorumlu tutulamaz.');
 
             // ── MADDE 8 ──
             checkPage(90);
@@ -498,6 +523,8 @@ function generateTextOnlyPdf(data) {
             item('8.3.', 'VELİ ve ÖĞRENCİ, kişisel verilerinin yukarıda belirtilen amaçlarla yurt dışındaki üniversiteler, konsolosluklar ve konaklama sağlayıcıları ile paylaşılmasına açıkça onay vermektedir.');
             doc.moveDown(0.1);
             item('8.4.', 'Taraflar, sözleşme şartlarını ve ücret bilgilerini üçüncü şahıslarla paylaşmamayı kabul eder.');
+            doc.moveDown(0.1);
+            item('8.5.', 'VELİ ve ÖĞRENCİ, DANIŞMAN\'ın ÖĞRENCİ\'nin yerleştirme sürecine ilişkin bilgileri, fotoğrafları ve görselleri kurumsal tanıtım, sosyal medya paylaşımları ve referans amaçlı kullanmasına onay vermektedir. DANIŞMAN, paylaşımlarda ÖĞRENCİ\'nin adını kullanabilir.');
 
             // ── MADDE 9 ──
             checkPage(50);
@@ -539,42 +566,39 @@ function generateTextOnlyPdf(data) {
             doc.moveTo(rx, sy).lineTo(rx + colW - 8, sy).strokeColor(CLR.dk).lineWidth(0.4).stroke();
             sy += 4;
             doc.font('R').fontSize(SZ.body).fillColor(CLR.tx);
-            doc.text('Venture Global', lx, sy, { width: colW });
-            doc.text('Yurt Dışı Eğitim Danışmanlık', lx, doc.y, { width: colW });
+            doc.text('VG DANISMANLIK LTD', lx, sy, { width: colW });
             doc.text('Adı Soyadı: ' + gName, rx, sy, { width: colW });
             doc.text('T.C. Kimlik No: ' + gTc, rx, doc.y, { width: colW });
             sy = Math.max(doc.y, sy + 24) + 8;
-            doc.text('İmza: ___________________', lx, sy);
-            doc.text('İmza: ___________________', rx, sy);
-            sy += 16;
+
+            // Signature row — image only on DANIŞMAN side, blank line on VELİ side
+            const sigRowY = sy;
+            let hasSigImage = false;
+            if (fs.existsSync(SIGNATURE_PATH)) {
+                try {
+                    doc.image(SIGNATURE_PATH, lx, sigRowY - 22, { width: 130 });
+                    hasSigImage = true;
+                } catch (sigErr) {
+                    console.warn('⚠️ Signature image embed failed:', sigErr.message);
+                }
+            }
+            if (!hasSigImage) {
+                doc.text('İmza: ___________________', lx, sigRowY);
+            }
+            doc.text('İmza: ___________________', rx, sigRowY);
+            sy = sigRowY + 52;
             doc.text('Tarih: ' + today, lx, sy);
             doc.text('Tarih: ' + today, rx, sy);
 
-            doc.y = sy + 20;
-            doc.moveTo(ML, doc.y).lineTo(RX, doc.y).strokeColor('#ccc').lineWidth(0.3).stroke();
-            doc.moveDown(0.3);
-
-            doc.font('B').fontSize(SZ.body).fillColor(CLR.dk).text('ÖĞRENCİ', lx);
-            let ssy = doc.y;
-            doc.moveTo(lx, ssy).lineTo(lx + colW - 8, ssy).strokeColor(CLR.dk).lineWidth(0.4).stroke();
-            doc.y = ssy + 4;
-            doc.font('R').fontSize(SZ.body).fillColor(CLR.tx);
-            doc.text('Adı Soyadı: ' + sn);
-            doc.text('T.C. Kimlik No: ' + tc);
-            doc.text('Pasaport No: ' + pp);
-            doc.moveDown(0.2);
-            doc.text('İmza: ___________________');
-            doc.text('Tarih: ' + today);
-
             // ── EK-1: ÖDEME MAKBUZU ──
-            checkPage(is11thGrade ? 100 : 80);
+            checkPage(has11thService ? 100 : 80);
             doc.moveDown(0.4);
             section('EK-1: ÖDEME MAKBUZU');
             doc.moveDown(0.15);
 
             doc.font('R').fontSize(SZ.body).fillColor(CLR.tx);
-            if (is11thGrade) {
-                // 11. Sınıf: 3 taksit makbuzu
+            if (has11thService) {
+                // 11. Sınıf hizmeti atanmış: 3 taksit makbuzu
                 doc.text(`${paidPrep ? '☑' : '☐'} 1. Taksit (11. Sınıf Hazırlık) Ödendi    Tarih: ${pdPrep}    Tutar: ${instPrep}`);
                 doc.moveDown(0.25);
                 doc.text(`${paid1 ? '☑' : '☐'} 2. Taksit (Kabul Öncesi) Ödendi    Tarih: ${pd1}    Tutar: ${inst1}`);
@@ -591,7 +615,7 @@ function generateTextOnlyPdf(data) {
             doc.moveTo(ML, doc.y).lineTo(RX, doc.y).strokeColor(CLR.dk).lineWidth(0.4).stroke();
             doc.moveDown(0.2);
             doc.font('R').fontSize(SZ.small).fillColor(CLR.mu)
-                .text(`Bu sözleşme ${today} tarihinde İstanbul'da düzenlenmiştir.`, { align: 'center' });
+                .text(`Bu sözleşme ${today} tarihinde Prag'da düzenlenmiştir.`, { align: 'center' });
 
             doc.end();
         } catch (e) { reject(e); }

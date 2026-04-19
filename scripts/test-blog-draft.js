@@ -24,9 +24,9 @@ const { generateBlogPost } = require('../services/blogAIService');
         console.log(post.content_en?.substring(0, 1000));
         
         // Check for internal links
-        const trHasStudentLife = post.content_tr?.includes('/student-life/');
+        const trHasStudentLife = post.content_tr?.includes('/ogrenci-yasami/');
         const trHasUniDetail = post.content_tr?.includes('/universities/') || post.content_tr?.includes('/c/');
-        const enHasStudentLife = post.content_en?.includes('/student-life/');
+        const enHasStudentLife = post.content_en?.includes('/ogrenci-yasami/');
         const enHasUniDetail = post.content_en?.includes('/universities/') || post.content_en?.includes('/c/');
         
         console.log('\n--- Internal Links Check ---');

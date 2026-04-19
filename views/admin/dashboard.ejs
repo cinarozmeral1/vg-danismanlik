@@ -73,42 +73,6 @@
             </div>
         </div>
 
-        <!-- AI Recommendations Stats -->
-        <div class="row mt-4">
-            <div class="col-md-6">
-                <div class="card shadow-sm" style="border-left: 4px solid #6f42c1;">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="text-muted mb-1">AI Önerileri</h6>
-                                <h3 class="mb-0 text-dark" id="aiRecommendationCount">0</h3>
-                                <small class="text-muted">Bu ay: <span id="aiRecommendationThisMonth">0</span></small>
-                            </div>
-                            <div class="rounded-circle p-3" style="background: rgba(111, 66, 193, 0.1);">
-                                <i class="fas fa-magic fa-2x" style="color: #6f42c1;"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card shadow-sm" style="border-left: 4px solid #fd7e14;">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h6 class="text-muted mb-1">Hazırlık Gerekli</h6>
-                                <h3 class="mb-0" id="prepSchoolNeededCount">0</h3>
-                                <small class="text-muted">öğrenciye hazırlık programı önerildi</small>
-                            </div>
-                            <div class="rounded-circle p-3" style="background: rgba(253, 126, 20, 0.1);">
-                                <i class="fas fa-book-reader fa-2x" style="color: #fd7e14;"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <% if (typeof isSuperAdmin !== 'undefined' && isSuperAdmin) { %>
         <!-- Student-Based Profitability Card -->
         <div class="row mt-4">
@@ -391,8 +355,6 @@ let currentFilters = {
 document.addEventListener('DOMContentLoaded', function() {
     loadFinancialData();
     loadStudentProfitability();
-    loadAIRecommendationStats();
-    
     // Add event listeners for filters
     document.getElementById('periodFilter').addEventListener('change', function() {
         currentFilters.period = this.value;
@@ -407,22 +369,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
-
-// Load AI Recommendation Statistics
-async function loadAIRecommendationStats() {
-    try {
-        const response = await fetch('/api/wizard/admin/stats');
-        const result = await response.json();
-        
-        if (result.success) {
-            document.getElementById('aiRecommendationCount').textContent = result.data.total || 0;
-            document.getElementById('aiRecommendationThisMonth').textContent = result.data.thisMonth || 0;
-            document.getElementById('prepSchoolNeededCount').textContent = result.data.prepSchoolNeeded || 0;
-        }
-    } catch (error) {
-        console.error('AI stats load error:', error);
-    }
-}
 
 // Load financial data (receivables and revenue)
 async function loadFinancialData() {

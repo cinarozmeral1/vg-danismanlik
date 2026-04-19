@@ -117,6 +117,50 @@
     text-decoration: underline;
 }
 
+.article-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 0.95rem;
+}
+
+.article-content table th,
+.article-content table td {
+    padding: 10px 14px;
+    border: 1px solid #dee2e6;
+    text-align: left;
+}
+
+.article-content table th {
+    background: #0078D7;
+    color: #fff;
+    font-weight: 600;
+}
+
+.article-content table tr:nth-child(even) {
+    background: #f8f9fa;
+}
+
+.youtube-embed {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    margin: 24px 0;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+}
+
+.youtube-embed iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    border-radius: 10px;
+}
+
 .article-content strong {
     color: #1a1a2e;
     font-weight: 600;
@@ -328,10 +372,22 @@
             <!-- Main Content -->
             <div class="col-lg-8">
                 <article class="article-container">
+                    <% if (post.universityLogo) { %>
+                    <div style="background: linear-gradient(135deg, #0078D7 0%, #005A9E 100%); border-radius: 12px 12px 0 0; padding: 20px 24px; display: flex; align-items: center; gap: 16px;">
+                        <img src="<%= post.universityLogo %>" alt="<%= post.universityName %>" style="width: 64px; height: 64px; object-fit: contain; background: #fff; border-radius: 10px; padding: 6px;">
+                        <div>
+                            <h3 style="color: #fff; margin: 0; font-size: 1.15rem; font-weight: 700;"><%= post.universityName %></h3>
+                            <% if (post.country) { %>
+                                <span style="color: rgba(255,255,255,0.8); font-size: 0.85rem;"><i class="fas fa-map-marker-alt me-1"></i><%= post.country %></span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <% } %>
+
                     <div class="article-header">
                         <% if (post.topic) { %>
                             <span class="article-badge">
-                                <% if (post.topic === 'university') { %>
+                                <% if (post.topic === 'university' || post.topic === 'department') { %>
                                     <i class="fas fa-university me-1"></i> <%= lang === 'en' ? 'University' : 'Üniversite' %>
                                 <% } else if (post.topic === 'country') { %>
                                     <i class="fas fa-globe me-1"></i> <%= lang === 'en' ? 'Country Guide' : 'Ülke Rehberi' %>
@@ -348,7 +404,7 @@
                         <div class="article-meta">
                             <span><i class="far fa-calendar"></i> <%= post.date %></span>
                             <span><i class="far fa-eye"></i> <%= post.views %> <%= lang === 'en' ? 'views' : 'görüntülenme' %></span>
-                            <span><i class="far fa-user"></i> Venture Global</span>
+                            <span><i class="far fa-user"></i> VG Danışmanlık</span>
                         </div>
                     </div>
                     
@@ -362,7 +418,7 @@
                                 <i class="fas fa-graduation-cap"></i>
                             </div>
                             <div class="author-info">
-                                <h5><%= lang === 'en' ? 'Venture Global Education Consultancy' : 'Venture Global Eğitim Danışmanlığı' %></h5>
+                                <h5><%= lang === 'en' ? 'VG Danışmanlık Education Consultancy' : 'VG Danışmanlık Eğitim Danışmanlığı' %></h5>
                                 <p><%= lang === 'en' ? 'Expert consultancy team in study abroad' : 'Yurtdışı eğitim alanında uzman danışmanlık ekibi' %></p>
                             </div>
                         </div>
@@ -422,6 +478,40 @@
                 </div>
                 <% } %>
                 
+                <!-- Country Guides -->
+                <div class="sidebar-card">
+                    <h4 class="sidebar-title">
+                        <i class="fas fa-globe-europe"></i> <%= lang === 'en' ? 'Country Guides' : 'Ülke Rehberleri' %>
+                    </h4>
+                    <%
+                    const guideCountries = [
+                        { flag: '🇩🇪', name: 'Almanya', slug: 'almanya', db: 'Germany' },
+                        { flag: '🇨🇿', name: 'Çekya', slug: 'cekya', db: 'Czech Republic' },
+                        { flag: '🇮🇹', name: 'İtalya', slug: 'italya', db: 'Italy' },
+                        { flag: '🇦🇹', name: 'Avusturya', slug: 'avusturya', db: 'Austria' },
+                        { flag: '🇬🇧', name: 'İngiltere', slug: 'ingiltere', db: 'UK' },
+                        { flag: '🇵🇱', name: 'Polonya', slug: 'polonya', db: 'Poland' },
+                        { flag: '🇭🇺', name: 'Macaristan', slug: 'macaristan', db: 'Hungary' },
+                        { flag: '🇳🇱', name: 'Hollanda', slug: 'hollanda', db: 'Netherlands' }
+                    ];
+                    const postCountry = typeof post.related_country !== 'undefined' ? post.related_country : '';
+                    const sorted = guideCountries.sort((a, b) => {
+                        if (a.db === postCountry) return -1;
+                        if (b.db === postCountry) return 1;
+                        return 0;
+                    });
+                    %>
+                    <div style="display:flex; flex-direction:column; gap:6px;">
+                        <% sorted.slice(0, 4).forEach(function(c) { %>
+                        <a href="/ulkede-universite/<%= c.slug %>" style="display:flex; align-items:center; gap:10px; padding:8px 12px; border-radius:8px; text-decoration:none; color:#1a1a2e; background:<%= c.db === postCountry ? '#e8f4fd' : '#f8f9fa' %>; transition:background 0.2s; font-size:0.9rem;" onmouseover="this.style.background='#e8f4fd'" onmouseout="this.style.background='<%= c.db === postCountry ? '#e8f4fd' : '#f8f9fa' %>'">
+                            <span style="font-size:1.3rem;"><%= c.flag %></span>
+                            <span style="font-weight:600;"><%= c.name %> Rehberi</span>
+                            <% if (c.db === postCountry) { %><span style="margin-left:auto; font-size:0.7rem; background:#005A9E; color:#fff; padding:2px 8px; border-radius:10px;">İlgili</span><% } %>
+                        </a>
+                        <% }); %>
+                    </div>
+                </div>
+
                 <!-- CTA -->
                 <div class="sidebar-card cta-card">
                     <h4 class="sidebar-title">

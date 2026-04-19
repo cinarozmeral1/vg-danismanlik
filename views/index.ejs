@@ -201,19 +201,13 @@
 <!-- Features Section -->
 <section class="section bg-light text-dark">
     <div class="container">
-        <!-- AI Student Wizard Button (Only Turkish - no English support) -->
-        <% if (typeof currentLanguage === 'undefined' || currentLanguage === 'tr') { %>
-        <div class="text-center mb-5" id="wizardButtonSection">
-            <a href="/student-wizard" class="wizard-cta-btn">
-                <i class="fas fa-magic me-2"></i>
-                <span>Öğrenci Sihirbazı</span>
-                <span class="wizard-badge">YENİ</span>
-            </a>
-            <p class="text-muted mt-3 mb-0">Yapay zeka ile size en uygun üniversiteyi bulun!</p>
-            <a href="#randevu" class="wizard-cta-btn mt-3" style="background: linear-gradient(135deg, #005A9E, #003d6b);" onclick="event.preventDefault(); smoothScrollTo('randevu');">
+        <!-- Randevu Al CTA Button -->
+        <div class="text-center mb-5" id="randevuCta">
+            <a href="#randevu" class="randevu-cta-btn" onclick="event.preventDefault(); smoothScrollTo('randevu');">
                 <i class="fas fa-calendar-check me-2"></i>
-                <span>Randevu Al</span>
+                <span><%= typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Book an Appointment' : 'Randevu Al' %></span>
             </a>
+            <p class="text-muted mt-3 mb-0"><%= typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Schedule a free 30-minute interview with our expert advisors' : 'Uzman danışmanlarımızla 30 dakikalık ücretsiz görüşme planlayın' %></p>
             <script>
             function smoothScrollTo(id) {
                 var el = document.getElementById(id);
@@ -236,14 +230,13 @@
             }
             </script>
         </div>
-        <% } %>
         <style>
-            .wizard-cta-btn {
+            .randevu-cta-btn {
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
                 gap: 8px;
-                background: #005A9E;
+                background: linear-gradient(135deg, #005A9E, #003d6b);
                 color: white;
                 border-radius: 50px;
                 font-weight: 600;
@@ -253,32 +246,13 @@
                 box-shadow: 0 4px 15px rgba(0,86,179,0.3);
                 transition: all 0.3s ease;
             }
-            .wizard-cta-btn:hover {
+            .randevu-cta-btn:hover {
                 transform: translateY(-3px);
                 box-shadow: 0 8px 25px rgba(0,86,179,0.4);
                 color: white;
             }
-            .wizard-badge {
-                background: #ffc107;
-                color: #333;
-                font-size: 0.65rem;
-                padding: 3px 8px;
-                border-radius: 10px;
-                font-weight: 700;
-            }
             @media (max-width: 576px) {
-                .wizard-cta-btn {
-                    font-size: 0.95rem;
-                    padding: 12px 20px;
-                    gap: 6px;
-                }
-                .wizard-cta-btn i {
-                    font-size: 1rem;
-                }
-                .wizard-badge {
-                    font-size: 0.55rem;
-                    padding: 2px 6px;
-                }
+                .randevu-cta-btn { font-size: 0.95rem; padding: 12px 24px; }
             }
         </style>
 
@@ -895,6 +869,72 @@
     </div>
 </section>
 
+<!-- Country Guides Section -->
+<section class="section py-5" style="background: linear-gradient(135deg, #f0f7ff 0%, #e8f0fe 100%);">
+    <div class="container">
+        <div class="text-center mb-4 reveal">
+            <h2 class="fw-bold mb-2" style="color: #003d6b; font-size: 2rem;">
+                <%= typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Country Guides' : 'Ülke Rehberleri' %>
+            </h2>
+            <p class="text-muted mb-0" style="max-width: 600px; margin: 0 auto;">
+                <%= typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Detailed university, visa and cost of living guides for all the countries we work with.' : 'Çalıştığımız tüm ülkeler için detaylı üniversite, vize ve yaşam rehberleri.' %>
+            </p>
+        </div>
+        <div class="row g-3 justify-content-center reveal">
+            <% const countryGuides = [
+                { slug: 'almanya', flag: '🇩🇪', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Germany' : 'Almanya' },
+                { slug: 'cekya', flag: '🇨🇿', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Czech Republic' : 'Çekya' },
+                { slug: 'italya', flag: '🇮🇹', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Italy' : 'İtalya' },
+                { slug: 'avusturya', flag: '🇦🇹', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Austria' : 'Avusturya' },
+                { slug: 'ingiltere', flag: '🇬🇧', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'United Kingdom' : 'İngiltere' },
+                { slug: 'polonya', flag: '🇵🇱', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Poland' : 'Polonya' },
+                { slug: 'macaristan', flag: '🇭🇺', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Hungary' : 'Macaristan' },
+                { slug: 'hollanda', flag: '🇳🇱', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Netherlands' : 'Hollanda' },
+                { slug: 'ispanya', flag: '🇪🇸', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'Spain' : 'İspanya' },
+                { slug: 'fransa', flag: '🇫🇷', name: typeof currentLanguage !== 'undefined' && currentLanguage === 'en' ? 'France' : 'Fransa' }
+            ]; %>
+            <% countryGuides.forEach(function(c) { %>
+            <div class="col-6 col-md-3">
+                <a href="/ulkede-universite/<%= c.slug %>" class="cg-home-card">
+                    <span class="cg-home-flag"><%= c.flag %></span>
+                    <span class="cg-home-name"><%= c.name %></span>
+                    <i class="fas fa-arrow-right cg-home-arrow"></i>
+                </a>
+            </div>
+            <% }); %>
+        </div>
+    </div>
+    <style>
+        .cg-home-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #fff;
+            border-radius: 14px;
+            padding: 18px 20px;
+            text-decoration: none;
+            color: #1a1a2e;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            transition: transform 0.25s, box-shadow 0.25s;
+            position: relative;
+        }
+        .cg-home-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,90,158,0.15);
+            color: #005A9E;
+        }
+        .cg-home-flag { font-size: 2rem; line-height: 1; flex-shrink: 0; }
+        .cg-home-name { font-weight: 600; font-size: 1rem; flex-grow: 1; }
+        .cg-home-arrow { color: #005A9E; opacity: 0; transition: opacity 0.2s, transform 0.2s; font-size: 0.85rem; }
+        .cg-home-card:hover .cg-home-arrow { opacity: 1; transform: translateX(3px); }
+        @media (max-width: 576px) {
+            .cg-home-card { padding: 14px 16px; gap: 10px; }
+            .cg-home-flag { font-size: 1.6rem; }
+            .cg-home-name { font-size: 0.9rem; }
+        }
+    </style>
+</section>
+
 <!-- Appointment Booking Section -->
 <section class="section py-5" style="background: #fff8f1; scroll-margin-top: 90px;" id="randevu">
     <div class="container">
@@ -1037,6 +1077,8 @@
                                             <option value="Polonya">Polonya</option>
                                             <option value="Avusturya">Avusturya</option>
                                             <option value="Hollanda">Hollanda</option>
+                                            <option value="İspanya">İspanya</option>
+                                            <option value="Fransa">Fransa</option>
                                             <option value="Henüz Karar Vermedim"><%= currentLanguage === 'en' ? 'Not Decided Yet' : 'Henüz Karar Vermedim' %></option>
                                         </select>
                                     </div>
@@ -1586,79 +1628,6 @@
     </div>
 </section>
 
-<!-- Kanpus Early Preparation Banner -->
-<section class="section" style="background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%); padding: 4rem 0;">
-    <div class="container">
-        <div class="row align-items-center reveal">
-            <div class="col-lg-6 text-white mb-4 mb-lg-0">
-                <h2 class="fw-bold mb-3">Kanpus <%= t.home.kanpusBanner.title %></h2>
-                <p class="lead mb-4"><%= t.home.kanpusBanner.subtitle %></p>
-                <div class="alert alert-warning mb-4" style="background: rgba(251, 191, 36, 0.2); border: 2px solid white; border-radius: 12px;">
-                    <strong style="color: white;"><%= t.home.kanpusBanner.exclusiveOffer %></strong>
-                </div>
-                <div class="d-flex flex-wrap gap-3 mb-4">
-                    <div class="d-flex align-items-center">
-                        <span><%= t.home.kanpusBanner.benefit1 %></span>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <span><%= t.home.kanpusBanner.benefit2 %></span>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <span><%= t.home.kanpusBanner.benefit3 %></span>
-                    </div>
-                </div>
-                <a href="/partners/kanpus" class="btn btn-light btn-lg">
-                    <i class="fas fa-arrow-right me-2"></i><%= t.home.kanpusBanner.cta %>
-                </a>
-            </div>
-            <div class="col-lg-6">
-                <div class="row g-3">
-                    <div class="col-6">
-                        <div class="card shadow-lg text-center p-3" style="border: none;">
-                            <h6 class="fw-bold mb-0">IB Diploma</h6>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="card shadow-lg text-center p-3" style="border: none;">
-                            <h6 class="fw-bold mb-0">AP Courses</h6>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="card shadow-lg text-center p-3" style="border: none;">
-                            <h6 class="fw-bold mb-0">SAT Prep</h6>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="card shadow-lg text-center p-3" style="border: none;">
-                            <h6 class="fw-bold mb-0">TOEFL iBT</h6>
-                        </div>
-                    </div>
-                    <div class="col-12">
-                        <div class="card shadow-lg text-center p-3" style="border: none; background: white;">
-                            <div class="d-flex align-items-center justify-content-center">
-                                <h5 class="fw-bold mb-0">IELTS</h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Assessment Form Section -->
-<section class="section text-dark prezi-section">
-    <div class="prezi-embed-full">
-        <iframe
-            src="https://prezi.com/view/ZvmXaHvzzfrz5qPbdP4A/embed"
-            title="Venture Global (VG Danışmanlık) Tanıtım Sunumu"
-            allowfullscreen
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-            allow="fullscreen"
-        ></iframe>
-    </div>
-</section>
 
 <!-- Promo Popup Carousel -->
 <div class="promo-popup-overlay">

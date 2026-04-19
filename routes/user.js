@@ -5,6 +5,7 @@ const fs = require('fs');
 const pool = require('../config/database');
 const { authenticateUser } = require('../middleware/auth');
 const { gopayConfig, goPayService } = require('../config/gopay');
+const { createContact } = require('../services/contactService');
 
 const router = express.Router();
 
@@ -133,6 +134,7 @@ router.get('/dashboard', async (req, res) => {
                 english_level,
                 high_school_graduation_date,
                 birth_date,
+                gpa,
                 passport_type,
                 passport_number,
                 desired_country,
@@ -284,6 +286,7 @@ router.get('/profile', authenticateUser, async (req, res) => {
                 english_level,
                 high_school_graduation_date,
                 birth_date,
+                gpa,
                 passport_type,
                 passport_number,
                 desired_country,
@@ -326,6 +329,7 @@ router.put('/profile', authenticateUser, async (req, res) => {
             english_level,
             high_school_graduation_date,
             birth_date,
+            gpa,
             passport_type,
             passport_number,
             desired_country,
@@ -367,16 +371,17 @@ router.put('/profile', authenticateUser, async (req, res) => {
                 english_level = $4,
                 high_school_graduation_date = $5,
                 birth_date = $6,
-                passport_type = $7,
-                passport_number = $8,
-                desired_country = $9,
-                active_class = $10,
-                tc_number = $11,
-                personal_info_completed = $12,
-                current_school = $13,
-                home_address = $14,
+                gpa = $7,
+                passport_type = $8,
+                passport_number = $9,
+                desired_country = $10,
+                active_class = $11,
+                tc_number = $12,
+                personal_info_completed = $13,
+                current_school = $14,
+                home_address = $15,
                 updated_at = CURRENT_TIMESTAMP
-             WHERE id = $15 RETURNING *
+             WHERE id = $16 RETURNING *
             `,
             [
                 first_name,
@@ -385,6 +390,7 @@ router.put('/profile', authenticateUser, async (req, res) => {
                 english_level,
                 normalizedHighSchoolDate,
                 normalizedBirthDate,
+                gpa || null,
                 passport_type,
                 passport_number,
                 desired_country,
@@ -456,6 +462,15 @@ router.post('/guardians/save-all', authenticateUser, async (req, res) => {
 
         await client.query('BEGIN');
 
+        // Mevcut velilerin telefonlarini al (yeni veli tespiti icin)
+        const existingGuardians = await client.query(
+            'SELECT phone, icloud_contact_uid FROM guardians WHERE user_id = $1',
+            [req.user.id]
+        );
+        const existingPhones = new Set(
+            existingGuardians.rows.map(g => g.phone).filter(Boolean)
+        );
+
         // Delete existing guardians for this user
         await client.query('DELETE FROM guardians WHERE user_id = $1', [req.user.id]);
 
@@ -486,6 +501,19 @@ router.post('/guardians/save-all', authenticateUser, async (req, res) => {
             'SELECT * FROM guardians WHERE user_id = $1 ORDER BY sort_order ASC',
             [req.user.id]
         );
+
+        // Yeni eklenen velileri iCloud rehberine kaydet
+        for (const g of result.rows) {
+            if (!g.phone || existingPhones.has(g.phone)) continue;
+            createContact(g.full_name, g.phone, g.email, 'guardian')
+                .then(uid => {
+                    if (uid) {
+                        pool.query('UPDATE guardians SET icloud_contact_uid = $1 WHERE id = $2', [uid, g.id])
+                            .catch(err => console.error('Guardian iCloud UID save failed:', err.message));
+                    }
+                })
+                .catch(err => console.error('Guardian iCloud contact failed:', err.message));
+        }
 
         res.json({ 
             success: true, 
@@ -817,12 +845,17 @@ router.get('/user-documents/:id/download', authenticateUser, async (req, res) =>
         const document = result.rows[0];
         
         // Check if file_data exists (new format) or file_path (legacy format)
+        const ext = (document.mime_type === 'application/pdf') ? '.pdf' : '';
+        const downloadName = document.title
+            ? `${document.title}${ext}`
+            : (document.original_filename || `dosya${ext}`);
+
         if (document.file_data) {
             // New format: use file_data column
             const buffer = Buffer.from(document.file_data, 'base64');
             
             res.setHeader('Content-Type', document.mime_type);
-            res.setHeader('Content-Disposition', `attachment; filename="${document.original_filename}"`);
+            res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(downloadName)}`);
             res.send(buffer);
         } else if (document.file_path && document.file_path.startsWith('data:')) {
             // Legacy format: data URL in file_path
@@ -830,7 +863,7 @@ router.get('/user-documents/:id/download', authenticateUser, async (req, res) =>
             const buffer = Buffer.from(base64Data, 'base64');
             
             res.setHeader('Content-Type', document.mime_type);
-            res.setHeader('Content-Disposition', `attachment; filename="${document.original_filename}"`);
+            res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(downloadName)}`);
             res.send(buffer);
         } else {
             return res.status(404).json({
@@ -1173,7 +1206,7 @@ router.get('/api/files/:id/download', authenticateUser, async (req, res) => {
         const fileBuffer = Buffer.from(file.file_data, 'base64');
 
         res.setHeader('Content-Type', file.mime_type);
-        res.setHeader('Content-Disposition', `attachment; filename="${file.original_filename}"`);
+        res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(file.original_filename)}`);
         res.send(fileBuffer);
     } catch (error) {
         console.error('Download file error:', error);

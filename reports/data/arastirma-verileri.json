@@ -1,0 +1,971 @@
+{
+  "kaynak_notu": "Resmi portallar ve üniversite sayfalarından araştırıldı: lf1.cuni.cz, semmelweis.hu, polimi.it, uva.nl, universiteitleiden.nl, tuwien.at, UCAS, CISIA, Universitaly, Studielink, uni-assist. Bu dosya tek bir sitenin yerine geçmez; tüm ülkelerin portalları, sınav takvimi, diploma kuralları ve adım adım başvuru tek yerde toplanır. 2026 başvuru dönemi.",
+  "ulke": {
+    "UK": {
+      "application_start": "Kaynak: ucas.com. Başvurular 13 Mayıs 2025 açılır; tamamlanmış başvuru 2 Eylül 2025’ten itibaren gönderilir.",
+      "application_end": "Çoğu program: 14 Ocak 2026 (eşit değerlendirme). Oxford, Cambridge ve çoğu tıp/diş/veteriner: 15 Ekim 2025 (18:00 UK). Son: 30 Haziran 2026; sonrası Clearing.",
+      "portal_link": "https://www.ucas.com",
+      "exam_system": "Çoğu program sınavsız. Oxford/Cambridge ve bazı bölümler: MAT, BMAT, LNAT vb. (üniversite sayfası).",
+      "exam_portal_link": "https://www.ucas.com",
+      "exceptions": "En fazla 5 program. 31 Mart 2026 danışma son tarihi (2026 döngüsü). Clearing 2 Temmuz 2026.",
+      "diploma_notes_canada": "12 yıl kabul; program bazında not/A-level denkliği.",
+      "diploma_notes_turkish": "Kabul; not dönüşümü veya ek koşul olabilir.",
+      "adim_adim": "1) ucas.com hesap, 2) En fazla 5 program seç; Oxford/Cambridge veya tıp/diş/vet ise 15 Ekim’e kadar gönder. 3) Çoğu program 14 Ocak. 4) Kabul/red sonrası Extra (26 Şubat’tan) veya Clearing (Temmuz)."
+    },
+    "Italy": {
+      "application_start": "Üniversiteye göre değişir. PoliMi mühendislik: 1. çağrı 1 Ekim – 1 Aralık 2025 (erken başvuru 50 EUR). Tıp (IMAT): kayıt sadece Universitaly'de, 2026 tarihleri henüz açıklanmadı (2025: Ağustos sonu açılış, Eylül ortası sınav).",
+      "application_end": "PoliMi 2. çağrı: 13 Ocak – 26 Şubat 2026 (150 EUR). AB dışı vize için Universitaly ön kayıt 31 Ağustos 2026. Genel Universitaly son başvuru Temmuz sonu.",
+      "portal_link": "https://www.universitaly.it",
+      "exam_system": "TOLC: cisiaonline.it üzerinden kayıt; tür programa göre (TOLC-I mühendislik vb.). Tıp için IMAT: sadece Universitaly (CISIA değil); tarihler Universitaly'de yayımlanır.",
+      "exam_portal_link": "https://www.cisiaonline.it",
+      "exceptions": "IMAT 2026 tarihleri resmi açıklanana kadar Universitaly takip edin. PoliMi mühendislik: erken başvuru daha düşük ücret ve daha hızlı değerlendirme.",
+      "diploma_notes_canada": "12 yıllık eğitim denk. Programa göre TOLC veya IMAT zorunlu.",
+      "diploma_notes_turkish": "12 yıl denk; TOLC/IMAT ve dil belgesi gerekir.",
+      "adim_adim": "1) Programa göre CISIA'da TOLC kaydı veya Universitaly'de IMAT (tıp). 2) Universitaly'de üniversite/program seçimi ve başvuru. 3) Kabul sonrası vize için Universitaly ön kayıt (AB dışı)."
+    },
+    "Netherlands": {
+      "application_start": "Numerus fixus: Studielink’te 1 Ekim – 15 Ocak 2026; en geç son haftadan önce kayıt. Diğer programlar: Eylül–Aralık 2025 açılış; vize/konaklama için 1 Nisan 2026 önerilir.",
+      "application_end": "Numerus fixus: 15 Ocak 2026 (23:59). Diğer lisans: 1 Mayıs 2026 (23:59). UvA tıp, psikoloji, işletme (İngilizce) vb. numerus fixus; Leiden tıp 15 Ocak.",
+      "portal_link": "https://www.studielink.nl",
+      "exam_system": "Numerus fixus: seçim sınavı veya not sıralaması (örn. UvA İşletme seçim sınavı Şubat 2026). Diğer programlar sınavsız.",
+      "exam_portal_link": "",
+      "exceptions": "En fazla 4 program (en fazla 2 numerus fixus). Leiden: Studielink sonrası uSis’e 2 gün içinde tamamla. 1 Mayıs sonrası ilk başvuru kayıt reddi riski.",
+      "diploma_notes_canada": "Kanada lise VWO denk; araştırma üniversitelerine doğrudan başvuru.",
+      "diploma_notes_turkish": "Türk lise HAVO denk; araştırma üniversitelerine doğrudan kabul yok; Nuffic/HBO veya hazırlık.",
+      "adim_adim": "1) Studielink’te hesap aç, program seç (max 4, max 2 numerus fixus). 2) Üniversitenin kendi portalında başvuruyu tamamla (Leiden: uSis 2 gün). 3) Numerus fixus ise seçim sınavı/tarihleri takip et."
+    },
+    "Germany": {
+      "application_start": "Kış dönemi: başvurular Mayıs–Temmuz; uni-assist kullananlar için tipik son 15 Temmuz.",
+      "application_end": "uni-assist: 15 Temmuz (kış). Üniversite bazlı daha erken olabilir. Belgeler + ödeme son tarihten en az 8 hafta önce önerilir.",
+      "portal_link": "https://www.uni-assist.de",
+      "exam_system": "Çoğu İngilizce lisans: belge/not ile; Studienkolleg veya dil sınavı gerekenler ayrı.",
+      "exam_portal_link": "",
+      "exceptions": "Her üniversitenin kendi son tarihi; uni-assist’e 8 hafta önce tam teslim.",
+      "diploma_notes_canada": "12 yıl çoğunlukla Abitur denk; eyalete göre ek koşul.",
+      "diploma_notes_turkish": "Çoğu eyalette Studienkolleg veya denklik; İngilizce programlar kendi kriteri.",
+      "adim_adim": "1) uni-assist.de üzerinden üniversite seç, başvuru yap. 2) Belgeleri ve ücreti son tarihten 8 hafta önce gönder. 3) Üniversite doğrudan başvuru kabul ediyorsa onun portalını kullan; son tarihleri üniversiteden kontrol et."
+    },
+    "Czech Republic": {
+      "application_start": "Charles 1. Tıp (resmi: text.lf1.cuni.cz): 1 Aralık 2025 açılış, 30 Nisan 2026 son başvuru. Diğer fakülteler kendi takvimleri.",
+      "application_end": "Charles 1. Tıp: 30 Nisan 2026. Yazılı sınav: 8 Haziran 2026 (09:00 veya 13:00), ek dönem 25 Haziran 2026 (09:00). Yurt dışında temsilci ile farklı tarihler.",
+      "portal_link": "Charles 1. Tıp: en.lf1.cuni.cz / başvuru formu 1 Aralık’ta yayımlanır.",
+      "exam_system": "Charles 1. Tıp: 1) Yazılı: 75 çoktan seçmeli (Biyoloji 25, Kimya 25, Genel Bilim 25), 90 dk, kağıt üzeri. 2) Sadece yazılıyı geçenler: MMI (çevrimiçi), 5 istasyon x 10 dk; kabul kararı sadece MMI puanına göre.",
+      "exam_portal_link": "",
+      "exceptions": "1. tur muafiyeti: belirli yüksek lisans/doktora mezunları veya AB/OECD’de tıp/diş 6+ dönem; yine de başvuru + ücret + 2. tur (MMI) gerekli. Ücret 285 EUR; yıllık 24.250 EUR. Lise bitmeden başvuru yapılabilir.",
+      "diploma_notes_canada": "12 yıl kabul; kayıt öncesi lise bitirme belgesi (nostrifikasyon gerekebilir). İngilizce sertifikası/personal statement 2026/27 için istenmiyor.",
+      "diploma_notes_turkish": "Aynı kurallar.",
+      "adim_adim": "1) 1 Aralık’ta lf1.cuni.cz başvuru formunu doldur, 285 EUR öde (ödenmeden sınava alınmaz). 2) Hazırlık materyalleri: en.lf1.cuni.cz/how-to-prepare-for-entrance-exams. 3) Prag’da 8/25 Haziran veya yurt dışı temsilci ile sınava gir. 4) Geçenler MMI’a davet; sadece MMI puanıyla sıralama. 5) Kayıt öncesi lise diploması/nostrifikasyon."
+    },
+    "Hungary": {
+      "application_start": "Semmelweis (resmi: semmelweis.hu, semaphor.semmelweis.hu): Başvuru 12 Ocak 2026’da açılır.",
+      "application_end": "Semmelweis tıp: 31 Mayıs 2026. Sınavlar Şubat sonu–Haziran sonu; sonuç sınavdan sonra 2 hafta içinde.",
+      "portal_link": "https://semaphor.semmelweis.hu (SEMAPHOR – Semmelweis Application Handling and Online Review).",
+      "exam_system": "Semmelweis tıp/diş: yazılı (Tıbbi Biyoloji, Tıbbi Kimya, Genel İngilizce, Biyomedikal İngilizce; her biri 20 soru, 20 dk) + mülakat (motivasyon, İngilizce, Zoom veya yüz yüze).",
+      "exam_portal_link": "",
+      "exceptions": "Üst orta düzey İngilizce (resmi sertifika zorunlu değil). Fen A-level veya eşdeğer ile sınav muafiyeti mümkün.",
+      "diploma_notes_canada": "12 yıl kabul; A-level/eşdeğer ile muafiyet olabilir.",
+      "diploma_notes_turkish": "Aynı.",
+      "adim_adim": "1) semaphor.semmelweis.hu üzerinden başvuru. 2) Sınav tarihi atanır (Şubat–Haziran). 3) Yazılı + mülakat; 2 hafta içinde sonuç. 4) Dönemlik ~10.450 USD + tek seferlik ücretler. İletişim: admission@semmelweis.hu."
+    },
+    "Austria": {
+      "application_start": "TU Wien kış 2026/27: AB dışı için 16 Ocak – 15 Temmuz 2026. Bilgisayar/mimarlık gibi sınavlı bölümlerde kayıt daha erken (Nisan–Haziran) bitiyor.",
+      "application_end": "TU Wien AB dışı kış: 15 Temmuz 2026. Sınavlı bölümlerde sınav Ağustos’ta. Genel kayıt 31 Ekim’e kadar şahsen.",
+      "portal_link": "Üniversite (TU Wien: tuwien.at/en/studies/admission).",
+      "exam_system": "TU Wien: Bilgisayar, Mimarlık, Mekansal Planlama giriş sınavı/ranking testi; diğer bölümler Programme-PRe-Phase veya seçim.",
+      "exam_portal_link": "",
+      "exceptions": "AB dışı için ayrı son başvuru; belgeler eksiksiz olmalı. Dönemlik harç ~726 EUR.",
+      "diploma_notes_canada": "12 yıl kabul; bölüme göre sınav/ön kurs.",
+      "diploma_notes_turkish": "Aynı.",
+      "adim_adim": "1) Üniversite başvuru portalında kayıt, belgeleri yükle. 2) Sınavlı bölümse sınav tarihinde katıl. 3) Kabul sonrası şahsen kayıt (31 Ekim kış için)."
+    },
+    "Poland": {
+      "application_start": "Mart–Temmuz arası başvurular yaygın.",
+      "application_end": "Üniversite bazlı; Temmuz–Ağustos sonları sık görülür.",
+      "portal_link": "Üniversite doğrudan veya ulusal portal.",
+      "exam_system": "Çoğu İngilizce program transkript ve dil belgesi ile; bazılarında sınav.",
+      "exam_portal_link": "",
+      "exceptions": "Düşük harç; İngilizce program sayısı artıyor.",
+      "diploma_notes_canada": "12 yıl kabul.",
+      "diploma_notes_turkish": "12 yıl kabul."
+    },
+    "Spain": {
+      "application_start": "Ocak–Haziran arası bölge ve üniversiteye göre.",
+      "application_end": "Bölgeye göre; Haziran sonları yaygın.",
+      "portal_link": "Üniversite veya özerk topluluk portalları.",
+      "exam_system": "Selectividad/PCE (AB dışı) bazı devlet üniversitelerinde; özel üniversiteler farklı.",
+      "exam_portal_link": "",
+      "exceptions": "AB dışı için PCE sınavı gerekebilir; program bazında kontrol edin.",
+      "diploma_notes_canada": "12 yıl kabul; PCE gereksinimi programa göre.",
+      "diploma_notes_turkish": "Aynı."
+    }
+  },
+  "takvim_2025_2026": [
+    { "ay": "Mayıs 2025", "olay": "UCAS başvuruları açılır (13 Mayıs)." },
+    { "ay": "Eylül 2025", "olay": "UCAS tamamlanmış başvurular gönderilebilir (2 Eylül). Hollanda: Eylül 2026 giriş için başvurular açılır." },
+    { "ay": "Ekim 2025", "olay": "Oxford, Cambridge ve çoğu UK tıp/diş/veteriner son başvuru: 15 Ekim." },
+    { "ay": "Kasım 2025", "olay": "İtalya: Birçok üniversitede ilk başvuru dönemi. Charles 1. Tıp başvuruları açılır (1 Aralık’a kadar)." },
+    { "ay": "Aralık 2025", "olay": "Charles University 1. Tıp: Başvuru dönemi (1 Aralık – 30 Nisan)." },
+    { "ay": "Ocak 2026", "olay": "UCAS çoğu program eşit değerlendirme son tarihi: 14 Ocak. Hollanda numerus fixus: 15 Ocak son başvuru." },
+    { "ay": "Şubat–Temmuz 2026", "olay": "İtalya TOLC dönemleri; cisiaonline.it üzerinden kayıt. Universitaly başvuruları devam eder." },
+    { "ay": "Nisan 2026", "olay": "Charles 1. Tıp başvuru bitiş: 30 Nisan. Hollanda: AB dışı için 1 Mayıs’tan önce başvuru önerilir." },
+    { "ay": "Mayıs 2026", "olay": "Hollanda: Numerus fixus dışı lisans programları son başvuru 1 Mayıs." },
+    { "ay": "Haziran 2026", "olay": "Charles 1. Tıp giriş sınavı: 8 Haziran (Prag). UCAS son başvuru: 30 Haziran." },
+    { "ay": "Temmuz 2026", "olay": "Almanya (uni-assist) kış dönemi tipik son tarih: 15 Temmuz. İtalya genel son başvuru (ör. 31 Temmuz)." }
+  ],
+  "linkler": [
+    { "ad": "UCAS (UK)", "url": "https://www.ucas.com" },
+    { "ad": "Universitaly (İtalya)", "url": "https://www.universitaly.it" },
+    { "ad": "CISIA – TOLC/IMAT kayıt (İtalya)", "url": "https://www.cisiaonline.it" },
+    { "ad": "Studielink (Hollanda)", "url": "https://www.studielink.nl" },
+    { "ad": "uni-assist (Almanya)", "url": "https://www.uni-assist.de" },
+    { "ad": "Nuffic (Hollanda denklik)", "url": "https://www.nuffic.nl" }
+  ],
+  "universite_ozel": {
+    "Charles University": {
+      "application_start": "1 Aralık 2025",
+      "application_end": "30 Nisan 2026",
+      "exam_date": "8 Haziran 2026 (09:00 veya 13:00), ek dönem 25 Haziran 2026 (09:00). Yurt dışı: temsilci üzerinden Ocak–Eylül arası.",
+      "annual_fee": "24250 EUR",
+      "application_fee": "285 EUR",
+      "required_docs_exams": "Kaynak: text.lf1.cuni.cz. 1) Yazılı: 75 MCQ (Biyoloji 25, Kimya 25, Genel Bilim 25), 90 dk, kağıt. 2) MMI (çevrimiçi): 5 istasyon x 10 dk; kabul sadece MMI puanına göre. Lise diploması kayıt öncesi; İngilizce sertifikası/personal statement 2026/27 gerekmez.",
+      "notes": "Doğrudan veya resmi temsilci (en.lf1.cuni.cz/international-representatives). Hazırlık: en.lf1.cuni.cz/how-to-prepare-for-entrance-exams. 1. tur muafiyeti: belirli yüksek lisans/6+ dönem tıp (AB/OECD); yine MMI gerekli. admissions@lf1.cuni.cz"
+    },
+    "Charles University (CUNI)": {
+      "application_start": "1 Aralık 2025",
+      "application_end": "30 Nisan 2026",
+      "exam_date": "8 Haziran 2026 (09:00 veya 13:00), ek dönem 25 Haziran 2026 (09:00).",
+      "annual_fee": "24250 EUR",
+      "application_fee": "285 EUR",
+      "required_docs_exams": "75 MCQ (Biyoloji, Kimya, Genel Bilim) + MMI. Sadece MMI puanı sıralamada. Lise diploması kayıt öncesi.",
+      "notes": "lf1.cuni.cz, admissions@lf1.cuni.cz. Temsilci ile yurt dışında sınav mümkün."
+    },
+    "Charles University - First Faculty of Medicine": {
+      "application_start": "1 Aralık 2025",
+      "application_end": "30 Nisan 2026",
+      "exam_date": "8 ve 25 Haziran 2026 Prag; yurt dışı temsilci ile.",
+      "annual_fee": "24250 EUR",
+      "application_fee": "285 EUR",
+      "required_docs_exams": "Yazılı 75 MCQ + MMI. Kaynak: text.lf1.cuni.cz.",
+      "notes": "admissions@lf1.cuni.cz"
+    },
+    "Semmelweis University": {
+      "application_start": "12 Ocak 2026",
+      "application_end": "31 Mayıs 2026",
+      "exam_date": "Şubat sonu – Haziran sonu (atama sonrası); sonuç 2 hafta içinde.",
+      "annual_fee": "yaklaşık 20900 USD (2 dönem)",
+      "application_fee": "",
+      "required_docs_exams": "SEMAPHOR (semaphor.semmelweis.hu). Yazılı: Tıbbi Biyoloji, Tıbbi Kimya, Genel İngilizce, Biyomedikal İngilizce (20 soru x 20 dk) + mülakat (Zoom/yüz yüze). Upper intermediate İngilizce; sertifika zorunlu değil.",
+      "notes": "6 yıl, 12 dönem. admission@semmelweis.hu"
+    },
+    "Politecnico di Milano": {
+      "application_start": "Mühendislik 1. çağrı: 1 Ekim – 1 Aralık 2025 (erken 50 EUR). 2. çağrı: 13 Ocak – 26 Şubat 2026 (150 EUR).",
+      "application_end": "2. çağrı 26 Şubat 2026. AB dışı vize için Universitaly ön kayıt 31 Ağustos 2026. Sonuçlar Mayıs sonuna kadar.",
+      "exam_date": "TOL (mühendislik) – PoliMi sayfasında kayıt tarihleri.",
+      "annual_fee": "",
+      "application_fee": "50 EUR (erken) / 150 EUR (standart)",
+      "required_docs_exams": "Kaynak: polimi.it. TOL sınavı; SAT alternatif kabul (polimi.it). Universitaly’de vize ön kayıt kabul sonrası.",
+      "notes": "Mühendislik (Architectural/Building Engineering hariç) Şubat 2027 giriş de var. polimi.it/en/prospective-students"
+    },
+    "University of Amsterdam": {
+      "application_start": "Numerus fixus: Studielink 1 Ekim – 15 Ocak 2026 (en geç son haftadan önce). Diğer: 1 Nisan 2026 vize/konaklama için önerilir.",
+      "application_end": "Numerus fixus (tıp, psikoloji, İşletme İngilizce, Ekonomi İngilizce vb.): 15 Ocak 2026. Diğer: 1 Mayıs 2026.",
+      "exam_date": "Numerus fixus seçim (örn. İşletme: 18 ve 28 Şubat 2026 sınav tarihleri).",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "Studielink + kurum portalında tam başvuru. Numerus fixus: seçim sınavı veya kura. uva.nl/en/education/admissions/bachelors",
+      "notes": "Max 4 program (max 2 numerus fixus). Vize/konaklama için 1 Nisan."
+    },
+    "Leiden University": {
+      "application_start": "Numerus fixus (tıp vb.): Studielink’te 15 Ocak’a kadar.",
+      "application_end": "15 Ocak 2026. Studielink sonrası uSis’e 2 gün içinde başvuruyu tamamla.",
+      "exam_date": "Numerus fixus seçim süreci.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "Önce Studielink, ardından Leiden uSis; 2 gün içinde tamamlanmalı.",
+      "notes": "universiteitleiden.nl/en/education/study-programmes"
+    },
+    "TU Wien": {
+      "application_start": "Kış 2026/27 AB dışı: 16 Ocak – 15 Temmuz 2026. Sınavlı bölümler (Bilgisayar, Mimarlık, Mekansal Planlama) kayıt Nisan–Haziran.",
+      "application_end": "15 Temmuz 2026 (AB dışı). Sınavlar Ağustos. Kayıt 31 Ekim’e kadar şahsen.",
+      "exam_date": "Bilgisayar, Mimarlık, Mekansal Planlama: ranking testi Ağustos.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "tuwien.at/en/studies/admission. Belgeler eksiksiz; AB dışı ayrı son tarih. Programme-PRe-Phase veya giriş sınavı.",
+      "notes": "Dönemlik harç ~726 EUR. Şahsen kayıt zorunlu."
+    },
+    "Anglo-American University": {
+      "application_start": "Rolling admissions (yıl boyu). Vize gerektirmeyenler: dönem başlamadan en geç 1 hafta önce. Vize gerektirenler: en az 10 hafta önce (işlem ~60 gün + AAU 2 hafta).",
+      "application_end": "Güz 2026: dönem 31 Ağustos 2026 başlar; vize için ideal başvuru orta Haziran 2026. Bahar 2027: dönem 29 Ocak 2027; vize için ideal ekim sonu 2026.",
+      "exam_date": "",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "Kaynak: aauni.edu/admissions. Lise diploması, transkript. Vize için erken başvuru şart.",
+      "notes": "aauni.edu. Rolling admissions; vize 10 hafta önce."
+    },
+    "Brno University of Technology": {
+      "application_start": "2026/2027 başvuruları açık. Genel son tarih 31 Mart 2026.",
+      "application_end": "Genel: 31 Mart 2026. Güzel Sanatlar: 30 Kasım 2025. İnşaat Mühendisliği (Building Architecture): 2 Ocak 2026. Mimarlık Fakültesi: 18 Ocak 2026.",
+      "exam_date": "Programa göre; bazı bölümlerde giriş sınavı.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "Kaynak: vut.cz. 24 İngilizce lisans/yüksek lisans programı. Lisans için lise düzeyi İngilizce.",
+      "notes": "vut.cz/en. Fakülte bazlı farklı son tarihler."
+    },
+    "Czech Technical University (CTU)": {
+      "application_start": "Normal başvuru dönemi: 1 Ocak – 31 Mart 2026. Bazı fakülteler erken dönem (yaz 2025): İnşaat 31 Temmuz, Makine/Elektrik 15 Ağustos vb.",
+      "application_end": "31 Mart 2026 (normal). Başvuru: prihlaska.cvut.cz. Başvuru ücreti ~950 CZK (≈38 EUR).",
+      "exam_date": "Fakülteye göre; bazı bölümlerde giriş sınavı.",
+      "annual_fee": "",
+      "application_fee": "~950 CZK (≈38 EUR)",
+      "required_docs_exams": "prihlaska.cvut.cz. Fakülte bazlı koşullar; her fakültenin kendi son tarihi olabilir.",
+      "notes": "cvut.cz. Fakülte sayfalarından güncel tarihleri kontrol edin."
+    },
+    "Politecnico di Torino": {
+      "application_start": "Lisans (mühendislik vb.) 2026/27: başvuru çağrıları Rektör kararı ile yayımlanır; TIL sınavı takvimi var. Yüksek lisans (İtalyan dışı): 19 Aralık 2025'ten itibaren Apply@polito.",
+      "application_end": "Lisans: TIL takvimine göre (polito.it çağrıları). Yüksek lisans: Apply@polito; programa göre son tarih.",
+      "exam_date": "Lisans: TIL (Test di Ingresso). Yüksek lisans: İngilizce B2.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "polito.it. Lisans: TIL; yüksek lisans: B2 İngilizce, Apply@polito üzerinden en fazla 2 program.",
+      "notes": "polito.it/en/education/applying-studying-graduating. Universitaly vize için kabul sonrası."
+    },
+    "Sapienza University of Rome": {
+      "application_start": "AB dışı (vize gerekli): Ön seçim 22 Aralık 2025 – 15 Mayıs 2026. MoveIN platformu; başvuru başı 30 EUR (en fazla 2 başvuru).",
+      "application_end": "AB dışı vize gerekli: 15 Mayıs 2026. AB ve eşdeğer: 31 Temmuz 2026. İtalyanca programlara AB dışı erişim 15 Mayıs – Haziran sonu. Infostud + Universitaly kayıt Haziran sonuna kadar.",
+      "exam_date": "TOLC (TOLC-I, TOLC-I English, TOLC-S, TOLC-E) mühendislik/bilgisayar vb. için. İtalyanca programlar için B2 İtalyanca sınavı.",
+      "annual_fee": "",
+      "application_fee": "30 EUR (en fazla 2 başvuru)",
+      "required_docs_exams": "uniroma1.it, MoveIN. TOLC türü programa göre. AB dışı İtalyanca programlar için B2 İtalyanca zorunlu.",
+      "notes": "uniroma1.it/en/admissions. Ön seçim kayıt garantisi değil; belgeler ve programa özel koşullar tamamlanmalı."
+    },
+    "Ca' Foscari University of Venice": {
+      "application_start": "2026/27 lisans başvuruları 17 Aralık 2025'te açılır. Birden fazla başvuru dönemi; vatandaşlığa göre farklı son tarihler.",
+      "application_end": "apply.unive.it üzerinden vatandaşlık seçip ilgili dönem son tarihine bakın. 30 EUR başvuru ücreti (iade alınmaz).",
+      "exam_date": "Bazı programlarda giriş sınavı.",
+      "annual_fee": "",
+      "application_fee": "30 EUR",
+      "required_docs_exams": "apply.unive.it. 12 yıl eğitim, lise bitirme belgesi. İlk öncelik programı için yaklaşık 6 hafta içinde geri bildirim.",
+      "notes": "unive.it, apply.unive.it. Başvuru turları 2026/27: apply.unive.it haberleri."
+    },
+    "University of Warsaw": {
+      "application_start": "2026/2027 İngilizce lisans: kayıt 3 Şubat'ta açıldı (tahmini). Programa göre son tarihler IRK'da (irk.uw.edu.pl).",
+      "application_end": "Programa göre; irk.uw.edu.pl REGISTRATION sekmesinden güncel son tarihler. Belgeler ve nitelik süreci programa özel.",
+      "exam_date": "Programa göre nitelik (qualification) süreci.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "irk.uw.edu.pl. Lise diploması ve transkript çevirileri; online kayıt, nitelik süreci, belgeleri son tarihe kadar teslim.",
+      "notes": "rekrutacja.uw.edu.pl, en.uw.edu.pl. Siyaset bilimi, uluslararası ilişkiler vb. İngilizce lisans programları."
+    },
+    "Erasmus University Rotterdam": {
+      "application_start": "Uluslararası adaylar için başvuru dönemi 1 Kasım 2025'te açılır. Studielink kayıt + EUR Admissions Portal'da başvuruyu tamamlama.",
+      "application_end": "AB dışı: 1 Nisan 2026. AB/EEA: 1 Mayıs 2026. Sadece Studielink yeterli değil; EUR portalda tamamlanmalı. 100 EUR başvuru ücreti (uygulanabiliyorsa).",
+      "exam_date": "Programa göre seçim.",
+      "annual_fee": "",
+      "application_fee": "100 EUR (uygulanabiliyorsa)",
+      "required_docs_exams": "Studielink + EUR Admissions Portal. Belgeleri son tarihe kadar yükle.",
+      "notes": "eur.nl. Master/Pre-master: 1 Nisan (AB dışı), 1 Mayıs (AB/EEA)."
+    },
+    "University of Vienna": {
+      "application_start": "2026/27 lisans (giriş sınavı/uygunluk sınavı olan programlar): başvuru 2 Mart – 4 Mayıs 2026.",
+      "application_end": "4 Mayıs 2026. Yazılı sınavlar 6 Temmuz 2026'dan itibaren (Viyana'da yüz yüze). Sonuç yaklaşık 2 hafta sonra. Dönem 1 Ekim 2026. 50 EUR idari ücret.",
+      "exam_date": "Giriş sınavı veya uygunluk sınavı; yılda bir dönem. Program bazlı test tarihleri 2025 sonuna kadar açıklanır.",
+      "annual_fee": "",
+      "application_fee": "50 EUR",
+      "required_docs_exams": "studieren.univie.ac.at, aufnahmeverfahren.univie.ac.at. Lise bitirme belgesi henüz yoksa da başvuru yapılabilir.",
+      "notes": "Sınavsız lisans programları için farklı başvuru dönemleri olabilir; vatandaşlığa göre sayfadan kontrol edin."
+    },
+    "Maastricht University": {
+      "application_start": "Studielink 1 Ekim 2025'te açılır. Sınırlı kontenjan; mümkün olan en kısa sürede başvuru önerilir.",
+      "application_end": "AB dışı (vize/oturum): 1 Nisan 2026 23:59 CET. AB/EEA/İsviçre: 1 Mayıs 2026 23:59 CET. Seçim süreçleri (mülakat vb.): 29 Mayıs 2026 17:00. Harç ödemesi (önerilir): 1 Ağustos 2026.",
+      "exam_date": "Programa göre seçim (mülakat vb.).",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "Studielink'te başlangıç anı olarak September 2026 seçin. Belgeler ve başvuru tamamlanmazsa değerlendirmeye alınmaz.",
+      "notes": "maastrichtuniversity.nl. Son tarihe kadar tüm belgeler yüklenmeli."
+    },
+    "Masaryk University": {
+      "application_start": "Programa göre; genelde kış dönemi için sonbahar–kış başvuruları. Başvuru sistemi: is.muni.cz / fakülte sayfaları.",
+      "application_end": "Fakülte ve programa göre değişir; resmi başvuru sayfasından güncel tarihleri kontrol edin.",
+      "exam_date": "",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "Lise diploması, transkript. Programa göre dil ve giriş koşulları.",
+      "notes": "muni.cz. Fakülte bazlı son tarihler."
+    },
+    "VSB Technical University of Ostrava (VSB-TUO)": {
+      "application_start": "İngilizce lisans: 1 Aralık 2025 – 28 Şubat / 15 Mart 2026 (fakülteye göre). Çekçe: 1 Kasım 2025 – 31 Mart 2026.",
+      "application_end": "İngilizce: 28 Şubat veya 15 Mart 2026. İnşaat Fakültesi: Çekçe 15 Kasım 2025; İngilizce Master 2 Aralık 2025. Başvuru: prihlaska.vsb.cz.",
+      "exam_date": "Fakülteye göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "vsb.cz/en/study/admissions. e-Application (prihlaska.vsb.cz). Fakülte bazlı tarihler.",
+      "notes": "vsb.cz. Application dates sayfasından güncel takvim."
+    },
+    "University of Chemistry and Technology (VSCHT)": {
+      "application_start": "Elektronik başvuru sistemi üzerinden; öğretim yılına göre dönemler açılır.",
+      "application_end": "Programa göre; student.vscht.cz / study.vscht.cz admission sayfalarından kontrol edin. İletişim: studium@vscht.cz.",
+      "exam_date": "",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "student.vscht.cz, study.vscht.cz. E-posta ile kayıt; lise diploması ve programa özel koşullar.",
+      "notes": "vscht.cz. Pedagogical Department: studium@vscht.cz."
+    },
+    "VSE Prague University of Economics": {
+      "application_start": "2026/27 başvuru dönemi 1 Kasım 2025'te açılır.",
+      "application_end": "1. dönem: 28 Şubat 2026. 2. dönem: 30 Nisan 2026. İşletme/Ekonomi (bazı programlar): 3. dönem 10 Haziran 2026. Master Finans ve Muhasebe: 1. dönem 30 Kasım 2025. Başvuru ücreti 50 EUR (1300 CZK); yıllık harç 5000 EUR.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "5000 EUR",
+      "application_fee": "50 EUR",
+      "required_docs_exams": "admissions.vse.cz. Uluslararası lisans/yüksek lisans programları; iki dönem son tarihi.",
+      "notes": "admissions.vse.cz. Program bazlı 3. dönem bazı bölümlerde."
+    },
+    "Czech University of Life Sciences (CZU)": {
+      "application_start": "Programa göre; genelde kış için ilkbahar–yaz başvuruları.",
+      "application_end": "Fakülte ve programa göre; czu.cz veya ilgili fakülte sayfasından güncel tarihler.",
+      "exam_date": "",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "czu.cz. Lise diploması, dil belgesi (programa göre).",
+      "notes": "czu.cz. Resmi başvuru portalından kontrol edin."
+    },
+    "Best School CZ ": {
+      "application_start": "Yıl boyu veya dönem bazlı; okul sayfasından güncel dönemler.",
+      "application_end": "Kuruma özel; resmi web sitesinden başvuru takvimi kontrol edin.",
+      "exam_date": "",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "Lise diploması, transkript. Okul sayfasından başvuru koşulları.",
+      "notes": "Kurum sayfasından güncel bilgi alın."
+    },
+    "Metropolitan University Prague (MUP)": {
+      "application_start": "Dönem bazlı; güz/bahar için ayrı başvuru dönemleri.",
+      "application_end": "mup.cz veya başvuru portalından güncel son tarihler.",
+      "exam_date": "",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "mup.cz. Lise diploması, dil (programa göre).",
+      "notes": "mup.cz."
+    },
+    "Unicorn University": {
+      "application_start": "Dönem bazlı başvurular; okul sayfasından açılış tarihleri.",
+      "application_end": "unicornuniversity.net / resmi portal; programa göre son tarih.",
+      "exam_date": "",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "Lise diploması, transkript. Okul koşulları.",
+      "notes": "unicornuniversity.net."
+    },
+    "University of New York in Prague (UNYP)": {
+      "application_start": "Rolling veya dönem bazlı; unyp.cz başvuru sayfası.",
+      "application_end": "unyp.cz; vize gerektirenler için erken başvuru önerilir.",
+      "exam_date": "",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "unyp.cz. Lise diploması, İngilizce (çoğu program İngilizce).",
+      "notes": "unyp.cz."
+    },
+    "University of Bologna": {
+      "application_start": "Uluslararası (TOLC): birden fazla dönem; 2025/26 örneği 1. dönem Şubat–Nisan, 2. dönem Nisan–Temmuz, 3. dönem Eylül. TOLC türü programa göre (CISIA).",
+      "application_end": "Programa ve döneme göre; unibo.it enrolment sayfası ve corsi.unibo.it. AB dışı TOLC@home 2025 veya 2026'da alınmış olmalı. TOLC 35 EUR, CISIA üzerinden.",
+      "exam_date": "TOLC (TOLC-E ekonomi, TOLC-I mühendislik vb.); cisiaonline.it.",
+      "annual_fee": "",
+      "application_fee": "TOLC 35 EUR",
+      "required_docs_exams": "unibo.it. TOLC türü programa göre; Universitaly (AB dışı vize).",
+      "notes": "unibo.it/en/study. 2026/27 çağrıları için güncel takvim sayfadan."
+    },
+    "Universita Bocconi": {
+      "application_start": "2026-27: Erken dönem 12 Kasım – 3 Aralık 2025; Kış dönemi (kabul sonrası) – 9 Nisan 2026; Bahar dönemi (kabul sonrası) – 4 Haziran 2026.",
+      "application_end": "Erken: 3 Aralık 2025 (sonuç 3 Mart 2026). Kış: 9 Nisan 2026 (sonuç 17 Haziran 2026). Bahar: 4 Haziran 2026 (sonuç 9 Temmuz 2026). Seçim: ACT/SAT veya Bocconi Online Test (%55) + not ortalaması (%45).",
+      "exam_date": "ACT, SAT veya Bocconi Online Test. 25 sınıf, 2800+ kontenjan; İngilizce programlarda %50-55 uluslararası.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "unibocconi.it. Lisans/hukuk; seçim testi + GPA (son iki yıl).",
+      "notes": "unibocconi.it/en/applying-bocconi. Kayıt sonrası belirlenen sürede kayıt tamamlanmalı."
+    },
+    "University of Padova": {
+      "application_start": "2026/27 başvuruları açık; apply.unipd.it üzerinden. En fazla 2 program seçilebilir.",
+      "application_end": "Programa göre; apply.unipd.it ve unipd.it/en/studying-padua/admission. Çağrılar genelde haziran civarı yayımlanır; son tarihleri kaçırmayın.",
+      "exam_date": "Programa göre (bazılarında TOLC veya diğer test).",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "apply.unipd.it. Lise/yüksek lisans diploması (İtalya dışı); belgeler başvuru ile.",
+      "notes": "unipd.it. Webinar ve açık hafta; 2026/27 için güncel çağrılar sayfada."
+    },
+    "University of Florence": {
+      "application_start": "2026/2027: 1. dönem 10 Aralık 2025 – 6 Şubat 2026 (sonuç yaklaşık mart ortası). 2. dönem 16 Şubat – 17 Nisan 2026 (sonuç mayıs ortası). 3. dönem (sadece AB + İtalya'da ikamet eden AB dışı): 15 Haziran – 31 Ağustos 2026 (sonuç eylül sonu).",
+      "application_end": "1. dönem: 6 Şubat 2026. 2. dönem: 17 Nisan 2026. 3. dönem: 31 Ağustos 2026. Başvuru ücreti 20 EUR. Sadece gönderilen başvurular işleme alınır.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "20 EUR",
+      "required_docs_exams": "apply.unifi.it. Kayıt, aday türü, belgeler, ödeme. Programa göre giriş koşulları.",
+      "notes": "unifi.it. apply.unifi.it portal."
+    },
+    "Roma Tre University": {
+      "application_start": "Lisans: standart kayıt 7 Temmuz – 15 Ekim (yıla göre); geç kayıt (ek ücret) 16 Ekim – 15 Aralık. Yüksek lisans: kariyer değerlendirmesi Haziran–Eylül; kayıt Temmuz–Ekim. AB dışı Universitaly: kayıt 15 Eylül.",
+      "application_end": "Programa ve döneme göre; uniroma3.it enrolment/admission. Kısıtlı programlar (Mimarlık, Bilgisayar Müh., Diller, Biyoloji, Öğretmenlik) ayrı usul.",
+      "exam_date": "Kısıtlı programlarda giriş sınavı veya sıralama.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "uniroma3.it, portalestudente.uniroma3.it. Lisans/yüksek lisans; AB dışı Universitaly.",
+      "notes": "uniroma3.it. Bölüm bazlı çağrılar."
+    },
+    "University of Trento": {
+      "application_start": "2026/27: 1. oturum başvuru 23 Mart 2026 12:00; TOLC 20-31 Mart. 2. oturum başvuru 11 Mayıs 2026 12:00; TOLC 8 Mayıs. 3. oturum başvuru 31 Temmuz 2026 12:00; TOLC 31 Temmuz. AB dışı (yurt dışında ikamet) sadece 1. oturum.",
+      "application_end": "1. oturum: 23 Mart 2026. 2. oturum: 11 Mayıs 2026. 3. oturum: 31 Temmuz 2026. TOLC CISIA üzerinden; başvuru unitn.it/corsi.",
+      "exam_date": "TOLC (CISIA); programa göre TOLC türü.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "unitn.it/en/study/register. İki adım: TOLC (CISIA) + UniTrento başvurusu.",
+      "notes": "unitn.it. 2026/27 başvuru çağrıları yayımlandı."
+    },
+    " Eötvös Loránd University (ELTE)": {
+      "application_start": "2026/27 başvuruları açık; apply.elte.hu. Çoğu program rolling; erken başvuru önerilir.",
+      "application_end": "Programa göre genelde Nisan sonu – Temmuz ortası. 100+ İngilizce lisans/yüksek lisans/doktora; çevrimiçi başvuru.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "elte.hu, apply.elte.hu. Lise/diploma, dil; program sayfasından koşullar.",
+      "notes": "elte.hu/en. Uluslararası Strateji Ofisi; program bazlı son tarih."
+    },
+    "University of Debrecen": {
+      "application_start": "Eylül 2026 giriş: diğer programlar 15 Haziran 2026. Doktora 15 Mayıs 2026. Ocak/Şubat 2026 giriş: tıp (BMC II) 1 Kasım 2025; diğer 15 Kasım 2025.",
+      "application_end": "Eylül 2026: 15 Haziran 2026 (lisans/yüksek lisans). Doktora: 15 Mayıs 2026. UD International Bursu: 20 Ocak 2025 açılış; %90'a kadar harç indirimi.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "edu.unideb.hu, southasia.edu.unideb.hu/deadlines. Çevrimiçi başvuru.",
+      "notes": "unideb.hu. Program bazlı istisnalar."
+    },
+    "University of Pécs": {
+      "application_start": "Lisans: 30 Haziran 2026. Yüksek lisans: 30 Haziran ve 30 Eylül 2026. Doktora: 15 Mayıs 2026.",
+      "application_end": "Lisans 30 Haziran 2026. Yüksek lisans 30 Haziran / 30 Eylül. Doktora 15 Mayıs 2026. DreamApply üzerinden başvuru; program sayfasından kesin tarihler.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "international.pte.hu, DreamApply. Program bazlı son tarihler sayfadan.",
+      "notes": "pte.hu. study-programs sayfasından güncel bilgi."
+    },
+    "University of Szeged": {
+      "application_start": "Güz 2026: AB dışı genelde Ocak–31 Mayıs; AB/EEA Mayıs–30 Haziran. Bahar 2027: AB dışı Eylül–Kasım; AB Kasım–Aralık başı.",
+      "application_end": "Fakülte ve programa göre; u-szeged.hu/prospective-students, apply.u-szeged.hu. Tıp için med.u-szeged.hu 2026/27 çevrimiçi başvuru.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "u-szeged.hu. Çevrimiçi başvuru; fakülte bazlı kesin tarihler.",
+      "notes": "u-szeged.hu. İlgili fakülte ile doğrulayın."
+    },
+    "University of Pisa": {
+      "application_start": "Programa göre; lisans ve yüksek lisans için farklı dönemler. İngilizce yüksek lisans (sınavsız): AB/AB dışı ayrı son tarihler. DSU bursu 2026: 5 Eylül 2025.",
+      "application_end": "applymscenglish.unipi.it (yüksek lisans İngilizce); onay sonrası kayıt 31 Aralık 2025 veya karar tarihinden 30 gün. international@unipi.it; unipi.it.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "unipi.it, applymscenglish.unipi.it. Lise/diploma; dil (programa göre).",
+      "notes": "unipi.it. Uluslararası ofis: international@unipi.it."
+    },
+    "University of Siena": {
+      "application_start": "2026/27 başvuruları 6 Kasım’dan itibaren programa göre kademeli açılır. En fazla 3 program; her biri için başvuru ücreti.",
+      "application_end": "Programa göre; apply.unisi.it. Değerlendirme genelde kapanış tarihinden yaklaşık 1 ay sonra. AB dışı: Universitaly vize (Mart/Nisan açılış); 2026/27 portal henüz açılmadığında ön kayıt yapmayın.",
+      "exam_date": "Bazı programlarda uzaktan yazılı test ve/veya mülakat.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "admission.unisi.it, apply.unisi.it. İtalyanca programlar A2 İngilizce; İngilizce programlar İtalyanca gerekmez.",
+      "notes": "unisi.it. Vize işlemi 4+ ay sürebilir; erken başvuru önerilir."
+    },
+    "Università Cattolica del Sacro Cuore": {
+      "application_start": "2026/27: Tur 1 5 Kasım 2025 – 25 Şubat 2026. Tur 2 26 Şubat – 6 Mayıs 2026 (AB dışı vize için son). Tur 3 7 Mayıs – 24 Haziran 2026. Psikoloji: Oturum 1 5 Kasım – 28 Ocak (sınav 17 Şubat); Oturum 2 30 Mart – 24 Haziran (sınav 16 Temmuz).",
+      "application_end": "AB dışı vize: 6 Mayıs 2026 (Tur 2). Spor/Sosyal Hizmet: AB dışı 24 Haziran; AB/İtalya’da ikamet 9 Eylül. Öğretmenlik: 26 Ağustos 2026. Sonuç her dönem kapanışından yaklaşık 8 hafta sonra.",
+      "exam_date": "Psikoloji: 17 Şubat ve 16 Temmuz 2026. Diğer programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "international.unicatt.it. Lisans turları; programa özel koşullar.",
+      "notes": "unicatt.it. AB dışı vize için Tur 2 son tarihini kaçırmayın."
+    },
+    "The European University of Rome": {
+      "application_start": "Dönem bazlı; güz/bahar için başvuru dönemleri. Resmi başvuru sayfasından güncel tarihler.",
+      "application_end": "Kurum sayfasından programa göre son tarih; vize gerektirenler için erken başvuru.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "Lise diploması, dil (programa göre). Kurum portalı.",
+      "notes": "Resmi web sitesinden güncel başvuru takvimi."
+    },
+    " Freie Universität Berlin ": {
+      "application_start": "Kış 2026/27: Kısıtlı programlar 1 Haziran – 15 Temmuz 2026. Kısıtsız programlar 1 Haziran – 1 Eylül 2026.",
+      "application_end": "Kısıtlı: 15 Temmuz 2026. Kısıtsız: 1 Eylül 2026. Uluslararası adaylar uni-assist’ten VPD (ön inceleme belgesi) almalı; VPD için birkaç hafta sürdüğünden erken başvuru önerilir.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "fu-berlin.de/en/studium/bewerbung. uni-assist VPD + üniversite başvurusu.",
+      "notes": "fu-berlin.de. Yüksek lisans ve değişim programları programa özel."
+    },
+    "Technical University of Munich (TUM)": {
+      "application_start": "Yaz 2026: 15 Ocak 2026. Kış 2026/27: 15 Temmuz 2026. Tüm adaylar (Almanya, AB, AB dışı) aynı son tarih.",
+      "application_end": "Yaz: 15 Ocak 2026. Kış: 15 Temmuz 2026. TUMonline üzerinden. AB dışı: uni-assist’e belgeleri son tarihten en az 8 hafta önce gönderin.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "tum.de/en/studies/application. TUMonline; gerekirse uni-assist ön belge.",
+      "notes": "tum.de. Bachelor/Master tarihleri aynı."
+    },
+    "Universität Heidelberg": {
+      "application_start": "Lisans 1. dönem: Kış 2026 1 Haziran – 15 Temmuz; Yaz 2026 1 Aralık – 15 Ocak. Yüksek lisans (kısıtlı): Kış 1 Mayıs – 15 Haziran; Yaz 1 Ekim – 15 Kasım.",
+      "application_end": "Lisans kış: 15 Temmuz. Lisans yaz: 15 Ocak. heiCO çevrimiçi portal. Başvuru ücreti yok; karar genelde son tarihten 3-4 hafta sonra.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "Yok",
+      "required_docs_exams": "uni-heidelberg.de. Onaylı transkript, Almanca/İngilizce çeviri, pasaport, dil belgesi.",
+      "notes": "uni-heidelberg.de. Programa özel tarihleri sayfadan kontrol edin."
+    },
+    "Technical University of Dresden (TUD)": {
+      "application_start": "Kış dönemi için genelde Mayıs–Temmuz; programa göre. uni-assist kullananlar için 8 hafta önce belge teslimi önerilir.",
+      "application_end": "Programa göre; tu-dresden.de ve uni-assist. Son tarihler fakülte/bölüme göre değişir.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "tu-dresden.de. uni-assist ön inceleme (gerekirse).",
+      "notes": "tu-dresden.de. Güncel son tarihler başvuru sayfasından."
+    },
+    "Bremen University": {
+      "application_start": "Kış 2026/27: genelde Haziran–Temmuz; uni-assist veya doğrudan başvuru programa göre.",
+      "application_end": "uni-bremen.de ve uni-assist; programa özel son tarih.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "uni-bremen.de. Lise/diploma; dil koşulları.",
+      "notes": "uni-bremen.de."
+    },
+    "Paderborn University": {
+      "application_start": "Kış için genelde Mayıs–Temmuz; uni-assist veya üniversite portalı.",
+      "application_end": "Programa göre; uni-paderborn.de. Son tarihler sayfadan.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "uni-paderborn.de. Lise/diploma.",
+      "notes": "uni-paderborn.de."
+    },
+    "Wuppertal University ": {
+      "application_start": "Kış 2026/27: genelde Haziran–Temmuz veya Ağustos; uni-wuppertal.de.",
+      "application_end": "Programa göre; uni-wuppertal.de başvuru sayfası.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "uni-wuppertal.de. Lise/diploma; dil (programa göre).",
+      "notes": "uni-wuppertal.de."
+    },
+    "Berlin School of Business and Innovation (BSBI)": {
+      "application_start": "Rolling veya dönem bazlı; bsbi.de başvuru sayfası.",
+      "application_end": "Dönem başlamadan önce; vize için erken başvuru. bsbi.de.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "bsbi.de. Lise/diploma; İngilizce (çoğu program).",
+      "notes": "bsbi.de."
+    },
+    "CBS International Business School": {
+      "application_start": "Dönem bazlı; cbs.de başvuru.",
+      "application_end": "cbs.de; vize gerekiyorsa erken başvuru.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "cbs.de. Lise/diploma; İngilizce/Almanca programa göre.",
+      "notes": "cbs.de."
+    },
+    "Lancaster University Leipzig": {
+      "application_start": "Dönem bazlı; Lancaster’ın Leipzig kampüsü için lancaster.ac.uk/leipzig veya kampüs sayfası.",
+      "application_end": "Kampüs sayfasından güncel son tarih.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "Lise diploması; İngilizce. Lancaster Leipzig başvuru koşulları.",
+      "notes": "Lancaster University Leipzig kampüs sayfasından."
+    },
+    "Aston University": {
+      "application_start": "UCAS başvuruları 13 Mayıs 2025 açılır; tamamlanmış başvuru 2 Eylül 2025’ten itibaren gönderilir.",
+      "application_end": "Çoğu program: 14 Ocak 2026 (18:00 UK). UCAS: ucas.com.",
+      "exam_date": "Programa göre (çoğu sınavsız).",
+      "annual_fee": "",
+      "application_fee": "UCAS ücreti",
+      "required_docs_exams": "UCAS üzerinden. Lise diploması, referans, personal statement.",
+      "notes": "aston.ac.uk. UCAS 5 program sınırı."
+    },
+    "Bournemouth University ": {
+      "application_start": "UCAS 13 Mayıs 2025 açılış; 2 Eylül 2025’ten itibaren gönderim.",
+      "application_end": "14 Ocak 2026 (çoğu program). UCAS: ucas.com.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "UCAS. Lise, referans, personal statement.",
+      "notes": "bournemouth.ac.uk."
+    },
+    "Cardiff University": {
+      "application_start": "UCAS 13 Mayıs 2025; gönderim 2 Eylül 2025’ten.",
+      "application_end": "Tıp/diş/vet: 15 Ekim 2025. Diğer: 14 Ocak 2026. UCAS.",
+      "exam_date": "Programa göre (tıp BMAT vb.).",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "UCAS. cardiff.ac.uk.",
+      "notes": "cardiff.ac.uk."
+    },
+    "Durham University": {
+      "application_start": "UCAS 13 Mayıs 2025; 2 Eylül 2025’ten gönderim.",
+      "application_end": "15 Ekim 2025 (Oxford/Cambridge ile aynı gün bazı programlar için değil; standart 14 Ocak 2026). UCAS.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "UCAS. durham.ac.uk.",
+      "notes": "durham.ac.uk."
+    },
+    "King's College London": {
+      "application_start": "UCAS 13 Mayıs 2025; 2 Eylül 2025’ten gönderim.",
+      "application_end": "Tıp ve diş: 15 Ekim 2025. Diğer çoğu program: 14 Ocak 2026 (18:00). UCAS.",
+      "exam_date": "Tıp/diş: UKCAT/BMAT vb. Diğer programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "UCAS. kcl.ac.uk.",
+      "notes": "kcl.ac.uk."
+    },
+    "London School of Economics and Political Science (LSE)": {
+      "application_start": "UCAS 13 Mayıs 2025; 2 Eylül 2025’ten gönderim.",
+      "application_end": "14 Ocak 2026 (18:00 GMT). UCAS. LSE çok rekabetçi; erken ve güçlü başvuru önerilir.",
+      "exam_date": "Programa göre (çoğu sınavsız).",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "UCAS. lse.ac.uk. Personal statement çok önemli.",
+      "notes": "lse.ac.uk. Karar son tarihi 13 Mayıs 2026."
+    },
+    "Newcastle University": {
+      "application_start": "UCAS 13 Mayıs 2025; 2 Eylül 2025’ten gönderim.",
+      "application_end": "Tıp/diş: 15 Ekim 2025. Diğer: 14 Ocak 2026. UCAS.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "UCAS. ncl.ac.uk.",
+      "notes": "ncl.ac.uk."
+    },
+    "Queen Mary University of London": {
+      "application_start": "UCAS 13 Mayıs 2025; 2 Eylül 2025’ten gönderim.",
+      "application_end": "Tıp/diş: 15 Ekim 2025. Diğer: 14 Ocak 2026. UCAS.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "UCAS. qmul.ac.uk.",
+      "notes": "qmul.ac.uk."
+    },
+    "University of Cambridge": {
+      "application_start": "UCAS 13 Mayıs 2025; 2 Eylül 2025’ten gönderim. Cambridge ek form ve bazı bölümlerde yazılı sınav/mülakat.",
+      "application_end": "15 Ekim 2025 (18:00 UK). UCAS. Oxford/Cambridge aynı yıl sadece birine başvurulabilir.",
+      "exam_date": "Bölüme göre (STEP, ENGAA, NSAA, TMUA vb.); mülakat.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "UCAS + Cambridge başvuru. cam.ac.uk.",
+      "notes": "cam.ac.uk. 15 Ekim kesin."
+    },
+    "University of Oxford ": {
+      "application_start": "UCAS 13 Mayıs 2025; 2 Eylül 2025’ten gönderim. Oxford ek form; bazı bölümlerde TSA, MAT, BMAT, LNAT vb.",
+      "application_end": "15 Ekim 2025 (18:00 UK). UCAS. Oxford/Cambridge aynı yıl sadece birine başvurulabilir.",
+      "exam_date": "Bölüme göre (MAT, BMAT, TSA, LNAT vb.); mülakat.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "UCAS + Oxford başvuru. ox.ac.uk.",
+      "notes": "ox.ac.uk. 15 Ekim kesin."
+    },
+    "University of Edinburgh": {
+      "application_start": "UCAS 13 Mayıs 2025; 2 Eylül 2025’ten gönderim.",
+      "application_end": "Tıp/vet: 15 Ekim 2025. Diğer: 14 Ocak 2026. UCAS.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "UCAS. ed.ac.uk.",
+      "notes": "ed.ac.uk."
+    },
+    "University of Manchester": {
+      "application_start": "UCAS 13 Mayıs 2025; 2 Eylül 2025’ten gönderim.",
+      "application_end": "Tıp/diş: 15 Ekim 2025. Diğer: 14 Ocak 2026. UCAS.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "UCAS. manchester.ac.uk.",
+      "notes": "manchester.ac.uk."
+    },
+    "University of Nottingham": {
+      "application_start": "UCAS 13 Mayıs 2025; 2 Eylül 2025’ten gönderim.",
+      "application_end": "Tıp/vet: 15 Ekim 2025. Diğer: 14 Ocak 2026. UCAS.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "UCAS. nottingham.ac.uk.",
+      "notes": "nottingham.ac.uk."
+    },
+    "University of Sussex": {
+      "application_start": "UCAS 13 Mayıs 2025; 2 Eylül 2025’ten gönderim.",
+      "application_end": "14 Ocak 2026. UCAS.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "UCAS. sussex.ac.uk.",
+      "notes": "sussex.ac.uk."
+    },
+    "University of York": {
+      "application_start": "UCAS 13 Mayıs 2025; 2 Eylül 2025’ten gönderim.",
+      "application_end": "14 Ocak 2026. UCAS.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "UCAS. york.ac.uk.",
+      "notes": "york.ac.uk."
+    },
+    "University of Westminster": {
+      "application_start": "UCAS 13 Mayıs 2025; 2 Eylül 2025’ten gönderim.",
+      "application_end": "14 Ocak 2026. UCAS.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "UCAS. westminster.ac.uk.",
+      "notes": "westminster.ac.uk."
+    },
+    "University of Brighton ": {
+      "application_start": "UCAS 13 Mayıs 2025; 2 Eylül 2025’ten gönderim.",
+      "application_end": "14 Ocak 2026. UCAS.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "UCAS. brighton.ac.uk.",
+      "notes": "brighton.ac.uk."
+    },
+    "University of Bolton": {
+      "application_start": "UCAS 13 Mayıs 2025; 2 Eylül 2025’ten gönderim. Bolton ayrıca doğrudan başvuru kabul edebilir.",
+      "application_end": "14 Ocak 2026 (UCAS). UCAS veya bolton.ac.uk.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "UCAS veya doğrudan. bolton.ac.uk.",
+      "notes": "bolton.ac.uk."
+    },
+    "University of Buckingham": {
+      "application_start": "Buckingham bağımsız; UCAS zorunlu değil. Rolling veya dönem bazlı; buckingham.ac.uk.",
+      "application_end": "Dönem başına; buckingham.ac.uk başvuru sayfası. Vize için erken başvuru.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "buckingham.ac.uk. Lise, referans; UCAS dışı başvuru mümkün.",
+      "notes": "buckingham.ac.uk. Bağımsız üniversite."
+    },
+    "University of Middlesex": {
+      "application_start": "UCAS 13 Mayıs 2025; 2 Eylül 2025’ten gönderim.",
+      "application_end": "14 Ocak 2026. UCAS. mdx.ac.uk.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "UCAS. mdx.ac.uk.",
+      "notes": "mdx.ac.uk."
+    },
+    "Regent's University London": {
+      "application_start": "Regent's bağımsız; doğrudan başvuru veya UCAS. regents.ac.uk.",
+      "application_end": "Dönem bazlı; regents.ac.uk. Vize için erken başvuru.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "regents.ac.uk. Lise, İngilizce.",
+      "notes": "regents.ac.uk."
+    },
+    "Medical University of Innsbruck": {
+      "application_start": "Tıp ve diş (MedAT): Çevrimiçi kayıt 2 Mart 2026’da açılır; sınav kayıt sonu 31 Mart 2026. MedAT sınav tarihi: 3 Temmuz 2026. Kayıt ücreti 110 EUR.",
+      "application_end": "MedAT kayıt: 31 Mart 2026. Diğer programlar: Kış genel 11 Temmuz – 31 Ekim; uzatılmış 2 Haziran – 28 Kasım. Yaz genel 8 Ocak – 31 Mart; uzatılmış 8 Ocak – 30 Nisan. zulassung@i-med.ac.at.",
+      "exam_date": "Tıp/diş: MedAT 3 Temmuz 2026.",
+      "annual_fee": "",
+      "application_fee": "110 EUR (MedAT)",
+      "required_docs_exams": "i-med.ac.at. MedAT (tıp/diş); diğer programlar farklı. Lise diploması.",
+      "notes": "i-med.ac.at. 2026/27 tıp/diş 430 kontenjan."
+    },
+    "Warsaw University of Technology": {
+      "application_start": "Şubat 2026 giriş (yüksek lisans): Başvuru oluşturma 9 Aralık 2025’e kadar. Kayıt açılış 3 Kasım 2025. Belgeler 22 Ocak 2026’ya kadar. Ders başlangıcı 23 Şubat 2026.",
+      "application_end": "Yeni başvuru: 9 Aralık 2025. Belgeler: 22 Ocak 2026. cwm.pw.edu.pl/apply. Doktora 2026L: 9 Aralık 2025 – 7 Ocak 2026 (IRK).",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "eng.pw.edu.pl, students.pw.edu.pl. Çevrimiçi başvuru.",
+      "notes": "pw.edu.pl. Şubat ve Eylül girişleri; programa göre takvim."
+    },
+    "AGH University of Technology": {
+      "application_start": "Dönem bazlı; kış için genelde ilkbahar–yaz, yaz için sonbahar. agh.edu.pl.",
+      "application_end": "agh.edu.pl ve ilgili IRK/başvuru portalından güncel son tarihler.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "agh.edu.pl. Lise diploması, dil (programa göre).",
+      "notes": "agh.edu.pl."
+    },
+    "Jagiellonian University": {
+      "application_start": "Programa göre; genelde kış girişi için haziran–temmuz. rekrutacja.uj.edu.pl veya international.uj.edu.pl.",
+      "application_end": "uj.edu.pl başvuru sayfasından güncel son tarihler; program bazlı.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "uj.edu.pl. Lise, transkript, dil.",
+      "notes": "uj.edu.pl. Jagiellonian University Krakow."
+    },
+    "Adam Mickiewicz University Poznan": {
+      "application_start": "Dönem bazlı; amu.edu.pl veya rekrutacja.amu.edu.pl.",
+      "application_end": "Programa göre; amu.edu.pl.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "amu.edu.pl. Lise, dil.",
+      "notes": "amu.edu.pl."
+    },
+    "Nicolaus Copernicus University": {
+      "application_start": "Dönem bazlı; umk.pl veya rekrutacja.umk.pl.",
+      "application_end": "Programa göre; umk.pl.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "umk.pl. Lise, dil.",
+      "notes": "umk.pl. Toruń."
+    },
+    "University of Wroclaw": {
+      "application_start": "Dönem bazlı; uni.wroc.pl veya rekrutacja.uni.wroc.pl.",
+      "application_end": "Programa göre; uni.wroc.pl.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "uni.wroc.pl. Lise, dil.",
+      "notes": "uni.wroc.pl."
+    },
+    "Gdansk University of Technology": {
+      "application_start": "Dönem bazlı; pg.edu.pl veya rekrutacja.pg.edu.pl.",
+      "application_end": "Programa göre; pg.edu.pl.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "pg.edu.pl. Lise, dil.",
+      "notes": "pg.edu.pl."
+    },
+    "Silesian University of Technology": {
+      "application_start": "Dönem bazlı; polsl.pl veya rekrutacja.",
+      "application_end": "Programa göre; polsl.pl.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "polsl.pl. Lise, dil.",
+      "notes": "polsl.pl."
+    },
+    "Medical University Lodz": {
+      "application_start": "Tıp/diş programları için genelde erken başvuru; rekrutacja.umed.lodz.pl.",
+      "application_end": "Programa göre; umed.lodz.pl.",
+      "exam_date": "Giriş sınavı (tıp/diş).",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "umed.lodz.pl. Lise, giriş sınavı.",
+      "notes": "umed.lodz.pl."
+    },
+    "Medical University of Wroclaw": {
+      "application_start": "Tıp/diş; umw.edu.pl veya rekrutacja.",
+      "application_end": "Programa göre; umw.edu.pl.",
+      "exam_date": "Giriş sınavı.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "umw.edu.pl. Lise, sınav.",
+      "notes": "umw.edu.pl."
+    },
+    "Poznan University of Medical Sciences": {
+      "application_start": "Tıp/diş; pums.edu.pl.",
+      "application_end": "Programa göre; pums.edu.pl.",
+      "exam_date": "Giriş sınavı.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "pums.edu.pl. Lise, sınav.",
+      "notes": "pums.edu.pl."
+    },
+    "Coventry University": {
+      "application_start": "Coventry UK veya Polonya kampüsü; UCAS (UK) veya kampüs başvurusu. coventry.ac.uk.",
+      "application_end": "UK: UCAS 14 Ocak 2026. Polonya kampüsü: coventry.ac.uk/waw veya ilgili sayfa.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "UCAS veya Coventry portal. coventry.ac.uk.",
+      "notes": "coventry.ac.uk. Kampüs seçimine göre başvuru yolu."
+    },
+    "Delft University of Technology": {
+      "application_start": "Uluslararası diploma: Numerus clausus (Uzay Müh., Bilgisayar Müh., Mimarlık, Klinik Teknolojisi, Nanobiyoloji) 15 Ocak 2026 23:59 CET. Diğer lisans: 1 Nisan 2026 23:59 CEST.",
+      "application_end": "Numerus clausus: 15 Ocak 2026. Diğer: 1 Nisan 2026. Studielink. Kayıt gereksinimleri Haziran’dan itibaren; resmi kayıt 31 Ağustos’a kadar.",
+      "exam_date": "Numerus clausus programlarda seçim.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "tudelft.nl. Studielink + TUD portal. Uluslararası diploma koşulları.",
+      "notes": "tudelft.nl. Enrolment 31 Ağustos."
+    },
+    "University of Groningen": {
+      "application_start": "Sabit kontenjanlı (numerus fixus) programlar: 15 Ocak 2026. Düzenli lisans: 1 Mayıs 2026. Erken kuş bazı programlarda 28 Şubat 2026.",
+      "application_end": "Numerus fixus: 15 Ocak 2026. Düzenli: 1 Mayıs 2026. Sanat (Uluslararası İlişkiler 15 Ocak), Fen/Mühendislik (çoğu 28 Şubat/1 Mayıs), Tıp Diş 15 Ocak, İşletme (International Business 15 Ocak). Studielink. Tüm programlar 1 Eylül başlar.",
+      "exam_date": "Numerus fixus’ta seçim.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "rug.nl. Studielink; program sayfasından kesin son tarih.",
+      "notes": "rug.nl. Son tarihten sonra gelen başvurular işleme alınmaz."
+    },
+    "Utrecht University": {
+      "application_start": "Lisans: programa göre; uu.nl. AB dışı yüksek lisans Eylül girişi: 1 Nisan’dan sonra kabul edilmez. AB: tüm başvuru dönemi; erken başvuru önerilir.",
+      "application_end": "Programa göre; uu.nl bölüm sayfası. Bachelor 2026 için güncel takvim uu.nl’den. admissionsoffice@uu.nl.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "uu.nl. Studielink (Hollanda); programa özel koşullar.",
+      "notes": "uu.nl. Kesin tarihler program sayfasından."
+    },
+    "Vrije Universiteit Amsterdam ": {
+      "application_start": "Numerus fixus lisans: 1 Ekim’dan itibaren başvuru; 15 Ocak 2026 son. Yüksek lisans: Ekim başı açılış; burs için 1 Aralık 2025 önerilir, çoğu burs 1 Şubat 2026.",
+      "application_end": "Numerus fixus: 15 Ocak 2026. Yüksek lisans: programa göre; Studielink + VU dashboard. Karar genelde 4-6 hafta.",
+      "exam_date": "Numerus fixus’ta seçim.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "vu.nl. Studielink + VU. Program sayfasından kesin tarih.",
+      "notes": "vu.nl."
+    },
+    "Radboud University Nijmegen": {
+      "application_start": "Lisans numerus fixus (Tıp, Diş, Psikoloji, Biyomedikal): 15 Ocak 2026. Düzenli lisans Eylül 2026: AB dışı 1 Nisan 2026; AB/EEA 1 Mayıs veya 1 Temmuz (konaklama lotosu). Yüksek lisans Eylül: AB dışı 1 Nisan (burs 31 Ocak); AB 1 Mayıs veya 1 Temmuz.",
+      "application_end": "Numerus fixus: 15 Ocak 2026. Düzenli lisans: AB dışı 1 Nisan, AB 1 Mayıs/1 Temmuz. Studielink zorunlu.",
+      "exam_date": "Numerus fixus’ta yerleştirme.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "ru.nl. Studielink. Burs için erken son tarih (31 Ocak) bazı programlarda.",
+      "notes": "ru.nl."
+    },
+    "University of Twente": {
+      "application_start": "Eylül 2026: Başvuru 1 Ekim’da açılır. Hollanda: tamamlanmış başvuru 1 Ağustos; kabul kabul 10 Ağustos; onaylı kopyalar 1 Eylül. EEA: 1 Temmuz tamamlanmış; kabul 1 Ağustos; kopyalar 1 Eylül. AB dışı: daha erken son tarihler.",
+      "application_end": "AB dışı: programa göre erken. EEA: 1 Temmuz. Hollanda: 1 Ağustos. Studielink. Vatandaşlık son tarihi belirler (ikamet değil).",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "utwente.nl. Studielink. Henüz mezun olmasanız da başvuru yapılabilir (yıl başından önce mezuniyet).",
+      "notes": "utwente.nl."
+    },
+    "Tilburg University": {
+      "application_start": "Studielink 1 Ekim’da açılır. Eylül 2026: AB dışı 1 Nisan; AB/EEA 1 Mayıs (Hollanda standart). tilburguniversity.edu.",
+      "application_end": "AB dışı: 1 Nisan 2026. AB/EEA: 1 Mayıs 2026. Studielink; programa özel sayfadan kontrol edin.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "tilburguniversity.edu. Studielink.",
+      "notes": "tilburguniversity.edu."
+    },
+    "The Hague University of Applied Sciences": {
+      "application_start": "Studielink 1 Ekim. HBO; Eylül girişi için 1 Mayıs (veya AB dışı 1 Nisan) genel. thuas.nl.",
+      "application_end": "1 Mayıs 2026 (düzenli). AB dışı vize: 1 Nisan 2026 önerilir. thuas.nl.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "thuas.nl. Studielink. HBO (uygulamalı bilimler).",
+      "notes": "thuas.nl."
+    },
+    "Navitas-University of Twente": {
+      "application_start": "Twente ile pathway/ortak program; Navitas veya Twente giriş tarihlerine göre. navitas.com veya utwente.nl.",
+      "application_end": "Pathway programı son tarihi Navitas/UT sayfasından.",
+      "exam_date": "Programa göre.",
+      "annual_fee": "",
+      "application_fee": "",
+      "required_docs_exams": "navitas.com, utwente.nl. Pathway koşulları.",
+      "notes": "Navitas – University of Twente pathway."
+    }
+  }
+}

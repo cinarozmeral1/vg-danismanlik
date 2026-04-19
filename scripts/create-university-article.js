@@ -8,6 +8,28 @@ const pool = new Pool({
 
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
+const CJK_REGEX = /[\u4e00-\u9fff\u3040-\u309f\u30a0-\u30ff\uac00-\ud7af\u3100-\u312f\u31a0-\u31bf\uff00-\uffef]/g;
+function stripUnwantedCharacters(text) {
+    if (!text || typeof text !== 'string') return text;
+    return text.replace(CJK_REGEX, '');
+}
+
+function createSlug(text) {
+    const chars = { 'ğ': 'g', 'ü': 'u', 'ş': 's', 'ı': 'i', 'ö': 'o', 'ç': 'c', 'İ': 'i' };
+    let slug = (text || '').toLowerCase();
+    for (const [tr, en] of Object.entries(chars)) slug = slug.replace(new RegExp(tr.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), en);
+    return slug.replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').substring(0, 80);
+}
+async function ensureUniqueSlug(baseSlug) {
+    let slug = baseSlug;
+    let n = 1;
+    for (;;) {
+        const r = await pool.query('SELECT 1 FROM blog_posts WHERE slug = $1', [slug]);
+        if (r.rows.length === 0) return slug;
+        slug = `${baseSlug}-${++n}`;
+    }
+}
+
 async function createUniversityArticle() {
     try {
         // Bir üniversite seç
@@ -65,20 +87,12 @@ SADECE HTML formatında yaz. JSON veya kod bloğu EKLEME.`;
         
         const data = await response.json();
         let content = data.choices?.[0]?.message?.content || '';
-        
-        // Temizle
+        content = stripUnwantedCharacters(content);
         content = content.replace(/```html\s*/gi, '').replace(/```/g, '').trim();
         
-        // Excerpt oluştur
+        const titleTR = uni.name + ' Üniversitesinde Öğrenci Olmak: 2025 Rehberi';
         const excerpt = content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 200) + '...';
-        
-        // Slug oluştur
-        const slug = (uni.name.toLowerCase()
-            .replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's')
-            .replace(/ı/g, 'i').replace(/ö/g, 'o').replace(/ç/g, 'c')
-            .replace(/[^a-z0-9\s-]/g, '')
-            .replace(/\s+/g, '-')
-            .replace(/-+/g, '-')) + '-' + Date.now().toString(36);
+        const slug = await ensureUniqueSlug(createSlug(titleTR));
         
         // Görsel seç
         const images = {
@@ -102,7 +116,7 @@ SADECE HTML formatında yaz. JSON veya kod bloğu EKLEME.`;
             ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, true, NOW())
             RETURNING *
         `, [
-            uni.name + ' Üniversitesinde Öğrenci Olmak: 2025 Rehberi',
+            titleTR,
             'Studying at ' + uni.name + ': 2025 Guide',
             slug,
             content,

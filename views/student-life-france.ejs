@@ -1,0 +1,338 @@
+<!-- Hero Section -->
+<section class="py-5" style="background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="display-4 fw-bold text-dark"><%= t.studentLifePage.hero.france.title %></h1>
+                <p class="lead text-muted"><%= t.studentLifePage.hero.france.subtitle %></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Content Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card shadow-lg border-0 mb-4 overflow-hidden reveal">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <div class="student-life-card-img-wrapper">
+                                <img src="/images/countries/france/paris-business-school.jpg" class="student-life-card-img" alt="France Business School Campus">
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <h3 class="mb-0"><%= t.studentLifePage.sections.educationSystem.title %></h3>
+                                </div>
+                                <p class="lead text-dark"><%= t.studentLifePage.countries.france.description1 %></p>
+                                <p><%= t.studentLifePage.countries.france.description2 %></p>
+
+                                <div class="row mt-4">
+                                    <div class="col-md-6">
+                                        <h5 class="mb-3" style="color: #005A9E;"><%= t.studentLifePage.sections.educationSystem.title %></h5>
+                                        <ul class="list-unstyled">
+                                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><strong><%= t.studentLifePage.sections.educationSystem.bachelor %> (BBA):</strong> 3-4 <%= t.studentLifePage.units.perYear.replace('/', '') %></li>
+                                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><strong><%= t.studentLifePage.sections.educationSystem.master %> (MIM):</strong> 1-2 <%= t.studentLifePage.units.perYear.replace('/', '') %></li>
+                                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><strong><%= t.studentLifePage.sections.educationSystem.language %>:</strong> <%= t.studentLifePage.languages.english %>/Français</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h5 class="mb-3" style="color: #005A9E;"><%= t.studentLifePage.sections.educationSystem.popularDepts %></h5>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <% const franceDepts = currentLanguage === 'en'
+                                                ? ['Business', 'Engineering', 'Arts & Design', 'Hospitality', 'International Relations', 'Luxury Management']
+                                                : ['İşletme', 'Mühendislik', 'Sanat ve Tasarım', 'Turizm ve Otelcilik', 'Uluslararası İlişkiler', 'Lüks Yönetimi']; %>
+                                            <% franceDepts.forEach(function(badge, idx) { %>
+                                                <span class="badge badge-style-<%= (idx % 3) + 1 %> text-dark fw-semibold bg-white border"><%= badge %></span>
+                                            <% }); %>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-lg border-0 mb-4 overflow-hidden reveal">
+                    <div class="row g-0">
+                        <div class="col-md-8">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <h3 class="mb-0"><%= t.studentLifePage.sections.accommodation.title %></h3>
+                                </div>
+                                <p class="lead text-dark"><%= t.studentLifePage.countries.france.livingDescription %></p>
+
+                                <div class="row mt-4">
+                                    <div class="col-md-6">
+                                        <h5 class="mb-3" style="color: #005A9E;"><%= t.studentLifePage.additionalTerms.accommodationOptions %></h5>
+                                        <ul class="list-unstyled">
+                                            <li class="mb-2"><strong>CROUS (<%= t.studentLifePage.sections.accommodation.studentDorms %>):</strong> 200-450€<%= t.studentLifePage.units.perMonth %></li>
+                                            <li class="mb-2"><strong><%= t.studentLifePage.sections.accommodation.privateDorms %>:</strong> 600-900€<%= t.studentLifePage.units.perMonth %></li>
+                                            <li class="mb-2"><strong><%= t.studentLifePage.sections.accommodation.sharedFlat %>:</strong> 400-1100€<%= t.studentLifePage.units.perMonth %></li>
+                                            <li class="mb-2"><strong><%= t.studentLifePage.sections.accommodation.studio %>:</strong> 700-1500€<%= t.studentLifePage.units.perMonth %></li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h5 class="mb-3" style="color: #005A9E;"><%= t.studentLifePage.sections.accommodation.monthlyLiving %></h5>
+                                        <div class="d-flex flex-wrap gap-2 mb-3">
+                                            <% const costBadges = [
+                                                {icon: 'fa-home', text: t.studentLifePage.sections.accommodation.costs.accommodation + ' 400-1100€'},
+                                                {icon: 'fa-utensils', text: t.studentLifePage.sections.accommodation.costs.food + ' 250-350€'},
+                                                {icon: 'fa-bus', text: t.studentLifePage.sections.accommodation.costs.transport + ' 30-85€'},
+                                                {icon: 'fa-shopping-bag', text: t.studentLifePage.sections.accommodation.costs.other + ' 150-250€'}
+                                            ]; %>
+                                            <% costBadges.forEach(function(badge, idx) { %>
+                                                <span class="badge badge-style-<%= (idx % 3) + 1 %> p-2 bg-white text-dark fw-semibold border" style="font-size: 0.85rem;">
+                                                    <%= badge.text %>
+                                                </span>
+                                            <% }); %>
+                                        </div>
+                                        <div class="alert" style="background: #eef6ff; border-left: 4px solid #005A9E;">
+                                            <strong><%= t.studentLifePage.sections.costs.total %>: 850-1.800€<%= t.studentLifePage.units.perMonth %></strong> <%= t.studentLifePage.sections.costs.variesByCity %>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="student-life-card-img-wrapper">
+                                <img src="/images/countries/france/lyon-student-life.jpg" class="student-life-card-img" alt="France Student Life Lyon">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-lg border-0 mb-4 overflow-hidden reveal">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <div class="student-life-card-img-wrapper">
+                                <img src="/images/countries/france/emlyon-edhec-campus.jpg" class="student-life-card-img" alt="France University Costs">
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <h3 class="mb-0"><%= t.studentLifePage.sections.costs.title %></h3>
+                                </div>
+                                <p class="lead text-dark"><%= t.studentLifePage.countries.france.costsDescription %></p>
+
+                                <div class="row mt-4">
+                                    <div class="col-md-6">
+                                        <h5 class="mb-3" style="color: #005A9E;"><%= t.studentLifePage.sections.costs.educationCosts %></h5>
+                                        <div class="card bg-light border-0 mb-3">
+                                            <div class="card-body p-3">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <h6 class="mb-1"><%= t.studentLifePage.sections.costs.stateUniversities %></h6>
+                                                        <small class="text-muted"><%= t.studentLifePage.sections.costs.mostEconomic %></small>
+                                                    </div>
+                                                    <span class="badge" style="background: #005A9E;">170-600€<%= t.studentLifePage.units.yearly %></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card bg-light border-0 mb-3">
+                                            <div class="card-body p-3">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <h6 class="mb-1"><%= t.studentLifePage.sections.costs.privateUniversities %></h6>
+                                                        <small class="text-muted"><%= t.studentLifePage.sections.costs.qualityEducation %></small>
+                                                    </div>
+                                                    <span class="badge" style="background: #005A9E;">8.000-15.000€<%= t.studentLifePage.units.yearly %></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card bg-light border-0 mb-3">
+                                            <div class="card-body p-3">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <h6 class="mb-1"><%= currentLanguage === 'en' ? 'Grandes Écoles & Business Schools' : 'Grandes Écoles ve İşletme Okulları' %></h6>
+                                                        <small class="text-muted"><%= t.studentLifePage.sections.costs.prestigiousPrograms %></small>
+                                                    </div>
+                                                    <span class="badge" style="background: #005A9E;">12.000-25.000€<%= t.studentLifePage.units.yearly %></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h5 class="mb-3" style="color: #005A9E;"><%= t.studentLifePage.additionalTerms.scholarshipOpportunities %></h5>
+                                        <div class="d-flex flex-column gap-2">
+                                            <div class="d-flex align-items-center p-2 border rounded">
+                                                <div>
+                                                    <strong><%= t.studentLifePage.additionalTerms.governmentScholarships %></strong>
+                                                    <small class="d-block text-muted"><%= t.studentLifePage.countries.france.scholarships.france.description %></small>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex align-items-center p-2 border rounded">
+                                                <div>
+                                                    <strong><%= t.studentLifePage.sections.costs.scholarships %></strong>
+                                                    <small class="d-block text-muted"><%= t.studentLifePage.countries.france.scholarships.university.description %></small>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex align-items-center p-2 border rounded">
+                                                <div>
+                                                    <strong><%= t.studentLifePage.additionalTerms.erasmusScholarships %></strong>
+                                                    <small class="d-block text-muted"><%= t.studentLifePage.countries.france.scholarships.erasmus.description %></small>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-3 p-3 rounded" style="background: #eef6ff; border-left: 4px solid #005A9E;">
+                                            <h6 class="mb-2" style="color: #005A9E;"><%= t.studentLifePage.sections.costs.workPermit %></h6>
+                                            <p class="mb-2"><%= t.studentLifePage.additionalTerms.workingHours %> (964 h/yıl)</p>
+                                            <small class="text-muted"><%= t.studentLifePage.additionalTerms.hourlyWage %>: 11-15€</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <!-- Consulting -->
+                <div class="card shadow-lg border-0 mb-4 reveal">
+                    <div class="card-header text-white" style="background: #005A9E;">
+                        <h5 class="mb-0">
+                            <%= t.studentLifePage.additionalTerms.consulting %>
+                        </h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <p class="mb-4 text-dark" style="color: #111 !important; text-shadow: none !important; font-weight: 500 !important;"><%= t.studentLifePage.countries.france.consultingText %></p>
+                        <a href="/contact" class="btn btn-primary btn-lg w-100 mb-3" style="font-size: clamp(0.875rem, 2vw, 1rem); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            <i class="fas fa-phone me-2"></i>
+                            <span class="d-none d-sm-inline"><%= t.studentLifePage.sections.consulting.freeConsulting %></span>
+                            <span class="d-sm-none">Danışmanlık</span>
+                        </a>
+                        <a href="/#randevu" class="btn btn-outline-primary btn-lg w-100" style="font-size: clamp(0.875rem, 2vw, 1rem);">
+                            <i class="fas fa-calendar-check me-2"></i><%= currentLanguage === 'en' ? 'Book an Appointment' : 'Randevu Al' %>
+                        </a>
+                        <p class="mt-2 mb-0 text-muted" style="font-size: 12px;"><%= currentLanguage === 'en' ? 'Want to study in France? Meet our expert advisors now!' : 'Fransa\'da okumak mı istiyorsun? Hemen uzman danışmanlarımızla görüş!' %></p>
+                    </div>
+                </div>
+
+                <!-- Quick Info -->
+                <div class="card shadow-lg border-0 mb-4 reveal">
+                    <div class="card-header text-white" style="background: #005A9E;">
+                        <h5 class="mb-0">
+                            <%= t.studentLifePage.sections.quickInfo.title %>
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-6 mb-3">
+                                <div class="p-3 rounded" style="background: #005A9E;">
+                                    <h4 class="text-white mb-1">170€+</h4>
+                                    <small class="text-white"><%= t.studentLifePage.sections.quickInfo.yearlyTuition %></small>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="p-3 rounded" style="background: #005A9E;">
+                                    <h4 class="text-white mb-1">850€</h4>
+                                    <small class="text-white"><%= t.studentLifePage.additionalTerms.minLiving %></small>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="p-3 rounded" style="background: #005A9E;">
+                                    <h4 class="text-white mb-1">~20 <%= t.studentLifePage.buttons.hours %></h4>
+                                    <small class="text-white"><%= t.studentLifePage.additionalTerms.weeklyWork %></small>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="p-3 rounded" style="background: #005A9E;">
+                                    <h4 class="text-white mb-1">70+</h4>
+                                    <small class="text-white"><%= t.studentLifePage.additionalTerms.universities %></small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert mt-3 text-dark" style="background: #eef6ff; border-left: 4px solid #005A9E; color: #111 !important; text-shadow: none !important; font-weight: 500 !important;">
+                            <strong style="color: #111 !important;"><%= t.studentLifePage.sections.quickInfo.tip %>:</strong> <%= t.studentLifePage.countries.france.alerts.tip %>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Important Warning - Turkish Diploma -->
+                <div class="card shadow-lg border-0 mb-4 reveal">
+                    <div class="card-header text-white" style="background: #005A9E;">
+                        <h5 class="mb-0">
+                            <%= t.studentLifePage.diplomaWarnings.turkishInfoTitle %>
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert mb-3" style="background: #eef6ff; border-left: 4px solid #005A9E;">
+                            <p class="mb-2"><strong><%= t.studentLifePage.diplomaWarnings.directAdmission %>:</strong></p>
+                            <p class="mb-0 text-dark"><%= t.studentLifePage.diplomaWarnings.france.info %></p>
+                        </div>
+                        <div class="alert mb-0" style="background: #eef6ff; border-left: 4px solid #005A9E;">
+                            <p class="mb-2"><strong><%= t.studentLifePage.diplomaWarnings.medicalFaculties %>:</strong></p>
+                            <p class="mb-0 text-dark small"><%= t.studentLifePage.diplomaWarnings.france.medicalWarning %></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kanada Lise Diploması Avantajı -->
+                <div class="card shadow-lg border-0 mb-4 reveal">
+                    <div class="card-header text-white" style="background: #005A9E;">
+                        <h5 class="mb-0">
+                            <%= t.studentLifePage.diplomaWarnings.canadianAdvantageTitle %>
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert mb-3" style="background: #eef6ff; border-left: 4px solid #005A9E;">
+                            <p class="mb-2"><strong><%= t.studentLifePage.diplomaWarnings.internationalRecognition %></strong></p>
+                            <p class="mb-0 text-dark"><%= t.studentLifePage.diplomaWarnings.france.advantage %></p>
+                        </div>
+                        <ul class="list-unstyled mb-3">
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><%= t.studentLifePage.diplomaWarnings.france.benefit1 %></li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><%= t.studentLifePage.diplomaWarnings.france.benefit2 %></li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><%= t.studentLifePage.diplomaWarnings.france.benefit3 %></li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i><%= t.studentLifePage.diplomaWarnings.france.benefit4 %></li>
+                        </ul>
+                        <a href="/partners/wcep" class="btn btn-sm w-100" style="background: #005A9E; color: white;">
+                            <%= t.studentLifePage.diplomaWarnings.aboutWcep %>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+<!-- Country Guide CTA -->
+<section class="py-4" style="background: linear-gradient(135deg, #003d6b 0%, #005A9E 100%);">
+    <div class="container">
+        <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3 py-2">
+            <div class="d-flex align-items-center gap-3 text-white">
+                <span style="font-size:2.5rem;">🇫🇷</span>
+                <div>
+                    <h4 class="mb-0 fw-bold"><%= currentLanguage === 'en' ? 'France Country Guide' : 'Fransa Ülke Rehberi' %></h4>
+                    <p class="mb-0 small" style="opacity:0.85;"><%= currentLanguage === 'en' ? 'Universities, fees, scholarships, visa process and more' : 'Üniversiteler, ücretler, burslar, vize süreci ve daha fazlası' %></p>
+                </div>
+            </div>
+            <a href="/ulkede-universite/fransa" class="btn btn-light btn-lg px-4" style="border-radius:50px; font-weight:600; white-space:nowrap;">
+                <i class="fas fa-book-open me-2"></i><%= currentLanguage === 'en' ? 'View Guide' : 'Rehberi İncele' %>
+            </a>
+        </div>
+    </div>
+</section>
+</section>
+
+<script>
+(function() {
+    var reveals = document.querySelectorAll('.reveal');
+    if (!reveals.length) return;
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry, i) {
+            if (entry.isIntersecting) {
+                setTimeout(function() { entry.target.classList.add('visible'); }, i * 80);
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.15 });
+    reveals.forEach(function(el) { observer.observe(el); });
+})();
+</script>

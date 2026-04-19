@@ -220,6 +220,36 @@ async function updateEvent(uid, { title, description, startDate, endDate, locati
     return uid;
 }
 
+async function deleteEvent(uid) {
+    try {
+        const client = await getClient();
+        const calendarUrl = await getTargetCalendarUrl(client);
+
+        const now = new Date();
+        const searchStart = new Date(now);
+        searchStart.setMonth(searchStart.getMonth() - 3);
+        const searchEnd = new Date(now);
+        searchEnd.setMonth(searchEnd.getMonth() + 6);
+
+        const calendarObjects = await client.fetchCalendarObjects({
+            calendar: { url: calendarUrl },
+            timeRange: { start: searchStart.toISOString(), end: searchEnd.toISOString() }
+        });
+        const existing = calendarObjects.find(obj => obj.data && obj.data.includes(uid));
+
+        if (existing) {
+            await client.deleteCalendarObject({ calendarObject: { url: existing.url, etag: existing.etag } });
+            console.log('✅ Deleted CalDAV event:', uid);
+            return true;
+        }
+        console.log('ℹ️ CalDAV event not found for deletion:', uid);
+        return false;
+    } catch (error) {
+        console.error('❌ CalDAV deleteEvent error:', error.message);
+        return false;
+    }
+}
+
 function getAvailableSlots(date, existingEvents) {
     const dayOfWeek = date.getDay();
     if (dayOfWeek === 1 || dayOfWeek === 4) return [];
@@ -230,7 +260,9 @@ function getAvailableSlots(date, existingEvents) {
     const maxCzechHour = maxTurkeyHour - turkeyOffsetHours;
     const czechUTCOffset = getCzechUTCOffsetHours(date);
 
-    const SLOT_DURATION_MS = 30 * 60 * 1000;
+    const MEETING_DURATION_MS = 30 * 60 * 1000;
+    const SLOT_BLOCK_MS = 60 * 60 * 1000; // 30 min meeting + 30 min buffer
+    const SLOT_STEP_MINS = 60;
     const slots = [];
     const startMinutes = SLOT_START_CZECH_HOUR * 60;
     const endMinutes = maxCzechHour * 60;
@@ -239,15 +271,16 @@ function getAvailableSlots(date, existingEvents) {
     const mo = date.getUTCMonth();
     const d = date.getUTCDate();
 
-    for (let mins = startMinutes; mins + 30 <= endMinutes; mins += 30) {
+    for (let mins = startMinutes; mins + 30 <= endMinutes; mins += SLOT_STEP_MINS) {
         const h = Math.floor(mins / 60);
         const m = mins % 60;
 
         const slotStartUTC = new Date(Date.UTC(y, mo, d, h - czechUTCOffset, m, 0, 0));
-        const slotEndUTC = new Date(slotStartUTC.getTime() + SLOT_DURATION_MS);
+        const slotEndUTC = new Date(slotStartUTC.getTime() + MEETING_DURATION_MS);
+        const blockEndUTC = new Date(slotStartUTC.getTime() + SLOT_BLOCK_MS);
 
         const isConflict = existingEvents.some(event => {
-            return event.start < slotEndUTC && event.end > slotStartUTC;
+            return event.start < blockEndUTC && event.end > slotStartUTC;
         });
 
         if (!isConflict) {
@@ -376,6 +409,7 @@ module.exports = {
     fetchEvents,
     createEvent,
     updateEvent,
+    deleteEvent,
     getSlotsForDate,
     getAvailableSlots,
     getAvailableDates,
