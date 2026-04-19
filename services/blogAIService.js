@@ -210,6 +210,161 @@ const CITY_TR_MAP = {
 };
 
 /**
+ * Manual overrides for the Turkish display name of specific universities.
+ * Keys are matched case-insensitively against the trimmed original name.
+ *
+ * The values follow the conventions used by established Turkish education
+ * consultancies (Truva, Academix, Edulife, ELT, ASBA, NextEdu, Real Eğitim,
+ * itebs, mesleknedir, etc.) so the URLs match how Turkish students actually
+ * search for these schools.
+ *
+ * General rules we follow:
+ *   - "City University" pattern → "City Üniversitesi" (Bologna, Oxford, …)
+ *   - Italian "Politecnico di X" / "Università X" → keep the native name
+ *   - Famous brand-only schools (King's College London, LSE, Bocconi, …)
+ *     keep the recognized brand
+ *   - Acronyms in parens (CTU, TUM, ELTE, …) are dropped from the display
+ *     name; the slug builder will reattach them as a trailing token
+ */
+const UNIVERSITY_TR_NAMES = {
+    // ---- Czech Republic ----
+    'Charles University (CUNI)': 'Charles Üniversitesi',
+    'Charles University in Prague': 'Charles Üniversitesi',
+    'Czech Technical University (CTU)': 'Çek Teknik Üniversitesi',
+    'University of Chemistry and Technology (VSCHT)': 'Prag Kimya ve Teknoloji Üniversitesi',
+    'Czech University of Life Sciences (CZU)': 'Çek Yaşam Bilimleri Üniversitesi',
+    'Masaryk University': 'Masaryk Üniversitesi',
+    'VSE Prague University of Economics': 'Prag Ekonomi Üniversitesi',
+    'Metropolitan University Prague (MUP)': 'Metropolitan Üniversitesi Prag',
+    'University of New York in Prague (UNYP)': 'New York Üniversitesi Prag',
+    'VSB Technical University of Ostrava (VSB-TUO)': 'VSB Ostrava Teknik Üniversitesi',
+    'Brno University of Technology': 'Brno Teknik Üniversitesi',
+    'Anglo-American University': 'Anglo-American Üniversitesi',
+    'Unicorn University': 'Unicorn Üniversitesi',
+    'Best School CZ': 'Best School CZ',
+
+    // ---- Germany ----
+    'Technical University of Dresden (TUD)': 'Dresden Teknik Üniversitesi',
+    'Berlin School of Business and Innovation (BSBI)': 'BSBI Berlin İşletme Okulu',
+    'Technical University of Munich (TUM)': 'Münih Teknik Üniversitesi',
+    'Universität Heidelberg': 'Heidelberg Üniversitesi',
+    'Freie Universität Berlin': 'Berlin Freie Üniversitesi',
+    'CBS International Business School': 'CBS International Business School',
+    'Lancaster University Leipzig': 'Lancaster Üniversitesi Leipzig',
+    'Munich Business School': 'Münih Business School',
+    'Paderborn University': 'Paderborn Üniversitesi',
+    'Wuppertal University': 'Wuppertal Üniversitesi',
+    'Bremen University': 'Bremen Üniversitesi',
+    'SRH University': 'SRH Heidelberg Üniversitesi',
+    'EU Business School (Munich)': 'EU Business School Münih',
+    'Macromedia University of Applied Sciences': 'Macromedia Uygulamalı Bilimler Üniversitesi',
+    'IU International University of Applied Sciences': 'IU International Uygulamalı Bilimler Üniversitesi',
+
+    // ---- Italy ----
+    'University of Bologna': 'Bologna Üniversitesi',
+    'University of Florence': 'Floransa Üniversitesi',
+    'University of Padova': 'Padova Üniversitesi',
+    'Università Cattolica del Sacro Cuore': 'Cattolica Üniversitesi',
+    'Sapienza University of Rome': 'Sapienza Üniversitesi',
+    'European School of Economics': 'European School of Economics',
+    'Politecnico di Milano': 'Politecnico di Milano',
+    'Politecnico di Torino': 'Politecnico di Torino',
+    'Universita Bocconi': 'Bocconi Üniversitesi',
+    'Università Bocconi': 'Bocconi Üniversitesi',
+    'University of Pisa': 'Pisa Üniversitesi',
+    'Ca\u2019 Foscari University of Venice': 'Ca\u2019 Foscari Üniversitesi',
+    "Ca' Foscari University of Venice": "Ca' Foscari Üniversitesi",
+    'University of Trento': 'Trento Üniversitesi',
+    'University of Siena': 'Siena Üniversitesi',
+    'The European University of Rome': 'Roma European Üniversitesi',
+    'IULM University Milan': 'IULM Üniversitesi Milano',
+    'Roma Tre University': 'Roma Tre Üniversitesi',
+
+    // ---- Poland ----
+    'University of Warsaw': 'Varşova Üniversitesi',
+    'Adam Mickiewicz University Poznan': 'Adam Mickiewicz Üniversitesi',
+    'AGH University of Technology': 'AGH Krakow Bilim ve Teknoloji Üniversitesi',
+    'Coventry University': 'Coventry Üniversitesi',
+    'Gdansk University of Technology': 'Gdansk Teknik Üniversitesi',
+    'Jagiellonian University': 'Jagiellonian Üniversitesi',
+    'Medical University Lodz': 'Lodz Tıp Üniversitesi',
+    'Medical University of Warsaw': 'Varşova Tıp Üniversitesi',
+    'Medical University of Wroclaw': 'Wroclaw Tıp Üniversitesi',
+    'Nicolaus Copernicus University': 'Nicolaus Copernicus Üniversitesi',
+    'Poznan University of Medical Sciences': 'Poznan Tıp Bilimleri Üniversitesi',
+    'Silesian University of Technology': 'Silesian Teknik Üniversitesi',
+    'University of Wroclaw': 'Wroclaw Üniversitesi',
+    'Warsaw University of Technology': 'Varşova Teknik Üniversitesi',
+
+    // ---- Hungary ----
+    'University of Szeged': 'Szeged Üniversitesi',
+    'Semmelweis University': 'Semmelweis Üniversitesi',
+    'Eötvös Loránd University (ELTE)': 'Eötvös Loránd Üniversitesi',
+    'Eötvös Loránd University': 'Eötvös Loránd Üniversitesi',
+    'University of Debrecen': 'Debrecen Üniversitesi',
+    'University of Pécs': 'Pécs Üniversitesi',
+
+    // ---- Netherlands ----
+    'Delft University of Technology': 'Delft Teknik Üniversitesi',
+    'Leiden University': 'Leiden Üniversitesi',
+    'Navitas-University of Twente': 'Navitas Twente Üniversitesi',
+    'ONCAMPUS Amsterdam': 'ONCAMPUS Amsterdam',
+    'University of Amsterdam': 'Amsterdam Üniversitesi',
+    'Radboud University Nijmegen': 'Radboud Üniversitesi',
+    'Tilburg University': 'Tilburg Üniversitesi',
+    'University of Groningen': 'Groningen Üniversitesi',
+    'Utrecht University': 'Utrecht Üniversitesi',
+    'Vrije Universiteit Amsterdam': 'Vrije Universiteit Amsterdam',
+    'University of Twente': 'Twente Üniversitesi',
+    'Amsterdam University of Applied Sciences': 'Amsterdam Uygulamalı Bilimler Üniversitesi',
+    'The Hague University of Applied Sciences': 'Lahey Uygulamalı Bilimler Üniversitesi',
+
+    // ---- Austria ----
+    'University of Vienna': 'Viyana Üniversitesi',
+    'Medical University of Vienna': 'Viyana Tıp Üniversitesi',
+    'Medical University of Innsbruck': 'Innsbruck Tıp Üniversitesi',
+
+    // ---- UK ----
+    'University of Manchester': 'Manchester Üniversitesi',
+    'University of Westminster': 'Westminster Üniversitesi',
+    "Regent's University London": "Regent's University London",
+    'Cardiff University': 'Cardiff Üniversitesi',
+    'London School of Economics and Political Science (LSE)': 'London School of Economics',
+    'University of Edinburgh': 'Edinburgh Üniversitesi',
+    "King's College London": "King's College London",
+    'University of Sussex': 'Sussex Üniversitesi',
+    'Newcastle University': 'Newcastle Üniversitesi',
+    'Queen Mary University of London': 'Queen Mary Üniversitesi Londra',
+    'University of Brighton': 'Brighton Üniversitesi',
+    'University of Nottingham': 'Nottingham Üniversitesi',
+    'University of York': 'York Üniversitesi',
+    'University of Buckingham': 'Buckingham Üniversitesi',
+    'Arden University': 'Arden Üniversitesi',
+    'Aston University': 'Aston Üniversitesi',
+    'Bournemouth University': 'Bournemouth Üniversitesi',
+    'Brunel University': 'Brunel Üniversitesi',
+    'Durham University': 'Durham Üniversitesi',
+    'University of Bolton': 'Bolton Üniversitesi',
+    'University of Oxford': 'Oxford Üniversitesi',
+    'University of Cambridge': 'Cambridge Üniversitesi',
+    'University of Middlesex': 'Middlesex Üniversitesi'
+};
+
+/**
+ * Look up the manual Turkish name for a university (case- and
+ * whitespace-insensitive). Returns null when no override exists so the
+ * caller can fall back to heuristic translation.
+ */
+function lookupUniversityTRName(name) {
+    if (!name || typeof name !== 'string') return null;
+    const key = name.trim().toLowerCase();
+    for (const [k, v] of Object.entries(UNIVERSITY_TR_NAMES)) {
+        if (k.trim().toLowerCase() === key) return v;
+    }
+    return null;
+}
+
+/**
  * Convert an English / native-language university name into a natural
  * Turkish name. Used so AI-generated TR articles read like they were
  * written for Turkish search intent (e.g. people Googling "Bologna
@@ -230,6 +385,13 @@ const CITY_TR_MAP = {
  */
 function getUniversityTurkishName(name) {
     if (!name || typeof name !== 'string') return name;
+
+    // 1) Manual override map (curated based on how Turkish consultancies
+    //    actually refer to each school). Wins over all heuristics.
+    const override = lookupUniversityTRName(name);
+    if (override) return override;
+
+    // 2) Heuristic translation as a fallback for names not in the override map.
     // Strip parenthesized acronyms (e.g. "Charles University (CUNI)" → "Charles University")
     // and apostrophe-s suffixes ("Regent's" → "Regent") so pattern matching is reliable.
     let out = name
@@ -422,6 +584,8 @@ function slugifyLatin(text) {
     if (!text) return '';
     return String(text)
         .toLowerCase()
+        // Drop apostrophes outright (so "King's" becomes "kings", not "king-s").
+        .replace(/[''ʼ`´']/g, '')
         .replace(/ı/g, 'i').replace(/İ/gi, 'i')
         .replace(/ş/g, 's').replace(/ğ/g, 'g')
         .replace(/ç/g, 'c').replace(/ö/g, 'o').replace(/ü/g, 'u')
@@ -467,10 +631,30 @@ function buildTurkishUniversitySlug(name, city) {
     let slug = slugifyLatin(trName);
     // Remove stop-words that survive slugification ("in", "of", "the").
     slug = slug.split('-').filter(t => !['in', 'of', 'the', 'and', 'at'].includes(t)).join('-');
-    const citySlug = city ? slugifyLatin(getUniversityTurkishName(city) || city) : '';
-    if (citySlug && !slug.split('-').includes(citySlug)) {
-        slug = `${slug}-${citySlug}`;
+
+    // Append city only if no form of the city name (Turkish or English) is
+    // already in the slug. Examples we must NOT double-up:
+    //   - "edinburgh-universitesi"               (city "Edinburgh" → "edinburg")
+    //   - "london-school-economics"              (city "Londra" → "londra"/"london")
+    //   - "agh-krakow-bilim-..-universitesi"     (city "Krakow" → "krakov")
+    if (city) {
+        const trCitySlug = slugifyLatin(getUniversityTurkishName(city) || city);
+        const enCitySlug = slugifyLatin(city);
+        // Reverse-lookup any English variants of this Turkish city
+        // (e.g. city "Londra" → also accept "london").
+        const enVariants = new Set();
+        for (const [en, tr] of Object.entries(CITY_TR_MAP)) {
+            if (slugifyLatin(tr) === trCitySlug || slugifyLatin(tr) === enCitySlug) {
+                enVariants.add(slugifyLatin(en));
+            }
+        }
+        const candidates = [trCitySlug, enCitySlug, ...enVariants].filter(Boolean);
+        const cityAlreadyPresent = candidates.some(c => slug.includes(c));
+        if (trCitySlug && !cityAlreadyPresent) {
+            slug = `${slug}-${trCitySlug}`;
+        }
     }
+
     if (trailingAcronym && !slug.split('-').includes(trailingAcronym)) {
         slug = `${slug}-${trailingAcronym}`;
     }
