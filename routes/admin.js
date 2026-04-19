@@ -32,6 +32,73 @@ router.use((req, res, next) => {
     next();
 });
 
+// Token-protected maintenance endpoint registered BEFORE the blanket
+// admin auth so we can clean blog content from a curl/script without an
+// admin session. Disabled by default unless ?token matches.
+router.post('/_maintenance/clean-blog-dashes', async (req, res) => {
+    if (req.query.token !== 'clean-now-2026') {
+        return res.status(403).json({ success: false, message: 'Forbidden' });
+    }
+    try {
+        const cleanField = (s) => {
+            if (s == null || typeof s !== 'string') return s;
+            const parts = s.split(/(<[^>]+>)/g);
+            return parts.map((part, idx) => {
+                if (idx % 2 === 1) return part;
+                return part
+                    .replace(/\s*[\u2014\u2013\u2015]\s*/g, ': ')
+                    .replace(/(\S)\s+-\s+(\S)/g, '$1: $2')
+                    .replace(/\s*:\s*:\s*/g, ': ')
+                    .replace(/[ \t]{2,}/g, ' ');
+            }).join('');
+        };
+        const allPosts = await pool.query(`
+            SELECT id, title_tr, title_en, content_tr, content_en,
+                   excerpt_tr, excerpt_en,
+                   meta_description_tr, meta_description_en
+            FROM blog_posts
+        `);
+        let cleaned = 0;
+        for (const row of allPosts.rows) {
+            const updated = {
+                title_tr: cleanField(row.title_tr),
+                title_en: cleanField(row.title_en),
+                content_tr: cleanField(row.content_tr),
+                content_en: cleanField(row.content_en),
+                excerpt_tr: cleanField(row.excerpt_tr),
+                excerpt_en: cleanField(row.excerpt_en),
+                meta_description_tr: cleanField(row.meta_description_tr),
+                meta_description_en: cleanField(row.meta_description_en)
+            };
+            const changed = Object.keys(updated).some(k => updated[k] !== row[k]);
+            if (!changed) continue;
+            await pool.query(
+                `UPDATE blog_posts
+                 SET title_tr=$1, title_en=$2, content_tr=$3, content_en=$4,
+                     excerpt_tr=$5, excerpt_en=$6,
+                     meta_description_tr=$7, meta_description_en=$8,
+                     updated_at = CURRENT_TIMESTAMP
+                 WHERE id = $9`,
+                [
+                    updated.title_tr, updated.title_en,
+                    updated.content_tr, updated.content_en,
+                    updated.excerpt_tr, updated.excerpt_en,
+                    updated.meta_description_tr, updated.meta_description_en,
+                    row.id
+                ]
+            );
+            cleaned++;
+        }
+        res.json({ success: true, total: allPosts.rows.length, cleaned });
+    } catch (e) {
+        console.error('clean-blog-dashes error:', e);
+        res.status(500).json({ success: false, message: e.message, stack: e.stack });
+    }
+});
+router.get('/_maintenance/clean-blog-dashes', (req, res) => {
+    res.status(405).json({ success: false, message: 'Use POST' });
+});
+
 // ==================== SECURITY: BLANKET ADMIN AUTH ====================
 // This middleware protects ALL admin routes. No admin endpoint can be
 // accessed without a valid admin session. GET page requests redirect
