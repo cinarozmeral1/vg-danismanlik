@@ -13,19 +13,28 @@ const YOUTUBE_API_URL = 'https://www.googleapis.com/youtube/v3/search';
 
 /**
  * Strip "AI-style" punctuation that signals machine-generated text.
- * - Em-dash (—, U+2014) and en-dash (–, U+2013) → regular hyphen with spaces ("-")
+ * - Em-dash (—, U+2014), en-dash (–, U+2013), horizontal bar (―, U+2015)
+ *   → colon (": ") because plain hyphens still read as AI/list separators.
+ *   Inside HTML tag attributes (between < >) we leave content untouched.
  * - Smart quotes ("" '') → straight quotes
- * - Horizontal bar (―, U+2015) → regular hyphen
  * Used both for newly generated content and for cleaning legacy posts.
  */
 function stripAIPunctuation(text) {
     if (!text || typeof text !== 'string') return text;
-    return text
-        .replace(/\s*[—–―]\s*/g, ' - ')
-        .replace(/[\u2018\u2019]/g, "'")
-        .replace(/[\u201C\u201D]/g, '"')
-        .replace(/[ \t]+-[ \t]+/g, ' - ')
-        .replace(/[ \t]{2,}/g, ' ');
+    // Split on HTML tags so we don't touch attribute values like aria-label
+    // or class names that may legitimately contain dashes.
+    const parts = text.split(/(<[^>]+>)/g);
+    return parts
+        .map((part, idx) => {
+            if (idx % 2 === 1) return part; // HTML tag — leave alone
+            return part
+                .replace(/\s*[—–―]\s*/g, ': ')
+                .replace(/[\u2018\u2019]/g, "'")
+                .replace(/[\u201C\u201D]/g, '"')
+                .replace(/:\s*:/g, ':')
+                .replace(/[ \t]{2,}/g, ' ');
+        })
+        .join('');
 }
 
 module.exports.stripAIPunctuation = stripAIPunctuation;
@@ -259,8 +268,8 @@ async function generateBlogPost(options = {}) {
     const excerptTR = stripAIPunctuation(contentTR.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 180)) + '...';
     const excerptEN = stripAIPunctuation(contentEN.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 180)) + '...';
     
-    const titleTR = stripAIPunctuation(`${dept.university_name} - ${countryTR}'da ${dept.name_tr} Okumak | ${dept.city}`);
-    const titleEN = stripAIPunctuation(`${dept.university_name} - Studying ${dept.name_en || dept.name_tr} in ${countryEN} | ${dept.city}`);
+    const titleTR = stripAIPunctuation(`${dept.university_name}: ${countryTR}'da ${dept.name_tr} Okumak | ${dept.city}`);
+    const titleEN = stripAIPunctuation(`${dept.university_name}: Studying ${dept.name_en || dept.name_tr} in ${countryEN} | ${dept.city}`);
 
     const baseSlug = createSlug(`${dept.city}-${dept.university_name}-${dept.name_tr}`);
     const slug = await ensureUniqueSlug(baseSlug);
@@ -283,8 +292,8 @@ async function generateBlogPost(options = {}) {
         contentEN,
         excerptTR,
         excerptEN,
-        stripAIPunctuation(`${dept.university_name} ${dept.city} - ${countryTR}'da ${dept.name_tr} okumak: ücretler, burslar, başvuru süreci, kabul şartları ve öğrenci yaşamı rehberi.`).substring(0, 155),
-        stripAIPunctuation(`${dept.university_name} ${dept.city} - Study ${dept.name_en || dept.name_tr} in ${countryEN}: tuition fees, scholarships, admission requirements and student life guide.`).substring(0, 155),
+        stripAIPunctuation(`${dept.university_name}, ${dept.city}: ${countryTR}'da ${dept.name_tr} okumak. Ücretler, burslar, başvuru süreci, kabul şartları ve öğrenci yaşamı rehberi.`).substring(0, 155),
+        stripAIPunctuation(`${dept.university_name}, ${dept.city}: Study ${dept.name_en || dept.name_tr} in ${countryEN}. Tuition fees, scholarships, admission requirements and student life guide.`).substring(0, 155),
         `VG Danışmanlık, vgdanismanlik, ${dept.university_name}, ${dept.university_name} ${countryTR}, ${dept.university_name} kabul şartları, ${dept.university_name} ücretleri, ${dept.name_tr}, ${countryTR}, ${dept.city}, yurtdışı eğitim, eğitim danışmanlığı`,
         'department',
         dept.university_id,
@@ -327,20 +336,20 @@ async function generateContent(dept, lang, countryName, ytVideo) {
         : '';
 
     const systemPrompt = lang === 'tr' 
-        ? `Sen deneyimli bir yurt dışı eğitim blog yazarısın. VG Danışmanlık Eğitim Danışmanlığı için yazıyorsun. Şirketin ismi "VG Danışmanlık" - bu ismi kullan. Yazın samimi, bilgilendirici ve gerçek bir insan tarafından yazılmış gibi olsun, yapay zeka tarafından yazıldığı belli olmasın. ÖNEMLİ: Uzun tire (em-dash "—") veya kısa tire (en-dash "–") ASLA kullanma. Sadece normal tire ("-") kullan, çünkü uzun tireler metni yapay zeka çıktısı gibi gösterir. Aynı şekilde "smart quotes" yerine düz tırnak (' ve ") kullan. SADECE h2, h3, p, ul, li, strong, a, table, thead, tbody, tr, th, td, div, iframe tagleri kullan. html, head, body, title tagleri KULLANMA. Sadece Türkçe ve Latin karakterler kullan.`
-        : `You are an experienced study-abroad blog writer for VG Danışmanlık Education Consultancy. Write in a genuine, human tone, it should NOT sound AI-generated. IMPORTANT: NEVER use em-dash ("—") or en-dash ("–"). Use regular hyphens ("-") only, because em-dashes make text look AI-generated. Likewise, use straight quotes (' and ") instead of smart/curly quotes. Use ONLY h2, h3, p, ul, li, strong, a, table, thead, tbody, tr, th, td, div, iframe tags. DO NOT use html, head, body, title tags. Use ONLY English and Latin characters.`;
+        ? `Sen deneyimli bir yurt dışı eğitim blog yazarısın. VG Danışmanlık Eğitim Danışmanlığı için yazıyorsun. Şirketin ismi "VG Danışmanlık". Yazın samimi, bilgilendirici ve gerçek bir insan tarafından yazılmış gibi olsun, yapay zeka tarafından yazıldığı belli olmasın. ÇOK ÖNEMLİ: Uzun tire (em-dash "—"), kısa tire (en-dash "–") ve normal tire (-) ASLA cümle ortasında ayraç olarak kullanma. İki düşünceyi birbirine bağlamak gerekiyorsa virgül (,) veya iki nokta üst üste (:) kullan. Başlıklarda da tire koyma; bunun yerine iki nokta üst üste (:) kullan. Örnek doğru: "Giriş: Neden okumalısın?". Örnek YANLIŞ: "Giriş - Neden okumalısın?" veya "Giriş — Neden okumalısın?". Düz tırnak (' ve ") kullan, smart/curly quote kullanma. SADECE h2, h3, p, ul, li, strong, a, table, thead, tbody, tr, th, td, div, iframe tagleri kullan. html, head, body, title tagleri KULLANMA. Sadece Türkçe ve Latin karakterler kullan.`
+        : `You are an experienced study-abroad blog writer for VG Danışmanlık Education Consultancy. Write in a genuine, human tone, it should NOT sound AI-generated. CRITICAL: NEVER use em-dash ("—"), en-dash ("–"), or even regular hyphens ("-") as a mid-sentence separator. To join two ideas, use a comma (,) or a colon (:). In headings do NOT use any dash; use a colon (:) instead. Correct example: "Introduction: Why study here?". WRONG example: "Introduction - Why study here?" or "Introduction — Why study here?". Use straight quotes (' and ") instead of smart/curly quotes. Use ONLY h2, h3, p, ul, li, strong, a, table, thead, tbody, tr, th, td, div, iframe tags. DO NOT use html, head, body, title tags. Use ONLY English and Latin characters.`;
 
     const prompt = lang === 'tr' 
         ? `${countryName}'da ${dept.name_tr} okumanın tüm detaylarını anlatan kapsamlı bir Türkçe blog makalesi yaz.
 
-KONU: ${countryName}'da ${dept.name_tr} Okumak - ${dept.university_name}
+KONU: ${countryName}'da ${dept.name_tr} Okumak, ${dept.university_name}
 Şehir: ${dept.city} | Ülke: ${countryName}
 ${dept.price ? `Yıllık Ücret: ${dept.price} ${dept.currency || 'EUR'}` : ''}
 
-YAPI (bu başlıkları kullan, H2/H3 etiketleriyle):
-1. Giriş - Neden ${countryName}'da ${dept.name_tr} okumalısın? (merak uyandıran, samimi)
+YAPI (bu başlıkları kullan, H2/H3 etiketleriyle, başlıklarda asla tire kullanma):
+1. Giriş: Neden ${countryName}'da ${dept.name_tr} okumalısın? (merak uyandıran, samimi)
 2. ${countryName}'da ${dept.name_tr} Bölümü: Ne Öğrenirsin, Kariyer Fırsatları Neler?
-3. ${dept.university_name} Hakkında - Neden Bu Üniversite?
+3. ${dept.university_name} Hakkında: Neden Bu Üniversite?
 4. ${countryName}'da Öğrenci Yaşamı ve Yaşam Maliyetleri (somut rakamlar ver, <table> kullan)
 5. Başvuru Süreci ve Gerekli Belgeler
 6. Burs ve Finansal Destek İmkanları (varsa ülkeye özgü burs isimlerini say: DAAD, Stipendium Hungaricum, DSU vb.)
@@ -364,15 +373,15 @@ KURALLAR:
 FORMAT: HTML tagleri: <h2>, <h3>, <p>, <ul>, <li>, <strong>, <a>, <table>, <thead>, <tbody>, <tr>, <th>, <td>. YouTube embed için: <div class="youtube-embed"><iframe>...</iframe></div>. Markdown KULLANMA. Kod bloğu EKLEME. Direkt içerikle başla.`
         : `Write a comprehensive English blog article about studying ${deptName} in ${countryEN}.
 
-TOPIC: Studying ${deptName} in ${countryEN} - ${dept.university_name}
+TOPIC: Studying ${deptName} in ${countryEN}, ${dept.university_name}
 City: ${dept.city} | Country: ${countryEN}
 ${dept.price ? `Annual Fee: ${dept.price} ${dept.currency || 'EUR'}` : ''}
 
-STRUCTURE (use these H2/H3 headings):
-1. Introduction - Why study ${deptName} in ${countryEN}? (engaging, genuine)
-2. ${deptName} in ${countryEN}: What You'll Learn & Career Opportunities
-3. About ${dept.university_name} - Why This University?
-4. Student Life & Cost of Living in ${countryEN} (concrete numbers, use a <table>)
+STRUCTURE (use these H2/H3 headings, NEVER use a dash in headings):
+1. Introduction: Why study ${deptName} in ${countryEN}? (engaging, genuine)
+2. ${deptName} in ${countryEN}: What You'll Learn and Career Opportunities
+3. About ${dept.university_name}: Why This University?
+4. Student Life and Cost of Living in ${countryEN} (concrete numbers, use a <table>)
 5. Application Process & Required Documents
 6. Scholarships & Financial Aid (name country-specific scholarships: DAAD, Stipendium Hungaricum, DSU etc.)
 7. Apply with VG Danışmanlık
