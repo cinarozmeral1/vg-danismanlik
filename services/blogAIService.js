@@ -130,6 +130,188 @@ const COUNTRY_STUDENT_LIFE_SLUGS = {
 };
 const OGRENCI_YASAMI_BASE = '/ogrenci-yasami';
 
+// City / region name translations used to convert university names into
+// natural Turkish (e.g. "University of Vienna" → "Viyana Üniversitesi").
+// Keys are matched case-insensitively as whole words.
+const CITY_TR_MAP = {
+    'Vienna': 'Viyana',
+    'Munich': 'Münih',
+    'Cologne': 'Köln',
+    'Athens': 'Atina',
+    'Rome': 'Roma',
+    'Florence': 'Floransa',
+    'Naples': 'Napoli',
+    'Milan': 'Milano',
+    'Venice': 'Venedik',
+    'Genoa': 'Cenova',
+    'Turin': 'Torino',
+    'Prague': 'Prag',
+    'Brno': 'Brno',
+    'Warsaw': 'Varşova',
+    'Krakow': 'Krakov',
+    'Cracow': 'Krakov',
+    'Wroclaw': 'Vrotslav',
+    'Lodz': 'Lodz',
+    'London': 'Londra',
+    'Edinburgh': 'Edinburg',
+    'Oxford': 'Oxford',
+    'Cambridge': 'Cambridge',
+    'Manchester': 'Manchester',
+    'Liverpool': 'Liverpool',
+    'Bristol': 'Bristol',
+    'Glasgow': 'Glasgow',
+    'Birmingham': 'Birmingham',
+    'Paris': 'Paris',
+    'Lyon': 'Lyon',
+    'Marseille': 'Marsilya',
+    'Bordeaux': 'Bordo',
+    'Toulouse': 'Toulouse',
+    'Nice': 'Nice',
+    'Strasbourg': 'Strazburg',
+    'Madrid': 'Madrid',
+    'Barcelona': 'Barselona',
+    'Seville': 'Sevilla',
+    'Valencia': 'Valensiya',
+    'Granada': 'Granada',
+    'Salamanca': 'Salamanca',
+    'Amsterdam': 'Amsterdam',
+    'Rotterdam': 'Rotterdam',
+    'The Hague': 'Lahey',
+    'Utrecht': 'Utrecht',
+    'Leiden': 'Leiden',
+    'Groningen': 'Groningen',
+    'Maastricht': 'Maastricht',
+    'Budapest': 'Budapeşte',
+    'Debrecen': 'Debrecen',
+    'Szeged': 'Szeged',
+    'Berlin': 'Berlin',
+    'Hamburg': 'Hamburg',
+    'Frankfurt': 'Frankfurt',
+    'Stuttgart': 'Stuttgart',
+    'Dusseldorf': 'Düsseldorf',
+    'Düsseldorf': 'Düsseldorf',
+    'Heidelberg': 'Heidelberg',
+    'Leipzig': 'Leipzig',
+    'Bonn': 'Bonn',
+    'Salzburg': 'Salzburg',
+    'Graz': 'Graz',
+    'Innsbruck': 'Innsbruck'
+};
+
+/**
+ * Convert an English / native-language university name into a natural
+ * Turkish name. Used so AI-generated TR articles read like they were
+ * written for Turkish search intent (e.g. people Googling "Bologna
+ * Üniversitesi işletme" should land on our article).
+ *
+ * Heuristics — applied in order:
+ *   1. "University of X"           → "X Üniversitesi"
+ *   2. "X University"              → "X Üniversitesi"
+ *   3. "Università di X" / "Universidad de X" / "Université de X" /
+ *      "Universität X"             → "X Üniversitesi"
+ *   4. "Technical University of X" → "X Teknik Üniversitesi"
+ *   5. "X Business School" / "X School of Business"
+ *                                  → "X İşletme Okulu"
+ *   6. "X College"                 → "X Koleji"
+ *   7. "X Institute of Technology" → "X Teknoloji Enstitüsü"
+ *   8. Translate any city tokens via CITY_TR_MAP
+ *   9. If nothing matched, return the original name unchanged.
+ */
+function getUniversityTurkishName(name) {
+    if (!name || typeof name !== 'string') return name;
+    let out = name.trim();
+
+    const translateCities = (s) => {
+        let r = s;
+        for (const [en, tr] of Object.entries(CITY_TR_MAP)) {
+            const re = new RegExp(`\\b${en.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\$&')}\\b`, 'gi');
+            r = r.replace(re, tr);
+        }
+        return r;
+    };
+
+    // Patterns ordered most-specific → least-specific
+    const patterns = [
+        // "Technical University of X" → "X Teknik Üniversitesi"
+        { re: /^Technical University of (.+)$/i,            build: m => `${translateCities(m[1])} Teknik Üniversitesi` },
+        // "X Institute of Technology" → "X Teknoloji Enstitüsü"
+        { re: /^(.+?)\s+Institute of Technology$/i,         build: m => `${translateCities(m[1])} Teknoloji Enstitüsü` },
+        // "X School of Business" → "X İşletme Okulu"
+        { re: /^(.+?)\s+School of Business$/i,              build: m => `${translateCities(m[1])} İşletme Okulu` },
+        // "X Business School" → "X İşletme Okulu"
+        { re: /^(.+?)\s+Business School$/i,                 build: m => `${translateCities(m[1])} İşletme Okulu` },
+        // "X School of Management" → "X Yönetim Okulu"
+        { re: /^(.+?)\s+School of Management$/i,            build: m => `${translateCities(m[1])} Yönetim Okulu` },
+        // "University College X" → "X Üniversite Koleji"
+        { re: /^University College (.+)$/i,                 build: m => `${translateCities(m[1])} Üniversite Koleji` },
+        // "X College" → "X Koleji"
+        { re: /^(.+?)\s+College$/i,                         build: m => `${translateCities(m[1])} Koleji` },
+        // "Sapienza University of Rome", "Vienna University of Economics" etc.
+        // "X University of Y": if Y is a known city → "TranslatedY X Üniversitesi",
+        //                     otherwise → "TranslatedX Üniversitesi" (X may itself be a city).
+        { re: /^(.+?)\s+University of (.+)$/i,              build: m => {
+            const left = m[1];
+            const right = m[2];
+            const cityKey = Object.keys(CITY_TR_MAP).find(c => c.toLowerCase() === right.toLowerCase());
+            if (cityKey) return `${CITY_TR_MAP[cityKey]} ${left} Üniversitesi`;
+            return `${translateCities(left)} Üniversitesi`;
+        }},
+        // "X Università di Y" → "Y X Üniversitesi" when Y is a city. MUST come before
+        // the bare "Università di Y" pattern because that one only requires the prefix.
+        { re: /^(\S.+?)\s+Università\s+(?:degli\s+Studi\s+)?di\s+(.+)$/i, build: m => {
+            const cityKey = Object.keys(CITY_TR_MAP).find(c => c.toLowerCase() === m[2].toLowerCase());
+            if (cityKey) return `${CITY_TR_MAP[cityKey]} ${m[1]} Üniversitesi`;
+            return `${translateCities(m[2])} ${m[1]} Üniversitesi`;
+        }},
+        // "Università di X" / "Università degli Studi di X"
+        { re: /^Università\s+(?:degli\s+Studi\s+)?di\s+(.+)$/i, build: m => `${translateCities(m[1])} Üniversitesi` },
+        // "Universidad Autónoma de X" / "Universidad Carlos III de X" / "Universidad de X"
+        // Anything between "Universidad" and " de " is a qualifier we want to keep.
+        { re: /^Universidad\s+(?:(.+?)\s+)?de\s+(.+)$/i,    build: m => {
+            const qual = (m[1] || '').trim();
+            const city = translateCities(m[2]);
+            return qual ? `${city} ${qual} Üniversitesi` : `${city} Üniversitesi`;
+        }},
+        // "Université de X" / "Université Paris X"
+        { re: /^Université\s+(?:de\s+)?(.+)$/i,             build: m => `${translateCities(m[1])} Üniversitesi` },
+        // "Universität X" (German)
+        { re: /^Universität\s+(.+)$/i,                      build: m => `${translateCities(m[1])} Üniversitesi` },
+        // "Univerzita Karlova" → "Charles Üniversitesi" handled as special case
+        { re: /^Univerzita\s+Karlova/i,                     build: () => 'Charles Üniversitesi' },
+        // Other "Univerzita X" (Czech)
+        { re: /^Univerzita\s+(.+)$/i,                       build: m => `${translateCities(m[1])} Üniversitesi` },
+        // "Uniwersytet Warszawski" → "Varşova Üniversitesi" special case
+        { re: /^Uniwersytet\s+Warszawski/i,                 build: () => 'Varşova Üniversitesi' },
+        // "Uniwersytet Jagielloński" → "Jagiellonian Üniversitesi"
+        { re: /^Uniwersytet\s+Jagiello[nń]ski/i,            build: () => 'Jagiellonian Üniversitesi' },
+        // Other "Uniwersytet X" (Polish)
+        { re: /^Uniwersytet\s+(.+)$/i,                      build: m => `${translateCities(m[1])} Üniversitesi` },
+        // "Universiteit X" (Dutch)
+        { re: /^Universiteit\s+(.+)$/i,                     build: m => `${translateCities(m[1])} Üniversitesi` },
+        // "X Universiteit" (Dutch reverse)
+        { re: /^(.+?)\s+Universiteit$/i,                    build: m => `${translateCities(m[1])} Üniversitesi` },
+        // "University of X"
+        { re: /^University of (.+)$/i,                      build: m => `${translateCities(m[1])} Üniversitesi` },
+        // "X University" (must come after "Technical University of X")
+        { re: /^(.+?)\s+University$/i,                      build: m => `${translateCities(m[1])} Üniversitesi` }
+    ];
+
+    for (const { re, build } of patterns) {
+        const m = out.match(re);
+        if (m) return build(m).replace(/\s{2,}/g, ' ').trim();
+    }
+
+    // Fallback: just translate any embedded city names; if the name
+    // contains the word "University" anywhere, swap it with "Üniversitesi"
+    const cityTranslated = translateCities(out);
+    if (/\bUniversity\b/i.test(cityTranslated)) {
+        return cityTranslated.replace(/\bUniversity\b/gi, 'Üniversitesi');
+    }
+    return cityTranslated;
+}
+
+module.exports.getUniversityTurkishName = getUniversityTurkishName;
+
 /** CJK ve istenmeyen karakterleri kaldır (Çince/Japonca/Korece vb. - sadece Türkçe/İngilizce kalsın) */
 function stripUnwantedCharacters(text) {
     if (!text || typeof text !== 'string') return text;
@@ -258,20 +440,29 @@ async function generateBlogPost(options = {}) {
     console.log('🎬 Searching for YouTube video...');
     const ytVideo = await findYouTubeVideo(dept.university_name, dept.name_tr, countryTR);
     
+    // Resolve a Turkish version of the university name. Used in the TR
+    // title, slug, prompt and meta so Google searches like
+    // "Bologna Üniversitesi işletme bölümü" surface our article.
+    const universityNameTR = getUniversityTurkishName(dept.university_name);
+    const universityNameEN = dept.university_name;
+    console.log(`🏫 University TR name: "${universityNameTR}" (from "${universityNameEN}")`);
+
     console.log('🤖 Generating Turkish content...');
-    const contentTR = stripAIPunctuation(await generateContent(dept, 'tr', countryTR, ytVideo));
+    const contentTR = stripAIPunctuation(await generateContent(dept, 'tr', countryTR, ytVideo, universityNameTR));
     
     console.log('🤖 Generating English content...');
-    const contentEN = stripAIPunctuation(await generateContent(dept, 'en', countryEN, ytVideo));
+    const contentEN = stripAIPunctuation(await generateContent(dept, 'en', countryEN, ytVideo, universityNameEN));
     
     // Excerpts ve SEO uyumlu Türkçe slug (her makaleye özel URL)
     const excerptTR = stripAIPunctuation(contentTR.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 180)) + '...';
     const excerptEN = stripAIPunctuation(contentEN.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 180)) + '...';
     
-    const titleTR = stripAIPunctuation(`${dept.university_name}: ${countryTR}'da ${dept.name_tr} Okumak | ${dept.city}`);
-    const titleEN = stripAIPunctuation(`${dept.university_name}: Studying ${dept.name_en || dept.name_tr} in ${countryEN} | ${dept.city}`);
+    const titleTR = stripAIPunctuation(`${universityNameTR}: ${countryTR}'da ${dept.name_tr} Okumak | ${dept.city}`);
+    const titleEN = stripAIPunctuation(`${universityNameEN}: Studying ${dept.name_en || dept.name_tr} in ${countryEN} | ${dept.city}`);
 
-    const baseSlug = createSlug(`${dept.city}-${dept.university_name}-${dept.name_tr}`);
+    // Slug is built from the Turkish university + Turkish department name
+    // so the URL itself reads naturally in Turkish (best Turkish SEO).
+    const baseSlug = createSlug(`${universityNameTR}-${dept.name_tr}-${dept.city}`);
     const slug = await ensureUniqueSlug(baseSlug);
     const isPublished = !isDraft;
     
@@ -292,9 +483,9 @@ async function generateBlogPost(options = {}) {
         contentEN,
         excerptTR,
         excerptEN,
-        stripAIPunctuation(`${dept.university_name}, ${dept.city}: ${countryTR}'da ${dept.name_tr} okumak. Ücretler, burslar, başvuru süreci, kabul şartları ve öğrenci yaşamı rehberi.`).substring(0, 155),
-        stripAIPunctuation(`${dept.university_name}, ${dept.city}: Study ${dept.name_en || dept.name_tr} in ${countryEN}. Tuition fees, scholarships, admission requirements and student life guide.`).substring(0, 155),
-        `VG Danışmanlık, vgdanismanlik, ${dept.university_name}, ${dept.university_name} ${countryTR}, ${dept.university_name} kabul şartları, ${dept.university_name} ücretleri, ${dept.name_tr}, ${countryTR}, ${dept.city}, yurtdışı eğitim, eğitim danışmanlığı`,
+        stripAIPunctuation(`${universityNameTR}, ${dept.city}: ${countryTR}'da ${dept.name_tr} okumak. Ücretler, burslar, başvuru süreci, kabul şartları ve öğrenci yaşamı rehberi.`).substring(0, 155),
+        stripAIPunctuation(`${universityNameEN}, ${dept.city}: Study ${dept.name_en || dept.name_tr} in ${countryEN}. Tuition fees, scholarships, admission requirements and student life guide.`).substring(0, 155),
+        `VG Danışmanlık, vgdanismanlik, ${universityNameTR}, ${universityNameEN}, ${universityNameTR} ${dept.name_tr}, ${universityNameTR} kabul şartları, ${universityNameTR} ücretleri, ${dept.name_tr}, ${countryTR}, ${dept.city}, yurtdışı eğitim, eğitim danışmanlığı`,
         'department',
         dept.university_id,
         dept.country,
@@ -315,9 +506,15 @@ async function generateBlogPost(options = {}) {
 }
 
 /**
- * Generate content in specified language
+ * Generate content in specified language.
+ * @param {object} dept Department row from DB
+ * @param {'tr'|'en'} lang Output language
+ * @param {string} countryName Country name in target language
+ * @param {object|null} ytVideo Optional YouTube video info
+ * @param {string} [universityName] Localized university name (Turkish or English).
+ *                                  Falls back to dept.university_name when omitted.
  */
-async function generateContent(dept, lang, countryName, ytVideo) {
+async function generateContent(dept, lang, countryName, ytVideo, universityName) {
     const apiKey = process.env.ANTHROPIC_API_KEY;
     
     if (!apiKey) {
@@ -325,14 +522,16 @@ async function generateContent(dept, lang, countryName, ytVideo) {
     }
     
     const deptName = lang === 'en' ? (dept.name_en || dept.name_tr) : dept.name_tr;
+    const uniName = universityName || dept.university_name;
+    const uniNameOriginal = dept.university_name; // for clarity / English fallback
     const countryEN = COUNTRY_NAMES[dept.country]?.en || dept.country;
     const countrySlug = COUNTRY_STUDENT_LIFE_SLUGS[dept.country] || '';
     const countryGuideLink = countrySlug ? `/ulkede-universite/${countrySlug}` : '';
     
     const ytInstruction = ytVideo
         ? (lang === 'tr'
-            ? `\nYOUTUBE VIDEO: Aşağıdaki videoyu makalenin 3. başlığından sonra doğal bir geçişle yerleştir:\n<div class="youtube-embed"><iframe src="https://www.youtube-nocookie.com/embed/${ytVideo.videoId}" title="${ytVideo.title}" allowfullscreen loading="lazy"></iframe></div>\nVideoyu tanıtan kısa bir cümle ekle (ör. "Aşağıdaki videoda ${dept.university_name} kampüsünü ve öğrenci deneyimlerini görebilirsiniz:").`
-            : `\nYOUTUBE VIDEO: Embed the following video naturally after the 3rd heading:\n<div class="youtube-embed"><iframe src="https://www.youtube-nocookie.com/embed/${ytVideo.videoId}" title="${ytVideo.title}" allowfullscreen loading="lazy"></iframe></div>\nAdd a brief introductory sentence (e.g. "Watch the video below to get a glimpse of life at ${dept.university_name}:").`)
+            ? `\nYOUTUBE VIDEO: Aşağıdaki videoyu makalenin 3. başlığından sonra doğal bir geçişle yerleştir:\n<div class="youtube-embed"><iframe src="https://www.youtube-nocookie.com/embed/${ytVideo.videoId}" title="${ytVideo.title}" allowfullscreen loading="lazy"></iframe></div>\nVideoyu tanıtan kısa bir cümle ekle (ör. "Aşağıdaki videoda ${uniName} kampüsünü ve öğrenci deneyimlerini görebilirsiniz:").`
+            : `\nYOUTUBE VIDEO: Embed the following video naturally after the 3rd heading:\n<div class="youtube-embed"><iframe src="https://www.youtube-nocookie.com/embed/${ytVideo.videoId}" title="${ytVideo.title}" allowfullscreen loading="lazy"></iframe></div>\nAdd a brief introductory sentence (e.g. "Watch the video below to get a glimpse of life at ${uniName}:").`)
         : '';
 
     const systemPrompt = lang === 'tr' 
@@ -342,14 +541,19 @@ async function generateContent(dept, lang, countryName, ytVideo) {
     const prompt = lang === 'tr' 
         ? `${countryName}'da ${dept.name_tr} okumanın tüm detaylarını anlatan kapsamlı bir Türkçe blog makalesi yaz.
 
-KONU: ${countryName}'da ${dept.name_tr} Okumak, ${dept.university_name}
+KONU: ${countryName}'da ${dept.name_tr} Okumak, ${uniName}
 Şehir: ${dept.city} | Ülke: ${countryName}
+Üniversitenin Türkçe adı: ${uniName} (orijinal: ${uniNameOriginal})
 ${dept.price ? `Yıllık Ücret: ${dept.price} ${dept.currency || 'EUR'}` : ''}
+
+ÜNİVERSİTE ADI KULLANIMI (kritik):
+- Tüm makale boyunca üniversitenin TÜRKÇE adını ("${uniName}") kullan. İngilizce orijinal ad ("${uniNameOriginal}") YALNIZCA ilk geçişte parantez içinde verilmeli, ör. "${uniName} (${uniNameOriginal})". Sonraki tüm geçişlerde sadece "${uniName}" yaz.
+- Tüm başlıklarda Türkçe ad kullan.
 
 YAPI (bu başlıkları kullan, H2/H3 etiketleriyle, başlıklarda asla tire kullanma):
 1. Giriş: Neden ${countryName}'da ${dept.name_tr} okumalısın? (merak uyandıran, samimi)
 2. ${countryName}'da ${dept.name_tr} Bölümü: Ne Öğrenirsin, Kariyer Fırsatları Neler?
-3. ${dept.university_name} Hakkında: Neden Bu Üniversite?
+3. ${uniName} Hakkında: Neden Bu Üniversite?
 4. ${countryName}'da Öğrenci Yaşamı ve Yaşam Maliyetleri (somut rakamlar ver, <table> kullan)
 5. Başvuru Süreci ve Gerekli Belgeler
 6. Burs ve Finansal Destek İmkanları (varsa ülkeye özgü burs isimlerini say: DAAD, Stipendium Hungaricum, DSU vb.)
@@ -358,8 +562,8 @@ ${ytInstruction}
 
 KURALLAR:
 1. 800-1100 kelime, kısa ve yüzeysel değil, gerçekten bilgilendirici yaz
-2. Şu anahtar kelimeleri DOĞAL şekilde dağıt (zorlama yapma): "${dept.university_name}", "${dept.university_name} ${countryName}", "${dept.university_name} ${dept.name_tr.toLowerCase()}", "yurtdışında ${dept.name_tr.toLowerCase()} okumak", "${countryName}'da ${dept.name_tr.toLowerCase()} bölümü", "yurt dışı eğitim danışmanlığı", "${dept.city} üniversite"
-3. ÖNEMLİ: Üniversite ismini ("${dept.university_name}") makalenin ilk paragrafında, ortasında ve sonuç paragrafında mutlaka kullan. Ülke ismini ("${countryName}") ve şehir ismini ("${dept.city}") de sık sık geçir, Google'da bu isimlerle aranıldığında makalenin çıkması gerekiyor
+2. Şu anahtar kelimeleri DOĞAL şekilde dağıt (zorlama yapma): "${uniName}", "${uniName} ${countryName}", "${uniName} ${dept.name_tr.toLowerCase()}", "${uniName} ${dept.name_tr.toLowerCase()} bölümü", "yurtdışında ${dept.name_tr.toLowerCase()} okumak", "${countryName}'da ${dept.name_tr.toLowerCase()} bölümü", "yurt dışı eğitim danışmanlığı", "${dept.city} üniversite"
+3. ÖNEMLİ: Türkçe üniversite ismini ("${uniName}") makalenin ilk paragrafında, ortasında ve sonuç paragrafında mutlaka kullan. Ülke ismini ("${countryName}") ve şehir ismini ("${dept.city}") de sık sık geçir, Google'da bu isimlerle aranıldığında makalenin çıkması gerekiyor
 4. Şirket ismi olarak SADECE "VG Danışmanlık" kullan (toplam 3-4 kez)
 5. Son bölümde "VG Danışmanlık ile iletişime geçebilirsiniz" şeklinde CTA ekle
 6. Bu bir LİSANS programıdır, yüksek lisans değil
@@ -367,20 +571,20 @@ KURALLAR:
 8. Yaşam maliyeti bölümünde bir <table> ile şehir bazlı karşılaştırma yap (kira, yemek, ulaşım gibi kalemler)
 9. Makalenin içerisine şu üç linki doğal şekilde yerleştir:
    - <a href="STUDENT_LIFE_LINK">${countryName}'de Öğrenci Hayatı</a>
-   - <a href="UNIVERSITY_DETAIL_LINK">${dept.university_name} hakkında detaylı bilgi</a>${countryGuideLink ? `\n   - <a href="${countryGuideLink}">${countryName}'da Üniversite Eğitimi Rehberi</a>` : ''}
+   - <a href="UNIVERSITY_DETAIL_LINK">${uniName} hakkında detaylı bilgi</a>${countryGuideLink ? `\n   - <a href="${countryGuideLink}">${countryName}'da Üniversite Eğitimi Rehberi</a>` : ''}
 10. Makale sonunda 3-4 soruluk kısa bir SSS/FAQ bölümü ekle (<h3>Sık Sorulan Sorular</h3> altında)
 
 FORMAT: HTML tagleri: <h2>, <h3>, <p>, <ul>, <li>, <strong>, <a>, <table>, <thead>, <tbody>, <tr>, <th>, <td>. YouTube embed için: <div class="youtube-embed"><iframe>...</iframe></div>. Markdown KULLANMA. Kod bloğu EKLEME. Direkt içerikle başla.`
         : `Write a comprehensive English blog article about studying ${deptName} in ${countryEN}.
 
-TOPIC: Studying ${deptName} in ${countryEN}, ${dept.university_name}
+TOPIC: Studying ${deptName} in ${countryEN}, ${uniName}
 City: ${dept.city} | Country: ${countryEN}
 ${dept.price ? `Annual Fee: ${dept.price} ${dept.currency || 'EUR'}` : ''}
 
 STRUCTURE (use these H2/H3 headings, NEVER use a dash in headings):
 1. Introduction: Why study ${deptName} in ${countryEN}? (engaging, genuine)
 2. ${deptName} in ${countryEN}: What You'll Learn and Career Opportunities
-3. About ${dept.university_name}: Why This University?
+3. About ${uniName}: Why This University?
 4. Student Life and Cost of Living in ${countryEN} (concrete numbers, use a <table>)
 5. Application Process & Required Documents
 6. Scholarships & Financial Aid (name country-specific scholarships: DAAD, Stipendium Hungaricum, DSU etc.)
@@ -389,8 +593,8 @@ ${ytInstruction}
 
 RULES:
 1. 800-1100 words, genuinely informative, not shallow
-2. Naturally include keywords: "${dept.university_name}", "${dept.university_name} ${countryEN}", "study ${deptName.toLowerCase()} abroad", "studying in ${countryEN}", "${dept.city} university", "education consultancy"
-3. IMPORTANT: Mention the university name ("${dept.university_name}") in the first paragraph, middle, and conclusion. Also frequently mention the country ("${countryEN}") and city ("${dept.city}")
+2. Naturally include keywords: "${uniName}", "${uniName} ${countryEN}", "study ${deptName.toLowerCase()} abroad", "studying in ${countryEN}", "${dept.city} university", "education consultancy"
+3. IMPORTANT: Mention the university name ("${uniName}") in the first paragraph, middle, and conclusion. Also frequently mention the country ("${countryEN}") and city ("${dept.city}")
 4. Use ONLY "VG Danışmanlık" as the company name (3-4 times total)
 5. End with a CTA: "Contact VG Danışmanlık for more information"
 6. This is a BACHELOR'S / UNDERGRADUATE program
@@ -398,7 +602,7 @@ RULES:
 8. Include a <table> in the cost of living section comparing rent, food, transport
 9. Include these three links naturally:
    - <a href="STUDENT_LIFE_LINK">Student Life in ${countryEN}</a>
-   - <a href="UNIVERSITY_DETAIL_LINK">Learn more about ${dept.university_name}</a>${countryGuideLink ? `\n   - <a href="${countryGuideLink}">Complete Guide to Studying in ${countryEN}</a>` : ''}
+   - <a href="UNIVERSITY_DETAIL_LINK">Learn more about ${uniName}</a>${countryGuideLink ? `\n   - <a href="${countryGuideLink}">Complete Guide to Studying in ${countryEN}</a>` : ''}
 10. Add a short FAQ section at the end with 3-4 questions (<h3>Frequently Asked Questions</h3>)
 
 FORMAT: HTML tags: <h2>, <h3>, <p>, <ul>, <li>, <strong>, <a>, <table>, <thead>, <tbody>, <tr>, <th>, <td>. For YouTube embed: <div class="youtube-embed"><iframe>...</iframe></div>. NO Markdown. NO code blocks. Start directly with content.`;
@@ -485,8 +689,8 @@ FORMAT: HTML tags: <h2>, <h3>, <p>, <ul>, <li>, <strong>, <a>, <table>, <thead>,
         }
         if (!hasUniversityLink) {
             linksHtml += lang === 'tr'
-                ? `<li><a href="${universityDetailUrl}">${dept.university_name} hakkında detaylı bilgi</a></li>`
-                : `<li><a href="${universityDetailUrl}">Learn more about ${dept.university_name}</a></li>`;
+                ? `<li><a href="${universityDetailUrl}">${uniName} hakkında detaylı bilgi</a></li>`
+                : `<li><a href="${universityDetailUrl}">Learn more about ${uniName}</a></li>`;
         }
         linksHtml += '</ul>';
         content += linksHtml;
@@ -560,4 +764,4 @@ async function getRelatedPosts(post, limit = 3) {
     return result.rows;
 }
 
-module.exports = { generateBlogPost, getBlogPosts, getBlogPostBySlug, getBlogPostCount, getRelatedPosts, findYouTubeVideo, COUNTRY_NAMES, COUNTRY_STUDENT_LIFE_SLUGS };
+module.exports = { generateBlogPost, getBlogPosts, getBlogPostBySlug, getBlogPostCount, getRelatedPosts, findYouTubeVideo, COUNTRY_NAMES, COUNTRY_STUDENT_LIFE_SLUGS, stripAIPunctuation, getUniversityTurkishName };
