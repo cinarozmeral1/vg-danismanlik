@@ -403,17 +403,9 @@ router.post('/complete-google-registration', async (req, res) => {
         // Format phone number
         const formattedPhone = formatPhoneNumber(phone);
         
-        // Create new user
-        const result = await pool.query(`
-            INSERT INTO users (
-                google_id, email, first_name, last_name, tc_number, phone, password_hash,
-                english_level, high_school_graduation_date, birth_date, gpa,
-                desired_country, current_school, active_class,
-                passport_type, passport_number, home_address,
-                email_verified, registered_via, personal_info_completed, created_at
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, NOW())
-            RETURNING *
-        `, [
+        // Create new user — explicitly mark as pending so admin sees them
+        // in the "Beklemede" list (regardless of DB default).
+        const googleCompleteParams = [
             googleId,
             googleEmail,
             first_name,
@@ -431,10 +423,37 @@ router.post('/complete-google-registration', async (req, res) => {
             passport_type || null,
             passport_number || null,
             home_address || null,
-            true, // email_verified
+            true,
             'google',
-            true // personal_info_completed
-        ]);
+            true
+        ];
+
+        let result;
+        try {
+            result = await pool.query(`
+                INSERT INTO users (
+                    google_id, email, first_name, last_name, tc_number, phone, password_hash,
+                    english_level, high_school_graduation_date, birth_date, gpa,
+                    desired_country, current_school, active_class,
+                    passport_type, passport_number, home_address,
+                    email_verified, registered_via, personal_info_completed,
+                    student_status, created_at
+                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, 'pending', NOW())
+                RETURNING *
+            `, googleCompleteParams);
+        } catch (statusErr) {
+            console.warn('Google complete-register: student_status column missing, retrying without it:', statusErr.message);
+            result = await pool.query(`
+                INSERT INTO users (
+                    google_id, email, first_name, last_name, tc_number, phone, password_hash,
+                    english_level, high_school_graduation_date, birth_date, gpa,
+                    desired_country, current_school, active_class,
+                    passport_type, passport_number, home_address,
+                    email_verified, registered_via, personal_info_completed, created_at
+                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, NOW())
+                RETURNING *
+            `, googleCompleteParams);
+        }
         
         const user = result.rows[0];
         console.log('✅ New user created via Google registration:', user.email);
@@ -632,40 +651,48 @@ router.post('/google-oauth2', async (req, res) => {
             const uniquePhone = '5' + Math.floor(Math.random() * 900000000 + 100000000).toString();
             const placeholderDate = '2000-01-01';
             
-            const result = await pool.query(`
-                INSERT INTO users (
-                    google_id,
-                    email,
-                    first_name,
-                    last_name,
-                    tc_number,
-                    phone,
-                    password_hash,
-                    english_level,
-                    high_school_graduation_date,
-                    birth_date,
-                    email_verified,
-                    registered_via,
-                    personal_info_completed,
-                    created_at
-                ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, NOW())
-                RETURNING *
-            `, [
+            // student_status set to 'pending' explicitly so Google sign-ups
+            // also land in the "Beklemede" admin tab regardless of DB default.
+            const googleInsertParams = [
                 user_data.sub,
                 user_data.email,
-                '', // Will be filled later by user - not auto-filled from Google
-                '', // Will be filled later by user - not auto-filled from Google
-                uniqueTc, // Placeholder tc_number - user will fill later
-                uniquePhone, // Placeholder phone - user will fill later  
-                'GOOGLE_AUTH_NO_PASSWORD', // Marker for Google users
-                'Belirtilmedi', // Placeholder english_level
-                placeholderDate, // Placeholder graduation date
-                placeholderDate, // Placeholder birth date
-                1, // Google users are automatically verified
+                '',
+                '',
+                uniqueTc,
+                uniquePhone,
+                'GOOGLE_AUTH_NO_PASSWORD',
+                'Belirtilmedi',
+                placeholderDate,
+                placeholderDate,
+                1,
                 'google',
-                false // Personal info not completed yet
-            ]);
-            
+                false
+            ];
+
+            let result;
+            try {
+                result = await pool.query(`
+                    INSERT INTO users (
+                        google_id, email, first_name, last_name, tc_number, phone,
+                        password_hash, english_level, high_school_graduation_date,
+                        birth_date, email_verified, registered_via,
+                        personal_info_completed, student_status, created_at
+                    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, 'pending', NOW())
+                    RETURNING *
+                `, googleInsertParams);
+            } catch (statusErr) {
+                console.warn('Google register: student_status column missing, retrying without it:', statusErr.message);
+                result = await pool.query(`
+                    INSERT INTO users (
+                        google_id, email, first_name, last_name, tc_number, phone,
+                        password_hash, english_level, high_school_graduation_date,
+                        birth_date, email_verified, registered_via,
+                        personal_info_completed, created_at
+                    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, NOW())
+                    RETURNING *
+                `, googleInsertParams);
+            }
+
             user = result.rows[0];
             
             // Initialize default checklist for new user
@@ -893,31 +920,17 @@ router.post('/register', async (req, res) => {
         const formattedPhone = formatPhoneNumber(phone);
         
         // Insert user with all provided fields from registration form
-        const result = await pool.query(`
-            INSERT INTO users (
-                first_name,
-                last_name,
-                email,
-                tc_number,
-                phone,
-                password_hash,
-                english_level,
-                high_school_graduation_date,
-                birth_date,
-                gpa,
-                passport_type,
-                passport_number,
-                desired_country,
-                active_class,
-                current_school,
-                home_address,
-                verification_token,
-                registered_via,
-                personal_info_completed,
-                email_verified
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
-            RETURNING id, first_name, last_name, email, phone
-        `, [
+        // student_status is explicitly set to 'pending' so new students always
+        // land in the "Beklemede" admin tab, regardless of DB default.
+        const insertColumns = [
+            'first_name', 'last_name', 'email', 'tc_number', 'phone',
+            'password_hash', 'english_level', 'high_school_graduation_date',
+            'birth_date', 'gpa', 'passport_type', 'passport_number',
+            'desired_country', 'active_class', 'current_school', 'home_address',
+            'verification_token', 'registered_via', 'personal_info_completed',
+            'email_verified'
+        ];
+        const insertValues = [
             first_name || '',
             last_name || '',
             email,
@@ -937,8 +950,27 @@ router.post('/register', async (req, res) => {
             verificationToken,
             'email',
             isPersonalInfoComplete,
-            false // email_verified - must verify via email
-        ]);
+            false
+        ];
+
+        let result;
+        try {
+            const colsWithStatus = [...insertColumns, 'student_status'];
+            const valsWithStatus = [...insertValues, 'pending'];
+            const placeholders = valsWithStatus.map((_, i) => `$${i + 1}`).join(', ');
+            result = await pool.query(
+                `INSERT INTO users (${colsWithStatus.join(', ')}) VALUES (${placeholders}) RETURNING id, first_name, last_name, email, phone`,
+                valsWithStatus
+            );
+        } catch (statusErr) {
+            // Fallback if student_status column does not yet exist
+            console.warn('Register: student_status column missing, retrying without it:', statusErr.message);
+            const placeholders = insertValues.map((_, i) => `$${i + 1}`).join(', ');
+            result = await pool.query(
+                `INSERT INTO users (${insertColumns.join(', ')}) VALUES (${placeholders}) RETURNING id, first_name, last_name, email, phone`,
+                insertValues
+            );
+        }
 
         const user = result.rows[0];
 

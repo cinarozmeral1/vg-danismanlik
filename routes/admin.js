@@ -630,6 +630,41 @@ async function ensureTablesExist() {
             }
         } catch (e) { console.log('Blog migration skipped:', e.message); }
 
+        // One-time migration: Strip em-dashes (—) and en-dashes (–) from blog
+        // titles and content, replacing them with regular hyphens. Long
+        // dashes are a strong "AI-written" tell and we want all our blog
+        // posts to read as human-written prose.
+        try {
+            const dashCheck = await pool.query(`
+                SELECT COUNT(*) FROM blog_posts
+                WHERE title_tr ~ '[—–―]' OR title_en ~ '[—–―]'
+                   OR content_tr ~ '[—–―]' OR content_en ~ '[—–―]'
+                   OR excerpt_tr ~ '[—–―]' OR excerpt_en ~ '[—–―]'
+                   OR meta_description_tr ~ '[—–―]' OR meta_description_en ~ '[—–―]'
+                   OR keywords ~ '[—–―]'
+            `);
+            if (parseInt(dashCheck.rows[0].count) > 0) {
+                const dashFields = [
+                    'title_tr', 'title_en',
+                    'content_tr', 'content_en',
+                    'excerpt_tr', 'excerpt_en',
+                    'meta_description_tr', 'meta_description_en',
+                    'keywords'
+                ];
+                // Replace " — ", " – ", " ― " (with optional surrounding spaces)
+                // with " - " and collapse double spaces.
+                const setClauses = dashFields.map(f =>
+                    `${f} = regexp_replace(regexp_replace(COALESCE(${f}, ''), '\\s*[—–―]\\s*', ' - ', 'g'), '[ \\t]{2,}', ' ', 'g')`
+                ).join(',\n                        ');
+                await pool.query(`
+                    UPDATE blog_posts
+                    SET ${setClauses},
+                        updated_at = CURRENT_TIMESTAMP
+                `);
+                console.log('✅ Blog posts cleaned: em-dashes removed');
+            }
+        } catch (e) { console.log('Blog em-dash migration skipped:', e.message); }
+
         console.log('✅ Tables ensured to exist');
     } catch (error) {
         console.error('❌ Error ensuring tables:', error.message);

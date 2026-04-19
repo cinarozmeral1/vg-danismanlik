@@ -12,6 +12,25 @@ const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
 const YOUTUBE_API_URL = 'https://www.googleapis.com/youtube/v3/search';
 
 /**
+ * Strip "AI-style" punctuation that signals machine-generated text.
+ * - Em-dash (—, U+2014) and en-dash (–, U+2013) → regular hyphen with spaces ("-")
+ * - Smart quotes ("" '') → straight quotes
+ * - Horizontal bar (―, U+2015) → regular hyphen
+ * Used both for newly generated content and for cleaning legacy posts.
+ */
+function stripAIPunctuation(text) {
+    if (!text || typeof text !== 'string') return text;
+    return text
+        .replace(/\s*[—–―]\s*/g, ' - ')
+        .replace(/[\u2018\u2019]/g, "'")
+        .replace(/[\u201C\u201D]/g, '"')
+        .replace(/[ \t]+-[ \t]+/g, ' - ')
+        .replace(/[ \t]{2,}/g, ' ');
+}
+
+module.exports.stripAIPunctuation = stripAIPunctuation;
+
+/**
  * YouTube Data API v3 ile universite/bolum icin video bul.
  * 3 katmanli arama: (1) universite+bolum, (2) sadece universite, (3) ulke+egitim
  */
@@ -231,17 +250,17 @@ async function generateBlogPost(options = {}) {
     const ytVideo = await findYouTubeVideo(dept.university_name, dept.name_tr, countryTR);
     
     console.log('🤖 Generating Turkish content...');
-    const contentTR = await generateContent(dept, 'tr', countryTR, ytVideo);
+    const contentTR = stripAIPunctuation(await generateContent(dept, 'tr', countryTR, ytVideo));
     
     console.log('🤖 Generating English content...');
-    const contentEN = await generateContent(dept, 'en', countryEN, ytVideo);
+    const contentEN = stripAIPunctuation(await generateContent(dept, 'en', countryEN, ytVideo));
     
     // Excerpts ve SEO uyumlu Türkçe slug (her makaleye özel URL)
-    const excerptTR = contentTR.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 180) + '...';
-    const excerptEN = contentEN.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 180) + '...';
+    const excerptTR = stripAIPunctuation(contentTR.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 180)) + '...';
+    const excerptEN = stripAIPunctuation(contentEN.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 180)) + '...';
     
-    const titleTR = `${dept.university_name} - ${countryTR}'da ${dept.name_tr} Okumak | ${dept.city}`;
-    const titleEN = `${dept.university_name} - Studying ${dept.name_en || dept.name_tr} in ${countryEN} | ${dept.city}`;
+    const titleTR = stripAIPunctuation(`${dept.university_name} - ${countryTR}'da ${dept.name_tr} Okumak | ${dept.city}`);
+    const titleEN = stripAIPunctuation(`${dept.university_name} - Studying ${dept.name_en || dept.name_tr} in ${countryEN} | ${dept.city}`);
 
     const baseSlug = createSlug(`${dept.city}-${dept.university_name}-${dept.name_tr}`);
     const slug = await ensureUniqueSlug(baseSlug);
@@ -264,8 +283,8 @@ async function generateBlogPost(options = {}) {
         contentEN,
         excerptTR,
         excerptEN,
-        `${dept.university_name} ${dept.city} - ${countryTR}'da ${dept.name_tr} okumak: ücretler, burslar, başvuru süreci, kabul şartları ve öğrenci yaşamı rehberi.`.substring(0, 155),
-        `${dept.university_name} ${dept.city} - Study ${dept.name_en || dept.name_tr} in ${countryEN}: tuition fees, scholarships, admission requirements and student life guide.`.substring(0, 155),
+        stripAIPunctuation(`${dept.university_name} ${dept.city} - ${countryTR}'da ${dept.name_tr} okumak: ücretler, burslar, başvuru süreci, kabul şartları ve öğrenci yaşamı rehberi.`).substring(0, 155),
+        stripAIPunctuation(`${dept.university_name} ${dept.city} - Study ${dept.name_en || dept.name_tr} in ${countryEN}: tuition fees, scholarships, admission requirements and student life guide.`).substring(0, 155),
         `VG Danışmanlık, vgdanismanlik, ${dept.university_name}, ${dept.university_name} ${countryTR}, ${dept.university_name} kabul şartları, ${dept.university_name} ücretleri, ${dept.name_tr}, ${countryTR}, ${dept.city}, yurtdışı eğitim, eğitim danışmanlığı`,
         'department',
         dept.university_id,
@@ -308,34 +327,34 @@ async function generateContent(dept, lang, countryName, ytVideo) {
         : '';
 
     const systemPrompt = lang === 'tr' 
-        ? `Sen deneyimli bir yurt dışı eğitim blog yazarısın. VG Danışmanlık Eğitim Danışmanlığı için yazıyorsun. Şirketin ismi "VG Danışmanlık" — bu ismi kullan. Yazın samimi, bilgilendirici ve gerçek bir insan tarafından yazılmış gibi olsun — yapay zeka tarafından yazıldığı belli olmasın. SADECE h2, h3, p, ul, li, strong, a, table, thead, tbody, tr, th, td, div, iframe tagleri kullan. html, head, body, title tagleri KULLANMA. Sadece Türkçe ve Latin karakterler kullan.`
-        : `You are an experienced study-abroad blog writer for VG Danışmanlık Education Consultancy. Write in a genuine, human tone — it should NOT sound AI-generated. Use ONLY h2, h3, p, ul, li, strong, a, table, thead, tbody, tr, th, td, div, iframe tags. DO NOT use html, head, body, title tags. Use ONLY English and Latin characters.`;
+        ? `Sen deneyimli bir yurt dışı eğitim blog yazarısın. VG Danışmanlık Eğitim Danışmanlığı için yazıyorsun. Şirketin ismi "VG Danışmanlık" - bu ismi kullan. Yazın samimi, bilgilendirici ve gerçek bir insan tarafından yazılmış gibi olsun, yapay zeka tarafından yazıldığı belli olmasın. ÖNEMLİ: Uzun tire (em-dash "—") veya kısa tire (en-dash "–") ASLA kullanma. Sadece normal tire ("-") kullan, çünkü uzun tireler metni yapay zeka çıktısı gibi gösterir. Aynı şekilde "smart quotes" yerine düz tırnak (' ve ") kullan. SADECE h2, h3, p, ul, li, strong, a, table, thead, tbody, tr, th, td, div, iframe tagleri kullan. html, head, body, title tagleri KULLANMA. Sadece Türkçe ve Latin karakterler kullan.`
+        : `You are an experienced study-abroad blog writer for VG Danışmanlık Education Consultancy. Write in a genuine, human tone, it should NOT sound AI-generated. IMPORTANT: NEVER use em-dash ("—") or en-dash ("–"). Use regular hyphens ("-") only, because em-dashes make text look AI-generated. Likewise, use straight quotes (' and ") instead of smart/curly quotes. Use ONLY h2, h3, p, ul, li, strong, a, table, thead, tbody, tr, th, td, div, iframe tags. DO NOT use html, head, body, title tags. Use ONLY English and Latin characters.`;
 
     const prompt = lang === 'tr' 
         ? `${countryName}'da ${dept.name_tr} okumanın tüm detaylarını anlatan kapsamlı bir Türkçe blog makalesi yaz.
 
-KONU: ${countryName}'da ${dept.name_tr} Okumak — ${dept.university_name}
+KONU: ${countryName}'da ${dept.name_tr} Okumak - ${dept.university_name}
 Şehir: ${dept.city} | Ülke: ${countryName}
 ${dept.price ? `Yıllık Ücret: ${dept.price} ${dept.currency || 'EUR'}` : ''}
 
 YAPI (bu başlıkları kullan, H2/H3 etiketleriyle):
-1. Giriş — Neden ${countryName}'da ${dept.name_tr} okumalısın? (merak uyandıran, samimi)
+1. Giriş - Neden ${countryName}'da ${dept.name_tr} okumalısın? (merak uyandıran, samimi)
 2. ${countryName}'da ${dept.name_tr} Bölümü: Ne Öğrenirsin, Kariyer Fırsatları Neler?
-3. ${dept.university_name} Hakkında — Neden Bu Üniversite?
-4. ${countryName}'da Öğrenci Yaşamı ve Yaşam Maliyetleri (somut rakamlar ver — <table> kullan)
+3. ${dept.university_name} Hakkında - Neden Bu Üniversite?
+4. ${countryName}'da Öğrenci Yaşamı ve Yaşam Maliyetleri (somut rakamlar ver, <table> kullan)
 5. Başvuru Süreci ve Gerekli Belgeler
 6. Burs ve Finansal Destek İmkanları (varsa ülkeye özgü burs isimlerini say: DAAD, Stipendium Hungaricum, DSU vb.)
 7. VG Danışmanlık ile Başvuru Süreci
 ${ytInstruction}
 
 KURALLAR:
-1. 800-1100 kelime — kısa ve yüzeysel değil, gerçekten bilgilendirici yaz
+1. 800-1100 kelime, kısa ve yüzeysel değil, gerçekten bilgilendirici yaz
 2. Şu anahtar kelimeleri DOĞAL şekilde dağıt (zorlama yapma): "${dept.university_name}", "${dept.university_name} ${countryName}", "${dept.university_name} ${dept.name_tr.toLowerCase()}", "yurtdışında ${dept.name_tr.toLowerCase()} okumak", "${countryName}'da ${dept.name_tr.toLowerCase()} bölümü", "yurt dışı eğitim danışmanlığı", "${dept.city} üniversite"
-3. ÖNEMLİ: Üniversite ismini ("${dept.university_name}") makalenin ilk paragrafında, ortasında ve sonuç paragrafında mutlaka kullan. Ülke ismini ("${countryName}") ve şehir ismini ("${dept.city}") de sık sık geçir — Google'da bu isimlerle aranıldığında makalenin çıkması gerekiyor
+3. ÖNEMLİ: Üniversite ismini ("${dept.university_name}") makalenin ilk paragrafında, ortasında ve sonuç paragrafında mutlaka kullan. Ülke ismini ("${countryName}") ve şehir ismini ("${dept.city}") de sık sık geçir, Google'da bu isimlerle aranıldığında makalenin çıkması gerekiyor
 4. Şirket ismi olarak SADECE "VG Danışmanlık" kullan (toplam 3-4 kez)
 5. Son bölümde "VG Danışmanlık ile iletişime geçebilirsiniz" şeklinde CTA ekle
 6. Bu bir LİSANS programıdır, yüksek lisans değil
-7. Rakamlar ve somut bilgiler kullan — vize süresi, yaşam maliyeti, ücret miktarı, QS ranking (varsa), öğrenci sayısı, kabul oranı
+7. Rakamlar ve somut bilgiler kullan: vize süresi, yaşam maliyeti, ücret miktarı, QS ranking (varsa), öğrenci sayısı, kabul oranı
 8. Yaşam maliyeti bölümünde bir <table> ile şehir bazlı karşılaştırma yap (kira, yemek, ulaşım gibi kalemler)
 9. Makalenin içerisine şu üç linki doğal şekilde yerleştir:
    - <a href="STUDENT_LIFE_LINK">${countryName}'de Öğrenci Hayatı</a>
@@ -345,28 +364,28 @@ KURALLAR:
 FORMAT: HTML tagleri: <h2>, <h3>, <p>, <ul>, <li>, <strong>, <a>, <table>, <thead>, <tbody>, <tr>, <th>, <td>. YouTube embed için: <div class="youtube-embed"><iframe>...</iframe></div>. Markdown KULLANMA. Kod bloğu EKLEME. Direkt içerikle başla.`
         : `Write a comprehensive English blog article about studying ${deptName} in ${countryEN}.
 
-TOPIC: Studying ${deptName} in ${countryEN} — ${dept.university_name}
+TOPIC: Studying ${deptName} in ${countryEN} - ${dept.university_name}
 City: ${dept.city} | Country: ${countryEN}
 ${dept.price ? `Annual Fee: ${dept.price} ${dept.currency || 'EUR'}` : ''}
 
 STRUCTURE (use these H2/H3 headings):
-1. Introduction — Why study ${deptName} in ${countryEN}? (engaging, genuine)
+1. Introduction - Why study ${deptName} in ${countryEN}? (engaging, genuine)
 2. ${deptName} in ${countryEN}: What You'll Learn & Career Opportunities
-3. About ${dept.university_name} — Why This University?
-4. Student Life & Cost of Living in ${countryEN} (concrete numbers — use a <table>)
+3. About ${dept.university_name} - Why This University?
+4. Student Life & Cost of Living in ${countryEN} (concrete numbers, use a <table>)
 5. Application Process & Required Documents
 6. Scholarships & Financial Aid (name country-specific scholarships: DAAD, Stipendium Hungaricum, DSU etc.)
 7. Apply with VG Danışmanlık
 ${ytInstruction}
 
 RULES:
-1. 800-1100 words — genuinely informative, not shallow
+1. 800-1100 words, genuinely informative, not shallow
 2. Naturally include keywords: "${dept.university_name}", "${dept.university_name} ${countryEN}", "study ${deptName.toLowerCase()} abroad", "studying in ${countryEN}", "${dept.city} university", "education consultancy"
 3. IMPORTANT: Mention the university name ("${dept.university_name}") in the first paragraph, middle, and conclusion. Also frequently mention the country ("${countryEN}") and city ("${dept.city}")
 4. Use ONLY "VG Danışmanlık" as the company name (3-4 times total)
 5. End with a CTA: "Contact VG Danışmanlık for more information"
 6. This is a BACHELOR'S / UNDERGRADUATE program
-7. Use concrete facts — visa duration, living costs, tuition amounts, QS ranking (if applicable), student count, acceptance rate
+7. Use concrete facts: visa duration, living costs, tuition amounts, QS ranking (if applicable), student count, acceptance rate
 8. Include a <table> in the cost of living section comparing rent, food, transport
 9. Include these three links naturally:
    - <a href="STUDENT_LIFE_LINK">Student Life in ${countryEN}</a>
