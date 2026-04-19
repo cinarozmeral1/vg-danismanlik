@@ -635,49 +635,68 @@ async function ensureTablesExist() {
         // blog titles, content, excerpts and meta. Dashes used as sentence
         // separators are a classic AI-writing tell, and the user prefers
         // colon-style headings ("Giriş: ..." rather than "Giriş - ...").
-        // We only target dashes WITH SURROUNDING SPACES so legitimate
-        // compound words (e.g. "in-class", year ranges "2024-2025",
-        // hyphenated names) are left alone.
+        //
+        // Implemented in pure JS (not SQL regex) because PostgreSQL's `~`
+        // operator was not reliably matching the literal multibyte em-dash
+        // character on prod, causing the previous SQL-based migration to
+        // silently skip every row.
         try {
-            const dashCheck = await pool.query(`
-                SELECT COUNT(*) FROM blog_posts
-                WHERE title_tr ~ '([—–―]| - )' OR title_en ~ '([—–―]| - )'
-                   OR content_tr ~ '([—–―]| - )' OR content_en ~ '([—–―]| - )'
-                   OR excerpt_tr ~ '([—–―]| - )' OR excerpt_en ~ '([—–―]| - )'
-                   OR meta_description_tr ~ '([—–―]| - )' OR meta_description_en ~ '([—–―]| - )'
+            const cleanField = (s) => {
+                if (s == null) return s;
+                if (typeof s !== 'string') return s;
+                // Split on HTML tags so attribute values (class="btn-primary"
+                // etc.) and compound words inside tags are not touched.
+                const parts = s.split(/(<[^>]+>)/g);
+                return parts.map((part, idx) => {
+                    if (idx % 2 === 1) return part; // HTML tag, leave alone
+                    return part
+                        .replace(/\s*[\u2014\u2013\u2015]\s*/g, ': ') // — – ―
+                        .replace(/(\S)\s+-\s+(\S)/g, '$1: $2')         // " - " separator
+                        .replace(/\s*:\s*:\s*/g, ': ')                  // collapse "::"
+                        .replace(/[ \t]{2,}/g, ' ');
+                }).join('');
+            };
+
+            const allPosts = await pool.query(`
+                SELECT id, title_tr, title_en, content_tr, content_en,
+                       excerpt_tr, excerpt_en,
+                       meta_description_tr, meta_description_en
+                FROM blog_posts
             `);
-            if (parseInt(dashCheck.rows[0].count) > 0) {
-                const dashFields = [
-                    'title_tr', 'title_en',
-                    'content_tr', 'content_en',
-                    'excerpt_tr', 'excerpt_en',
-                    'meta_description_tr', 'meta_description_en'
-                ];
-                // 1) " — ", " – ", " ― " → ": "
-                // 2) " - " (space-hyphen-space) → ": "
-                // 3) collapse "::" doubles and double spaces
-                const setClauses = dashFields.map(f =>
-                    `${f} = regexp_replace(
-                        regexp_replace(
-                            regexp_replace(
-                                regexp_replace(COALESCE(${f}, ''), '\\s*[—–―]\\s*', ': ', 'g'),
-                                '\\s+-\\s+', ': ', 'g'
-                            ),
-                            ':\\s*:', ':', 'g'
-                        ),
-                        '[ \\t]{2,}', ' ', 'g'
-                    )`
-                ).join(',\n                        ');
-                await pool.query(`
-                    UPDATE blog_posts
-                    SET ${setClauses},
-                        updated_at = CURRENT_TIMESTAMP
-                    WHERE title_tr ~ '([—–―]| - )' OR title_en ~ '([—–―]| - )'
-                       OR content_tr ~ '([—–―]| - )' OR content_en ~ '([—–―]| - )'
-                       OR excerpt_tr ~ '([—–―]| - )' OR excerpt_en ~ '([—–―]| - )'
-                       OR meta_description_tr ~ '([—–―]| - )' OR meta_description_en ~ '([—–―]| - )'
-                `);
-                console.log('✅ Blog posts cleaned: long dashes and " - " separators replaced with ":"');
+
+            let cleanedCount = 0;
+            for (const row of allPosts.rows) {
+                const updated = {
+                    title_tr: cleanField(row.title_tr),
+                    title_en: cleanField(row.title_en),
+                    content_tr: cleanField(row.content_tr),
+                    content_en: cleanField(row.content_en),
+                    excerpt_tr: cleanField(row.excerpt_tr),
+                    excerpt_en: cleanField(row.excerpt_en),
+                    meta_description_tr: cleanField(row.meta_description_tr),
+                    meta_description_en: cleanField(row.meta_description_en)
+                };
+                const changed = Object.keys(updated).some(k => updated[k] !== row[k]);
+                if (!changed) continue;
+                await pool.query(
+                    `UPDATE blog_posts
+                     SET title_tr=$1, title_en=$2, content_tr=$3, content_en=$4,
+                         excerpt_tr=$5, excerpt_en=$6,
+                         meta_description_tr=$7, meta_description_en=$8,
+                         updated_at = CURRENT_TIMESTAMP
+                     WHERE id = $9`,
+                    [
+                        updated.title_tr, updated.title_en,
+                        updated.content_tr, updated.content_en,
+                        updated.excerpt_tr, updated.excerpt_en,
+                        updated.meta_description_tr, updated.meta_description_en,
+                        row.id
+                    ]
+                );
+                cleanedCount++;
+            }
+            if (cleanedCount > 0) {
+                console.log(`✅ Blog posts cleaned: ${cleanedCount} rows had long dashes / " - " separators replaced with ":"`);
             }
         } catch (e) { console.log('Blog em-dash migration skipped:', e.message); }
 
