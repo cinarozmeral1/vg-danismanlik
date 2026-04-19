@@ -291,7 +291,7 @@
         "url": "https://vgdanismanlik.com",
         "potentialAction": {
             "@type": "SearchAction",
-            "target": "https://vgdanismanlik.com/universities?search={search_term_string}",
+            "target": "https://vgdanismanlik.com/universiteler?search={search_term_string}",
             "query-input": "required name=search_term_string"
         }
     }
@@ -311,7 +311,7 @@
                 "@type": "ListItem",
                 "position": 2,
                 "name": "Üniversiteler",
-                "item": "https://vgdanismanlik.com/universities"
+                "item": "https://vgdanismanlik.com/universiteler"
             },
             {
                 "@type": "ListItem",
@@ -402,7 +402,7 @@
                         <a class="nav-link" href="/services"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.services : 'Hizmetler' %></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/universities"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.universities : 'Üniversiteler' %></a>
+                        <a class="nav-link" href="/universiteler"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.universities : 'Üniversiteler' %></a>
                     </li>
 
                     
@@ -779,7 +779,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="/universities" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
+                            <a href="/universiteler" style="display: flex; align-items: center; padding: 0.875rem 1.25rem; color: var(--gray-700); text-decoration: none; border-left: 3px solid transparent; ">
                                 <i class="fas fa-university" style="width: 20px; margin-right: 12px; color: var(--primary-600);"></i>
                                 <span style="font-size: 0.9rem; font-weight: 500;"><%= (typeof t !== 'undefined' && t.nav) ? t.nav.universities : 'Üniversiteler' %></span>
                             </a>
@@ -987,16 +987,16 @@
                 <div class="col-lg-3 col-md-3 mb-4">
                     <h6 class="mb-3">Ülke Rehberleri</h6>
                     <div class="d-flex flex-column gap-1">
-                        <a href="/ulkede-universite/almanya" class="text-white-50 text-decoration-none small" style="transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color=''">🇩🇪 Almanya</a>
-                        <a href="/ulkede-universite/cekya" class="text-white-50 text-decoration-none small" style="transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color=''">🇨🇿 Çekya</a>
-                        <a href="/ulkede-universite/italya" class="text-white-50 text-decoration-none small" style="transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color=''">🇮🇹 İtalya</a>
-                        <a href="/ulkede-universite/avusturya" class="text-white-50 text-decoration-none small" style="transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color=''">🇦🇹 Avusturya</a>
-                        <a href="/ulkede-universite/ingiltere" class="text-white-50 text-decoration-none small" style="transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color=''">🇬🇧 İngiltere</a>
-                        <a href="/ulkede-universite/polonya" class="text-white-50 text-decoration-none small" style="transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color=''">🇵🇱 Polonya</a>
-                        <a href="/ulkede-universite/macaristan" class="text-white-50 text-decoration-none small" style="transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color=''">🇭🇺 Macaristan</a>
-                        <a href="/ulkede-universite/hollanda" class="text-white-50 text-decoration-none small" style="transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color=''">🇳🇱 Hollanda</a>
-                        <a href="/ulkede-universite/ispanya" class="text-white-50 text-decoration-none small" style="transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color=''">🇪🇸 İspanya</a>
-                        <a href="/ulkede-universite/fransa" class="text-white-50 text-decoration-none small" style="transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color=''">🇫🇷 Fransa</a>
+                        <a href="/almanyada-universite" class="text-white-50 text-decoration-none small" style="transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color=''">🇩🇪 Almanya</a>
+                        <a href="/cekyada-universite" class="text-white-50 text-decoration-none small" style="transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color=''">🇨🇿 Çekya</a>
+                        <a href="/italyada-universite" class="text-white-50 text-decoration-none small" style="transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color=''">🇮🇹 İtalya</a>
+                        <a href="/avusturyada-universite" class="text-white-50 text-decoration-none small" style="transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color=''">🇦🇹 Avusturya</a>
+                        <a href="/ingilterede-universite" class="text-white-50 text-decoration-none small" style="transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color=''">🇬🇧 İngiltere</a>
+                        <a href="/polonyada-universite" class="text-white-50 text-decoration-none small" style="transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color=''">🇵🇱 Polonya</a>
+                        <a href="/macaristanda-universite" class="text-white-50 text-decoration-none small" style="transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color=''">🇭🇺 Macaristan</a>
+                        <a href="/hollandada-universite" class="text-white-50 text-decoration-none small" style="transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color=''">🇳🇱 Hollanda</a>
+                        <a href="/ispanyada-universite" class="text-white-50 text-decoration-none small" style="transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color=''">🇪🇸 İspanya</a>
+                        <a href="/fransada-universite" class="text-white-50 text-decoration-none small" style="transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color=''">🇫🇷 Fransa</a>
                     </div>
                 </div>
 

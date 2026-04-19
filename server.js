@@ -730,7 +730,11 @@ app.get('/admin/universities/edit/:id', async (req, res) => {
     }
 });
 
-app.get('/universities/:slug', async (req, res) => {
+// University detail pages live at /universiteler/:slug (canonical Turkish URL).
+// /universities/:slug 301-redirects to /universiteler/:slug so existing links
+// and Google index entries keep working. The legacy_slug fallback (English
+// pre-migration slugs → current Turkish slug) also still applies.
+const universityDetailHandler = async (req, res) => {
     try {
         const slug = req.params.slug;
 
@@ -741,20 +745,19 @@ app.get('/universities/:slug', async (req, res) => {
         `, [slug]);
 
         if (universityResult.rows.length === 0) {
-            // Fallback: maybe the visitor / Google still has the OLD English
-            // slug — look it up via legacy_slug and 301-redirect to the
-            // current canonical Turkish slug. This preserves SEO equity for
-            // every URL we ever shipped.
+            // Fallback: visitor/Google still has the OLD English slug — look
+            // it up via legacy_slug and 301-redirect to the current Turkish
+            // canonical URL. Preserves SEO equity for every URL we ever
+            // shipped.
             try {
                 const legacyResult = await pool.query(
                     'SELECT slug FROM universities WHERE legacy_slug = $1 LIMIT 1',
                     [slug]
                 );
                 if (legacyResult.rows.length > 0 && legacyResult.rows[0].slug) {
-                    return res.redirect(301, `/universities/${legacyResult.rows[0].slug}`);
+                    return res.redirect(301, `/universiteler/${legacyResult.rows[0].slug}`);
                 }
             } catch (legacyErr) {
-                // legacy_slug column may not exist on very old DBs; ignore
                 console.warn('legacy_slug lookup failed:', legacyErr.message);
             }
             return res.status(404).render('error', {
@@ -778,7 +781,7 @@ app.get('/universities/:slug', async (req, res) => {
         res.locals.seoTitle = `${university.name} - ${university.country} Üniversite | VG Danışmanlık`;
         res.locals.seoDescription = `${university.name} (${university.city}, ${university.country}) bölümleri, programları, ücretleri ve başvuru süreci. ${university.country}'da üniversite okumak ve yurt dışı eğitim danışmanlığı için VG Danışmanlık'a başvurun.`;
         res.locals.seoKeywords = `${university.name.toLowerCase()}, ${university.name.toLowerCase()} bölümleri, ${university.name.toLowerCase()} ücretleri, ${university.city.toLowerCase()} üniversite, ${university.country.toLowerCase()} üniversite, ${university.country.toLowerCase()}'da eğitim, ${university.country.toLowerCase()}'da üniversite okumak, yurt dışı eğitim danışmanlığı, yurtdışı üniversite başvurusu, VG Danışmanlık`;
-        res.locals.canonicalUrl = `${res.locals.baseUrl || 'https://vgdanismanlik.com'}/universities/${slug}`;
+        res.locals.canonicalUrl = `${res.locals.baseUrl || 'https://vgdanismanlik.com'}/universiteler/${slug}`;
         res.locals.schemaType = 'CollegeOrUniversity';
         res.locals.ogType = 'article';
         if (university.logo_url) {
@@ -799,14 +802,16 @@ app.get('/universities/:slug', async (req, res) => {
             message: 'Üniversite bilgileri yüklenirken bir hata oluştu.'
         });
     }
-});
+};
+app.get('/universiteler/:slug', universityDetailHandler);
+app.get('/universities/:slug', (req, res) => res.redirect(301, `/universiteler/${req.params.slug}`));
 
 app.get('/c/:id', async (req, res) => {
     try {
         const universityId = req.params.id;
         const result = await pool.query('SELECT slug FROM universities WHERE id = $1', [universityId]);
         if (result.rows.length > 0 && result.rows[0].slug) {
-            return res.redirect(301, '/universities/' + result.rows[0].slug);
+            return res.redirect(301, '/universiteler/' + result.rows[0].slug);
         }
         return res.status(404).render('error', {
             title: 'Üniversite Bulunamadı',
@@ -1045,7 +1050,7 @@ app.get('/sitemap.xml', async (req, res) => {
     
     <!-- Universities -->
     <url>
-        <loc>${baseUrl}/universities</loc>
+        <loc>${baseUrl}/universiteler</loc>
         <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.9</priority>
@@ -1125,17 +1130,17 @@ app.get('/sitemap.xml', async (req, res) => {
         <priority>0.8</priority>
     </url>
     
-    <!-- Ülke Rehber Sayfaları -->
-    <url><loc>${baseUrl}/ulkede-universite/almanya</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
-    <url><loc>${baseUrl}/ulkede-universite/cekya</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
-    <url><loc>${baseUrl}/ulkede-universite/italya</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
-    <url><loc>${baseUrl}/ulkede-universite/avusturya</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
-    <url><loc>${baseUrl}/ulkede-universite/ingiltere</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
-    <url><loc>${baseUrl}/ulkede-universite/polonya</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
-    <url><loc>${baseUrl}/ulkede-universite/macaristan</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
-    <url><loc>${baseUrl}/ulkede-universite/hollanda</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
-    <url><loc>${baseUrl}/ulkede-universite/ispanya</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
-    <url><loc>${baseUrl}/ulkede-universite/fransa</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+    <!-- Ülke Rehber Sayfaları (Türkçe URL) -->
+    <url><loc>${baseUrl}/almanyada-universite</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+    <url><loc>${baseUrl}/cekyada-universite</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+    <url><loc>${baseUrl}/italyada-universite</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+    <url><loc>${baseUrl}/avusturyada-universite</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+    <url><loc>${baseUrl}/ingilterede-universite</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+    <url><loc>${baseUrl}/polonyada-universite</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+    <url><loc>${baseUrl}/macaristanda-universite</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+    <url><loc>${baseUrl}/hollandada-universite</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+    <url><loc>${baseUrl}/ispanyada-universite</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+    <url><loc>${baseUrl}/fransada-universite</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
 
     <!-- Partners -->
     <url>
@@ -1183,7 +1188,7 @@ app.get('/sitemap.xml', async (req, res) => {
             ? new Date(uni.updated_at).toISOString().split('T')[0]
             : new Date().toISOString().split('T')[0];
         return `    <url>
-        <loc>${baseUrl}/universities/${uni.slug || uni.id}</loc>
+        <loc>${baseUrl}/universiteler/${uni.slug || uni.id}</loc>
         <lastmod>${lastmod}</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
@@ -1361,7 +1366,7 @@ app.get('/partners/medczech', (req, res) => {
 });
 
 app.get('/partners/bestschool', (req, res) => {
-    res.redirect(301, '/universities/best-school-cz-prag-czech-republic');
+    res.redirect(301, '/universiteler/best-school-cz-prag');
 });
 
 app.get('/partners/kanpus', (req, res) => {
@@ -1369,15 +1374,16 @@ app.get('/partners/kanpus', (req, res) => {
 });
 
 
-// Universities page route - Optimized
-app.get('/universities', async (req, res) => {
+// Universities listing page lives at /universiteler (canonical Turkish URL).
+// /universities is kept as a 301 redirect to preserve old links and SEO equity.
+const universitiesListingHandler = async (req, res) => {
     try {
-        // Set SEO metadata with competitive keywords
         res.locals.seoTitle = 'Üniversiteler - Yurt Dışı Üniversite Başvurusu | Venture Global Eğitim Danışmanlığı';
-        res.locals.seoDescription = 'Almanya, Çekya, İtalya, Avusturya, İngiltere, Polonya ve Macaristan\'daki prestijli üniversiteleri keşfedin. Yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı ve Avrupa eğitim danışmanlığı hizmetlerimiz ile 50+ üniversite seçeneği. Size en uygun eğitim fırsatını bulun.';
-        res.locals.seoKeywords = 'yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı, Avrupa eğitim danışmanlığı, avrupa üniversiteleri, almanya üniversiteleri, çekya üniversiteleri, italya üniversiteleri, avusturya üniversiteleri, ingiltere üniversiteleri, polonya üniversiteleri, macaristan üniversiteleri, yurtdışı üniversite başvurusu';
-        
-        // Get all universities from database with optimized query (sorted by admin-defined order)
+        res.locals.seoDescription = 'Almanya, Çekya, İtalya, Avusturya, İngiltere, Polonya, Macaristan, Hollanda, İspanya ve Fransa\'daki prestijli üniversiteleri keşfedin. Yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı ve Avrupa eğitim danışmanlığı hizmetlerimiz ile 100+ üniversite seçeneği. Size en uygun eğitim fırsatını bulun.';
+        res.locals.seoKeywords = 'yurt dışı danışmanlık, yurt dışı eğitim danışmanlığı, Avrupa eğitim danışmanlığı, avrupa üniversiteleri, almanya üniversiteleri, çekya üniversiteleri, italya üniversiteleri, avusturya üniversiteleri, ingiltere üniversiteleri, polonya üniversiteleri, macaristan üniversiteleri, hollanda üniversiteleri, ispanya üniversiteleri, fransa üniversiteleri, yurtdışı üniversite başvurusu';
+        res.locals.canonicalUrl = 'https://vgdanismanlik.com/universiteler';
+        res.locals.currentPath = '/universiteler';
+
         const universitiesResult = await pool.query(`
             SELECT 
                 u.*,
@@ -1396,13 +1402,14 @@ app.get('/universities', async (req, res) => {
         });
     } catch (error) {
         console.error('Universities page error:', error);
-        // Fallback to empty array if database error
         res.render('universities', {
             title: 'Üniversiteler - Venture Global',
             universities: []
         });
     }
-});
+};
+app.get('/universiteler', universitiesListingHandler);
+app.get('/universities', (req, res) => res.redirect(301, '/universiteler'));
 
 app.get('/university/:id', async (req, res) => {
     try {
@@ -1422,7 +1429,7 @@ app.get('/university/:id', async (req, res) => {
             result = await pool.query('SELECT slug FROM universities WHERE LOWER(name) LIKE LOWER($1) LIMIT 1', [`%${searchTerm}%`]);
         }
         if (result.rows.length > 0 && result.rows[0].slug) {
-            return res.redirect(301, '/universities/' + result.rows[0].slug);
+            return res.redirect(301, '/universiteler/' + result.rows[0].slug);
         }
         return res.status(404).render('error', { title: 'Üniversite Bulunamadı', message: 'Aradığınız üniversite bulunamadı.' });
     } catch (error) {
@@ -2549,17 +2556,19 @@ STUDENT_LIFE_COUNTRIES.forEach(({ key, trSlug, view }) => {
 });
 
 // ─── Ülke Rehber Sayfaları (/ulkede-universite/:slug) ───
+// `slug`      → legacy slug used in /ulkede-universite/{slug} URLs (kept for 301 redirects)
+// `guideSlug` → new canonical URL slug (e.g. "almanyada-universite") served at /{guideSlug}
 const COUNTRY_GUIDE_MAP = [
-    { key: 'germany',      slug: 'almanya',    nameTR: 'Almanya',          nameEN: 'Germany',        dbCountry: 'Germany',            flag: '🇩🇪' },
-    { key: 'czech',         slug: 'cekya',      nameTR: 'Çek Cumhuriyeti',  nameEN: 'Czech Republic', dbCountry: 'Czech Republic',     flag: '🇨🇿' },
-    { key: 'italy',         slug: 'italya',     nameTR: 'İtalya',           nameEN: 'Italy',          dbCountry: 'Italy',              flag: '🇮🇹' },
-    { key: 'austria',       slug: 'avusturya',  nameTR: 'Avusturya',        nameEN: 'Austria',        dbCountry: 'Austria',            flag: '🇦🇹' },
-    { key: 'uk',            slug: 'ingiltere',  nameTR: 'İngiltere',        nameEN: 'United Kingdom', dbCountry: 'UK',                 flag: '🇬🇧' },
-    { key: 'poland',        slug: 'polonya',    nameTR: 'Polonya',          nameEN: 'Poland',         dbCountry: 'Poland',             flag: '🇵🇱' },
-    { key: 'hungary',       slug: 'macaristan', nameTR: 'Macaristan',       nameEN: 'Hungary',        dbCountry: 'Hungary',            flag: '🇭🇺' },
-    { key: 'netherlands',   slug: 'hollanda',   nameTR: 'Hollanda',         nameEN: 'Netherlands',    dbCountry: 'Netherlands',        flag: '🇳🇱' },
-    { key: 'spain',         slug: 'ispanya',    nameTR: 'İspanya',          nameEN: 'Spain',          dbCountry: 'Spain',              flag: '🇪🇸' },
-    { key: 'france',        slug: 'fransa',     nameTR: 'Fransa',           nameEN: 'France',         dbCountry: 'France',             flag: '🇫🇷' }
+    { key: 'germany',      slug: 'almanya',    guideSlug: 'almanyada-universite',    nameTR: 'Almanya',          nameEN: 'Germany',        dbCountry: 'Germany',            flag: '🇩🇪' },
+    { key: 'czech',         slug: 'cekya',      guideSlug: 'cekyada-universite',      nameTR: 'Çek Cumhuriyeti',  nameEN: 'Czech Republic', dbCountry: 'Czech Republic',     flag: '🇨🇿' },
+    { key: 'italy',         slug: 'italya',     guideSlug: 'italyada-universite',     nameTR: 'İtalya',           nameEN: 'Italy',          dbCountry: 'Italy',              flag: '🇮🇹' },
+    { key: 'austria',       slug: 'avusturya',  guideSlug: 'avusturyada-universite',  nameTR: 'Avusturya',        nameEN: 'Austria',        dbCountry: 'Austria',            flag: '🇦🇹' },
+    { key: 'uk',            slug: 'ingiltere',  guideSlug: 'ingilterede-universite',  nameTR: 'İngiltere',        nameEN: 'United Kingdom', dbCountry: 'UK',                 flag: '🇬🇧' },
+    { key: 'poland',        slug: 'polonya',    guideSlug: 'polonyada-universite',    nameTR: 'Polonya',          nameEN: 'Poland',         dbCountry: 'Poland',             flag: '🇵🇱' },
+    { key: 'hungary',       slug: 'macaristan', guideSlug: 'macaristanda-universite', nameTR: 'Macaristan',       nameEN: 'Hungary',        dbCountry: 'Hungary',            flag: '🇭🇺' },
+    { key: 'netherlands',   slug: 'hollanda',   guideSlug: 'hollandada-universite',   nameTR: 'Hollanda',         nameEN: 'Netherlands',    dbCountry: 'Netherlands',        flag: '🇳🇱' },
+    { key: 'spain',         slug: 'ispanya',    guideSlug: 'ispanyada-universite',    nameTR: 'İspanya',          nameEN: 'Spain',          dbCountry: 'Spain',              flag: '🇪🇸' },
+    { key: 'france',        slug: 'fransa',     guideSlug: 'fransada-universite',     nameTR: 'Fransa',           nameEN: 'France',         dbCountry: 'France',             flag: '🇫🇷' }
 ];
 
 const _ytCache = {};
@@ -2607,8 +2616,14 @@ async function getCountryYouTubeVideos(countryNameTR, countryKey) {
     }
 }
 
+// Country guide pages live at /{guideSlug} (e.g. /almanyada-universite).
+// Old /ulkede-universite/{slug} URLs 301-redirect to the new canonical URL
+// so existing links and SEO equity are preserved.
 COUNTRY_GUIDE_MAP.forEach(cd => {
-    app.get('/ulkede-universite/' + cd.slug, async (req, res) => {
+    const newPath = '/' + cd.guideSlug;
+    const oldPath = '/ulkede-universite/' + cd.slug;
+
+    const countryGuideHandler = async (req, res) => {
         try {
             const t = res.locals.t || {};
             const guideContent = t.countryGuide?.[cd.key] || {};
@@ -2629,8 +2644,8 @@ COUNTRY_GUIDE_MAP.forEach(cd => {
                 ? `Complete guide to studying in ${cd.nameEN}. Universities, tuition fees, scholarships, application process, visa and cost of living. Free consultation by VG Danışmanlık.`
                 : `${cd.nameTR}'da üniversite eğitimi rehberi. Üniversiteler, ücretler, burslar, başvuru süreci, vize ve yaşam maliyetleri. VG Danışmanlık ile ücretsiz danışmanlık.`;
             res.locals.seoKeywords = `${cd.nameTR.toLowerCase()}'da üniversite, ${cd.nameTR.toLowerCase()}'da eğitim, ${cd.nameTR.toLowerCase()} üniversiteleri, ${cd.nameTR.toLowerCase()} burs, yurt dışı eğitim, VG Danışmanlık`;
-            res.locals.canonicalUrl = baseUrl + '/ulkede-universite/' + cd.slug;
-            res.locals.currentPath = '/ulkede-universite/' + cd.slug;
+            res.locals.canonicalUrl = baseUrl + newPath;
+            res.locals.currentPath = newPath;
 
             const countryVideos = await getCountryYouTubeVideos(cd.nameTR, cd.key);
 
@@ -2647,7 +2662,10 @@ COUNTRY_GUIDE_MAP.forEach(cd => {
             console.error('Country guide error:', err);
             res.status(500).render('error', { title: 'Error', message: err.message });
         }
-    });
+    };
+
+    app.get(newPath, countryGuideHandler);
+    app.get(oldPath, (req, res) => res.redirect(301, newPath));
 });
 
 // Eski İngilizce URL'ler → Türkçe URL'e 301 (mevcut linkler kırılmasın, SEO değeri taşınsın)
