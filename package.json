@@ -17,9 +17,9 @@
     "report:html:populer": "node scripts/build-report-html.js --populer",
     "report:pdf": "node scripts/generate-report-pdf.js",
     "report:short": "node scripts/export-universities-for-report.js && node scripts/build-report-html.js --populer && node scripts/generate-report-pdf.js",
-    "deploy": "vercel --yes",
-    "deploy:preview": "vercel --yes",
-    "deploy:prod": "vercel --prod"
+    "deploy": "npx vercel --yes",
+    "deploy:preview": "npx vercel --yes",
+    "deploy:prod": "npx vercel --prod"
   },
   "dependencies": {
     "@pdf-lib/fontkit": "^1.1.1",
@@ -50,15 +50,13 @@
     "pg": "^8.16.3",
     "sqlite3": "^5.1.7",
     "stripe": "^20.0.0",
-    "tsdav": "^2.1.8",
-    "vercel": "^48.1.6"
+    "tsdav": "^2.1.8"
   },
   "devDependencies": {
     "eslint": "^9.33.0",
     "html-minifier-terser": "^7.2.0",
     "marked": "^17.0.6",
-    "nodemon": "^3.1.10",
-    "puppeteer": "^23.11.1"
+    "nodemon": "^3.1.10"
   },
   "keywords": [
     "venture-global",
