@@ -144,6 +144,12 @@ router.post('/_maintenance/migrate-uni-slugs', async (req, res) => {
     }
     const dryRun = req.query.dryRun === '1' || req.query.dryRun === 'true';
     try {
+        // Belt-and-braces: ensure the column exists before we read it.
+        try {
+            await pool.query(`ALTER TABLE universities ADD COLUMN IF NOT EXISTS legacy_slug TEXT`);
+        } catch (alterErr) {
+            console.log('legacy_slug ALTER inside endpoint:', alterErr.message);
+        }
         const { rows } = await pool.query(`
             SELECT id, name, city, country, slug, legacy_slug
             FROM universities
@@ -916,6 +922,19 @@ async function ensureTablesExist() {
         console.error('❌ Error ensuring tables:', error.message);
     }
 }
+
+// Independent migration: universities.legacy_slug. Runs UNCONDITIONALLY
+// on module load (not nested inside ensureTablesExist) so an earlier
+// migration failure can't short-circuit it. Idempotent.
+(async () => {
+    try {
+        await pool.query(`ALTER TABLE universities ADD COLUMN IF NOT EXISTS legacy_slug TEXT`);
+        await pool.query(`CREATE INDEX IF NOT EXISTS idx_universities_legacy_slug ON universities(legacy_slug)`);
+        console.log('✅ universities.legacy_slug column ensured');
+    } catch (e) {
+        console.log('legacy_slug migration error (non-fatal):', e.message);
+    }
+})();
 
 // Call this once when the module loads
 console.log('🚀 Starting ensureTablesExist...');
