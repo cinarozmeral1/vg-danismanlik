@@ -234,6 +234,12 @@ function getUniversityTurkishName(name) {
     const patterns = [
         // "Technical University of X" → "X Teknik Üniversitesi"
         { re: /^Technical University of (.+)$/i,            build: m => `${translateCities(m[1])} Teknik Üniversitesi` },
+        // "X Technical University" → "X Teknik Üniversitesi" (e.g. "Czech Technical University")
+        { re: /^(.+?)\s+Technical University$/i,            build: m => `${translateCities(m[1].replace(/^Czech$/i, 'Çek'))} Teknik Üniversitesi` },
+        // "X University of Applied Sciences" → "X Uygulamalı Bilimler Üniversitesi"
+        { re: /^(.+?)\s+University of Applied Sciences$/i,  build: m => `${translateCities(m[1])} Uygulamalı Bilimler Üniversitesi` },
+        // "X Medical University" → "X Tıp Üniversitesi"
+        { re: /^(.+?)\s+Medical University$/i,              build: m => `${translateCities(m[1])} Tıp Üniversitesi` },
         // "X Institute of Technology" → "X Teknoloji Enstitüsü"
         { re: /^(.+?)\s+Institute of Technology$/i,         build: m => `${translateCities(m[1])} Teknoloji Enstitüsü` },
         // "X School of Business" → "X İşletme Okulu"
@@ -246,6 +252,12 @@ function getUniversityTurkishName(name) {
         { re: /^University College (.+)$/i,                 build: m => `${translateCities(m[1])} Üniversite Koleji` },
         // "X College" → "X Koleji"
         { re: /^(.+?)\s+College$/i,                         build: m => `${translateCities(m[1])} Koleji` },
+        // "X University in Y" / "X University at Y" → "TranslatedY X Üniversitesi"
+        { re: /^(.+?)\s+University\s+(?:in|at)\s+(.+)$/i,   build: m => {
+            const cityKey = Object.keys(CITY_TR_MAP).find(c => c.toLowerCase() === m[2].toLowerCase());
+            if (cityKey) return `${CITY_TR_MAP[cityKey]} ${m[1]} Üniversitesi`;
+            return `${translateCities(m[2])} ${m[1]} Üniversitesi`;
+        }},
         // "Sapienza University of Rome", "Vienna University of Economics" etc.
         // "X University of Y": if Y is a known city → "TranslatedY X Üniversitesi",
         //                     otherwise → "TranslatedX Üniversitesi" (X may itself be a city).
@@ -311,6 +323,110 @@ function getUniversityTurkishName(name) {
 }
 
 module.exports.getUniversityTurkishName = getUniversityTurkishName;
+
+/**
+ * Brand-only short slug for acronym-named institutions whose Turkish
+ * "translation" would feel forced. Returns just the acronym in lowercase.
+ *
+ * Triggers when the original name starts with a 2-6 letter ACRONYM
+ * followed only by a generic institutional suffix:
+ *   "ESADE Business School"      → "esade"
+ *   "IE University"              → "ie"
+ *   "EMLYON Business School"     → "emlyon"
+ *   "EDHEC Business School"      → "edhec"
+ *   "IÉSEG School of Management" → "ieseg"
+ *   "ESCP Business School"       → "escp"
+ *   "INSEAD"                     → "insead"
+ *
+ * Returns null when the name does NOT look brand-only (e.g. "Charles University",
+ * "University of Bologna", "Sapienza University of Rome"). The caller should
+ * fall back to getUniversityTurkishName + slugify in that case.
+ */
+function getUniversityBrandSlug(name) {
+    if (!name || typeof name !== 'string') return null;
+    const trimmed = name.trim();
+    // Strip diacritics for the acronym check so "IÉSEG" matches as IESEG.
+    const stripDiacritics = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const tokens = trimmed.split(/\s+/);
+    if (tokens.length === 0) return null;
+    const firstAscii = stripDiacritics(tokens[0]);
+    // Acronym: 2-6 letters, all uppercase (after diacritic stripping)
+    if (!/^[A-Z]{2,6}$/.test(firstAscii)) return null;
+    // Standalone acronym university (e.g. "INSEAD")
+    if (tokens.length === 1) return firstAscii.toLowerCase();
+    const rest = tokens.slice(1).join(' ').toLowerCase().trim();
+    const validSuffixes = [
+        'business school',
+        'business',
+        'school of business',
+        'school of management',
+        'school of economics',
+        'university',
+        'institute',
+        'institute of technology'
+    ];
+    if (validSuffixes.includes(rest)) return firstAscii.toLowerCase();
+    return null;
+}
+
+module.exports.getUniversityBrandSlug = getUniversityBrandSlug;
+
+/**
+ * Latin-only slug builder. Maps Turkish + common European diacritics to
+ * ASCII equivalents and removes anything else.
+ */
+function slugifyLatin(text) {
+    if (!text) return '';
+    return String(text)
+        .toLowerCase()
+        .replace(/ı/g, 'i').replace(/İ/gi, 'i')
+        .replace(/ş/g, 's').replace(/ğ/g, 'g')
+        .replace(/ç/g, 'c').replace(/ö/g, 'o').replace(/ü/g, 'u')
+        // Latinize remaining diacritics (é, à, ñ, ł, č, ž, etc.)
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/ł/g, 'l').replace(/Ł/gi, 'l')
+        .replace(/ø/g, 'o').replace(/æ/g, 'ae').replace(/ß/g, 'ss')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .substring(0, 80);
+}
+
+/**
+ * Build a Türkçe-friendly URL slug for a university.
+ *
+ * Strategy:
+ *   1. If the name looks brand-only (ESADE, IE, …) → return the bare acronym.
+ *   2. Otherwise compute the Turkish display name via getUniversityTurkishName
+ *      and slugify it. If the resulting slug doesn't already contain the city,
+ *      we append the city for uniqueness/clarity.
+ *
+ * The caller is responsible for calling ensureUniqueSlug() to avoid
+ * collisions across rows.
+ */
+function buildTurkishUniversitySlug(name, city) {
+    const brand = getUniversityBrandSlug(name);
+    if (brand) {
+        // For brand-only slugs we DO add the city when we have one, to keep
+        // URLs unique and richer (e.g. "hec-paris", "ie-madrid", "esade-barselona").
+        const citySlug = city ? slugifyLatin(getUniversityTurkishName(city) || city) : '';
+        if (citySlug && !brand.includes(citySlug)) {
+            return `${brand}-${citySlug}`;
+        }
+        return brand;
+    }
+    const trName = getUniversityTurkishName(name) || name;
+    let slug = slugifyLatin(trName);
+    const citySlug = city ? slugifyLatin(getUniversityTurkishName(city) || city) : '';
+    // Avoid duplicating the city when the name already ends with it
+    // (e.g. "Bologna Üniversitesi" + city "Bologna" → keep "bologna-universitesi").
+    if (citySlug && !slug.split('-').includes(citySlug)) {
+        slug = `${slug}-${citySlug}`;
+    }
+    return slug.substring(0, 80);
+}
+
+module.exports.buildTurkishUniversitySlug = buildTurkishUniversitySlug;
+module.exports.slugifyLatin = slugifyLatin;
 
 /** CJK ve istenmeyen karakterleri kaldır (Çince/Japonca/Korece vb. - sadece Türkçe/İngilizce kalsın) */
 function stripUnwantedCharacters(text) {
@@ -764,4 +880,4 @@ async function getRelatedPosts(post, limit = 3) {
     return result.rows;
 }
 
-module.exports = { generateBlogPost, getBlogPosts, getBlogPostBySlug, getBlogPostCount, getRelatedPosts, findYouTubeVideo, COUNTRY_NAMES, COUNTRY_STUDENT_LIFE_SLUGS, stripAIPunctuation, getUniversityTurkishName };
+module.exports = { generateBlogPost, getBlogPosts, getBlogPostBySlug, getBlogPostCount, getRelatedPosts, findYouTubeVideo, COUNTRY_NAMES, COUNTRY_STUDENT_LIFE_SLUGS, stripAIPunctuation, getUniversityTurkishName, getUniversityBrandSlug, buildTurkishUniversitySlug, slugifyLatin };
