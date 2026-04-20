@@ -13,10 +13,12 @@
           "public/favicon-192.png",
           "public/apple-touch-icon.png",
           "public/images/signature.png",
+          "public/fonts/**",
+          "public/templates/**",
           "views/**",
           "locales/**"
         ],
-        "excludeFiles": "{public/images/**,public/uploads/**,public/videos/**,public/css/**,public/js/**,public/templates/**,public/fonts/**,public/logo-with-bg.png,public/favicon-original.png,reports/**,scripts/**,docs/**,tests/**,*.md,.git/**,.next/**,.cache/**}"
+        "excludeFiles": "{public/images/**,public/uploads/**,public/videos/**,public/css/**,public/js/**,public/logo-with-bg.png,public/favicon-original.png,reports/**,scripts/**,docs/**,tests/**,*.md,.git/**,.next/**,.cache/**}"
       }
     },
     {
